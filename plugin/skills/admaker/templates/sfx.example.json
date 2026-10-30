@@ -1,0 +1,5 @@
+[
+  { "frame": 30,  "file": "sfx/impact_dry.wav",  "gain": 0.8, "peakLagMs": 12, "note": "hook 숫자 착지" },
+  { "frame": 92,  "file": "sfx/whoosh_low.wav",  "gain": 0.5, "peakLagMs": 180, "note": "hero 카드 접근 시작" },
+  { "frame": 660, "file": "sfx/impact_logo.wav", "gain": 0.9, "peakLagMs": 8,  "note": "엔드카드 로고 착지 (직전 준-무음)" }
+]
