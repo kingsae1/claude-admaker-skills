@@ -21,14 +21,17 @@ plugin/skills/admaker/
 │   ├── aesthetic-rules.md       검수 체크리스트 (B/R/Q/S/C/P)
 │   ├── ad-formats.md            길이·비율·세이프존·오디오 규격
 │   ├── engine-recipes.md        기법 → admaker ProjectJSON 변환법
+│   ├── fonts.md / fonts.json    무드별 폰트 페어링 + admaker 앱 폰트 목록
 │   └── shots/                   샷 카드 (초기 5장)
 └── templates/                   프로젝트 시작 파일
     ├── TREATMENT.md
     ├── timeline.mjs             단일 진실의 원천
     ├── build-project.mjs        timeline + brand → project.json (카메라·룩 스택 포함)
+    ├── fonts.mjs                폰트 토큰 → style(fontFamily·fontUrl)
     ├── motion.mjs               입장·퇴장·Ken Burns·숨쉬기·모션 블러·룩 스택·자막 페이지
     ├── gen-audio-kit.mjs        소재가 없을 때 임시 SFX·베드 합성
     ├── validate.mjs             엔진에 없는 이름·src 누락 검사 + 모션 규칙 경고
+    ├── to-admaker-import.mjs    project.json → admaker 앱 광고 불러오기 파일
     ├── shots/*.mjs              샷 카드별 클립 생성 함수
     ├── render/                  헤드리스 Exporter 렌더 하니스 (Vite + Playwright)
     └── build.sh
