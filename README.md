@@ -1,11 +1,11 @@
-# claude-admaker-template
+# claude-admaker-skills
 
 admaker 엔진으로 광고 모션그래픽을 만드는 Claude Code 스킬입니다. 결과물은 `@admaker/engine` ProjectJSON이고, 브라우저 `Exporter`로 mp4를 렌더합니다. 같은 JSON은 admaker Studio에서 열어 고칠 수 있습니다.
 
 ## 설치
 
 ```sh
-claude plugin marketplace add kingsae1/claude-admaker-template
+claude plugin marketplace add kingsae1/claude-admaker-skills
 claude plugin install admaker@admaker
 ```
 
