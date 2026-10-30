@@ -41,7 +41,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
 | 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
 | 9. 검수 | 숫자 체크리스트 + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
-| 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일 생성 → 아래 목록 | `references/engine-recipes.md` §9 |
+| 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일, `to-admaker-template.mjs`로 플래너 템플릿 생성 → 아래 목록 | `references/engine-recipes.md` §9, §9.1 |
 
 ## 반드시 지킬 원칙
 
@@ -58,6 +58,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 
 - `<name>_<비율>.mp4` (규격마다), `poster.jpg`, 내레이션/자막이 있으면 `<name>.srt`
 - BGM이 있으면 BGM 없는 버전(SFX 유지)
+- `template.json` (admaker 플래너 모드 템플릿: 바닥 소재를 뺀 그래픽 오버레이. 씬 단위로 하나씩, 바꿔 넣을 문구·로고는 `field`/`{{marker}}`로 표시. §9.1)
 - `admaker-import.json` (admaker 앱 "광고 불러오기"로 여는 파일, `to-admaker-import.mjs`로 생성. 변환 경고도 함께 알림), `project.json` (렌더용 엔진 ProjectJSON), `scripts/`·`scenes/` (script 어댑터나 three 커스텀 씬을 썼다면. 이 둘은 앱에 등록되어 있지 않아 불러오기 파일에서 빠지므로, 앱에서 고칠 광고라면 그 장면을 영상으로 미리 렌더해 Video 클립으로 넣음)
 - `TREATMENT.md`, `brand.json`, `timeline.mjs`, `sfx.json`, `CREDITS`, `build.sh`
 - 합성 임시음을 썼다면 그 사실(교체 권장)

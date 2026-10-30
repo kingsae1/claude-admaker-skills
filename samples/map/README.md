@@ -28,3 +28,5 @@ node to-admaker-import.mjs project.json admaker-import.json
 - 폰트: Black Han Sans(제목), Noto Sans KR 500(본문). 렌더 하니스에서는 `--local-fonts`로 로컬 파일을 씁니다.
 - 바닥 소재는 실제 사용자 영상 자리입니다. 샘플은 직접 만든 자리표시 영상(밤거리 보케)으로 렌더했고, `project.json`에서는 `assets/input.mp4`를 가리킵니다.
 - 색·타이밍은 첫 렌더 뒤 고친 값입니다(줌 1.35 → 1.55, 지도 면 → 선만, 전체 어둡게 층 제거, 글자 받침 50% → 30%).
+
+플래너 모드 템플릿: `template.json` (`node to-admaker-template.mjs project.json admaker-import.json template.json --group 배송지도 --name 경로-1`). 바닥 영상을 뺀 그래픽 오버레이만 들어 있고, admaker 앱 코드로 파싱과 씬 합성(6초 → 4초 씬)을 확인했습니다.

@@ -371,3 +371,29 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 - 변환 후 경고(△)를 읽고, 빠진 것이 화면에 중요하면 대체합니다.
 - 앱에서 열어 렌더 결과와 같은지 한 번 확인합니다(특히 텍스트 폰트·위치, 겹침 순서). **아직 실제 앱 불러오기로 검증하지 않았습니다.**
 
+### 9.1 플래너 모드 템플릿 (`template.json`)
+
+admaker 플래너(AI PLAN) 모드의 템플릿은 **씬 위에 얹는 오버레이**입니다. 씬의 영상·사진은 앱이 깔고, 템플릿은 그 위의 글자·도형·이미지만 가집니다. 이 스킬의 "소재가 바닥, 그래픽이 위" 구조와 같아서, 광고의 그래픽 층을 그대로 템플릿으로 뺄 수 있습니다. `to-admaker-template.mjs`가 `admaker-import.json`을 받아 바꿉니다(admaker 앱 `fad70f6`의 `overlayTemplates.ts`·`hcnPlanMediaSceneOverlays.ts`로 파싱·씬 합성까지 확인).
+
+```sh
+node to-admaker-template.mjs project.json admaker-import.json template.json \
+  --group "그룹 이름" --name "오프닝-1" --desc "어떤 씬에 어울리는지, 스타일" [--from 0 --to 3] [--keep-look]
+```
+
+| 항목 | 템플릿 형식 | 비고 |
+|---|---|---|
+| 루트 | `version`, `groupName`, `templateName`, `description`, `track_type`, `inputs[]`, `tracks[]`, `transitions: []`, `output` | 같은 `groupName`끼리 앱에서 한 그룹. `description`은 앱의 템플릿 추천 LLM이 읽음(어울리는 씬, 스타일, "필요 요소") |
+| 바닥 소재·배경 | 빠짐 | `footage_*`, `track_bg`, 소리는 앱이 씬마다 따로 깖 |
+| 룩 레이어 | 기본으로 빠짐 | `--keep-look`이면 `look_*`도 넣음 |
+| 겹침 순서 | **트랙 순서**(앞 = 아래) | 앱이 저작 순서로 zIndex를 다시 매김 |
+| 글자 | `source`에 문구(줄바꿈 `\N`), 스타일은 transform | `fontName`: 눈누 계열은 파일명(예: `BMDOHYEON.woff`), Google 계열은 이름 그대로 |
+| 바꿔 넣을 값 | 클립 이름이 표준 필드면 앱이 값을 넣음 | Text·Image 클립에 `field: "store_name"`처럼 적음. 문구 일부만 바꾸려면 글자에 `{{store_name}}`을 쓰면 `multi_` 클립이 됨 |
+| 자막 | 첫 Caption 클립 → 이름 `subtitle` | 앱이 씬 자막을 이 자리·스타일로 그림 |
+| 시간 | 씬 길이에 맞춰 모든 시간이 같은 비율로 늘거나 줄어듦 | 템플릿 하나는 씬 하나(보통 1.5–6초). 긴 광고는 `--from/--to`로 씬마다 나눔 |
+| 크기 | 템플릿 캔버스 → 씬 캔버스로 x·y를 따로 늘림 | 광고와 같은 비율로 만듦. 비율이 다른 씬에 쓰면 도형·지도가 찌그러짐 |
+
+표준 필드(앱 VIDEO_TEMPLATE_SPEC §5): 글자 `store_name`, `location`, `phone`, `business_hours`, `business_category`, `tagline`, `promo_title`, `promo_price`, `promo_period`, `badge`, `cta`, `menu_name_N`, `menu_price_N`, `website`, `sns_handle`. 이미지 `logo`, `qr`, `store_image`, `menu_image_N`, 장식 `*_bg`, `bg_image`, `overlay`, `frame`, `deco_N`(장식은 비워 두면 템플릿 기본 이미지 유지).
+
+- 클립 id가 우연히 표준 필드 이름(예: `logo`)이면 앱이 값을 바꿔 넣습니다. 의도가 아니면 id를 바꿉니다(스크립트가 경고).
+- 앱에 실제로 넣는 곳: 카탈로그는 앱 저장소 `src/assets/ai-plan-templates/`에 파일을 추가(파일명 = id, 예: `40-1_그룹_오프닝-1.json`).
+
