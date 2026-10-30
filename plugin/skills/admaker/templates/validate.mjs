@@ -3,6 +3,7 @@
 // 사용: node validate.mjs project.json
 // 아래 목록은 @admaker/engine 3.0.5 (three 어댑터 + 씬 훅 포함) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
+import { findFont, hasHangul } from "./fonts.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "unfold", "fold"]);
 const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "perspective", "easing"]);
@@ -23,6 +24,7 @@ const err = (id, m) => issues.push(`✗ ${id}: ${m}`);
 const warnings = [];
 const warn = (id, m) => warnings.push(`△ ${id}: ${m}`);
 const entranceStarts = new Map(); // 입장 시작 프레임 → 클립 id들 (R7)
+const fontUrls = new Map(); // fontFamily → Set(fontUrl) (B5)
 const dur = p.settings?.duration ?? Infinity;
 
 for (const [id, c] of Object.entries(p.clips ?? {})) {
@@ -47,6 +49,16 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     const bt = c.backdropType ?? c.style?.backdropType ?? "solid";
     if (!BACKDROPS.has(bt)) err(id, `모르는 backdropType "${bt}"`);
   }
+  if (c.type === "Text" || c.type === "Caption") {
+    const fam = c.style?.fontFamily;
+    const text = c.type === "Caption" ? (c.caption?.words ?? []).map((w) => w.text).join(" ") || c.text : c.text;
+    const hit = fam && findFont(fam);
+    if (!fam) err(id, "style.fontFamily 없음 (brand.json fonts 토큰을 fontStyle()로 넣으세요)");
+    else if (!hit) warn(id, `"${fam}"은 admaker 폰트 목록(fonts.json)에 없음: 앱에서 다른 폰트로 보일 수 있음 (B5)`);
+    else if (!hit.font.korean && hasHangul(text)) err(id, `"${fam}"은 한글이 없는 폰트인데 한글 텍스트 (B5)`);
+    if (fam && !c.style?.fontUrl) err(id, `"${fam}"에 fontUrl 없음 (엔진이 폰트를 못 불러옴)`);
+    if (fam && c.style?.fontUrl) fontUrls.set(fam, new Set([...(fontUrls.get(fam) ?? []), c.style.fontUrl]));
+  }
   const kfs = (c.animations ?? []).filter((a) => a.type === "keyframes");
   for (const a of kfs) {
     const stops = Object.values(a.params ?? {});
@@ -67,6 +79,9 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   if (c.type === "Adapter" && !["script", "lottie", "three"].includes(c.adapter)) err(id, `모르는 어댑터 "${c.adapter}"`);
 }
 
+for (const [fam, urls] of fontUrls) if (urls.size > 1) err(fam, `한 폰트 이름에 파일 ${urls.size}개 (엔진은 이름 하나에 파일 하나만 등록함, B5: 한글 폰트는 프로젝트당 한 굵기)`);
+const families = new Set([...fontUrls.keys()].map((f) => findFont(f)?.font.name ?? f));
+if (families.size > 3) warn("fonts", `폰트 패밀리 ${families.size}개 (B4: 디스플레이 1 + 본문 1 + 숫자 1 이하)`);
 for (const [f, ids] of entranceStarts) if (ids.length >= 3) warn(ids.join(", "), `프레임 ${f}에 입장 ${ids.length}개 동시 시작 (R7: 3–6프레임 시차)`);
 console.log(issues.length ? issues.join("\n") : "✓ 검사 통과");
 if (warnings.length) console.log(warnings.join("\n"));

@@ -31,13 +31,15 @@ export function kenBurns(clipDur, { shotIndex = 0, zoom = 1.08, pan = -25, ui = 
     params: { "0%": { ...s, easing: "easeInOutSine" }, "100%": { ...e } } };
 }
 
-/** 숨쉬기 (Q13): start(초, 클립 기준)부터 clipDur까지 왕복. R1 정지 중인 브랜드 요소에는 쓰지 않는다. */
-export function breathe(clipDur, start, { period = 3, scale = 1.015, y = -3 } = {}) {
+/** 숨쉬기 (Q13): start(초, 클립 기준)부터 clipDur까지 반복. R1 정지 중인 브랜드 요소에는 쓰지 않는다.
+ *  0%→50%→100%가 한 번 왕복이라 direction(alternate)이 필요 없다. admaker 불러오기 포맷은 direction을 보존하지 않는다. */
+export function breathe(clipDur, start, { period = 6, scale = 1.015, y = -3 } = {}) {
   const left = clipDur - start;
   if (left < 2) return null;
+  const ease = "easeInOutSine";
   return { type: "keyframes",
-    options: { duration: us(period), delay: us(start), easing: "linear", iterCount: Math.ceil(left / period), direction: "alternate" },
-    params: { "0%": { scale: 1, y: 0, easing: "easeInOutSine" }, "100%": { scale, y } } };
+    options: { duration: us(period), delay: us(start), easing: "linear", iterCount: Math.ceil(left / period) },
+    params: { "0%": { scale: 1, y: 0, easing: ease }, "50%": { scale, y, easing: ease }, "100%": { scale: 1, y: 0 } } };
 }
 
 /** 모션 블러 (Q14): 가로 이동 keyframes의 stop에 넣을 값. px/프레임 기준 30 이상일 때만. */
@@ -47,25 +49,70 @@ export const blurFor = (pxPerFrame) => (Math.abs(pxPerFrame) >= 30 ? Math.min(40
 export const motionBlurEffect = (id, start, dur, vy, vx = 0) =>
   ({ id, key: "motionBlurFilter", startTime: us(start), duration: us(dur), values: { velocity: { x: vx, y: vy }, kernelSize: 9 } });
 
-/** 룩 스택 (Q11): 배경·그레이드·그레인·비네트 클립 4–5개. 값은 렌더 검증 전 초기값. */
-export function lookStack({ W, H, duration, brand, dark = true }) {
-  const c = brand.colors ?? {};
-  const full = (z, opacity = 1) => ({ x: 0, y: 0, width: W, height: H, angle: 0, opacity, zIndex: z });
-  const timing = { display: { from: 0, to: us(duration) }, duration: us(duration), playbackRate: 1 };
-  const hex = (h, a) => h && /^#[0-9a-f]{6}$/i.test(h) ? h + Math.round(a * 255).toString(16).padStart(2, "0") : h;
-  const clips = {
-    look_bg: { type: "Backdrop", name: "bg", src: "backdrop", backdropType: "meshGradient", timing, transform: full(0),
-      style: { backdropType: "meshGradient", colors: [c.background ?? "#0A0A0F", hex(c.primary ?? c.accent, 0.2), hex(c.accent, 0.13)].filter(Boolean), speed: 0.3, scale: 1 } },
-    look_grade: { type: "Effect", name: "grade", effectKey: "adjustmentFilter", timing, transform: full(90),
-      values: { saturation: 1.1, contrast: 1.08, gamma: 1, brightness: 1, red: 1, green: 1, blue: 1, alpha: 1 } },
-    look_tint: { type: "Effect", name: "tint", effectKey: "colorOverlayFilter", timing, transform: full(91),
-      values: { color: c.primary ?? c.accent ?? "#000000", alpha: dark ? 0.06 : 0.03 } },
-    look_grain: { type: "Backdrop", name: "grain", src: "backdrop", backdropType: "noise", timing, transform: full(95, dark ? 0.05 : 0.035),
-      style: { backdropType: "noise", colors: ["#808080"], density: 0.6, speed: 1 } },
-    look_vignette: { type: "Effect", name: "vignette", effectKey: "oldFilmFilter", timing, transform: full(99),
-      values: { sepia: 0, noise: 0, scratch: 0, vignetting: 0.3, vignettingAlpha: 0.5, vignettingBlur: 0.4 } },
+// 결정적 PRNG (그레인 지터용)
+function rng(seed) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
-  const trackOf = { look_bg: "look_bg", look_grade: "look_fx", look_tint: "look_fx", look_grain: "look_grain", look_vignette: "look_fx" };
+}
+const svgUrl = (svg) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+
+/**
+ * 룩 스택 (Q11): 배경 · 틴트(그레이드) · 그레인 · 비네트를 SVG Image 클립으로 만든다.
+ * Backdrop·Effect 클립 대신 Image를 쓰는 이유: admaker 앱의 "광고 불러오기" 포맷(EncodingPayload)은
+ * Backdrop·Effect를 받지 않는다. Image(SVG)는 렌더 하니스와 앱 양쪽에서 같은 모습으로 나온다.
+ * 값은 렌더 검증 전 초기값.
+ */
+export function lookStack({ W, H, duration, brand, dark = true, grain = true }) {
+  const c = brand.colors ?? {};
+  const bg = c.background ?? "#0A0A0F", hero = c.primary ?? c.accent ?? "#7C3AED", acc = c.accent ?? hero;
+  const D = us(duration);
+  const timing = { display: { from: 0, to: D }, duration: D, playbackRate: 1 };
+  const tf = (x, y, w, h, z, opacity = 1) => ({ x, y, width: w, height: h, angle: 0, opacity, zIndex: z });
+
+  // ① 배경: 단색 + 큰 방사형 빛 두 개, 프레임보다 12% 크게 두고 천천히 흐른다
+  const bw = Math.round(W * 1.12), bh = Math.round(H * 1.12);
+  const bgSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${bw}" height="${bh}" viewBox="0 0 ${bw} ${bh}">`
+    + `<defs><radialGradient id="a"><stop offset="0" stop-color="${hero}" stop-opacity="0.22"/><stop offset="0.62" stop-color="${hero}" stop-opacity="0"/></radialGradient>`
+    + `<radialGradient id="b"><stop offset="0" stop-color="${acc}" stop-opacity="0.14"/><stop offset="0.65" stop-color="${acc}" stop-opacity="0"/></radialGradient></defs>`
+    + `<rect width="100%" height="100%" fill="${bg}"/>`
+    + `<circle cx="${bw * 0.25}" cy="${bh * 0.12}" r="${Math.max(bw, bh) * 0.45}" fill="url(#a)"/>`
+    + `<circle cx="${bw * 0.82}" cy="${bh * 0.9}" r="${Math.max(bw, bh) * 0.38}" fill="url(#b)"/></svg>`;
+  const drift = { type: "keyframes", options: { duration: D, delay: 0, easing: "linear" },
+    params: { "0%": { x: 0, y: 0, easing: "easeInOutSine" }, "100%": { x: -(bw - W) * 0.6, y: -(bh - H) * 0.4 } } };
+
+  // ② 틴트: 강조색 반투명 면 (엔진 colorOverlay와 같은 일반 합성)
+  const tintSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><rect width="100%" height="100%" fill="${hero}"/></svg>`;
+
+  // ③ 그레인: 프레임보다 128px 큰 노이즈를 2프레임마다 다른 자리로 옮겨 깜빡이게 한다(1초 루프)
+  const gw = W + 128, gh = H + 128;
+  const grainSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${gw}" height="${gh}">`
+    + `<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/><feColorMatrix type="saturate" values="0"/></filter>`
+    + `<rect width="100%" height="100%" filter="url(#n)"/></svg>`;
+  const r = rng(42), jumps = 15, jitter = {};
+  for (let i = 0; i < jumps; i++) {
+    const p = (i / jumps) * 100, q = ((i + 1) / jumps) * 100 - 0.05;
+    const v = { x: -Math.round(r() * 128), y: -Math.round(r() * 128) };
+    jitter[`${p.toFixed(2)}%`] = v;
+    jitter[`${q.toFixed(2)}%`] = v;
+  }
+  const grainAnim = { type: "keyframes", options: { duration: us(1), delay: 0, easing: "linear", iterCount: Math.ceil(duration) }, params: jitter };
+
+  // ④ 비네트: 가운데 투명 → 가장자리 어둡게
+  const vigSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">`
+    + `<defs><radialGradient id="v" cx="50%" cy="50%" r="72%"><stop offset="0.56" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="${dark ? 0.3 : 0.18}"/></radialGradient></defs>`
+    + `<rect width="100%" height="100%" fill="url(#v)"/></svg>`;
+
+  const clips = {
+    look_bg: { type: "Image", name: "look-bg", src: svgUrl(bgSvg), timing, transform: tf(0, 0, bw, bh, 1), animations: [drift] },
+    look_tint: { type: "Image", name: "look-tint", src: svgUrl(tintSvg), timing, transform: tf(0, 0, W, H, 90, dark ? 0.06 : 0.03) },
+    ...(grain ? { look_grain: { type: "Image", name: "look-grain", src: svgUrl(grainSvg), timing, transform: tf(0, 0, gw, gh, 95, dark ? 0.05 : 0.035), animations: [grainAnim] } } : {}),
+    look_vignette: { type: "Image", name: "look-vignette", src: svgUrl(vigSvg), timing, transform: tf(0, 0, W, H, 99) },
+  };
+  const trackOf = { look_bg: "look_bg", look_tint: "look_tint", look_grain: "look_grain", look_vignette: "look_vignette" };
   return { clips, trackOf };
 }
 

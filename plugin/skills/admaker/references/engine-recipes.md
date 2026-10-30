@@ -134,12 +134,13 @@
 
 ```jsonc
 { "type": "keyframes",
-  "options": { "duration": 3000000, "delay": <입장 끝 μs>, "easing": "linear", "iterCount": <남은 길이 ÷ 3초, 올림>, "direction": "alternate" },
+  "options": { "duration": 6000000, "delay": <입장 끝 μs>, "easing": "linear", "iterCount": <남은 길이 ÷ 6초, 올림> },
   "params": { "0%": { "scale": 1, "y": 0, "easing": "easeInOutSine" },
-              "100%": { "scale": 1.015, "y": -3 } } }
+              "50%": { "scale": 1.015, "y": -3, "easing": "easeInOutSine" },
+              "100%": { "scale": 1, "y": 0 } } }
 ```
 
-- `direction: "alternate"`라 0%↔100%를 왕복하고, 이음새가 없습니다.
+- 한 주기 안에서 갔다가 돌아오므로 이음새가 없습니다. 엔진의 `direction: "alternate"`도 되지만 admaker 불러오기 포맷이 `direction`을 보존하지 않으므로 쓰지 않습니다.
 - `@admaker/animation`의 `float` 루프(±12px)는 숨쉬기로는 큽니다. 진폭을 위 값으로 직접 씁니다.
 - R1 정지 중인 워드마크·CTA·가격에는 넣지 않습니다.
 
@@ -149,7 +150,7 @@
   ```jsonc
   "0%": { "x": -1200, "motionBlur": 30, "easing": "easeOutExpo" }, "70%": { "x": 0, "motionBlur": 0 }, "100%": { "x": 0, "motionBlur": 0 }
   ```
-- **세로·대각선 이동**: `motionBlur` 키는 가로뿐이므로 클립 효과를 씁니다. `clip.effects = [{ "id": "fx1", "key": "motionBlurFilter", "startTime": 0, "duration": <빠른 구간 μs>, "values": { "velocity": { "x": 0, "y": 30 }, "kernelSize": 9 } }]` (`startTime`은 클립 시작 기준 μs, 한 번에 효과 하나만 적용됨).
+- **세로·대각선 이동**: `motionBlur` 키는 가로뿐이므로 클립 효과를 씁니다. 단, 클립 효과(`clip.effects`)는 admaker 불러오기 포맷에서 빠지므로(§9) 앱에서 고칠 프로젝트라면 대신 `blur` 키를 빠른 구간에 2–4로 넣습니다. `clip.effects = [{ "id": "fx1", "key": "motionBlurFilter", "startTime": 0, "duration": <빠른 구간 μs>, "values": { "velocity": { "x": 0, "y": 30 }, "kernelSize": 9 } }]` (`startTime`은 클립 시작 기준 μs, 한 번에 효과 하나만 적용됨).
 - 엔진 프리셋 `motionBlurIn`/`motionBlurOut`(`@admaker/animation`)도 같은 키를 씁니다.
 
 ## 3. 텍스트
@@ -204,42 +205,23 @@
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
 - 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만.
 
-### 5.1 룩 스택: 배경 → 그레이드 → 그레인·비네트 (aesthetic-rules Q11)
+### 5.1 룩 스택: 배경 → 틴트 → 그레인 → 비네트 (aesthetic-rules Q11)
 
-`Effect` 클립은 **자기보다 zIndex가 낮은 모든 것**에 필터를 겁니다. 그래서 층 순서가 곧 zIndex입니다.
+`build-project.mjs`가 `motion.mjs`의 `lookStack()`으로 광고 전체 길이의 **SVG Image 클립 4개**를 깝니다. 각 층은 별도 트랙이고, 겹침은 zIndex로 정합니다.
 
-| 층 | 클립 | zIndex 예 |
+| 층 | 만드는 법 | zIndex |
 |---|---|---|
-| ① 배경 | `Backdrop` (`backdropType`: `meshGradient` / `floatingBlobs` / `gradient`) | 0 |
+| ① 배경 | 브랜드 배경색 + 강조색·보조색 방사형 빛 2개. 프레임보다 12% 크게 두고 광고 전체에 걸쳐 천천히 흐름 | 1 |
 | ② 소재 | Image / Video / Adapter(three) | 10–19 |
 | ③ 그래픽·글자 | Shape / Text / Caption | 20–49 |
-| ④ 그레이드 | `Effect` `adjustmentFilter` (+ 필요하면 `colorOverlayFilter`) | 90 |
-| ⑤ 그레인·비네트 | `Backdrop` `noise` 오버레이(그레인) + `Effect` `oldFilmFilter`(비네트) | 95, 99 |
+| ④ 틴트 | 강조색 단색 면, 불투명도 0.06(어두운 테마) / 0.03(밝은 테마) | 90 |
+| ⑤ 그레인 | `feTurbulence` 노이즈, 프레임보다 128px 크게 두고 2프레임마다 다른 자리로 점프(1초 루프), 불투명도 0.05 | 95 |
+| ⑥ 비네트 | 가운데 투명 → 가장자리 검정 0.3 방사형 | 99 |
 
-```jsonc
-// ① 배경: 브랜드 색 2–3개로 천천히 움직이는 메시
-"c_bg":    { "type": "Backdrop", "src": "backdrop", "backdropType": "meshGradient",
-             "style": { "backdropType": "meshGradient", "colors": ["<bg>", "<primary 20%>", "<accent 13%>"], "speed": 0.3, "scale": 1 },
-             "transform": { "x": 0, "y": 0, "width": W, "height": H, "angle": 0, "opacity": 1, "zIndex": 0 }, … }
-// ④ 그레이드: 소재를 한 룩으로 (어두운 테마 기준)
-"c_grade": { "type": "Effect", "effectKey": "adjustmentFilter", "values": { "saturation": 1.1, "contrast": 1.08, "gamma": 1, "brightness": 1 },
-             "transform": { …, "zIndex": 90 }, … }
-"c_tint":  { "type": "Effect", "effectKey": "colorOverlayFilter", "values": { "color": "<primary>", "alpha": 0.06 }, "transform": { …, "zIndex": 91 }, … }
-// ⑤-a 그레인: 회색 noise 배경을 아주 옅게 덮음 (엔진이 1/30초마다 시드를 바꿔 움직임)
-"c_grain": { "type": "Backdrop", "src": "backdrop", "backdropType": "noise",
-             "style": { "backdropType": "noise", "colors": ["#808080"], "density": 0.6, "speed": 1 },
-             "transform": { "x": 0, "y": 0, "width": W, "height": H, "angle": 0, "opacity": 0.05, "zIndex": 95 }, … }
-// ⑤-b 비네트: oldFilm에서 세피아·스크래치·노이즈를 끄고 비네트만
-"c_vig":   { "type": "Effect", "effectKey": "oldFilmFilter",
-             "values": { "sepia": 0, "noise": 0, "scratch": 0, "vignetting": 0.3, "vignettingAlpha": 0.5, "vignettingBlur": 0.4 },
-             "transform": { …, "zIndex": 99 }, … }
-```
-
-- 네 클립 모두 광고 전체 길이로 깔고, `build-project.mjs`의 `lookStack()`이 만듭니다. 장면마다 바꾸려면 구간별 클립으로 나눕니다.
-- **`Backdrop`·`Shape`·`Image`·`Adapter` 클립은 `src`가 비어 있으면 Core(Studio 로딩)가 버립니다.** 절차적 클립에는 표식 값(`"backdrop"`, `"shape"`, `"script"`, `"three"`)을 넣습니다. 예외는 Text·Caption·Effect·Transition. `validate.mjs`가 검사합니다.
-- 그레이드 강도: 어두운 테마 `colorOverlay` alpha 0.06–0.10, 밝은 테마 0.03–0.06. 엔진 `colorOverlay`는 소프트라이트가 아니라 일반 합성이라, 리모션식 soft-light 0.18보다 훨씬 낮게 씁니다.
-- `oldFilmFilter`의 노이즈는 시드가 고정이라 그레인이 화면에 "붙어" 보입니다. 그래서 그레인은 매 프레임 바뀌는 `noise` 배경으로 따로 만들고, oldFilm은 비네트로만 씁니다.
-- 회색 그레인 오버레이는 대비를 약간(불투명도만큼) 낮춥니다. 0.03–0.06을 넘기지 말고, 스타일 프레임(§8)에서 확인합니다.
+- **`Backdrop`·`Effect` 클립을 쓰지 않는 이유**: admaker 앱의 광고 불러오기 포맷이 이 둘을 받지 않습니다(§9). SVG Image는 엔진(3.0.5는 SVG data URL을 `<img>`로 디코딩)과 앱(불러올 때 PNG로 래스터화) 양쪽에서 같게 나옵니다.
+- 엔진 `adjustmentFilter`(채도·대비)는 앱으로 옮겨지지 않습니다. 렌더 전용으로 꼭 필요하면 Effect 클립을 추가하되, `to-admaker-import.mjs`가 경고와 함께 뺀다는 것을 알고 씁니다.
+- 끄기: `build-project.mjs --look off`, 밝은 테마: `--look light`. 그레인만 빼려면 `lookStack({ …, grain: false })`.
+- **`Shape`·`Image`·`Adapter`·`Backdrop` 클립은 `src`가 비어 있으면 Core(Studio 로딩)가 버립니다.** 절차적 클립에는 표식 값(`"shape"`, `"script"`, `"three"`)을 넣습니다. 예외는 Text·Caption·Effect·Transition. `validate.mjs`가 검사합니다.
 - **아직 실제 렌더로 값 검증 전입니다.** 첫 프로젝트의 스타일 프레임에서 강도를 맞추고 이 표를 고칩니다.
 
 ## 6. 사운드
@@ -341,3 +323,26 @@ registerThreeScene("glass-hero", async ({ THREE, src, params, loadGLTF }) => {
 - 렌더는 `templates/render/`의 하니스로 합니다: 헤드리스 Chromium에서 페이지가 `Exporter.create({width, height, fps, bitrate})` → `load(project)` → `export()` 결과를 파일로 저장.
 - 스틸 검수는 `Preview.capture(timeUs)`(PNG)로 1–2초마다 뽑아 컨택트 시트로 만듭니다.
 - `Exporter.isSupported({videoCodec, width, height, bitrate})`로 코덱 지원을 먼저 확인합니다. WebCodecs·WebGL이 없는 환경이면 렌더가 실패하므로 GPU 있는 Chromium 또는 앱의 export를 씁니다.
+
+## 9. admaker 앱으로 넘기기 (광고 불러오기 포맷)
+
+admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌더 서버용 **EncodingPayload wire JSON**만 받습니다: `{ version, track_type, inputs: [{name, type, inputType, src, …}], tracks: [{name, type, clips: [...]}], transitions, output, admaker_meta: { creationMode } }`. 시간은 **초**, 클립 이름이 앱 안에서 `ep_<name>` id가 됩니다.
+
+`templates/to-admaker-import.mjs`가 `project.json`을 이 형식(`admaker-import.json`)으로 바꿉니다.
+
+| 엔진 | 불러오기 포맷 | 비고 |
+|---|---|---|
+| settings | `output` + `track_bg`(단색 SVG) | 배경색은 track_bg SVG에서 읽힘 |
+| Image / Video / Audio | `clipType` image / video / audio + `inputs` | 오디오 페이드는 `fadeInSec`/`fadeOutSec` |
+| Text | `text`, 스타일은 transform(`fontName`, `fontSize`, `color`, `align`, …) | `characterAnimation`은 transform에 실어 앱의 text_segment 렌더러가 그림 |
+| Caption | `text_segment` + `_isCaption`, `_captionWords`, `_captionColors` | `wordAnimation`은 빠짐 |
+| Shape | `shape` + `transform.shape {shapeType, style}` | |
+| Adapter lottie / three(model) | `lottie` + `transform.adapter {adapter, params}` | three 모델은 `params.src`(data URL)에 있어야 함 |
+| animations | `transform.animation[] {type, start, duration, easing, iterCount, params}` | keyframes·마스크·countUp 등 15종만. `stagger`·`direction`은 빠짐 |
+| Transition | `transitions[] {type, duration, from, to, mode}` | xfade 이름(fade, slideleft, …)으로 변환 |
+| zIndex | `transform.zIndex = 1,000,000 + z` | 앱이 트랙을 재배치해도 겹침 순서를 지키는 "명시 zIndex" 구간 |
+| **빠지는 것** | Backdrop, Effect, `clip.effects`, script 어댑터, three 커스텀 씬 | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
+
+- 변환 후 경고(△)를 읽고, 빠진 것이 화면에 중요하면 대체합니다.
+- 앱에서 열어 렌더 결과와 같은지 한 번 확인합니다(특히 텍스트 폰트·위치, 겹침 순서). **아직 실제 앱 불러오기로 검증하지 않았습니다.**
+

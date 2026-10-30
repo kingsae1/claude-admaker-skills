@@ -33,14 +33,14 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 |---|---|---|
 | 1. 브리프 | 질문 한 번, 브리프 요약 | `references/ad-formats.md` |
 | 2. 트리트먼트 | `TREATMENT.md`: 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵, 사운드 표 | `references/director.md`, `templates/TREATMENT.md` |
-| 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B3 |
+| 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
 | 4. 샷 선택 | 에너지 골격의 슬롯마다 샷 카드를 고름. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문 |
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀 | `templates/timeline.mjs` |
-| 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조 | `references/engine-recipes.md` §8 |
+| 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조. 폰트 후보가 여럿이면 여기서 하나로 정함 | `references/engine-recipes.md` §8 |
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
 | 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
 | 9. 검수 | 숫자 체크리스트 + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
-| 10. 납품 | 아래 목록 | |
+| 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일 생성 → 아래 목록 | `references/engine-recipes.md` §9 |
 
 ## 반드시 지킬 원칙
 
@@ -57,8 +57,8 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 
 - `<name>_<비율>.mp4` (규격마다), `poster.jpg`, 내레이션/자막이 있으면 `<name>.srt`
 - BGM이 있으면 BGM 없는 버전(SFX 유지)
-- `project.json` (admaker Studio에서 여는 ProjectJSON), `scripts/`·`scenes/` (script 어댑터나 three 커스텀 씬을 썼다면, 앱에도 같은 이름으로 등록해야 함을 README에 명시)
+- `admaker-import.json` (admaker 앱 "광고 불러오기"로 여는 파일, `to-admaker-import.mjs`로 생성. 변환 경고도 함께 알림), `project.json` (렌더용 엔진 ProjectJSON), `scripts/`·`scenes/` (script 어댑터나 three 커스텀 씬을 썼다면. 이 둘은 앱에 등록되어 있지 않아 불러오기 파일에서 빠지므로, 앱에서 고칠 광고라면 그 장면을 영상으로 미리 렌더해 Video 클립으로 넣음)
 - `TREATMENT.md`, `brand.json`, `timeline.mjs`, `sfx.json`, `CREDITS`, `build.sh`
 - 합성 임시음을 썼다면 그 사실(교체 권장)
 
-사용자에게는 프로젝트 폴더 위치, 규격별 파일, `project.json`을 Studio에서 열 수 있다는 것(script 어댑터나 three 커스텀 씬을 썼다면 등록이 필요하다는 것), `CREDITS`, 소재 책임이 사용자에게 있다는 것을 알려줍니다.
+사용자에게는 프로젝트 폴더 위치, 규격별 파일, `admaker-import.json`을 admaker에서 광고 불러오기로 열 수 있다는 것(앱으로 넘어가지 않은 요소가 있으면 그 목록), `CREDITS`, 소재 책임이 사용자에게 있다는 것을 알려줍니다.
