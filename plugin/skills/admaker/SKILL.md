@@ -38,7 +38,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀 | `templates/timeline.mjs` |
 | 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조 | `references/engine-recipes.md` §8 |
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
-| 8. 제작 | 보이스 → 음악 → `build-project.mjs`로 ProjectJSON 생성 → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
+| 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
 | 9. 검수 | 숫자 체크리스트 + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
 | 10. 납품 | 아래 목록 | |
 
@@ -49,8 +49,9 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 3. **결정적 렌더링.** script 어댑터와 생성 코드에 `Date.now()`, 시드 없는 `Math.random()`, 이전 프레임 상태 의존을 쓰지 않습니다.
 4. **첫 1초 안에 훅, 마지막에 브랜드 + CTA 홀드.** 워드마크와 CTA는 자리잡은 뒤 최소 1초(6초 범퍼는 0.7초) 정지합니다.
 5. **샷 카드를 쓸 때는 카드 전문을 읽고**, 카드의 "알려진 함정" 값은 낮추지 않습니다.
-6. **검수는 숫자로.** 자막 실효 글자 높이 ≥ 프레임 높이의 5%, 보조 ≥ 3%, 자막 ≥ max(1.8초, 발화 + 0.6초), −14 LUFS(매체 규격 우선), 블랙/빈 프레임 0, 컷–비트 오차 ≤ 2프레임, 미등록 어댑터 0.
-7. **권리.** 사용자 자산과 CC0/CC BY/OFL 소재만. 서드파티 자산은 `CREDITS`에 출처·라이선스와 함께 적습니다. 타사 브랜드·캐릭터는 사용자가 권리를 확인하지 않으면 쓰지 않습니다. 엔진 소스는 프로젝트 폴더로 복사하지 않습니다.
+6. **모션 기본기는 `templates/motion.mjs`로.** 화면은 5층(배경 → 소재 → 그래픽 → 그레이드 → 그레인·비네트), 입장은 2–3속성 + 3–6프레임 시차, 퇴장은 입장의 절반, 스틸은 Ken Burns, 오래 머무는 조연은 숨쉬기, 빠른 이동은 모션 블러(aesthetic-rules R6–R9, Q11–Q15). 브랜드 요소의 정지(R1)는 이 모든 것보다 우선합니다.
+7. **검수는 숫자로.** 자막 실효 글자 높이 ≥ 프레임 높이의 5%, 보조 ≥ 3%, 정보 자막 ≥ max(1.8초, 발화 + 0.6초)(단어 동기 자막은 Q15), −14 LUFS(매체 규격 우선), 블랙/빈 프레임 0, 컷–비트 오차 ≤ 2프레임, 미등록 어댑터 0.
+8. **권리.** 사용자 자산과 CC0/CC BY/OFL 소재만. 서드파티 자산은 `CREDITS`에 출처·라이선스와 함께 적습니다. 타사 브랜드·캐릭터는 사용자가 권리를 확인하지 않으면 쓰지 않습니다. 엔진 소스는 프로젝트 폴더로 복사하지 않습니다.
 
 ## 납품물 (프로젝트 폴더)
 
@@ -58,5 +59,6 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 - BGM이 있으면 BGM 없는 버전(SFX 유지)
 - `project.json` (admaker Studio에서 여는 ProjectJSON), `scripts/`·`scenes/` (script 어댑터나 three 커스텀 씬을 썼다면, 앱에도 같은 이름으로 등록해야 함을 README에 명시)
 - `TREATMENT.md`, `brand.json`, `timeline.mjs`, `sfx.json`, `CREDITS`, `build.sh`
+- 합성 임시음을 썼다면 그 사실(교체 권장)
 
 사용자에게는 프로젝트 폴더 위치, 규격별 파일, `project.json`을 Studio에서 열 수 있다는 것(script 어댑터나 three 커스텀 씬을 썼다면 등록이 필요하다는 것), `CREDITS`, 소재 책임이 사용자에게 있다는 것을 알려줍니다.
