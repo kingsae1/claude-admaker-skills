@@ -1,9 +1,11 @@
 // timeline.mjs + brand.json → project.json (@admaker/engine ProjectJSON)
-// 사용: node build-project.mjs [--size 1080x1920] [--out project.json]
+// 사용: node build-project.mjs [--size 1080x1920] [--out project.json] [--look off|light]
 // 샷 함수는 shots/<card>.mjs 에 둔다: export default (ctx) => ({ clips: {...}, trackOf: {clipId: trackName} })
+// 모션 기본형(entrance/exit/kenBurns/breathe/captionPages)은 motion.mjs 에서 import 한다.
 import fs from "node:fs";
 import path from "node:path";
 import { FPS, DURATION, SHOTS, CAMERA, us } from "./timeline.mjs";
+import { lookStack } from "./motion.mjs";
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (v.startsWith("--") ? [...a, [v.slice(2), arr[i + 1]]] : a), []));
 const [W, H] = (args.size ?? "1080x1920").split("x").map(Number);
@@ -43,9 +45,15 @@ export function cameraKeyframes(section, clip, clipFromSec) {
   return { type: "keyframes", options: { duration: us(dur), delay: us(Math.max(0, keys[0].t - clipFromSec)), easing: "linear" }, params };
 }
 
-for (const shot of SHOTS) {
+// 룩 스택 (aesthetic-rules Q11): 배경(z 0), 그레이드(z 90–91), 그레인(z 95), 비네트(z 99). 샷 클립은 z 10–49에 둔다.
+if (args.look !== "off") {
+  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light" });
+  for (const [id, clip] of Object.entries(look.clips)) addClip(id, clip, look.trackOf[id], clip.type);
+}
+
+for (const [shotIndex, shot] of SHOTS.entries()) {
   const mod = await import(path.resolve("shots", `${shot.card}.mjs`));
-  const out = mod.default({ shot, brand, W, H, FPS, us });
+  const out = mod.default({ shot, shotIndex, brand, W, H, FPS, us });
   for (const [id, clip] of Object.entries(out.clips)) {
     const cam = cameraKeyframes(shot.section, clip, shot.from);
     if (cam && clip.transform) clip.animations = [...(clip.animations ?? []), cam];
