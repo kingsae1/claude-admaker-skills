@@ -87,7 +87,7 @@
 | `starReveal` | `points`, `innerRatio` | 이벤트성(자제) |
 | `blockReveal` | `cols`, `rows`, `seed` | 그리드 스타일 빌드 |
 
-공통: `reverse` 또는 `mode: "out"`으로 퇴장. 트랙 단위 마스크가 필요하면 다른 클립을 알파 마스크로 씁니다.
+공통: `reverse` 또는 `mode: "out"`으로 퇴장. **마스크는 `delay` 전에는 적용되지 않아 클립이 다 보입니다.** 늦게 열리는 마스크는 delay를 쓰지 말고 클립의 `timing.display.from`을 여는 시점으로 둡니다(§2.6). 트랙 단위 마스크가 필요하면 다른 클립을 알파 마스크로 씁니다.
 
 ### 2.5 기타 모션
 
@@ -113,8 +113,8 @@
 ```
 
 - 한 클립의 animations는 **합성됩니다**. x·y·angle은 더하고, scale·opacity는 곱하고, blur·motionBlur는 큰 값을 씁니다. 그래서 입장·퇴장·카메라·숨쉬기를 각각 따로 넣어도 됩니다.
-- 시작 전(`delay` 이전)에는 0% 값이 적용되고 끝난 뒤에는 100% 값이 유지됩니다. 입장 0%는 숨긴 상태, 퇴장 0%는 항등값(opacity 1, 오프셋 0)으로 써야 겹쳐도 깨지지 않습니다.
-- 여러 클립의 시차(R7): i번째 클립 입장 `delay = i × (3–6프레임)`. `build-project.mjs`의 `entrance(…, { index })`가 계산합니다.
+- **엔진은 `delay` 전에는 keyframes·paint·마스크(wipe 등) 모션을 아예 적용하지 않습니다**(0% 값이 걸리지 않고 클립이 원래 모습으로 보임, 3.0.5 `Animation.hasStarted`). 그래서 늦게 등장하는 입장은 `delay`를 쓰지 말고 0%~시작 구간을 숨긴 값으로 붙잡는 stop을 앞에 넣습니다(`motion.mjs` `holdFrom`, `entrance`가 자동으로 처리). 예외: strokeDraw(그리기)와 countUp은 delay 전에도 시작 상태를 보여줍니다. 끝난 뒤에는 100% 값이 유지됩니다. 퇴장은 delay 전이 항등값이라 `delay`로 붙여도 됩니다.
+- 여러 클립의 시차(R7): i번째 클립 입장 시작 = i × (3–6프레임). `entrance(…, { index })`가 계산해 붙잡는 stop으로 넣습니다.
 
 ### 2.7 Ken Burns (aesthetic-rules Q12)
 
@@ -197,6 +197,31 @@
 5. 2.5D 기울임: `rotateX`/`rotateY` + `perspective`. 텍스트가 있으면 15° 이하.
 6. 장면이 복잡하면 대안으로, 그 장면을 Adapter `script` 하나로 그리고 카메라를 그 안에서 처리합니다(§7).
 
+### 4.1 지도 (`templates/map.mjs`)
+
+지도 효과는 **빌드할 때 GeoJSON을 화면 좌표로 투영해** 엔진 기본 클립으로 바꿉니다. 렌더 하니스와 admaker 앱 불러오기에서 같은 모습으로 나옵니다(엔진 3.0.5 렌더로 확인, `samples/map`).
+
+| 요소 | 클립 | 모션 |
+|---|---|---|
+| 바탕 지도 | Image (SVG data URL, 프레임 크기) `baseMapSrc` | `entrance` |
+| 강조 지역 | Shape `shapeType: "path"` `regionShape` (path는 화면 좌표, `viewBox` = 클립 상자) | `paint` `fillColor` 0%→100% |
+| 경로 | Shape path(2차 곡선) `routeShape`, fill 투명 | `strokeDraw` `{ fill: "hidden" }` |
+| 핀 | Shape circle `pinShape` | scale 0.2→1 `easeOutBack` (`holdFrom`) |
+| 지명 | Text, 좌표는 `map.point([lon, lat])` | `entrance` (x 이동) |
+| 줌·이동 | 위 모든 지도 클립에 같은 `mapCamera` keyframes | 화면의 한 점을 가운데로, zoom 1→1.3–1.6 |
+
+순서:
+1. 데이터를 고르고 출처를 `CREDITS.md`에 적습니다. 세계·국가 경계는 Natural Earth(퍼블릭 도메인), 한국 시도 경계는 southkorea/southkorea-maps(KOSTAT 2013 기반) 같은 공개 데이터를 씁니다. 큰 파일은 mapshaper 등으로 단순화해 수백 KB 이하로 줄입니다.
+2. `makeProjection(features, [x, y, w, h])`로 지도가 들어갈 상자를 정합니다. 카피 자리는 상자 밖에 남깁니다.
+3. 지도 클립은 **모두 첫 카메라 키 이전(보통 0초)에 시작**시키고, 늦게 나타날 요소는 입장 모션으로 숨깁니다. `mapCamera`는 클립이 첫 키보다 늦게 시작하면 오류를 냅니다.
+4. 카피 아래로 지도가 지나가면 아래쪽 그라데이션 가림막(Image)을 카피 바로 아래 z에 둡니다.
+5. **지도는 소재 위에 얹습니다.** 바탕 지도는 `baseMapSrc(…, { fillOpacity: 0.6–0.75 })`로 반투명하게 두어 아래 영상이 비치게 하고, 지도 뒤 소재가 밝으면 지도 상자보다 조금 큰 어두운 스크림을 한 장 깝니다. 지도가 화면 전체를 불투명하게 덮는 구간은 1초 이내(Q11).
+
+함정:
+- 엔진 scale은 클립 중심 기준이라 `mapCamera`가 위치를 보정합니다. 지도 클립에 다른 scale 모션(핀 팝)을 같이 넣어도 곱해져서 문제없습니다.
+- 경로·외곽선 굵기도 zoom만큼 굵어집니다. 최종 zoom에서 보기 좋은 굵기를 기준으로 고릅니다.
+- 3D 지형, 위성 사진, 수천 개 점 같은 지도는 이 방식 대신 미리 렌더한 영상(Video)으로 넣습니다.
+
 ## 5. 도형, 배경, 필터, 전환
 
 - `Shape` 종류: rectangle, rounded, pill, circle, ellipse, line, triangle, rightTriangle, diamond, pentagon, hexagon, polygon, star, trapezoid, speech, heart, cloud, arrow, path(SVG path). 채우기는 단색 또는 `linear-gradient(...)`.
@@ -205,15 +230,16 @@
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
 - 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만.
 
-### 5.1 룩 스택: 배경 → 틴트 → 그레인 → 비네트 (aesthetic-rules Q11)
+### 5.1 소재 + 룩 스택: 소재 → 스크림 → 그래픽 → 틴트 → 그레인 → 비네트 (aesthetic-rules Q11)
 
-`build-project.mjs`가 `motion.mjs`의 `lookStack()`으로 광고 전체 길이의 **SVG Image 클립 4개**를 깝니다. 각 층은 별도 트랙이고, 겹침은 zIndex로 정합니다.
+광고의 바닥은 항상 사용자가 준 영상·이미지입니다. `build-project.mjs`가 `timeline.mjs`의 `FOOTAGE`를 z 2–9에 프레임 가득(cover) 깔고, 그 위에 `motion.mjs`의 `lookStack()`으로 **SVG Image 클립**(틴트·그레인·비네트, 소재가 프레임을 다 못 채우면 생성 배경도)을 얹습니다. 각 층은 별도 트랙이고, 겹침은 zIndex로 정합니다.
 
 | 층 | 만드는 법 | zIndex |
 |---|---|---|
-| ① 배경 | 브랜드 배경색 + 강조색·보조색 방사형 빛 2개. 프레임보다 12% 크게 두고 광고 전체에 걸쳐 천천히 흐름 | 1 |
-| ② 소재 | Image / Video / Adapter(three) | 10–19 |
-| ③ 그래픽·글자 | Shape / Text / Caption | 20–49 |
+| (생성 배경) | 소재가 프레임을 다 채우지 못할 때만(`lookStack({ background: true })`). 브랜드 배경색 + 방사형 빛 2개, 프레임보다 12% 크게 두고 천천히 흐름 | 1 |
+| ① 소재 | `FOOTAGE`의 Video / Image, cover 맞춤, 스틸은 Ken Burns | 2–9 |
+| ② 스크림 | 글자 자리만 배경색 그라데이션(부분, Image SVG) | 10–19 |
+| ③ 그래픽·글자 | Shape / Text / Caption / 반투명 지도·패널 / Adapter(three) | 20–49 |
 | ④ 틴트 | 강조색 단색 면, 불투명도 0.06(어두운 테마) / 0.03(밝은 테마) | 90 |
 | ⑤ 그레인 | `feTurbulence` 노이즈, 프레임보다 128px 크게 두고 2프레임마다 다른 자리로 점프(1초 루프), 불투명도 0.05 | 95 |
 | ⑥ 비네트 | 가운데 투명 → 가장자리 검정 0.3 방사형 | 99 |

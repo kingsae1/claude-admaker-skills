@@ -38,6 +38,6 @@ name: endcard-logo-cta
 // 로고 Image
 { "type": "keyframes", "options": { "duration": 500000, "delay": 0, "easing": "linear" },
   "params": { "0%": { "scale": 0.92, "opacity": 0, "blur": 6, "easing": "easeOutQuart" }, "100%": { "scale": 1, "opacity": 1, "blur": 0 } } }
-// CTA 버튼 Shape (pill)
-{ "type": "rectExpand", "options": { "duration": 350000, "delay": 900000, "easing": "easeOutCubic" }, "params": {} }
+// CTA 버튼 Shape (pill): 클립 timing.display.from을 로고 +0.9초로 두고 delay 0 (마스크는 delay 전에 적용되지 않아 미리 보임, engine-recipes §2.4)
+{ "type": "rectExpand", "options": { "duration": 350000, "delay": 0, "easing": "easeOutCubic" }, "params": {} }
 ```
