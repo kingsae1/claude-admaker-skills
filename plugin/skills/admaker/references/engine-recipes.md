@@ -225,6 +225,7 @@
 ## 5. 도형, 배경, 필터, 전환
 
 - `Shape` 종류: rectangle, rounded, pill, circle, ellipse, line, triangle, rightTriangle, diamond, pentagon, hexagon, polygon, star, trapezoid, speech, heart, cloud, arrow, path(SVG path). 채우기는 단색 또는 `linear-gradient(...)`.
+- 드로잉(엔진 3.1+): `brush`(가변 굵기 붓 획), path의 `fillRule: "evenodd"`, Shape `regionFilters`(도형 안쪽만 아래 화면에 필터), 모든 클립 `blendMode`(normal·add·multiply·screen·darken·lighten). 손그림 강조·글자 패스·붓 획 레시피는 `drawing.md`.
 - 이어지는 바는 한 Shape로 그립니다(이음새 방지).
 - `Backdrop`: 단색/그라디언트 배경.
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).

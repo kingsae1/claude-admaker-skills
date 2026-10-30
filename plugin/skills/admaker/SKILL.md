@@ -18,6 +18,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
    - 광고 한 편 → 아래 워크플로.
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
+   - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
 2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 설치 위치와 버전을 찾고, 기준 버전과 다르면 이름·파라미터를 다시 대조합니다. 엔진이 없으면 사용자에게 설치 경로를 묻습니다(사내 비공개 패키지라 직접 받을 수 없습니다).
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.
    - 제품/서비스, 이 광고의 **단 하나의 메시지**, CTA 문구와 URL
