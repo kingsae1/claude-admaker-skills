@@ -31,23 +31,20 @@ const clips = {};
 const trackOf = {};
 const add = (id, clip, track) => { clips[id] = { name: id, ...clip }; trackOf[id] = track; };
 
-// 바닥 소재(맨 아래, 프레임 가득) + 반투명 어둡게(0.35): 그래픽은 모두 이 위에 얹는다 (Q11)
+// 바닥 소재(맨 아래, 프레임 가득, 원본 그대로): 그래픽은 모두 이 위에 얹는다 (Q11)
 add("footage_0", { type: "Video", src: FOOTAGE_SRC, timing: { ...all, trim: { from: 0, to: us(DUR) } }, volume: 0, transform: tf(0, 0, W, H, 2), animations: [] }, "footage");
-add("footage_dim", { type: "Image", src: svgUrl(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><rect width="100%" height="100%" fill="${C.background}"/></svg>`),
-  timing: all, transform: tf(0, 0, W, H, 9, 0.4), animations: [] }, "footage_dim");
-
-// 바탕 지도 (반투명: 아래 영상이 비침)
-add("map_base", { type: "Image", src: baseMapSrc(map, features, { W, H, fill: C.surface, fillOpacity: 0.72, stroke: "#3A4766", strokeWidth: 2 }),
+// 바탕 지도: 면 없이 흰 경계선 + 그림자 (영상이 그대로 보임)
+add("map_base", { type: "Image", src: baseMapSrc(map, features, { W, H }),
   timing: all, transform: tf(0, 0, W, H, 10),
   animations: [entrance({ dur: 0.7, y: 30, scale: 0.97 })] }, "map_base");
 
 // 강조 지역: 서울은 먼저 밝게, 부산은 도착할 때 강조색
 const paintTo = (delay, dur, from, to) => ({ type: "paint", options: { duration: us(dur), delay: us(delay), easing: "easeOutCubic" },
   params: { "0%": { fillColor: from }, "100%": { fillColor: to } } });
-add("map_seoul", regionShape(map, byName("서울특별시"), { timing: all, z: 20, fill: C.surface, stroke: "#2A3550", strokeWidth: 2,
-  animations: [entrance({ dur: 0.7, y: 30, scale: 0.97 }), paintTo(0.8, 0.4, C.surface, "#5468A8")] }), "map_regions");
-add("map_busan", regionShape(map, byName("부산광역시"), { timing: all, z: 21, fill: C.surface, stroke: "#2A3550", strokeWidth: 2,
-  animations: [entrance({ dur: 0.7, y: 30, scale: 0.97 }), paintTo(3.2, 0.35, C.surface, C.accent)] }), "map_regions");
+add("map_seoul", regionShape(map, byName("서울특별시"), { timing: all, z: 20, fill: "rgba(255,255,255,0)", stroke: "#FFFFFF", strokeWidth: 2.5,
+  animations: [entrance({ dur: 0.7, y: 30, scale: 0.97 }), paintTo(0.8, 0.4, "rgba(255,255,255,0)", "rgba(255,255,255,0.55)")] }), "map_regions");
+add("map_busan", regionShape(map, byName("부산광역시"), { timing: all, z: 21, fill: "rgba(255,255,255,0)", stroke: "#FFFFFF", strokeWidth: 2.5,
+  animations: [entrance({ dur: 0.7, y: 30, scale: 0.97 }), paintTo(3.2, 0.35, "rgba(255,90,54,0)", "rgba(255,90,54,0.9)")] }), "map_regions");
 
 // 경로: 1.6초부터 1.6초 동안 그린다
 add("map_route", routeShape(map, SEOUL, BUSAN, { timing: all, z: 30, color: C.accent, width: 9, bend: -0.28,
@@ -79,17 +76,17 @@ const cam = [
 ];
 for (const id of Object.keys(clips).filter((k) => k.startsWith("map_"))) clips[id].animations.push(mapCamera(clips[id], cam, { W, H, us, clipFrom: 0 }));
 
-// 아래 가림막 + 카피
-const scrim = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H * 0.42}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">`
-  + `<stop offset="0" stop-color="${C.background}" stop-opacity="0"/><stop offset="0.45" stop-color="${C.background}" stop-opacity="0.92"/><stop offset="1" stop-color="${C.background}"/></linearGradient></defs>`
+// 글자 띠 받침(아래 30%, 최대 0.6) + 카피(그림자)
+const scrim = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H * 0.3}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">`
+  + `<stop offset="0" stop-color="${C.background}" stop-opacity="0"/><stop offset="0.5" stop-color="${C.background}" stop-opacity="0.45"/><stop offset="1" stop-color="${C.background}" stop-opacity="0.6"/></linearGradient></defs>`
   + `<rect width="100%" height="100%" fill="url(#g)"/></svg>`;
-add("copy_scrim", { type: "Image", src: svgUrl(scrim), timing: all, transform: tf(0, H * 0.58, W, H * 0.42, 40),
+add("copy_scrim", { type: "Image", src: svgUrl(scrim), timing: all, transform: tf(0, H * 0.7, W, H * 0.3, 40),
   animations: [holdFrom({ type: "keyframes", options: { duration: us(0.6), delay: 0, easing: "linear" }, params: at(0, [{ opacity: 0, y: 120, easing: "easeOutCubic" }, { opacity: 1, y: 0 }]) }, 3.5)] }, "copy");
 add("copy_sub", { type: "Text", text: "오늘 밤 12시까지 주문하면", timing: all, transform: tf(80, 1440, 920, 70, 45),
-  style: { ...font(brand.fonts.body, "/fonts/noto500.ttf"), fontSize: 46, color: C.muted, align: "left", verticalAlign: "center" },
+  style: { ...font(brand.fonts.body, "/fonts/noto500.ttf"), fontSize: 46, color: "#D5DAE3", shadow: { color: "#000000", alpha: 0.55, blur: 12, offsetX: 0, offsetY: 3 },  align: "left", verticalAlign: "center" },
   animations: [entrance({ dur: 0.5, delay: 3.8, y: 30 })] }, "copy");
 add("copy_head", { type: "Text", text: "내일 아침 도착", timing: all, transform: tf(80, 1520, 920, 170, 46),
-  style: { ...font(brand.fonts.display, "/fonts/bhs.ttf"), fontSize: 140, color: C.text, align: "left", verticalAlign: "center" },
+  style: { ...font(brand.fonts.display, "/fonts/bhs.ttf"), fontSize: 140, color: C.text, shadow: { color: "#000000", alpha: 0.55, blur: 12, offsetX: 0, offsetY: 3 },  align: "left", verticalAlign: "center" },
   animations: [entrance({ dur: 0.6, delay: 3.8, index: 1, y: 50, scale: 0.94 })] }, "copy");
 const late = (a) => ({ display: { from: us(a), to: us(DUR) }, duration: us(DUR - a), playbackRate: 1 });
 add("copy_bar", { type: "Shape", src: "shape", shapeType: "rect", timing: late(4.3), transform: tf(84, 1712, 220, 10, 46), style: { fill: C.accent },

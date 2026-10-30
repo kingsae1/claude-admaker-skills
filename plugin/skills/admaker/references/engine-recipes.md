@@ -215,7 +215,7 @@
 2. `makeProjection(features, [x, y, w, h])`로 지도가 들어갈 상자를 정합니다. 카피 자리는 상자 밖에 남깁니다.
 3. 지도 클립은 **모두 첫 카메라 키 이전(보통 0초)에 시작**시키고, 늦게 나타날 요소는 입장 모션으로 숨깁니다. `mapCamera`는 클립이 첫 키보다 늦게 시작하면 오류를 냅니다.
 4. 카피 아래로 지도가 지나가면 아래쪽 그라데이션 가림막(Image)을 카피 바로 아래 z에 둡니다.
-5. **지도는 소재 위에 얹습니다.** 바탕 지도는 `baseMapSrc(…, { fillOpacity: 0.6–0.75 })`로 반투명하게 두어 아래 영상이 비치게 하고, 지도 뒤 소재가 밝으면 지도 상자보다 조금 큰 어두운 스크림을 한 장 깝니다. 지도가 화면 전체를 불투명하게 덮는 구간은 1초 이내(Q11).
+5. **지도는 소재 위에 얹습니다.** `baseMapSrc`의 기본값은 면 없이 흰 경계선 + 그림자라 아래 영상이 그대로 보입니다. 강조할 지역은 `regionShape` + `paint`로 채웁니다. 면 지도가 어울리는 광고면 `fill`·`fillOpacity`를 주거나 작은 인셋 지도로 쓸 수 있고, 이때 영상이 너무 묻히지 않는지 봅니다(Q11).
 
 함정:
 - 엔진 scale은 클립 중심 기준이라 `mapCamera`가 위치를 보정합니다. 지도 클립에 다른 scale 모션(핀 팝)을 같이 넣어도 곱해져서 문제없습니다.
@@ -230,20 +230,19 @@
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
 - 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만.
 
-### 5.1 소재 + 룩 스택: 소재 → 스크림 → 그래픽 → 틴트 → 그레인 → 비네트 (aesthetic-rules Q11)
+### 5.1 소재 + 그래픽 층 (aesthetic-rules Q11)
 
-광고의 바닥은 항상 사용자가 준 영상·이미지입니다. `build-project.mjs`가 `timeline.mjs`의 `FOOTAGE`를 z 2–9에 프레임 가득(cover) 깔고, 그 위에 `motion.mjs`의 `lookStack()`으로 **SVG Image 클립**(틴트·그레인·비네트, 소재가 프레임을 다 못 채우면 생성 배경도)을 얹습니다. 각 층은 별도 트랙이고, 겹침은 zIndex로 정합니다.
+광고의 바닥은 항상 사용자가 준 영상·이미지이고, 기본은 원본이 또렷하게 보이는 쪽입니다. `build-project.mjs`가 `timeline.mjs`의 `FOOTAGE`를 z 2–9에 프레임 가득(cover) 깔고, 그래픽은 그 위에 얹습니다. 소재가 있을 때 `lookStack`은 기본으로 가장자리 비네트만 넣습니다(틴트·그레인은 옵션으로 켤 수 있음).
 
 | 층 | 만드는 법 | zIndex |
 |---|---|---|
-| (생성 배경) | 소재가 프레임을 다 채우지 못할 때만(`lookStack({ background: true })`). 브랜드 배경색 + 방사형 빛 2개, 프레임보다 12% 크게 두고 천천히 흐름 | 1 |
-| ① 소재 | `FOOTAGE`의 Video / Image, cover 맞춤, 스틸은 Ken Burns | 2–9 |
-| ② 스크림 | 글자 자리만 배경색 그라데이션(부분, Image SVG) | 10–19 |
-| ③ 그래픽·글자 | Shape / Text / Caption / 반투명 지도·패널 / Adapter(three) | 20–49 |
-| ④ 틴트 | 강조색 단색 면, 불투명도 0.06(어두운 테마) / 0.03(밝은 테마) | 90 |
-| ⑤ 그레인 | `feTurbulence` 노이즈, 프레임보다 128px 크게 두고 2프레임마다 다른 자리로 점프(1초 루프), 불투명도 0.05 | 95 |
-| ⑥ 비네트 | 가운데 투명 → 가장자리 검정 0.3 방사형 | 99 |
+| (생성 배경) | 소재가 프레임을 다 채우지 못할 때만(`lookStack({ footage: false })` 또는 레터박스). 브랜드 배경색 + 방사형 빛 2개 | 1 |
+| ① 소재 | `FOOTAGE`의 Video / Image, cover 맞춤, 스틸은 Ken Burns. 투명도·필터 없음 | 2–9 |
+| ② 글자 받침 | 필요할 때: 글자 띠에 걸친 아래쪽 그라데이션(예: 높이 30%, 최대 0.6) 또는 글자 뒤 작은 알약·패널 | 10–19 |
+| ③ 그래픽·글자 | Shape / Text / Caption / 지도·도표 / Adapter(three). 소재 위 Text는 `shadow`(예: alpha 0.5, blur 8–12)가 무난 | 20–49 |
+| ④ 비네트 | 기본: 가장자리만 검정 0.18, 가운데 70%는 투명 | 99 |
 
+- 틴트(z 90, 0.06)·그레인(z 95, 0.05)은 그래픽만으로 만드는 광고(`lookStack({ footage: false })`)의 기본값이고, 소재 위에서도 `lookStack({ grain: true })`처럼 켤 수 있습니다. 켜면 소재가 흐려 보이지 않는지 렌더로 확인합니다.
 - **`Backdrop`·`Effect` 클립을 쓰지 않는 이유**: admaker 앱의 광고 불러오기 포맷이 이 둘을 받지 않습니다(§9). SVG Image는 엔진(3.0.5는 SVG data URL을 `<img>`로 디코딩)과 앱(불러올 때 PNG로 래스터화) 양쪽에서 같게 나옵니다.
 - 엔진 `adjustmentFilter`(채도·대비)는 앱으로 옮겨지지 않습니다. 렌더 전용으로 꼭 필요하면 Effect 클립을 추가하되, `to-admaker-import.mjs`가 경고와 함께 뺀다는 것을 알고 씁니다.
 - 끄기: `build-project.mjs --look off`, 밝은 테마: `--look light`. 그레인만 빼려면 `lookStack({ …, grain: false })`.
