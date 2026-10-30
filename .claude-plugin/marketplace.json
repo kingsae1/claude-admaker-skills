@@ -1,0 +1,12 @@
+{
+  "name": "admaker",
+  "owner": { "name": "kingsae1", "url": "https://github.com/kingsae1" },
+  "metadata": { "description": "Admaker: ad and promo motion graphics rendered in code on the admaker canvas engine." },
+  "plugins": [
+    {
+      "name": "admaker",
+      "source": "./plugin",
+      "description": "Plan, direct and render short ad videos (6/15/30/60 s) as code-driven motion graphics on the admaker-plugin canvas engine."
+    }
+  ]
+}

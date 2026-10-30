@@ -1,0 +1,8 @@
+{
+  "fonts": { "display": "Pretendard-Bold.woff2", "body": "Pretendard-Regular.woff2" },
+  "sizes": { "headline": 0.07, "subtitle": 0.052, "caption": 0.032 },
+  "colors": { "background": "#0B0B0F", "surface": "#16161D", "text": "#F5F5F7", "muted": "#8A8A94", "accent": "#3D7BFF" },
+  "radius": 24,
+  "grid": { "columns": 6, "margin": 0.074, "gutter": 0.022 },
+  "logo": { "default": "assets/logo.svg", "reverse": "assets/logo-reverse.svg", "minHeight": 0.04 }
+}
