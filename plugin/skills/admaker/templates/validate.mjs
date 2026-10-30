@@ -1,6 +1,6 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임 키 이름, 클립 타입 제약, 시간 범위
 // 사용: node validate.mjs project.json
-// 아래 목록은 @admaker/engine 3.0.2 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
+// 아래 목록은 @admaker/engine 3.0.5 (three 어댑터 + 씬 훅 포함) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "unfold", "fold"]);
@@ -32,6 +32,12 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     }
   }
   if (c.type === "Adapter" && c.adapter === "script" && !c.params?.name) err(id, "script 어댑터에 params.name 없음");
+  if (c.type === "Adapter" && c.adapter === "three") {
+    const scene = c.params?.scene ?? "model";
+    if (scene === "model" && !(c.src || c.params?.src)) err(id, "three model 씬에 src(.glb/.gltf) 없음");
+    if (scene !== "model" && !c.src) err(id, "three 커스텀 씬에 src 없음 (비어 있으면 Core가 클립을 버림, 표식 값 \"three\")");
+  }
+  if (c.type === "Adapter" && !["script", "lottie", "three"].includes(c.adapter)) err(id, `모르는 어댑터 "${c.adapter}"`);
 }
 
 console.log(issues.length ? issues.join("\n") : "✓ 검사 통과");

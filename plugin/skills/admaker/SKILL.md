@@ -56,7 +56,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 
 - `<name>_<비율>.mp4` (규격마다), `poster.jpg`, 내레이션/자막이 있으면 `<name>.srt`
 - BGM이 있으면 BGM 없는 버전(SFX 유지)
-- `project.json` (admaker Studio에서 여는 ProjectJSON), `scripts/` (script 어댑터를 썼다면, 앱에도 같은 이름으로 등록해야 함을 README에 명시)
+- `project.json` (admaker Studio에서 여는 ProjectJSON), `scripts/`·`scenes/` (script 어댑터나 three 커스텀 씬을 썼다면, 앱에도 같은 이름으로 등록해야 함을 README에 명시)
 - `TREATMENT.md`, `brand.json`, `timeline.mjs`, `sfx.json`, `CREDITS`, `build.sh`
 
-사용자에게는 프로젝트 폴더 위치, 규격별 파일, `project.json`을 Studio에서 열 수 있다는 것(script 어댑터를 썼다면 등록이 필요하다는 것), `CREDITS`, 소재 책임이 사용자에게 있다는 것을 알려줍니다.
+사용자에게는 프로젝트 폴더 위치, 규격별 파일, `project.json`을 Studio에서 열 수 있다는 것(script 어댑터나 three 커스텀 씬을 썼다면 등록이 필요하다는 것), `CREDITS`, 소재 책임이 사용자에게 있다는 것을 알려줍니다.

@@ -2,6 +2,7 @@
 // 엔진은 프로젝트에 설치된 @admaker/engine을 쓴다(소스를 복사하지 않는다).
 import { Exporter, Preview, registerScript } from "@admaker/engine";
 import "@admaker/engine/adapters/lottie";
+import { registerThreeScene } from "@admaker/engine/adapters/three";
 
 // script 어댑터: 프로젝트 scripts/*.js 를 같은 이름으로 등록 (admaker 앱에도 같은 이름으로 등록해야 함)
 const scripts = import.meta.glob("../scripts/*.js", { eager: true });
@@ -45,5 +46,12 @@ window.captureStills = async (project, timesSec) => {
     return shots; // PNG data URL
   } finally { preview.dispose(); }
 };
+
+// three 커스텀 씬: 프로젝트 scenes/*.js (export default setup, export const options)
+const scenes = import.meta.glob("../scenes/*.js", { eager: true });
+for (const [file, mod] of Object.entries(scenes)) {
+  const name = file.split("/").pop().replace(/\.js$/, "");
+  registerThreeScene(name, mod.default, mod.options ?? {});
+}
 
 window.RENDER_READY = true;

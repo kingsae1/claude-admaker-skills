@@ -34,7 +34,7 @@ plugin/skills/admaker/
 
 ## 상태
 
-- 엔진 기준 버전: `@admaker/engine` 3.0.2, `@admaker/animation` 2.0.6
+- 엔진 기준 버전: `@admaker/engine` 3.0.5 (admaker-plugin `14ef6ee`, three 어댑터 + 씬 훅 포함), `@admaker/animation` 2.0.7
 - 문서와 템플릿은 엔진 코드를 읽고 작성했고, **아직 실제 렌더로 검증하지 않았습니다.** 첫 광고를 만들면서 샷 카드 값과 렌더 하니스를 검증해야 합니다.
 
 출처와 라이선스: [ATTRIBUTION.md](ATTRIBUTION.md)
