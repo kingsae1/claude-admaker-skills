@@ -69,9 +69,9 @@ for (const [i, f] of FOOTAGE.entries()) {
 }
 if (!FOOTAGE.length) console.warn("△ FOOTAGE가 비어 있음: 이 스킬의 광고는 사용자 영상·이미지 위에 그래픽을 얹는 구조입니다 (SKILL.md)");
 
-// 룩 스택 (aesthetic-rules Q11): 소재 위 틴트(z 90), 그레인(z 95), 비네트(z 99). 소재가 프레임을 다 못 채울 때만 생성 배경(z 1).
+// 룩 스택 (aesthetic-rules Q11): 소재가 있으면 가장자리 비네트(z 99)만(소재를 뿌옇게 하는 틴트·그레인 없음). 소재가 프레임을 다 못 채우면 생성 배경(z 1).
 if (args.look !== "off") {
-  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light", background: !footageFills });
+  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light", footage: FOOTAGE.length > 0, background: !footageFills });
   for (const [id, clip] of Object.entries(look.clips)) addClip(id, clip, look.trackOf[id], clip.type);
 }
 

@@ -7,7 +7,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 
 광고 한 편을 **기획 → 연출 → 샷 조립 → 사운드 → 렌더 → 검수**까지 끌고 가는 스킬입니다.
 결과물은 `@admaker/engine`의 **ProjectJSON**이고, 브라우저 `Exporter`로 mp4를 만듭니다. 같은 JSON은 admaker Studio에서 열어 고칠 수 있습니다.
-**바닥은 사용자가 준 영상·이미지입니다.** 광고는 항상 입력 소재(영상 또는 이미지)를 맨 아래(z 0–9)에 프레임 가득 깔고, 모션 그래픽(글자·도형·지도·자막·룩 레이어)을 그 위에 얹는 구조입니다. 그래픽이 소재를 통째로 가리지 않게 하고, 글자는 스크림·틴트로 소재 위에서 읽히게 합니다. 소재는 `timeline.mjs`의 `FOOTAGE`에 적습니다.
+**바닥은 사용자가 준 영상·이미지입니다.** 광고는 항상 입력 소재(영상 또는 이미지)를 맨 아래(z 0–9)에 프레임 가득 깔고, 모션 그래픽(글자·도형·지도·자막·룩 레이어)을 그 위에 얹는 구조입니다. 소재가 뿌옇게 묻히지 않는 쪽이 기본이라, 화면 전체를 덮는 어둡게·틴트·반투명 면은 꼭 필요할 때만 약하게 쓰고 가독성은 주로 글자 주변(그림자, 작은 알약, 글자 띠 그라데이션)에서 만듭니다(aesthetic-rules Q11). 소재는 `timeline.mjs`의 `FOOTAGE`에 적습니다.
 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다).
 
 광고의 판단 순서는 **메시지 전달 → 브랜드 기억 → 리듬·사운드 → 카메라 → 장식**입니다.
@@ -41,7 +41,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
 | 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
 | 9. 검수 | 숫자 체크리스트 + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
-| 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일 생성 → 아래 목록 | `references/engine-recipes.md` §9 |
+| 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일, `to-admaker-template.mjs`로 플래너 템플릿 생성 → 아래 목록 | `references/engine-recipes.md` §9, §9.1 |
 
 ## 반드시 지킬 원칙
 
@@ -50,7 +50,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 3. **결정적 렌더링.** script 어댑터와 생성 코드에 `Date.now()`, 시드 없는 `Math.random()`, 이전 프레임 상태 의존을 쓰지 않습니다.
 4. **첫 1초 안에 훅, 마지막에 브랜드 + CTA 홀드.** 워드마크와 CTA는 자리잡은 뒤 최소 1초(6초 범퍼는 0.7초) 정지합니다.
 5. **샷 카드를 쓸 때는 카드 전문을 읽고**, 카드의 "알려진 함정" 값은 낮추지 않습니다.
-6. **모션 기본기는 `templates/motion.mjs`로.** 화면은 아래부터 소재(사용자 영상·이미지) → 스크림 → 그래픽 → 틴트 → 그레인·비네트, 입장은 2–3속성 + 3–6프레임 시차, 퇴장은 입장의 절반, 스틸은 Ken Burns, 오래 머무는 조연은 숨쉬기, 빠른 이동은 모션 블러(aesthetic-rules R6–R9, Q11–Q15). 브랜드 요소의 정지(R1)는 이 모든 것보다 우선합니다. 늦게 등장하는 요소는 `options.delay` 대신 `entrance()`/`holdFrom()`을 씁니다(엔진은 delay 전에 0% 값을 걸지 않음). 지도는 `templates/map.mjs`(engine-recipes §4.1, 샷 카드 `map-*`).
+6. **모션 기본기는 `templates/motion.mjs`로.** 화면은 아래부터 소재(사용자 영상·이미지) → 글자 받침 → 그래픽 → 가장자리 비네트, 입장은 2–3속성 + 3–6프레임 시차, 퇴장은 입장의 절반, 스틸은 Ken Burns, 오래 머무는 조연은 숨쉬기, 빠른 이동은 모션 블러(aesthetic-rules R6–R9, Q11–Q15). 브랜드 요소의 정지(R1)는 이 모든 것보다 우선합니다. 늦게 등장하는 요소는 `options.delay` 대신 `entrance()`/`holdFrom()`을 씁니다(엔진은 delay 전에 0% 값을 걸지 않음). 지도는 `templates/map.mjs`(engine-recipes §4.1, 샷 카드 `map-*`).
 7. **검수는 숫자로.** 자막 실효 글자 높이 ≥ 프레임 높이의 5%, 보조 ≥ 3%, 정보 자막 ≥ max(1.8초, 발화 + 0.6초)(단어 동기 자막은 Q15), −14 LUFS(매체 규격 우선), 블랙/빈 프레임 0, 컷–비트 오차 ≤ 2프레임, 미등록 어댑터 0.
 8. **권리.** 사용자 자산과 CC0/CC BY/OFL 소재만. 서드파티 자산은 `CREDITS`에 출처·라이선스와 함께 적습니다(지도 경계 데이터 포함: 데이터셋 이름, 기준 연도, 원 출처). 타사 브랜드·캐릭터는 사용자가 권리를 확인하지 않으면 쓰지 않습니다. 엔진 소스는 프로젝트 폴더로 복사하지 않습니다.
 
@@ -58,6 +58,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 
 - `<name>_<비율>.mp4` (규격마다), `poster.jpg`, 내레이션/자막이 있으면 `<name>.srt`
 - BGM이 있으면 BGM 없는 버전(SFX 유지)
+- `template.json` (admaker 플래너 모드 템플릿: 바닥 소재를 뺀 그래픽 오버레이. 씬 단위로 하나씩, 바꿔 넣을 문구·로고는 `field`/`{{marker}}`로 표시. §9.1)
 - `admaker-import.json` (admaker 앱 "광고 불러오기"로 여는 파일, `to-admaker-import.mjs`로 생성. 변환 경고도 함께 알림), `project.json` (렌더용 엔진 ProjectJSON), `scripts/`·`scenes/` (script 어댑터나 three 커스텀 씬을 썼다면. 이 둘은 앱에 등록되어 있지 않아 불러오기 파일에서 빠지므로, 앱에서 고칠 광고라면 그 장면을 영상으로 미리 렌더해 Video 클립으로 넣음)
 - `TREATMENT.md`, `brand.json`, `timeline.mjs`, `sfx.json`, `CREDITS`, `build.sh`
 - 합성 임시음을 썼다면 그 사실(교체 권장)

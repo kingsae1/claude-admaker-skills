@@ -33,6 +33,7 @@ plugin/skills/admaker/
     ├── gen-audio-kit.mjs        소재가 없을 때 임시 SFX·베드 합성
     ├── validate.mjs             엔진에 없는 이름·src 누락 검사 + 모션 규칙 경고
     ├── to-admaker-import.mjs    project.json → admaker 앱 광고 불러오기 파일
+    ├── to-admaker-template.mjs  → admaker 플래너 모드 템플릿(씬 오버레이, template.json)
     ├── shots/*.mjs              샷 카드별 클립 생성 함수
     ├── render/                  헤드리스 Exporter 렌더 하니스 (Vite + Playwright)
     └── build.sh
