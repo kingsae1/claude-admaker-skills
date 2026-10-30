@@ -215,6 +215,7 @@
 2. `makeProjection(features, [x, y, w, h])`로 지도가 들어갈 상자를 정합니다. 카피 자리는 상자 밖에 남깁니다.
 3. 지도 클립은 **모두 첫 카메라 키 이전(보통 0초)에 시작**시키고, 늦게 나타날 요소는 입장 모션으로 숨깁니다. `mapCamera`는 클립이 첫 키보다 늦게 시작하면 오류를 냅니다.
 4. 카피 아래로 지도가 지나가면 아래쪽 그라데이션 가림막(Image)을 카피 바로 아래 z에 둡니다.
+5. **지도는 소재 위에 얹습니다.** 바탕 지도는 `baseMapSrc(…, { fillOpacity: 0.6–0.75 })`로 반투명하게 두어 아래 영상이 비치게 하고, 지도 뒤 소재가 밝으면 지도 상자보다 조금 큰 어두운 스크림을 한 장 깝니다. 지도가 화면 전체를 불투명하게 덮는 구간은 1초 이내(Q11).
 
 함정:
 - 엔진 scale은 클립 중심 기준이라 `mapCamera`가 위치를 보정합니다. 지도 클립에 다른 scale 모션(핀 팝)을 같이 넣어도 곱해져서 문제없습니다.
@@ -229,15 +230,16 @@
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
 - 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만.
 
-### 5.1 룩 스택: 배경 → 틴트 → 그레인 → 비네트 (aesthetic-rules Q11)
+### 5.1 소재 + 룩 스택: 소재 → 스크림 → 그래픽 → 틴트 → 그레인 → 비네트 (aesthetic-rules Q11)
 
-`build-project.mjs`가 `motion.mjs`의 `lookStack()`으로 광고 전체 길이의 **SVG Image 클립 4개**를 깝니다. 각 층은 별도 트랙이고, 겹침은 zIndex로 정합니다.
+광고의 바닥은 항상 사용자가 준 영상·이미지입니다. `build-project.mjs`가 `timeline.mjs`의 `FOOTAGE`를 z 2–9에 프레임 가득(cover) 깔고, 그 위에 `motion.mjs`의 `lookStack()`으로 **SVG Image 클립**(틴트·그레인·비네트, 소재가 프레임을 다 못 채우면 생성 배경도)을 얹습니다. 각 층은 별도 트랙이고, 겹침은 zIndex로 정합니다.
 
 | 층 | 만드는 법 | zIndex |
 |---|---|---|
-| ① 배경 | 브랜드 배경색 + 강조색·보조색 방사형 빛 2개. 프레임보다 12% 크게 두고 광고 전체에 걸쳐 천천히 흐름 | 1 |
-| ② 소재 | Image / Video / Adapter(three) | 10–19 |
-| ③ 그래픽·글자 | Shape / Text / Caption | 20–49 |
+| (생성 배경) | 소재가 프레임을 다 채우지 못할 때만(`lookStack({ background: true })`). 브랜드 배경색 + 방사형 빛 2개, 프레임보다 12% 크게 두고 천천히 흐름 | 1 |
+| ① 소재 | `FOOTAGE`의 Video / Image, cover 맞춤, 스틸은 Ken Burns | 2–9 |
+| ② 스크림 | 글자 자리만 배경색 그라데이션(부분, Image SVG) | 10–19 |
+| ③ 그래픽·글자 | Shape / Text / Caption / 반투명 지도·패널 / Adapter(three) | 20–49 |
 | ④ 틴트 | 강조색 단색 면, 불투명도 0.06(어두운 테마) / 0.03(밝은 테마) | 90 |
 | ⑤ 그레인 | `feTurbulence` 노이즈, 프레임보다 128px 크게 두고 2프레임마다 다른 자리로 점프(1초 루프), 불투명도 0.05 | 95 |
 | ⑥ 비네트 | 가운데 투명 → 가장자리 검정 0.3 방사형 | 99 |

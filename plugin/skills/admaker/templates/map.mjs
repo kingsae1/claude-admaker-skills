@@ -22,11 +22,11 @@ export function regionPath(map, feature) {
   return { d, box: [r1(x0), r1(y0), r1(x1 - x0), r1(y1 - y0)] };
 }
 
-/** 바탕 지도 한 장 (전체 프레임 크기 SVG Image src) */
-export function baseMapSrc(map, features, { W, H, fill, stroke, strokeWidth = 1.5 }) {
+/** 바탕 지도 한 장 (전체 프레임 크기 SVG Image src). 소재(영상) 위에 얹으므로 면은 기본 반투명(fillOpacity 0.7) */
+export function baseMapSrc(map, features, { W, H, fill, fillOpacity = 0.7, stroke, strokeWidth = 1.5 }) {
   const paths = features.map((f) => `<path d="${map.path(f)}"/>`).join("");
   return svgUrl(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`
-    + `<g fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round">${paths}</g></svg>`);
+    + `<g fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round">${paths}</g></svg>`);
 }
 
 /** 강조 지역 Shape 클립 (path를 화면 좌표 그대로 쓰고 viewBox = 클립 상자) */

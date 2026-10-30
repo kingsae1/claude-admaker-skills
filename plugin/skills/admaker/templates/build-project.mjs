@@ -4,8 +4,8 @@
 // 모션 기본형(entrance/exit/kenBurns/breathe/captionPages)은 motion.mjs 에서 import 한다.
 import fs from "node:fs";
 import path from "node:path";
-import { FPS, DURATION, SHOTS, CAMERA, us } from "./timeline.mjs";
-import { lookStack } from "./motion.mjs";
+import { FPS, DURATION, SHOTS, CAMERA, FOOTAGE, us } from "./timeline.mjs";
+import { lookStack, kenBurns } from "./motion.mjs";
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (v.startsWith("--") ? [...a, [v.slice(2), arr[i + 1]]] : a), []));
 const [W, H] = (args.size ?? "1080x1920").split("x").map(Number);
@@ -45,9 +45,33 @@ export function cameraKeyframes(section, clip, clipFromSec) {
   return { type: "keyframes", options: { duration: us(dur), delay: us(Math.max(0, keys[0].t - clipFromSec)), easing: "linear" }, params };
 }
 
-// 룩 스택 (aesthetic-rules Q11): 배경(z 0), 그레이드(z 90–91), 그레인(z 95), 비네트(z 99). 샷 클립은 z 10–49에 둔다.
+// 바닥 소재 (Q11): 사용자 영상·이미지를 z 2–9에 cover로 깐다. 모션 그래픽(샷 클립 z 10–49)은 모두 이 위에 얹힌다.
+const cover = ([sw, sh] = [W, H]) => {
+  const k = Math.max(W / sw, H / sh), w = Math.round(sw * k), h = Math.round(sh * k);
+  return { x: Math.round((W - w) / 2), y: Math.round((H - h) / 2), width: w, height: h, fills: true };
+};
+const fit = ([sw, sh] = [W, H]) => { // 레터박스(contain): 소재를 자르면 안 될 때
+  const k = Math.min(W / sw, H / sh), w = Math.round(sw * k), h = Math.round(sh * k);
+  return { x: Math.round((W - w) / 2), y: Math.round((H - h) / 2), width: w, height: h, fills: w >= W && h >= H };
+};
+let footageFills = FOOTAGE.length > 0;
+for (const [i, f] of FOOTAGE.entries()) {
+  const box = f.fit === "contain" ? fit(f.size) : cover(f.size);
+  footageFills &&= box.fills;
+  const dur = f.to - f.from;
+  const still = f.type === "Image";
+  addClip(`footage_${i}`, {
+    type: f.type, name: `footage-${i}`, src: f.src,
+    timing: { display: { from: us(f.from), to: us(f.to) }, duration: us(dur), playbackRate: 1, ...(still ? {} : { trim: { from: us(f.trimFrom ?? 0), to: us((f.trimFrom ?? 0) + dur) } }) },
+    transform: { x: box.x, y: box.y, width: box.width, height: box.height, angle: 0, opacity: 1, zIndex: 2 + Math.min(i, 7) },
+    ...(still ? { animations: [kenBurns(dur, { shotIndex: i })] } : { volume: f.volume ?? 0 }),
+  }, "footage", f.type);
+}
+if (!FOOTAGE.length) console.warn("△ FOOTAGE가 비어 있음: 이 스킬의 광고는 사용자 영상·이미지 위에 그래픽을 얹는 구조입니다 (SKILL.md)");
+
+// 룩 스택 (aesthetic-rules Q11): 소재 위 틴트(z 90), 그레인(z 95), 비네트(z 99). 소재가 프레임을 다 못 채울 때만 생성 배경(z 1).
 if (args.look !== "off") {
-  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light" });
+  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light", background: !footageFills });
   for (const [id, clip] of Object.entries(look.clips)) addClip(id, clip, look.trackOf[id], clip.type);
 }
 

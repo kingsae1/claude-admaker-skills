@@ -1,5 +1,5 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
-// + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7) (△ 경고, 종료 코드에 영향 없음)
+// + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 덮는 불투명 면(Q11) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
 // 아래 목록은 @admaker/engine 3.0.5 (three 어댑터 + 씬 훅 포함) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
@@ -89,6 +89,24 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
 for (const [fam, urls] of fontUrls) if (urls.size > 1) err(fam, `한 폰트 이름에 파일 ${urls.size}개 (엔진은 이름 하나에 파일 하나만 등록함, B5: 한글 폰트는 프로젝트당 한 굵기)`);
 const families = new Set([...fontUrls.keys()].map((f) => findFont(f)?.font.name ?? f));
 if (families.size > 3) warn("fonts", `폰트 패밀리 ${families.size}개 (B4: 디스플레이 1 + 본문 1 + 숫자 1 이하)`);
+// Q11: 광고의 바닥은 사용자 영상·이미지. 그래픽이 프레임 60% 이상을 1초 넘게 불투명하게 덮으면 경고
+const { width: PW = 1080, height: PH = 1920 } = p.settings ?? {};
+const clipsAll = Object.entries(p.clips ?? {});
+const footage = clipsAll.filter(([, c]) => (c.type === "Video" || c.type === "Image") && !String(c.src ?? "").startsWith("data:")
+  && (c.transform?.width ?? 0) * (c.transform?.height ?? 0) >= PW * PH * 0.6);
+if (!footage.length) warn("footage", "프레임을 채우는 사용자 영상·이미지가 없음 (Q11: 소재를 맨 아래에 깔고 그래픽을 얹음)");
+const footZ = Math.min(...footage.map(([, c]) => c.transform?.zIndex ?? 0));
+const svgHasAlpha = (src) => { try { return /opacity="0?\.|stop-opacity|fill="none"|fill="transparent"/.test(decodeURIComponent(src)); } catch { return false; } };
+for (const [id, c] of clipsAll) {
+  if (footage.some(([fid]) => fid === id) || id.startsWith("look_")) continue;
+  if (!["Image", "Shape", "Video"].includes(c.type)) continue;
+  const t = c.transform ?? {}, d = c.timing?.display;
+  const area = Math.max(0, Math.min(PW, t.x + t.width) - Math.max(0, t.x)) * Math.max(0, Math.min(PH, t.y + t.height) - Math.max(0, t.y));
+  if (area < PW * PH * 0.6 || (t.opacity ?? 1) < 0.9 || !d || d.to - d.from <= 1e6 || (t.zIndex ?? 0) <= footZ) continue;
+  if (c.type === "Image" && String(c.src).startsWith("data:image/svg") && svgHasAlpha(c.src)) continue;
+  if (c.type === "Shape" && ((c.style?.fillOpacity ?? 1) < 0.9 || /transparent|none/.test(c.style?.fill ?? ""))) continue;
+  warn(id, `불투명한 면이 프레임의 ${Math.round((area / (PW * PH)) * 100)}%를 ${((d.to - d.from) / 1e6).toFixed(1)}초 덮어 바닥 소재가 안 보임 (Q11: 반투명 0.55–0.75 또는 부분 패널)`);
+}
 for (const [f, ids] of entranceStarts) if (ids.length >= 3) warn(ids.join(", "), `프레임 ${f}에 입장 ${ids.length}개 동시 시작 (R7: 3–6프레임 시차)`);
 console.log(issues.length ? issues.join("\n") : "✓ 검사 통과");
 if (warnings.length) console.log(warnings.join("\n"));

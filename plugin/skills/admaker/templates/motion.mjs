@@ -78,12 +78,13 @@ function rng(seed) {
 const svgUrl = (svg) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 
 /**
- * 룩 스택 (Q11): 배경 · 틴트(그레이드) · 그레인 · 비네트를 SVG Image 클립으로 만든다.
+ * 룩 스택 (Q11): 사용자 소재(맨 아래) 위에 얹는 틴트(그레이드) · 그레인 · 비네트를 SVG Image 클립으로 만든다.
+ * background: true면 소재 아래(z 1)에 생성 배경을 깐다. 소재가 프레임을 다 채우지 못할 때(레터박스)만 쓴다.
  * Backdrop·Effect 클립 대신 Image를 쓰는 이유: admaker 앱의 "광고 불러오기" 포맷(EncodingPayload)은
  * Backdrop·Effect를 받지 않는다. Image(SVG)는 렌더 하니스와 앱 양쪽에서 같은 모습으로 나온다.
  * 값은 렌더 검증 전 초기값.
  */
-export function lookStack({ W, H, duration, brand, dark = true, grain = true }) {
+export function lookStack({ W, H, duration, brand, dark = true, grain = true, background = false }) {
   const c = brand.colors ?? {};
   const bg = c.background ?? "#0A0A0F", hero = c.primary ?? c.accent ?? "#7C3AED", acc = c.accent ?? hero;
   const D = us(duration);
@@ -124,7 +125,7 @@ export function lookStack({ W, H, duration, brand, dark = true, grain = true }) 
     + `<rect width="100%" height="100%" fill="url(#v)"/></svg>`;
 
   const clips = {
-    look_bg: { type: "Image", name: "look-bg", src: svgUrl(bgSvg), timing, transform: tf(0, 0, bw, bh, 1), animations: [drift] },
+    ...(background ? { look_bg: { type: "Image", name: "look-bg", src: svgUrl(bgSvg), timing, transform: tf(0, 0, bw, bh, 1), animations: [drift] } } : {}),
     look_tint: { type: "Image", name: "look-tint", src: svgUrl(tintSvg), timing, transform: tf(0, 0, W, H, 90, dark ? 0.06 : 0.03) },
     ...(grain ? { look_grain: { type: "Image", name: "look-grain", src: svgUrl(grainSvg), timing, transform: tf(0, 0, gw, gh, 95, dark ? 0.05 : 0.035), animations: [grainAnim] } } : {}),
     look_vignette: { type: "Image", name: "look-vignette", src: svgUrl(vigSvg), timing, transform: tf(0, 0, W, H, 99) },

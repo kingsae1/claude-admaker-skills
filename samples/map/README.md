@@ -6,7 +6,8 @@
 
 | 시간 | 일어나는 일 | 쓰는 것 |
 |---|---|---|
-| 0–0.7초 | 바탕 지도와 강조 지역이 들어옴 | Image(SVG) + Shape path, `entrance` |
+| 전체 | 바닥 소재(사용자 영상) + 배경색 0.4로 살짝 어둡게 | Video z 2, Image z 9 |
+| 0–0.7초 | 반투명 바탕 지도(면 0.72)와 강조 지역이 들어옴 | Image(SVG) + Shape path, `entrance` |
 | 0.8–1.2초 | 서울이 칠해지고 핀·지명 | `paint`, 핀 팝(`holdFrom`), Text |
 | 1.4–3.4초 | 경로가 그려지며 경로 쪽으로 1.55배 줌 | `strokeDraw`, `mapCamera` |
 | 3.2–3.6초 | 부산이 강조색으로, 핀·지명 | `paint`, 핀 팝 |
@@ -25,4 +26,5 @@ node to-admaker-import.mjs project.json admaker-import.json
 
 - 지도 데이터: southkorea/southkorea-maps의 시도 경계(통계청 KOSTAT 2013 기반). 광고에 쓸 때는 `CREDITS`에 적습니다. 데이터 파일은 이 저장소에 넣지 않았습니다.
 - 폰트: Black Han Sans(제목), Noto Sans KR 500(본문). 렌더 하니스에서는 `--local-fonts`로 로컬 파일을 씁니다.
-- 색·타이밍은 첫 렌더 뒤 한 번 고친 값입니다(줌 1.35 → 1.55, 가림막 50% → 42%).
+- 바닥 소재는 실제 사용자 영상 자리입니다. 샘플은 직접 만든 자리표시 영상(밤거리 보케)으로 렌더했고, `project.json`에서는 `assets/input.mp4`를 가리킵니다.
+- 색·타이밍은 첫 렌더 뒤 고친 값입니다(줌 1.35 → 1.55, 가림막 50% → 42%, 지도 면 불투명 → 0.72).

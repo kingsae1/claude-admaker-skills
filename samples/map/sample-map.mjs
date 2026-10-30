@@ -7,6 +7,8 @@ import { us } from "./timeline.mjs";
 
 const W = 1080, H = 1920, DUR = 6;
 const LOCAL_FONTS = process.argv.includes("--local-fonts");
+// 바닥 소재: 사용자 영상. 샘플은 자리표시 영상(밤거리 보케)으로 렌더했다
+const FOOTAGE_SRC = LOCAL_FONTS ? "/footage.mp4" : "assets/input.mp4";
 const brand = {
   colors: { background: "#0B0F1A", surface: "#1A2233", text: "#F5F7FA", muted: "#8A94A6", accent: "#FF5A36", primary: "#3D5AFE" },
   fonts: { display: { name: "Black Han Sans" }, body: { name: "Noto Sans KR", weight: 500 } },
@@ -29,8 +31,13 @@ const clips = {};
 const trackOf = {};
 const add = (id, clip, track) => { clips[id] = { name: id, ...clip }; trackOf[id] = track; };
 
-// 바탕 지도
-add("map_base", { type: "Image", src: baseMapSrc(map, features, { W, H, fill: C.surface, stroke: "#2A3550", strokeWidth: 2 }),
+// 바닥 소재(맨 아래, 프레임 가득) + 반투명 어둡게(0.35): 그래픽은 모두 이 위에 얹는다 (Q11)
+add("footage_0", { type: "Video", src: FOOTAGE_SRC, timing: { ...all, trim: { from: 0, to: us(DUR) } }, volume: 0, transform: tf(0, 0, W, H, 2), animations: [] }, "footage");
+add("footage_dim", { type: "Image", src: svgUrl(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><rect width="100%" height="100%" fill="${C.background}"/></svg>`),
+  timing: all, transform: tf(0, 0, W, H, 9, 0.4), animations: [] }, "footage_dim");
+
+// 바탕 지도 (반투명: 아래 영상이 비침)
+add("map_base", { type: "Image", src: baseMapSrc(map, features, { W, H, fill: C.surface, fillOpacity: 0.72, stroke: "#3A4766", strokeWidth: 2 }),
   timing: all, transform: tf(0, 0, W, H, 10),
   animations: [entrance({ dur: 0.7, y: 30, scale: 0.97 })] }, "map_base");
 
@@ -70,7 +77,7 @@ const cam = [
   { t: 1.4, cx: W / 2, cy: H / 2, zoom: 1, easing: "easeInOutCubic" },
   { t: 3.4, cx: mx, cy: my + (H / 2 - targetY) / Z, zoom: Z },
 ];
-for (const id of Object.keys(clips)) clips[id].animations.push(mapCamera(clips[id], cam, { W, H, us, clipFrom: 0 }));
+for (const id of Object.keys(clips).filter((k) => k.startsWith("map_"))) clips[id].animations.push(mapCamera(clips[id], cam, { W, H, us, clipFrom: 0 }));
 
 // 아래 가림막 + 카피
 const scrim = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H * 0.42}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">`

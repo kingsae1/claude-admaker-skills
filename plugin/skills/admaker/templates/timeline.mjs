@@ -29,6 +29,12 @@ export const CAMERA = {
   ],
 };
 
+// 바닥 소재: 사용자가 준 영상·이미지. 항상 맨 아래(z 2–9)에 프레임 가득 깔리고, 모션 그래픽은 그 위에 얹힌다.
+// from/to: 광고 기준 초. size: 원본 픽셀 크기(cover 맞춤 계산용). trimFrom: 영상의 몇 초부터 쓸지. still: 이미지면 Ken Burns.
+export const FOOTAGE = [
+  { src: "assets/input.mp4", type: "Video", from: 0, to: SECTIONS.at(-1).to, size: [1080, 1920], trimFrom: 0, volume: 0 },
+];
+
 // 샷 배치: 샷 카드 이름과 그 샷에 넘길 내용
 export const SHOTS = [
   { card: "hook-number-slam",    section: "hook",    from: beat(0),  to: beat(3),  props: { number: "3초", caption: "설명 한 줄" } },
