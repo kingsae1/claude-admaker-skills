@@ -16,10 +16,12 @@
 | [feature-mask-reveal](feature-mask-reveal.md) | 상승부 | 중고 | 1.5–2.5초 | 와이프로 열리는 사진 + 줄 단위로 올라오는 문구 |
 | [price-countup](price-countup.md) | 상승부 끝 | 중고 | 1.8–2.5초 | 가격·통계가 굴러가다 멈추고 강조 |
 | [endcard-logo-cta](endcard-logo-cta.md) | 엔드카드 | 최고→정지 | 2.5–4초 | 로고가 자리잡고 메시지·CTA가 차례로, 1초 이상 정지 |
+| [map-region-pin](map-region-pin.md) | 훅·주인공 | 중 | 1.5–2.5초 | 지도가 들어오고 한 지역이 칠해지며 핀이 박힘 (`map.mjs`) |
+| [map-route-draw](map-route-draw.md) | 주인공·상승부 | 중고 | 2–3초 | 두 지점 사이 경로가 그려지며 지도가 다가감 (`map.mjs`) |
 
 ## 카드 형식
 
-> 현재 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
+> `map-*` 2장은 엔진 3.0.5로 렌더해 확인한 값입니다. 나머지 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
 
 새 카드는 아래 형식으로 씁니다. 실제로 렌더해 확인한 값만 파라미터 표에 적습니다.
 

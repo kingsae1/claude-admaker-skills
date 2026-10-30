@@ -12,7 +12,24 @@ export function entrance({ dur = 0.6, delay = 0, index = 0, gap = 4, y = 40, x =
   if (scale !== 1) from.scale = scale;
   if (blur) from.blur = blur;
   const to = { opacity: 1, ...(y ? { y: 0 } : {}), ...(x ? { x: 0 } : {}), ...(scale !== 1 ? { scale: 1 } : {}), ...(blur ? { blur: 0 } : {}) };
-  return { type: "keyframes", options: { duration: us(dur), delay: us(delay + index * frames(gap)), easing: "linear" }, params: { "0%": from, "100%": to } };
+  return holdFrom({ type: "keyframes", options: { duration: us(dur), delay: 0, easing: "linear" }, params: { "0%": from, "100%": to } }, delay + index * frames(gap));
+}
+
+/**
+ * 엔진은 options.delay 전에는 keyframes·paint·마스크 모션을 아예 적용하지 않는다(0% 값이 걸리지 않음).
+ * 입장처럼 "시작 전에도 0% 상태여야 하는" 모션은 delay를 쓰지 않고, 0%~delay 구간을 같은 값으로 붙잡는 stop을 앞에 넣는다.
+ * anim: delay 0인 keyframes/paint 항목, delaySec: 클립 기준 시작 초.
+ */
+export function holdFrom(anim, delaySec) {
+  if (!(delaySec > 0)) return anim;
+  const d = us(delaySec), dur = anim.options.duration, total = d + dur;
+  const remap = (k) => (/^from$/i.test(k) ? 0 : /^to$/i.test(k) ? 100 : parseFloat(k));
+  const params = {};
+  const stops = Object.entries(anim.params).map(([k, v]) => [remap(k), v]).sort((a, b) => a[0] - b[0]);
+  const { easing: _e, ...first } = stops[0][1];
+  params["0%"] = first; // 0 → delay: 그대로 둠
+  for (const [pct, v] of stops) params[`${(((d + (pct / 100) * dur) / total) * 100).toFixed(3)}%`] = v;
+  return { ...anim, options: { ...anim.options, duration: total, delay: 0 }, params };
 }
 
 /** 퇴장 (R8): 입장의 절반 길이, easeIn. clipDur(초)의 끝에 붙는다. 0%는 항등값이라 겹쳐도 안전. */

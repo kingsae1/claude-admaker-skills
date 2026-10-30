@@ -35,7 +35,7 @@ name: feature-mask-reveal
 ```jsonc
 // 이미지
 { "type": "wipe", "options": { "duration": 450000, "delay": 0, "easing": "easeInOutQuart" }, "params": { "direction": "left" } }
-// 강조 바 Shape
-{ "type": "centerExpand", "options": { "duration": 300000, "delay": 250000, "easing": "easeOutCubic" }, "params": { "axis": "x" } }
+// 강조 바 Shape: 클립 시작을 이미지 +0.25초로 두고 delay 0 (마스크는 delay 전에 적용되지 않음)
+{ "type": "centerExpand", "options": { "duration": 300000, "delay": 0, "easing": "easeOutCubic" }, "params": { "axis": "x" } }
 ```
 `direction`, `axis` 값의 정확한 이름은 엔진 버전의 타입 정의에서 확인합니다(engine-recipes §0).

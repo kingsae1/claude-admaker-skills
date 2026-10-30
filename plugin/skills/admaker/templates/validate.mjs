@@ -61,12 +61,19 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   }
   const kfs = (c.animations ?? []).filter((a) => a.type === "keyframes");
   for (const a of kfs) {
-    const stops = Object.values(a.params ?? {});
+    const pctOf = (k) => (/^from$/i.test(k) ? 0 : /^to$/i.test(k) ? 100 : parseFloat(k));
+    const sorted = Object.entries(a.params ?? {}).sort((x, y) => pctOf(x[0]) - pctOf(y[0]));
+    const stops = sorted.map(([, v]) => v);
     const first = stops[0] ?? {};
+    const same = (v) => JSON.stringify(Object.entries(v).filter(([k]) => k !== "easing").sort()) === JSON.stringify(Object.entries(first).filter(([k]) => k !== "easing").sort());
+    let held = 0; // 첫 값을 붙잡는 stop(holdFrom) 뒤에서 실제 입장이 시작
+    for (const [k, v] of sorted.slice(1)) { if (!same(v)) break; held = pctOf(k); }
+    if (first.opacity === 0 && (a.options?.delay ?? 0) > 0)
+      err(id, "입장 keyframes에 options.delay: 엔진은 delay 전에 0% 값을 걸지 않아 클립이 먼저 보였다가 사라짐 (motion.mjs entrance/holdFrom 사용)");
     const moved = Object.keys(first).filter((k) => k !== "easing");
     if (moved.length === 1 && moved[0] === "opacity" && first.opacity === 0) warn(id, "opacity만 바뀌는 단독 페이드 입장 (R6: 위치·scale을 함께)");
     if (first.opacity === 0 && d) {
-      const f = Math.round(((d.from + (a.options?.delay ?? 0)) / 1e6) * FPS(p));
+      const f = Math.round(((d.from + (a.options?.delay ?? 0) + (held / 100) * (a.options?.duration ?? 0)) / 1e6) * FPS(p));
       entranceStarts.set(f, [...(entranceStarts.get(f) ?? []), id]);
     }
   }
