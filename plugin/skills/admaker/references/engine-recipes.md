@@ -3,11 +3,11 @@
 연출 문서의 기법을 `@admaker/engine` ProjectJSON으로 옮기는 방법입니다. 렌더 기준은 **브라우저 `Exporter`**입니다.
 기준 버전: `@admaker/engine` 3.0.5 (admaker-plugin `14ef6ee`, three 어댑터 + 씬 훅 `attach`/`render` 포함), `@admaker/animation` 2.0.7. 엔진이 바뀌면 이 문서의 이름·파라미터를 엔진 타입 정의와 다시 대조합니다.
 
-> 엔진은 사내 전용 비공개 패키지입니다. 엔진 소스를 이 스킬이나 프로젝트 폴더로 복사하지 않고, 설치된 패키지(`node_modules/@admaker/*`)를 import해서 씁니다.
+> 엔진은 사내 전용 비공개 패키지입니다. 로그인한 사용자만 admaker 앱의 스킬 설치로 받을 수 있습니다. 엔진 소스를 이 스킬이나 프로젝트 폴더로 복사하지 않고, 설치된 패키지(`node_modules/@admaker/*`)를 import해서 씁니다.
 
 ## 0. 확인 절차 (매 프로젝트 첫 단계)
 
-1. 엔진 설치 위치를 찾습니다: admaker 앱의 `node_modules/@admaker/engine`, 또는 admaker-plugin 모노레포 빌드 결과.
+1. 엔진 설치 위치를 찾습니다: 프로젝트의 `node_modules/@admaker/engine`. 없으면 프로젝트 폴더에서 `node <스킬 폴더>/templates/install-engine.mjs`를 돌립니다(렌더 하니스까지 쓰면 `--render`). 이 스크립트는 admaker 앱이 스킬과 함께 받아 둔 `<스킬 폴더>/vendor/*.tgz`(`packages.json` 목록)를 프로젝트 `vendor/`로 복사해 설치합니다. `vendor/`가 없으면 admaker 앱에서 스킬을 다시 설치합니다.
 2. 버전을 확인합니다(`package.json`). 이 문서의 기준 버전과 다르면 `dist/index.d.ts`에서 `ProjectJSON`, `ClipJSON`, `AnimationJSON`, `ANIMATABLE_PROPERTIES`, 애니메이션 레지스트리 이름을 다시 확인합니다.
 3. Text·Caption·Shape의 `style` 필드는 버전마다 늘어나므로, 모르는 필드는 **앱에서 만든 프로젝트를 `preview.exportToJSON()`으로 내보낸 참조 JSON**에서 그대로 가져옵니다. 추측해서 필드를 만들지 않습니다.
 
