@@ -18,7 +18,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
    - 광고 한 편 → 아래 워크플로.
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
-2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 설치 위치와 버전을 찾고, 기준 버전과 다르면 이름·파라미터를 다시 대조합니다. 엔진이 없으면 사용자에게 설치 경로를 묻습니다(사내 비공개 패키지라 직접 받을 수 없습니다).
+2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.
    - 제품/서비스, 이 광고의 **단 하나의 메시지**, CTA 문구와 URL
    - 매체와 규격 → `references/ad-formats.md`

@@ -4,12 +4,14 @@ admaker 엔진으로 광고 모션그래픽을 만드는 Claude Code 스킬입�
 
 ## 설치
 
-```sh
-claude plugin marketplace add kingsae1/claude-admaker-skills
-claude plugin install admaker@admaker
-```
+admaker 데스크톱 앱에서 MCP 메뉴 → **Claude와 연결하기**를 엽니다.
 
-엔진(`@admaker/engine`)은 사내 비공개 패키지라 스킬에 포함되어 있지 않습니다. 광고 프로젝트 폴더에 설치해 두어야 렌더할 수 있습니다.
+- **Claude Code**: "Claude Code" 탭에서 **스킬 설치**를 누르면 `~/.claude/skills/admaker`에 스킬과 엔진 패키지(`vendor/`)가 같이 설치됩니다. admaker에 로그인한 상태여야 합니다.
+- **Claude 앱(데스크톱·웹)**: "Claude 앱" 탭에서 스킬 zip을 받아 Claude 설정 → 기능 → 스킬에 올립니다.
+
+이 저장소와 엔진(`@admaker/engine`)은 비공개이고, 배포 파일은 admaker-api(`/api/skills/admaker`, 로그인 필요)에서 내려받습니다. 배포 파일은 admaker-api의 `scripts/build_skill_bundle.py`로 만듭니다.
+
+광고 프로젝트 폴더에서는 `node ~/.claude/skills/admaker/templates/install-engine.mjs`로 엔진을 설치합니다(렌더까지 하면 `--render`).
 
 ## 구성
 
@@ -33,6 +35,7 @@ plugin/skills/admaker/
     ├── gen-audio-kit.mjs        소재가 없을 때 임시 SFX·베드 합성
     ├── validate.mjs             엔진에 없는 이름·src 누락 검사 + 모션 규칙 경고
     ├── to-admaker-import.mjs    project.json → admaker 앱 광고 불러오기 파일
+    ├── install-engine.mjs       스킬과 같이 받은 엔진(vendor/*.tgz)을 프로젝트에 설치
     ├── to-admaker-template.mjs  → admaker 플래너 모드 템플릿(씬 오버레이, template.json)
     ├── shots/*.mjs              샷 카드별 클립 생성 함수
     ├── render/                  헤드리스 Exporter 렌더 하니스 (Vite + Playwright)
