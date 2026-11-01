@@ -20,6 +20,7 @@ plugin/skills/admaker/
 ├── SKILL.md                     워크플로와 원칙
 ├── references/
 │   ├── director.md              광고 연출 (메시지, 에너지 골격, 사운드, 리듬, 카메라)
+│   ├── copy.md                  광고 문구 (훅 세 칸, 오프닝 메뉴, 시청자 단계, 금지 문구, 정직한 할인)
 │   ├── aesthetic-rules.md       검수 체크리스트 (B/R/Q/S/C/P)
 │   ├── ad-formats.md            길이·비율·세이프존·오디오 규격
 │   ├── engine-recipes.md        기법 → admaker ProjectJSON 변환법
