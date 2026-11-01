@@ -11,6 +11,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 **admaker 앱 MCP가 연결되어 있으면(`get_production_workflow` 도구가 보이면) 광고 한 편은 그 순서대로 끝까지 만들고, 모션그래픽에서 멈추지 않습니다.**
 순서: BGM을 앱 AI로 먼저 만들기 → `audio.analyzeBeats`로 BGM의 템포·마디·피크를 받아 씬 나누기 → 모션그래픽(이 스킬, 씬 경계·비트에 맞춰) → 내레이션(씬 시작에 맞춰) → 바닥 이미지 img2img(`ai.image.edit`) → **사용자 확인** → 이미지→영상(`ai.video.imageToVideo`) → 배치·검토.
 이때 `timeline.mjs`의 BPM·비트·섹션은 분석값을 그대로 쓰고, 소리는 ProjectJSON에 넣지 않고 `import_to_admaker { keepAudio: true }`로 앱에서 먼저 만든 BGM을 그대로 옮깁니다. AI 생성 전에는 예상 크레딧과 프롬프트를 보여 주고 확인받습니다.
+MCP가 있으면 모션그래픽만으로 끝내지 않습니다. `references/techniques.md`(MCP에서는 `get_ad_guide({ name: 'techniques.md' })`)의 기법 메뉴에서 씬마다 이미지 생성·img2img·누끼/레이어 분리·이미지→영상·영상 생성·효과음·Lottie·손그림·레터링을 골라 섞고, 씬표에 기법과 예상 크레딧을 적어 제안합니다.
 MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다).
 
 광고의 판단 순서는 **메시지 전달 → 브랜드 기억 → 리듬·사운드 → 카메라 → 장식**입니다.
