@@ -6,6 +6,7 @@
     {
       "name": "admaker",
       "source": "./plugin",
+      "version": "0.2.0",
       "description": "Plan, direct and render short ad videos (6/15/30/60 s) as code-driven motion graphics on the admaker-plugin canvas engine."
     }
   ]
