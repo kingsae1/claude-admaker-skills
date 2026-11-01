@@ -4,6 +4,6 @@
   "description": "Plan, direct and render short ad videos (6/15/30/60 s) as code-driven motion graphics on the admaker-plugin canvas engine.",
   "author": { "name": "kingsae1", "url": "https://github.com/kingsae1" },
   "repository": "https://github.com/kingsae1/claude-admaker-skills",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "keywords": ["ad", "motion-graphics", "canvas", "video", "agent-skill"]
 }
