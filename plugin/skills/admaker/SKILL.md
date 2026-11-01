@@ -8,7 +8,11 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 광고 한 편을 **기획 → 연출 → 샷 조립 → 사운드 → 렌더 → 검수**까지 끌고 가는 스킬입니다.
 결과물은 `@admaker/engine`의 **ProjectJSON**이고, 브라우저 `Exporter`로 mp4를 만듭니다. 같은 JSON은 admaker Studio에서 열어 고칠 수 있습니다.
 **바닥은 사용자가 준 영상·이미지입니다.** 광고는 항상 입력 소재(영상 또는 이미지)를 맨 아래(z 0–9)에 프레임 가득 깔고, 모션 그래픽(글자·도형·지도·자막·룩 레이어)을 그 위에 얹는 구조입니다. 소재가 뿌옇게 묻히지 않는 쪽이 기본이라, 화면 전체를 덮는 어둡게·틴트·반투명 면은 꼭 필요할 때만 약하게 쓰고 가독성은 주로 글자 주변(그림자, 작은 알약, 글자 띠 그라데이션)에서 만듭니다(aesthetic-rules Q11). 소재는 `timeline.mjs`의 `FOOTAGE`에 적습니다.
-영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다).
+**admaker 앱 MCP가 연결되어 있으면(`get_production_workflow` 도구가 보이면) 광고 한 편은 그 순서대로 끝까지 만들고, 모션그래픽에서 멈추지 않습니다.**
+순서: BGM을 앱 AI로 먼저 만들기 → `audio.analyzeBeats`로 BGM의 템포·마디·피크를 받아 씬 나누기 → 모션그래픽(이 스킬, 씬 경계·비트에 맞춰) → 내레이션(씬 시작에 맞춰) → 바닥 이미지 img2img(`ai.image.edit`) → **사용자 확인** → 이미지→영상(`ai.video.imageToVideo`) → 배치·검토.
+이때 `timeline.mjs`의 BPM·비트·섹션은 분석값을 그대로 쓰고, 소리는 ProjectJSON에 넣지 않고 `import_to_admaker { keepAudio: true }`로 앱에서 먼저 만든 BGM을 그대로 옮깁니다. AI 생성 전에는 예상 크레딧과 프롬프트를 보여 주고 확인받습니다.
+MCP가 있으면 모션그래픽만으로 끝내지 않습니다. `references/techniques.md`(MCP에서는 `get_ad_guide({ name: 'techniques.md' })`)의 기법 메뉴에서 씬마다 이미지 생성·img2img·누끼/레이어 분리·이미지→영상·영상 생성·효과음·Lottie·손그림·레터링을 골라 섞고, 씬표에 기법과 예상 크레딧을 적어 제안합니다.
+MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다).
 
 광고의 판단 순서는 **메시지 전달 → 브랜드 기억 → 리듬·사운드 → 카메라 → 장식**입니다.
 
@@ -19,7 +23,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
-2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 설치 위치와 버전을 찾고, 기준 버전과 다르면 이름·파라미터를 다시 대조합니다. 엔진이 없으면 사용자에게 설치 경로를 묻습니다(사내 비공개 패키지라 직접 받을 수 없습니다).
+2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.
    - 제품/서비스, 이 광고의 **단 하나의 메시지**, CTA 문구와 URL
    - 매체와 규격 → `references/ad-formats.md`
@@ -34,7 +38,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 | 단계 | 할 일 | 읽을 파일 |
 |---|---|---|
 | 1. 브리프 | 질문 한 번, 브리프 요약 | `references/ad-formats.md` |
-| 2. 트리트먼트 | `TREATMENT.md`: 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵, 사운드 표 | `references/director.md`, `templates/TREATMENT.md` |
+| 2. 트리트먼트 | `TREATMENT.md`: 문구(시청자 단계, 훅 후보 3개, 근거 표), 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵(드롭, 섹션별 음악 사건 수), 사운드 표 | `references/director.md`, `references/copy.md`, `templates/TREATMENT.md` |
 | 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
 | 4. 샷 선택 | 에너지 골격의 슬롯마다 샷 카드를 고름. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문 |
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀 | `templates/timeline.mjs` |
@@ -49,11 +53,12 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 1. **타임라인이 단일 진실의 원천입니다.** `timeline.mjs` 하나를 ProjectJSON 생성, SFX, 자막, 검사가 모두 읽습니다. 타임라인이 바뀌면 프로젝트를 다시 생성하고 SFX 표 전체를 다시 맞춥니다. ProjectJSON을 손으로 고치지 않습니다.
 2. **엔진에 있는 이름만 씁니다.** 모르는 이징 이름은 엔진이 조용히 선형으로 처리하고, 등록되지 않은 모션 type이나 스크립트 이름은 그려지지 않습니다. 생성 후 `templates/validate.mjs`로 이름을 검사합니다.
 3. **결정적 렌더링.** script 어댑터와 생성 코드에 `Date.now()`, 시드 없는 `Math.random()`, 이전 프레임 상태 의존을 쓰지 않습니다.
-4. **첫 1초 안에 훅, 마지막에 브랜드 + CTA 홀드.** 워드마크와 CTA는 자리잡은 뒤 최소 1초(6초 범퍼는 0.7초) 정지합니다.
+4. **첫 1초 안에 훅, 마지막에 브랜드 + CTA 홀드.** 워드마크와 CTA는 자리잡은 뒤 최소 1초(6초 범퍼는 0.7초) 정지합니다. 훅은 화면·내레이션·자막 세 칸으로 쓰고, 화면 문구의 숫자·주장은 사용자 자료에서만 가져옵니다(최상급·할인·마감 표현은 `references/copy.md` §7).
 5. **샷 카드를 쓸 때는 카드 전문을 읽고**, 카드의 "알려진 함정" 값은 낮추지 않습니다.
 6. **모션 기본기는 `templates/motion.mjs`로.** 화면은 아래부터 소재(사용자 영상·이미지) → 글자 받침 → 그래픽 → 가장자리 비네트, 입장은 2–3속성 + 3–6프레임 시차, 퇴장은 입장의 절반, 스틸은 Ken Burns, 오래 머무는 조연은 숨쉬기, 빠른 이동은 모션 블러(aesthetic-rules R6–R9, Q11–Q15). 브랜드 요소의 정지(R1)는 이 모든 것보다 우선합니다. 늦게 등장하는 요소는 `options.delay` 대신 `entrance()`/`holdFrom()`을 씁니다(엔진은 delay 전에 0% 값을 걸지 않음). 지도는 `templates/map.mjs`(engine-recipes §4.1, 샷 카드 `map-*`).
 7. **검수는 숫자로.** 자막 실효 글자 높이 ≥ 프레임 높이의 5%, 보조 ≥ 3%, 정보 자막 ≥ max(1.8초, 발화 + 0.6초)(단어 동기 자막은 Q15), −14 LUFS(매체 규격 우선), 블랙/빈 프레임 0, 컷–비트 오차 ≤ 2프레임, 미등록 어댑터 0.
 8. **권리.** 사용자 자산과 CC0/CC BY/OFL 소재만. 서드파티 자산은 `CREDITS`에 출처·라이선스와 함께 적습니다(지도 경계 데이터 포함: 데이터셋 이름, 기준 연도, 원 출처). 타사 브랜드·캐릭터는 사용자가 권리를 확인하지 않으면 쓰지 않습니다. 엔진 소스는 프로젝트 폴더로 복사하지 않습니다.
+9. **음악이 편집을 정합니다.** 구간마다 화면 변화가 음악의 바쁨을 따라가고, 드롭이 있으면 핵심 순간 하나를 드롭에 둡니다(`director.md` §7.1–7.2, aesthetic-rules R10).
 
 ## 납품물 (프로젝트 폴더)
 

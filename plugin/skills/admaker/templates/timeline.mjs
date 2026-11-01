@@ -18,6 +18,15 @@ export const SECTIONS = [
   { id: "endcard", from: beat(22), to: beat(30) },
 ];
 
+// 드롭 맞추기 (director.md §7.2): 음원 안의 드롭 시각(trackDropSec)이 광고의 핵심 순간(hitSec)에 오게 음악을 배치한다.
+// 음악 시작 = hitSec - trackDropSec. 음수면 음원 앞을 잘라 쓴다(trimFrom). 드롭이 없는 광고는 null.
+export const DROP = null; // 예: { hitSec: beat(9), trackDropSec: 12.4 }
+export const musicPlacement = (drop = DROP) => {
+  if (!drop) return { from: 0, trimFrom: 0 };
+  const start = drop.hitSec - drop.trackDropSec;
+  return start >= 0 ? { from: start, trimFrom: 0 } : { from: 0, trimFrom: -start };
+};
+
 // 화면 전체 충격은 3개 이하 (aesthetic-rules R4)
 export const BIG_HITS = [beat(1), beat(22)];
 
