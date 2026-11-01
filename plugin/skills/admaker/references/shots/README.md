@@ -18,6 +18,7 @@
 | [endcard-logo-cta](endcard-logo-cta.md) | 엔드카드 | 최고→정지 | 2.5–4초 | 로고가 자리잡고 메시지·CTA가 차례로, 1초 이상 정지 |
 | [map-region-pin](map-region-pin.md) | 훅·주인공 | 중 | 1.5–2.5초 | 지도가 들어오고 한 지역이 칠해지며 핀이 박힘 (`map.mjs`) |
 | [map-route-draw](map-route-draw.md) | 주인공·상승부 | 중고 | 2–3초 | 두 지점 사이 경로가 그려지며 지도가 다가감 (`map.mjs`) |
+| [hand-drawn-emphasis](hand-drawn-emphasis.md) | 상승부·엔드카드 | 중 | 0.5–0.8초 (얹는 샷) | 핵심 단어·가격 둘레에 손그림 동그라미·밑줄이 그려짐 (`draw.mjs`) |
 
 ## 카드 형식
 
