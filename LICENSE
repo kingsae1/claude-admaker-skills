@@ -1,0 +1,48 @@
+admaker Skill — Proprietary License
+
+Copyright (c) 2026 kingsae1 (ShanePark). All rights reserved.
+
+1. Ownership. This repository and everything in it, except the third-party
+   material listed in ATTRIBUTION.md, (the "Software") is the confidential and
+   proprietary property of the copyright holder above.
+
+2. No license granted. No right or license to use, copy, modify, merge,
+   publish, distribute, sublicense, sell, or create derivative works of the
+   Software is granted to anyone, except:
+   (a) the copyright holder; and
+   (b) persons who receive the Software through a channel the copyright holder
+       operates or approves in writing (for example, the "skill install"
+       feature of the admaker app), and only to use it unmodified with the
+       admaker app and engine for their own ad production. This permission
+       does not include redistribution, publication, or use in any other
+       product or service.
+
+3. Public visibility. The Software being viewable on a public website or
+   repository does not grant any of the rights listed in section 2.
+
+4. Third-party material. Parts of the documentation are rewritten from the
+   projects listed in ATTRIBUTION.md. Those parts remain subject to their own
+   licenses (MIT, Apache License 2.0), whose notices are kept in
+   ATTRIBUTION.md. For the Apache-2.0 derived files, this license applies only
+   to the copyright holder's own modifications, as Apache License 2.0
+   section 4 allows. Nothing in this license limits rights those licenses give.
+
+5. admaker engine. The @admaker/* packages are separate proprietary software
+   and are not part of the Software. They are licensed only under their own
+   terms.
+
+6. No warranty. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+   KIND, EXPRESS OR IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE
+   FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS
+   USE.
+
+For permission requests, contact the copyright holder through
+https://github.com/kingsae1.
+
+---
+요약 (참고용, 위 영문이 우선합니다): 이 저장소는 저작권자의 비공개 소유물입니다.
+저작권자와, 저작권자가 운영·승인한 경로(예: admaker 앱의 스킬 설치)로 받은 사람이
+admaker 앱·엔진으로 자기 광고를 만드는 용도로 수정 없이 쓰는 경우만 허용합니다.
+복제·수정·재배포·다른 제품에서의 사용은 서면 허락 없이 금지합니다. 공개 저장소에서
+볼 수 있다고 해서 사용 권리가 생기지 않습니다. ATTRIBUTION.md의 외부 출처 부분은
+각 원 라이선스(MIT, Apache-2.0)를 따릅니다.

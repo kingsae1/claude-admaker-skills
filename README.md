@@ -20,6 +20,7 @@ plugin/skills/admaker/
 ├── SKILL.md                     워크플로와 원칙
 ├── references/
 │   ├── director.md              광고 연출 (메시지, 에너지 골격, 사운드, 리듬, 카메라)
+│   ├── copy.md                  광고 문구 (훅 세 칸, 오프닝 메뉴, 시청자 단계, 금지 문구, 정직한 할인)
 │   ├── aesthetic-rules.md       검수 체크리스트 (B/R/Q/S/C/P)
 │   ├── ad-formats.md            길이·비율·세이프존·오디오 규격
 │   ├── engine-recipes.md        기법 → admaker ProjectJSON 변환법
@@ -48,4 +49,4 @@ samples/map/                     지도 샘플 샷 (서울 → 부산 배송, �
 - 엔진 기준 버전: `@admaker/engine` 3.0.5 (admaker-plugin `14ef6ee`, three 어댑터 + 씬 훅 포함), `@admaker/animation` 2.0.7
 - 렌더 하니스, `motion.mjs`의 입장·룩 스택, `map.mjs`, 지도 샷 카드 2장은 엔진 3.0.5로 렌더해 확인했습니다(`samples/map`). 나머지 샷 카드 5장의 값은 아직 렌더로 검증하지 않았습니다.
 
-출처와 라이선스: [ATTRIBUTION.md](ATTRIBUTION.md)
+라이선스: 비공개 라이선스입니다. 저작권자의 허락 없이 복제·수정·재배포할 수 없습니다([LICENSE](LICENSE)). 외부 출처 부분은 [ATTRIBUTION.md](ATTRIBUTION.md)의 원 라이선스를 따릅니다.
