@@ -1,7 +1,7 @@
 # admaker 엔진 레시피
 
 연출 문서의 기법을 `@admaker/engine` ProjectJSON으로 옮기는 방법입니다. 렌더 기준은 **브라우저 `Exporter`**입니다.
-기준 버전: `@admaker/engine` 3.0.5 (admaker-plugin `14ef6ee`, three 어댑터 + 씬 훅 `attach`/`render` 포함), `@admaker/animation` 2.0.7. 엔진이 바뀌면 이 문서의 이름·파라미터를 엔진 타입 정의와 다시 대조합니다.
+기준 버전: `@admaker/engine` 3.0.7 (admaker-plugin `455c950`; three 어댑터 + 씬 훅 `attach`/`render`는 3.0.5부터, gsap 3.15), `@admaker/animation` 2.0.8. 엔진이 바뀌면 이 문서의 이름·파라미터를 엔진 타입 정의와 다시 대조합니다.
 
 > 엔진은 사내 전용 비공개 패키지입니다. 로그인한 사용자만 admaker 앱의 스킬 설치로 받을 수 있습니다. 엔진 소스를 이 스킬이나 프로젝트 폴더로 복사하지 않고, 설치된 패키지(`node_modules/@admaker/*`)를 import해서 씁니다.
 
@@ -57,7 +57,7 @@
 
 ### 2.2 이징 매핑
 
-엔진은 cubic-bezier를 받지 않습니다. 이름형 이징(`easeOutCubic` 등, `easeOutBack` 같은 별칭, gsap 문자열 `"power2.out"`)만 받고, 모르는 이름은 **선형으로 조용히 처리**하므로 오타에 주의합니다.
+엔진은 cubic-bezier를 받지 않습니다. 이름형 이징(`easeOutCubic` 등, `easeOutBack` 같은 별칭)과 gsap-core 문자열(`"power2.out"`, 설정값이 있는 `"back.out(1.7)"`, `"elastic.out(1,0.4)"`, `"steps(6)"`, `"none"`; 방향을 빼면 `.out`)만 받고, 모르는 이름은 **선형으로 조용히 처리**하므로 오타에 주의합니다. CustomEase·EasePack(`rough`, `slow(…)`, `expoScale`)·CustomWiggle은 등록되어 있지 않아 역시 선형이 됩니다. 고르는 법은 `references/gsap.md` §3.
 
 | 원래 의도 | 쓸 이름 |
 |---|---|
@@ -73,7 +73,8 @@
 
 한 클립의 연속 동작(올라오며 커지다가 살짝 기울어짐 등)은 `gsapTimeline` 하나로 씁니다.
 `params.tweens = [{ to: {…}, from?: {…}, duration: 초, ease: "power3.out", position: "<" | "+=0.1" | 초, repeat?, yoyo? }]`
-속성: `x y scale scaleX scaleY angle opacity blur brightness rotateX rotateY`.
+속성: `x y scale scaleX scaleY angle opacity blur brightness rotateX rotateY`(시간은 초, 값은 클립 위에 더하기·곱하기).
+엔진은 멈춘 GSAP 타임라인을 프레임 시간으로 맞추므로 결정적입니다. 다만 라벨·`defaults`·`stagger`·중첩·상대값(`"+=100"`)은 조용히 무시되고 **`repeat: -1`은 0으로 잘립니다**(최대 100). `delay` 전에는 적용되지 않으니 늦은 입장은 첫 tween의 `position`에 대기를 넣습니다. 전체 규칙과 패턴은 `references/gsap.md`.
 
 ### 2.4 마스크 등장
 
@@ -303,6 +304,8 @@ registerScript("brand-grid-snap", (ctx, { width, height, time, params }) => {
 
 ### 7.1 three.js 3D (`three` 어댑터)
 
+장면을 예쁘게 짜는 법(조명·재질·후처리·에셋)과 외부 three.js 예제를 옮길 때 바꿀 것은 `references/three.md`에 있습니다. 여기는 API 계약입니다.
+
 `import "@admaker/engine/adapters/three"`로 등록합니다(프로젝트에 `three` >= 0.160 설치 필요). 3D 씬은 Adapter 클립 하나로 그려지고, 그 결과는 일반 클립처럼 위치·keyframes·마스크·필터를 받습니다.
 
 **내장 `model` 씬** — glTF/GLB 하나를 턴테이블로 보여줄 때. 코드 등록 없이 JSON만으로 됩니다.
@@ -316,6 +319,7 @@ registerScript("brand-grid-snap", (ctx, { width, height, time, params }) => {
 
 - `spin`(도/초, 기본 30), `angle`(시작 각도), `tilt`(카메라 높이 각도, 기본 15), `zoom`(1 = 화면에 꼭 맞춤), `offsetX`/`offsetY`(모델 크기 단위로 화면 안 위치 이동), `animation`(glTF 애니메이션 이름/번호, `false`면 끔), `background`(없으면 투명), `exposure`, `light`, `environment`(스튜디오 환경광 PMREM, 기본 true. 금속·유리에 필요).
 - 모델은 자동으로 가운데 정렬·크기 맞춤됩니다. 환경광이 켜지면 반구광·키·림은 형태만 잡도록 약해집니다.
+- 기본 로더는 Draco·meshopt·KTX2로 압축된 glb를 읽지 못합니다. 압축을 풀어 쓰고, 크기는 텍스처 축소·WebP로 줄입니다(`three.md` §5).
 
 **커스텀 씬** — 브릭, 유리 제품, 로우폴리 섬, 팝업북, 데이터 실물화처럼 장면을 직접 짜야 할 때.
 
@@ -334,7 +338,7 @@ registerThreeScene("glass-hero", async ({ THREE, src, params, loadGLTF }) => {
     attach(renderer) {
       composer?.dispose(); env?.dispose();
       const pmrem = new THREE.PMREMGenerator(renderer);
-      env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;   // HDRI 파일은 RGBELoader → fromEquirectangular
+      env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;   // HDR 파일은 HDRLoader(r180 이전 이름 RGBELoader), mapping = EquirectangularReflectionMapping
       pmrem.dispose();
       scene.environment = env;
       composer = new EffectComposer(renderer);
