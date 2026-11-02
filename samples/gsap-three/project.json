@@ -1,0 +1,1135 @@
+{
+  "settings": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration": 6000000,
+    "backgroundColor": "#0B0D14"
+  },
+  "tracks": [
+    {
+      "id": "t_look_vignette",
+      "name": "look_vignette",
+      "type": "Image",
+      "clipIds": [
+        "look_vignette"
+      ]
+    },
+    {
+      "id": "t_footage",
+      "name": "footage",
+      "type": "Video",
+      "clipIds": [
+        "footage_0"
+      ]
+    },
+    {
+      "id": "t_hero",
+      "name": "hero",
+      "type": "Adapter",
+      "clipIds": [
+        "hero_3d"
+      ]
+    },
+    {
+      "id": "t_scrim",
+      "name": "scrim",
+      "type": "Image",
+      "clipIds": [
+        "copy_scrim"
+      ]
+    },
+    {
+      "id": "t_copy",
+      "name": "copy",
+      "type": "Text",
+      "clipIds": [
+        "hook",
+        "head_1",
+        "head_2"
+      ]
+    },
+    {
+      "id": "t_chips",
+      "name": "chips",
+      "type": "Image",
+      "clipIds": [
+        "chip_bg_0",
+        "chip_tx_0",
+        "chip_bg_1",
+        "chip_tx_1",
+        "chip_bg_2",
+        "chip_tx_2"
+      ]
+    },
+    {
+      "id": "t_end",
+      "name": "end",
+      "type": "Text",
+      "clipIds": [
+        "end_brand",
+        "end_cta",
+        "end_bar"
+      ]
+    }
+  ],
+  "clips": {
+    "look_vignette": {
+      "type": "Image",
+      "name": "look-vignette",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221080%22%20height%3D%221920%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22v%22%20cx%3D%2250%25%22%20cy%3D%2250%25%22%20r%3D%2272%25%22%3E%3Cstop%20offset%3D%220.7%22%20stop-color%3D%22%23000%22%20stop-opacity%3D%220%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23000%22%20stop-opacity%3D%220.18%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url(%23v)%22%2F%3E%3C%2Fsvg%3E",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 6000000
+        },
+        "duration": 6000000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 1080,
+        "height": 1920,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 99
+      }
+    },
+    "footage_0": {
+      "name": "footage_0",
+      "animations": [],
+      "type": "Video",
+      "src": "assets/input.mp4",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 6000000
+        },
+        "duration": 6000000,
+        "playbackRate": 1,
+        "trim": {
+          "from": 0,
+          "to": 6000000
+        }
+      },
+      "volume": 0,
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 1080,
+        "height": 1920,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 2
+      }
+    },
+    "hero_3d": {
+      "name": "hero_3d",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "y": 160,
+                  "opacity": 0,
+                  "scale": 0.86,
+                  "blur": 10
+                },
+                "to": {
+                  "y": 0,
+                  "opacity": 1,
+                  "scale": 1,
+                  "blur": 0
+                },
+                "duration": 0.9,
+                "ease": "power3.out",
+                "position": 0.2
+              },
+              {
+                "to": {
+                  "y": -150,
+                  "scale": 0.78
+                },
+                "duration": 0.7,
+                "ease": "power3.inOut",
+                "position": 4
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Adapter",
+      "adapter": "three",
+      "src": "three",
+      "params": {
+        "scene": "orbit-hero",
+        "accent": "#FF5A36",
+        "seed": 7,
+        "beats": [
+          2.4,
+          2.9,
+          3.4
+        ]
+      },
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 6000000
+        },
+        "duration": 6000000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 0,
+        "y": 230,
+        "width": 1080,
+        "height": 1080,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 30
+      }
+    },
+    "copy_scrim": {
+      "name": "copy_scrim",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "opacity": 0
+                },
+                "to": {
+                  "opacity": 1
+                },
+                "duration": 0.6,
+                "ease": "power2.out",
+                "position": 0.8
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221080%22%20height%3D%22653%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%230B0D14%22%20stop-opacity%3D%220%22%2F%3E%3Cstop%20offset%3D%220.55%22%20stop-color%3D%22%230B0D14%22%20stop-opacity%3D%220.4%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230B0D14%22%20stop-opacity%3D%220.55%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url(%23g)%22%2F%3E%3C%2Fsvg%3E",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 6000000
+        },
+        "duration": 6000000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 0,
+        "y": 1267,
+        "width": 1080,
+        "height": 653,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 20
+      }
+    },
+    "hook": {
+      "name": "hook",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "y": 24,
+                  "opacity": 0
+                },
+                "to": {
+                  "y": 0,
+                  "opacity": 1
+                },
+                "duration": 0.5,
+                "ease": "power3.out",
+                "position": 0.3
+              },
+              {
+                "to": {
+                  "y": -20,
+                  "opacity": 0
+                },
+                "duration": 0.25,
+                "ease": "power2.in",
+                "position": 3.85
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "귀가 먼저 알아챕니다",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 150,
+        "width": 920,
+        "height": 80,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 40
+      },
+      "style": {
+        "fontFamily": "Noto Sans KR",
+        "fontUrl": "https://fonts.gstatic.com/s/notosanskr/v40/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLQ.ttf",
+        "fontWeight": "400",
+        "_weight": 500,
+        "fontSize": 56,
+        "color": "#C9CFDA",
+        "align": "center",
+        "verticalAlign": "center",
+        "shadow": {
+          "color": "#000000",
+          "alpha": 0.5,
+          "blur": 12,
+          "offsetX": 0,
+          "offsetY": 3
+        }
+      }
+    },
+    "head_1": {
+      "name": "head_1",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "y": 70,
+                  "opacity": 0,
+                  "blur": 8
+                },
+                "to": {
+                  "y": 0,
+                  "opacity": 1,
+                  "blur": 0
+                },
+                "duration": 0.45,
+                "ease": "power3.out",
+                "position": 1
+              },
+              {
+                "to": {
+                  "scale": 1.05
+                },
+                "duration": 0.16,
+                "ease": "power2.out",
+                "position": "-=0.06"
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.3,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "y": -40,
+                  "opacity": 0
+                },
+                "duration": 0.25,
+                "ease": "power2.in",
+                "position": 3.8
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "소음은 지우고",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 1330,
+        "width": 920,
+        "height": 130,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 45
+      },
+      "style": {
+        "fontFamily": "Pretendard",
+        "fontUrl": "https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2",
+        "fontWeight": "400",
+        "_weight": 800,
+        "fontSize": 104,
+        "color": "#F5F7FA",
+        "align": "left",
+        "verticalAlign": "center",
+        "shadow": {
+          "color": "#000000",
+          "alpha": 0.5,
+          "blur": 12,
+          "offsetX": 0,
+          "offsetY": 3
+        }
+      }
+    },
+    "head_2": {
+      "name": "head_2",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "y": 70,
+                  "opacity": 0,
+                  "blur": 8
+                },
+                "to": {
+                  "y": 0,
+                  "opacity": 1,
+                  "blur": 0
+                },
+                "duration": 0.45,
+                "ease": "power3.out",
+                "position": 1.1333333333333333
+              },
+              {
+                "to": {
+                  "scale": 1.05
+                },
+                "duration": 0.16,
+                "ease": "power2.out",
+                "position": "-=0.06"
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.3,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "y": -40,
+                  "opacity": 0
+                },
+                "duration": 0.25,
+                "ease": "power2.in",
+                "position": 3.8
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "소리는 선명하게",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 1460,
+        "width": 920,
+        "height": 130,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 45
+      },
+      "style": {
+        "fontFamily": "Pretendard",
+        "fontUrl": "https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2",
+        "fontWeight": "400",
+        "_weight": 800,
+        "fontSize": 104,
+        "color": "#F5F7FA",
+        "align": "left",
+        "verticalAlign": "center",
+        "shadow": {
+          "color": "#000000",
+          "alpha": 0.5,
+          "blur": 12,
+          "offsetX": 0,
+          "offsetY": 3
+        }
+      }
+    },
+    "chip_bg_0": {
+      "name": "chip_bg_0",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "scale": 0.4,
+                  "opacity": 0,
+                  "y": 20
+                },
+                "to": {
+                  "scale": 1,
+                  "opacity": 1,
+                  "y": 0
+                },
+                "duration": 0.35,
+                "ease": "back.out(2)",
+                "position": 2.4
+              },
+              {
+                "to": {
+                  "scale": 1.06
+                },
+                "duration": 0.07,
+                "ease": "power2.out",
+                "position": 2.9
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.22,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "scale": 1.06
+                },
+                "duration": 0.07,
+                "ease": "power2.out",
+                "position": 3.4
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.22,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "duration": 0.22,
+                "ease": "power2.in",
+                "position": 3.85
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22350%22%20height%3D%2288%22%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%22347%22%20height%3D%2285%22%20rx%3D%2243%22%20fill%3D%22%230B0D14%22%20fill-opacity%3D%220.55%22%20stroke%3D%22%23F5F7FA%22%20stroke-opacity%3D%220.5%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 1630,
+        "width": 350,
+        "height": 88,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 50
+      }
+    },
+    "chip_tx_0": {
+      "name": "chip_tx_0",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "scale": 0.4,
+                  "opacity": 0,
+                  "y": 20
+                },
+                "to": {
+                  "scale": 1,
+                  "opacity": 1,
+                  "y": 0
+                },
+                "duration": 0.35,
+                "ease": "back.out(2)",
+                "position": 2.4
+              },
+              {
+                "to": {
+                  "scale": 1.06
+                },
+                "duration": 0.07,
+                "ease": "power2.out",
+                "position": 2.9
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.22,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "scale": 1.06
+                },
+                "duration": 0.07,
+                "ease": "power2.out",
+                "position": 3.4
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.22,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "duration": 0.22,
+                "ease": "power2.in",
+                "position": 3.85
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "노이즈 캔슬링",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 1630,
+        "width": 350,
+        "height": 88,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 51
+      },
+      "style": {
+        "fontFamily": "Noto Sans KR",
+        "fontUrl": "https://fonts.gstatic.com/s/notosanskr/v40/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLQ.ttf",
+        "fontWeight": "400",
+        "_weight": 500,
+        "fontSize": 40,
+        "color": "#F5F7FA",
+        "align": "center",
+        "verticalAlign": "center"
+      }
+    },
+    "chip_bg_1": {
+      "name": "chip_bg_1",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "scale": 0.4,
+                  "opacity": 0,
+                  "y": 20
+                },
+                "to": {
+                  "scale": 1,
+                  "opacity": 1,
+                  "y": 0
+                },
+                "duration": 0.35,
+                "ease": "back.out(2)",
+                "position": 2.9
+              },
+              {
+                "to": {
+                  "scale": 1.06
+                },
+                "duration": 0.07,
+                "ease": "power2.out",
+                "position": 3.4
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.22,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "duration": 0.22,
+                "ease": "power2.in",
+                "position": 3.916666666666667
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22310%22%20height%3D%2288%22%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%22307%22%20height%3D%2285%22%20rx%3D%2243%22%20fill%3D%22%230B0D14%22%20fill-opacity%3D%220.55%22%20stroke%3D%22%23F5F7FA%22%20stroke-opacity%3D%220.5%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 446,
+        "y": 1630,
+        "width": 310,
+        "height": 88,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 50
+      }
+    },
+    "chip_tx_1": {
+      "name": "chip_tx_1",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "scale": 0.4,
+                  "opacity": 0,
+                  "y": 20
+                },
+                "to": {
+                  "scale": 1,
+                  "opacity": 1,
+                  "y": 0
+                },
+                "duration": 0.35,
+                "ease": "back.out(2)",
+                "position": 2.9
+              },
+              {
+                "to": {
+                  "scale": 1.06
+                },
+                "duration": 0.07,
+                "ease": "power2.out",
+                "position": 3.4
+              },
+              {
+                "to": {
+                  "scale": 1
+                },
+                "duration": 0.22,
+                "ease": "power2.inOut"
+              },
+              {
+                "to": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "duration": 0.22,
+                "ease": "power2.in",
+                "position": 3.916666666666667
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "36시간 재생",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 446,
+        "y": 1630,
+        "width": 310,
+        "height": 88,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 51
+      },
+      "style": {
+        "fontFamily": "Noto Sans KR",
+        "fontUrl": "https://fonts.gstatic.com/s/notosanskr/v40/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLQ.ttf",
+        "fontWeight": "400",
+        "_weight": 500,
+        "fontSize": 40,
+        "color": "#F5F7FA",
+        "align": "center",
+        "verticalAlign": "center"
+      }
+    },
+    "chip_bg_2": {
+      "name": "chip_bg_2",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "scale": 0.4,
+                  "opacity": 0,
+                  "y": 20
+                },
+                "to": {
+                  "scale": 1,
+                  "opacity": 1,
+                  "y": 0
+                },
+                "duration": 0.35,
+                "ease": "back.out(2)",
+                "position": 3.4
+              },
+              {
+                "to": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "duration": 0.22,
+                "ease": "power2.in",
+                "position": 3.9833333333333334
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22260%22%20height%3D%2288%22%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%22257%22%20height%3D%2285%22%20rx%3D%2243%22%20fill%3D%22%230B0D14%22%20fill-opacity%3D%220.55%22%20stroke%3D%22%23F5F7FA%22%20stroke-opacity%3D%220.5%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 772,
+        "y": 1630,
+        "width": 260,
+        "height": 88,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 50
+      }
+    },
+    "chip_tx_2": {
+      "name": "chip_tx_2",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "scale": 0.4,
+                  "opacity": 0,
+                  "y": 20
+                },
+                "to": {
+                  "scale": 1,
+                  "opacity": 1,
+                  "y": 0
+                },
+                "duration": 0.35,
+                "ease": "back.out(2)",
+                "position": 3.4
+              },
+              {
+                "to": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "duration": 0.22,
+                "ease": "power2.in",
+                "position": 3.9833333333333334
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "무선 충전",
+      "timing": {
+        "display": {
+          "from": 0,
+          "to": 4100000
+        },
+        "duration": 4100000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 772,
+        "y": 1630,
+        "width": 260,
+        "height": 88,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 51
+      },
+      "style": {
+        "fontFamily": "Noto Sans KR",
+        "fontUrl": "https://fonts.gstatic.com/s/notosanskr/v40/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLQ.ttf",
+        "fontWeight": "400",
+        "_weight": 500,
+        "fontSize": 40,
+        "color": "#F5F7FA",
+        "align": "center",
+        "verticalAlign": "center"
+      }
+    },
+    "end_brand": {
+      "name": "end_brand",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "y": 50,
+                  "opacity": 0,
+                  "scale": 0.94
+                },
+                "to": {
+                  "y": 0,
+                  "opacity": 1,
+                  "scale": 1
+                },
+                "duration": 0.55,
+                "ease": "power3.out",
+                "position": 0.1
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "AURA Buds",
+      "timing": {
+        "display": {
+          "from": 4100000,
+          "to": 6000000
+        },
+        "duration": 1900000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 1250,
+        "width": 920,
+        "height": 150,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 60
+      },
+      "style": {
+        "fontFamily": "Pretendard",
+        "fontUrl": "https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2",
+        "fontWeight": "400",
+        "_weight": 800,
+        "fontSize": 130,
+        "color": "#F5F7FA",
+        "align": "center",
+        "verticalAlign": "center",
+        "shadow": {
+          "color": "#000000",
+          "alpha": 0.5,
+          "blur": 12,
+          "offsetX": 0,
+          "offsetY": 3
+        }
+      }
+    },
+    "end_cta": {
+      "name": "end_cta",
+      "animations": [
+        {
+          "type": "gsapTimeline",
+          "options": {
+            "delay": 0
+          },
+          "params": {
+            "tweens": [
+              {
+                "from": {
+                  "y": 30,
+                  "opacity": 0
+                },
+                "to": {
+                  "y": 0,
+                  "opacity": 1
+                },
+                "duration": 0.5,
+                "ease": "power3.out",
+                "position": 0.26666666666666666
+              }
+            ]
+          }
+        }
+      ],
+      "type": "Text",
+      "text": "11월 15일 사전예약",
+      "timing": {
+        "display": {
+          "from": 4100000,
+          "to": 6000000
+        },
+        "duration": 1900000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 80,
+        "y": 1420,
+        "width": 920,
+        "height": 80,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 61
+      },
+      "style": {
+        "fontFamily": "Noto Sans KR",
+        "fontUrl": "https://fonts.gstatic.com/s/notosanskr/v40/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzztgyeLQ.ttf",
+        "fontWeight": "400",
+        "_weight": 500,
+        "fontSize": 50,
+        "color": "#F5F7FA",
+        "align": "center",
+        "verticalAlign": "center",
+        "shadow": {
+          "color": "#000000",
+          "alpha": 0.5,
+          "blur": 12,
+          "offsetX": 0,
+          "offsetY": 3
+        }
+      }
+    },
+    "end_bar": {
+      "name": "end_bar",
+      "animations": [
+        {
+          "type": "wipe",
+          "options": {
+            "duration": 450000,
+            "delay": 0,
+            "easing": "expo.out"
+          },
+          "params": {
+            "direction": "right"
+          }
+        }
+      ],
+      "type": "Shape",
+      "src": "shape",
+      "shapeType": "rect",
+      "timing": {
+        "display": {
+          "from": 4500000,
+          "to": 6000000
+        },
+        "duration": 1500000,
+        "playbackRate": 1
+      },
+      "transform": {
+        "x": 430,
+        "y": 1530,
+        "width": 220,
+        "height": 10,
+        "angle": 0,
+        "opacity": 1,
+        "zIndex": 61
+      },
+      "style": {
+        "fill": "#FF5A36"
+      }
+    }
+  },
+  "transitions": []
+}

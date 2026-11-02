@@ -25,6 +25,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
+   - 한 클립의 여러 단계 동작(올라오며 펀치, 비트 펀치, 카드 뒤집기) → `references/gsap.md` (`gsapTimeline`). 3D 제품·오브젝트 샷 → `references/three.md` + `engine-recipes.md` §7.1. 웹용 GSAP·three.js 예제(ScrollTrigger, rAF, Clock, `new WebGLRenderer`)는 그대로 쓰지 않고 이 두 문서의 변환표대로 바꿉니다.
 2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.
    - 제품/서비스, 이 광고의 **단 하나의 메시지**, CTA 문구와 URL
@@ -54,7 +55,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 
 1. **타임라인이 단일 진실의 원천입니다.** `timeline.mjs` 하나를 ProjectJSON 생성, SFX, 자막, 검사가 모두 읽습니다. 타임라인이 바뀌면 프로젝트를 다시 생성하고 SFX 표 전체를 다시 맞춥니다. ProjectJSON을 손으로 고치지 않습니다.
 2. **엔진에 있는 이름만 씁니다.** 모르는 이징 이름은 엔진이 조용히 선형으로 처리하고, 등록되지 않은 모션 type이나 스크립트 이름은 그려지지 않습니다. 생성 후 `templates/validate.mjs`로 이름을 검사합니다.
-3. **결정적 렌더링.** script 어댑터와 생성 코드에 `Date.now()`, 시드 없는 `Math.random()`, 이전 프레임 상태 의존을 쓰지 않습니다.
+3. **결정적 렌더링.** script 어댑터, three 커스텀 씬과 생성 코드에 `Date.now()`, `requestAnimationFrame`, `THREE.Clock`/`Timer`, 재생 중인 GSAP 트윈, 시드 없는 `Math.random()`, 이전 프레임 상태 의존을 쓰지 않습니다. 코드 안의 GSAP는 멈춘 타임라인을 `tl.time(time)`으로 맞춥니다(`gsap.md` §7).
 4. **첫 1초 안에 훅, 마지막에 브랜드 + CTA 홀드.** 워드마크와 CTA는 자리잡은 뒤 최소 1초(6초 범퍼는 0.7초) 정지합니다. 훅은 화면·내레이션·자막 세 칸으로 쓰고, 화면 문구의 숫자·주장은 사용자 자료에서만 가져옵니다(최상급·할인·마감 표현은 `references/copy.md` §7).
 5. **샷 카드를 쓸 때는 카드 전문을 읽고**, 카드의 "알려진 함정" 값은 낮추지 않습니다.
 6. **모션 기본기는 `templates/motion.mjs`로.** 화면은 아래부터 소재(사용자 영상·이미지) → 글자 받침 → 그래픽 → 가장자리 비네트, 입장은 2–3속성 + 3–6프레임 시차, 퇴장은 입장의 절반, 스틸은 Ken Burns, 오래 머무는 조연은 숨쉬기, 빠른 이동은 모션 블러(aesthetic-rules R6–R9, Q11–Q15). 브랜드 요소의 정지(R1)는 이 모든 것보다 우선합니다. 늦게 등장하는 요소는 `options.delay` 대신 `entrance()`/`holdFrom()`을 씁니다(엔진은 delay 전에 0% 값을 걸지 않음). 지도는 `templates/map.mjs`(engine-recipes §4.1, 샷 카드 `map-*`).
