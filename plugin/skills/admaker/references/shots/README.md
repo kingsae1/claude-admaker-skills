@@ -20,6 +20,8 @@
 | [map-route-draw](map-route-draw.md) | 주인공·상승부 | 중고 | 2–3초 | 두 지점 사이 경로가 그려지며 지도가 다가감 (`map.mjs`) |
 | [handwritten-title](handwritten-title.md) | 훅·엔드카드 | 저–중 | 1.5–3초 | 손글씨 폰트 문구가 한 글자씩 써지고 내내 손으로 그린 듯 떨림 (`motion.mjs` `handwriting`) |
 | [hand-drawn-emphasis](hand-drawn-emphasis.md) | 상승부·엔드카드 | 중 | 0.5–0.8초 (얹는 샷) | 핵심 단어·가격 둘레에 손그림 동그라미·밑줄이 그려짐 (`draw.mjs`) |
+| [beat-flicker-sting](beat-flicker-sting.md) | 훅 | 최고 | 1마디 + 카피 | 막대가 솟고 컬러 바가 2프레임씩 깜빡이다 워드마크가 박에 슬램 (`presets/fast-montage.mjs`) |
+| [beat-montage-wipe](beat-montage-wipe.md) | 상승부 | 중고 | 블록당 k박 (0.8–1.4초) | 소재 컷마다 라벨·제목, 컷 사이를 투톤 사선 띠가 덮음 (`presets/fast-montage.mjs`) |
 
 ## 카드 형식
 

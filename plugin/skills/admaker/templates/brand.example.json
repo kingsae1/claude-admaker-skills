@@ -28,7 +28,10 @@
     "surface": "#16161D",
     "text": "#F5F5F7",
     "muted": "#8A8A94",
-    "accent": "#3D7BFF"
+    "accent": "#3D7BFF",
+    "accentDeep": "#1E3F99",
+    "flicker2": "#FF7A45",
+    "flicker3": "#00C2FF"
   },
   "radius": 24,
   "grid": {

@@ -72,6 +72,8 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   if (/^blob:/.test(String(c.src ?? "").trim())) err(id, "src가 blob: 주소 (새 프로젝트에서 안 보임). 앱에서 가져온 클립이면 metadata._encoding.inputExtras.originalSrc의 CDN 주소를 쓰세요");
   if (c.type === "Shape") {
     // 도형 종류는 클립 최상위 shapeType만 읽힘. style 안에 두면 사각형으로 그려진다
+    // 그라데이션은 style.gradient. fill에 CSS 그라데이션을 넣으면 캔버스가 색을 못 읽어 단색(검정) 면이 된다
+    if (/gradient\(/.test(String(c.style?.fill ?? ""))) err(id, `style.fill에 그라데이션 "${String(c.style.fill).slice(0, 30)}…" (단색으로 그려짐). style.gradient에 넣으세요`);
     if (c.style?.shapeType && c.style.shapeType !== c.shapeType) err(id, `style.shapeType "${c.style.shapeType}"은 무시됨 (도형 종류는 클립의 shapeType에: { type: "Shape", shapeType: "${c.style.shapeType}" })`);
   }
   if (c.type === "Effect" && !FILTERS.has(c.effectKey)) err(id, `모르는 Effect 필터 "${c.effectKey}" (이름은 …Filter 형식)`);
