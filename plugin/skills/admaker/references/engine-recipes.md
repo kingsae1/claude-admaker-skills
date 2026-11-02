@@ -162,7 +162,7 @@
 ## 3. 텍스트
 
 - 글자/단어/줄 단위 애니메이션은 텍스트의 `characterAnimation` 프리셋으로 씁니다. 목록은 엔진에서 직접 받습니다: `listTextAnimationPresets()` (`@admaker/engine/text-segment`).
-  - 입장(3.0.2 기준): `rise`, `line_rise`, `slam`, `zoom_settle`, `drop`, `wave`, `center_reveal`, `cascade`, `blur_in`, `spin_in`, `swing`, `skew_slide`, `elastic_pop`, `bouncy_in`, `pop`, `typewriter`, `fade_in`, `slide_up`, `slide_down`, `grow`, `panorama`, `fly_in`, `bounce`
+  - 입장(3.0.2 기준): `rise`, `line_rise`, `slam`, `zoom_settle`, `drop`, `wave`, `center_reveal`, `cascade`, `blur_in`, `spin_in`, `swing`, `skew_slide`, `elastic_pop`, `bouncy_in`, `pop`, `typewriter`, `fade_in`, `slide_up`, `slide_down`, `grow`, `panorama`, `fly_in`, `bounce`, `handwrite_in`(손글씨, @admaker/animation 2.0.8 · 엔진 3.0.7+)
   - 퇴장: `fade_out`, `shrink_out`, `sink_out`, `fly_out`, `blur_out`, `bouncy_out`
 - 각 항목은 `duration`, `stagger`, `staggerMode`(`char|word|line`), `staggerOrder`, `easing`을 덮어쓸 수 있습니다.
 - **클립 리빌**(베이스라인 아래에서 올라와 박스 밖은 잘림) = `line_rise` 또는 `rise` + 줄 단위.
@@ -191,6 +191,25 @@
 - `isKeyWord` + `colors.keyword`는 강조 단어를 따로 칠할 때. active 색과 keyword 색을 둘 다 accent로 쓰면 한 프레임에 강조가 둘이 될 수 있으니(B2) 하나만 씁니다.
 - 위치: 9:16에서 세로 약 65%(하단 20% 세이프존 위), 16:9에서 하단 타이틀 세이프 안쪽.
 - 프로젝트에 `captionConfig`가 있으면 그 색·위치가 기본값으로 합쳐집니다.
+
+### 3.2 손글씨 (handwrite_in + lineBoil)
+
+`fonts.json`에서 `category`가 `hand`·`handwriting`인 폰트(Nanum Pen Script, Nanum Brush Script, East Sea Dokdo, Gaegu, Caveat …)로 헤드라인·한 줄 문구를 쓰거나, 사용자가 "손글씨로" 써 달라고 하면 기본으로 아래 조합을 씁니다. 앱 애니메이션 탭의 텍스트 추천 '손글씨'와 같은 값입니다(엔진 3.0.7 · animation 2.0.8).
+
+- 입장: `characterAnimation`에 `handwrite_in`. 글자마다 opacity·blur·x가 바뀌어 펜으로 쓰듯 왼쪽부터 번지며 써집니다. 기본값 `duration 0.45`, `stagger 0.08`, `staggerMode "char"`, `easing "power2.out"`. 한국어도 손글씨는 글자 단위가 자연스럽습니다(10자 넘으면 `word`).
+- 유지: 클립 전체 길이의 `lineBoil`(`amount 2.5`, `scale 14`, `fps 10`, `variants 3`). 큰 글자(150px+)는 `amount` 3–4.
+- 퇴장: `fade_out` 또는 클립 keyframes `exit`.
+- `motion.mjs` `handwriting(clipDur)`가 `{ characterAnimation, animations }`를 돌려줍니다.
+
+```js
+const hw = handwriting(clipDur, { stagger: 0.08 });
+{ type: "Text", text: "오늘도 수고했어요", style: { ...fontStyle(brand.fonts.display), fontSize: 120, color: "#fff", characterAnimation: hw.characterAnimation },
+  animations: hw.animations }
+```
+
+- `handwrite_in`은 획을 따라 그리지 않고 글자가 번지며 나타납니다. 획이 실제로 그려지는 모습이 필요하면 훅·엔드카드의 큰 한 줄에 한해 `text_to_path` → stroke만 + `strokeDraw`(외곽선을 따라 그려짐) + `lineBoil`을 씁니다(`drawing.md` 글자 패스). 패스가 된 글자는 앱에서 텍스트로 고칠 수 없으니 문구가 바뀔 광고에는 쓰지 않습니다.
+- 손글씨 폰트를 본문·자막·가격 같은 정보 문구에 쓸 때는 `handwrite_in`을 빼고(읽는 속도가 느려짐) `lineBoil`만 약하게(`amount` 1.5) 붙이거나 그대로 둡니다.
+- `validate.mjs`는 손글씨 폰트의 짧은 Text에 `lineBoil`이 없으면 △ 경고를 냅니다(의도했으면 무시).
 
 ## 4. 카메라 (엔진에 카메라가 없음)
 
