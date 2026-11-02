@@ -14,7 +14,7 @@ on:
         description: 'Which number to bump'
         type: choice
         options: [patch, minor, major]
-        default: patch
+        default: minor
 
 permissions:
   contents: write
@@ -45,7 +45,7 @@ jobs:
       - name: Bump version
         id: bump
         run: |
-          LEVEL="${{ github.event.inputs.level || vars.VERSION_BUMP_LEVEL || 'patch' }}"
+          LEVEL="${{ github.event.inputs.level || vars.VERSION_BUMP_LEVEL || 'minor' }}"
           NEXT=$(node .github/scripts/bump-version.mjs "$LEVEL")
           echo "version=$NEXT" >> "$GITHUB_OUTPUT"
           echo "Bumped ($LEVEL) to $NEXT"
