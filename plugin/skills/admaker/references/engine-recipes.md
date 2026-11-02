@@ -95,7 +95,12 @@
 - `strokeDraw`, `paint` (Shape 전용): 선이 그려지기, 색 채우기.
 - `unfold` / `fold`: 접혀 있던 것이 펼쳐짐.
 - `shake`: `frequency`, `decay`. 제품 광고에서는 거의 쓰지 않습니다(aesthetic-rules Q3).
-- 반복·경로 모션은 `@admaker/animation`의 `compileAnimation()`으로 만들면 keyframes로 변환되어 나옵니다(loop 8종, path 6종 + custom).
+- `lineBoil` (모든 시각 클립, 손글씨·손그림에 추천): 라인 보일. 테두리가 초당 `fps`번(기본 10, 8–12 권장) 새로 그린 듯 미세하게 바뀌어 손글씨 폰트에 '손맛'을 줍니다. 클립 길이 전체로 붙입니다(`duration` = 클립 길이). params: `amount`(흔들림 px, 기본 2.5 · 큰 글자 3–4), `scale`(물결 크기 px, 기본 14 · 작을수록 거칠게), `variants`(모양 N개를 순환, 3이면 같은 글씨를 세 번 다시 쓴 느낌 · 0이면 매번 새 모양), `jitter`(단계마다 위치 px), `rotate`(단계마다 기울기 도). 입장 모션(keyframes·wipe·characterAnimation)과 함께 씁니다.
+  ```jsonc
+  { "type": "lineBoil", "options": { "duration": 4000000, "easing": "linear" }, "params": { "amount": 2.5, "scale": 14, "fps": 10, "variants": 3 } }
+  ```
+  앱 애니메이션 탭에서는 텍스트 추천 '손글씨'(글자별 `handwrite_in` + lineBoil)와 반복 효과 '손그림 떨림'으로 고릅니다.
+- 반복·경로 모션은 `@admaker/animation`의 `compileAnimation()`으로 만들면 keyframes로 변환되어 나옵니다(loop 9종 — lineBoil은 그대로 lineBoil로 나옴, path 6종 + custom).
 
 ### 2.6 입장·퇴장 기본형 (aesthetic-rules R6–R8)
 
@@ -364,7 +369,7 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 | Caption | `text_segment` + `_isCaption`, `_captionWords`, `_captionColors` | `wordAnimation`은 빠짐 |
 | Shape | `shape` + `transform.shape {shapeType, style}` | |
 | Adapter lottie / three(model) | `lottie` + `transform.adapter {adapter, params}` | three 모델은 `params.src`(data URL)에 있어야 함 |
-| animations | `transform.animation[] {type, start, duration, easing, iterCount, params}` | keyframes·마스크·countUp 등 15종만. `stagger`·`direction`은 빠짐 |
+| animations | `transform.animation[] {type, start, duration, easing, iterCount, params}` | keyframes·마스크·countUp·lineBoil 등 16종만. `stagger`·`direction`은 빠짐 |
 | Transition | `transitions[] {type, duration, from, to, mode}` | xfade 이름(fade, slideleft, …)으로 변환 |
 | zIndex | `transform.zIndex = 1,000,000 + z` | 앱이 트랙을 재배치해도 겹침 순서를 지키는 "명시 zIndex" 구간 |
 | **빠지는 것** | Backdrop, Effect, `clip.effects`, script 어댑터, three 커스텀 씬 | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
