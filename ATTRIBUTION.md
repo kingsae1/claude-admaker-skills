@@ -32,5 +32,15 @@
 - 참고: `RECIPE.md` (결정적 단어를 음악 드롭에 맞추는 역산, 드롭 직전 컷 가속)
 - 라이선스: MIT, Copyright (c) 2026 Vishisht Choudhary. 코드는 쓰지 않았습니다(`director.md` §7.2, `templates/timeline.mjs`의 `DROP`).
 
+## gsap-skills
+- 저장소: https://github.com/greensock/gsap-skills
+- 참고: `skills/gsap-timeline/SKILL.md`, `skills/gsap-core/SKILL.md`, `skills/gsap-utils/SKILL.md`, `skills/gsap-plugins/SKILL.md` (position 문법, delay 대신 타임라인으로 잇기, 이징 고르기, 순수 유틸 함수, 플러그인 기능 목록)
+- 라이선스: MIT, Copyright (c) 2026 GreenSock. 원문을 옮기지 않고 admaker 엔진의 `gsapTimeline`에 맞게 한국어로 새로 썼습니다(`references/gsap.md`, `engine-recipes.md` §2.2–2.3). 지원·미지원 표와 패턴은 이 저장소에서 엔진 동작을 확인해 새로 쓴 것입니다. GSAP 라이브러리 자체는 이 스킬에 포함되지 않습니다(엔진 의존성, GSAP Standard License).
+
+## threejs-skills
+- 저장소: https://github.com/cloudai-x/threejs-skills
+- 참고: `skills/threejs-lighting`, `threejs-materials`, `threejs-postprocessing`, `threejs-loaders`, `threejs-asset-pipeline`, `threejs-animation`의 `SKILL.md` (3점 조명과 환경광, PBR 재질 값, 패스 순서, HDRLoader 이름 변경, glTF 압축과 경량화, 믹서 시간 지정, 흔한 실수 목록)
+- 라이선스: MIT, Copyright (c) 2026 CloudAI-X. 코드는 복사하지 않았고 원칙만 admaker `three` 어댑터(공유 렌더러, 시간 기반 `update`)에 맞게 다시 썼습니다(`references/three.md`, `engine-recipes.md` §7.1, `samples/gsap-three`).
+
 ## admaker 엔진
 `@admaker/*` 패키지(kingsae1/admaker-plugin)는 KT 사내 전용 독점 소프트웨어입니다. 이 스킬은 엔진 소스를 포함하지 않고 공개 API 이름만 참조합니다.

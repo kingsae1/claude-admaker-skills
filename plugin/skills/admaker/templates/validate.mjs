@@ -1,7 +1,7 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
 // + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
-// 아래 목록은 @admaker/engine 3.0.5 (three 어댑터 + 씬 훅 포함) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
+// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { findFont, hasHangul } from "./fonts.mjs";
 
@@ -9,7 +9,28 @@ const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "c
 const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "perspective", "easing"]);
 const EASINGS = new Set(["linear", "none", "slow",
   ...["Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "Back", "Elastic", "Bounce"].flatMap((n) => [`easeIn${n}`, `easeOut${n}`, `easeInOut${n}`])]);
-const isGsapEase = (e) => /^(power[0-4]|sine|expo|circ|back|elastic|bounce|quad|cubic|quart|quint)\.(in|out|inOut)/.test(e);
+// gsap-core가 아는 이징: 이름(방향 생략 = .out), 설정값 "back.out(1.7)", "steps(6)". CustomEase·EasePack(rough, slow(…), expoScale)은 등록 안 됨
+const isGsapEase = (e) => /^(power[0-4]|sine|expo|circ|back|elastic|bounce|quad|cubic|quart|quint|strong|linear)(\.(in|out|inOut))?(\([\d.,\s-]*\))?$/.test(e) || /^steps\(\d+\)$/.test(e);
+const GSAP_PROPS = new Set(["x", "y", "scale", "scaleX", "scaleY", "angle", "opacity", "blur", "brightness", "rotateX", "rotateY"]);
+// 엔진 gsapTimeline이 받는 position: 숫자, "<", ">", "<0.2", "+=0.5", "-=0.2" (라벨 없음)
+const GSAP_POSITION = /^(?:[<>](?:(?:[+-]=)?-?\d*\.?\d+)?|[+-]=\d*\.?\d+)$/;
+function checkGsapTimeline(id, a) {
+  const tweens = a.params?.tweens;
+  if (!Array.isArray(tweens) || !tweens.length) return err(id, "gsapTimeline: params.tweens가 비어 있음");
+  if (tweens.length > 200) err(id, `gsapTimeline: tween ${tweens.length}개 (엔진은 앞 200개만 씀)`);
+  tweens.forEach((t, i) => {
+    const at = `gsapTimeline tweens[${i}]`;
+    if (!t?.to || !Object.keys(t.to).length) err(id, `${at}: to 없음 (from만 있으면 엔진이 tween을 버림)`);
+    for (const part of ["to", "from"]) for (const [k, v] of Object.entries(t?.[part] ?? {})) {
+      if (!GSAP_PROPS.has(k)) err(id, `${at}.${part}: 모르는 속성 "${k}" (엔진이 버림)`);
+      else if (typeof v !== "number" || !Number.isFinite(v)) err(id, `${at}.${part}.${k}: 숫자가 아님 "${v}" (상대값·단위·random()은 엔진이 버림)`);
+    }
+    if (t?.ease && !EASINGS.has(t.ease) && !isGsapEase(t.ease)) err(id, `${at}: 모르는 ease "${t.ease}" (엔진은 선형으로 처리함)`);
+    if (typeof t?.position === "string" && !GSAP_POSITION.test(t.position.trim())) err(id, `${at}: position "${t.position}"은 엔진이 모름 (라벨 불가, 앞 tween 뒤에 붙음)`);
+    if (t?.repeat !== undefined && (t.repeat < 0 || t.repeat > 100)) err(id, `${at}: repeat ${t.repeat} (엔진은 0–100으로 자름, -1 무한 불가)`);
+  });
+  if (Number(a.options?.delay) > 0) warn(id, "gsapTimeline에 options.delay: delay 전에는 from 값이 걸리지 않음. 첫 tween의 position에 대기를 넣으세요 (gsap.md §4)");
+}
 const SHAPE_ONLY = new Set(["strokeDraw", "paint"]);
 const FILTERS = new Set(["adjustment", "advancedBloom", "backdropBlur", "bloom", "colorMap", "colorOverlay", "convolution", "dot", "dropShadow", "glitch", "glow", "godray", "grayscale", "hslAdjustment", "kawaseBlur", "motionBlur", "oldFilm", "pixelate", "radialBlur", "reflection", "rgbSplit", "tiltShift"].map((n) => `${n}Filter`));
 const BACKDROPS = new Set(["solid", "gradient", "meshGradient", "noise", "floatingBlobs"]);
@@ -37,6 +58,7 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (a.type === "countUp" && c.type !== "Text") err(id, "countUp은 Text 전용");
     const e = a.options?.easing;
     if (e && !EASINGS.has(e) && !isGsapEase(e)) err(id, `모르는 easing "${e}" (엔진은 선형으로 처리함)`);
+    if (a.type === "gsapTimeline") checkGsapTimeline(id, a);
     if (a.type === "keyframes") for (const [stop, v] of Object.entries(a.params ?? {})) {
       for (const k of Object.keys(v)) if (!KEYFRAME_KEYS.has(k)) err(id, `keyframes ${stop}: 모르는 키 "${k}"`);
       if (v.easing && !EASINGS.has(v.easing) && !isGsapEase(v.easing)) err(id, `keyframes ${stop}: 모르는 easing "${v.easing}"`);

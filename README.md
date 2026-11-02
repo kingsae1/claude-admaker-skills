@@ -24,6 +24,8 @@ plugin/skills/admaker/
 │   ├── aesthetic-rules.md       검수 체크리스트 (B/R/Q/S/C/P)
 │   ├── ad-formats.md            길이·비율·세이프존·오디오 규격
 │   ├── engine-recipes.md        기법 → admaker ProjectJSON 변환법
+│   ├── gsap.md                  gsapTimeline 작성법, 이징, 웹 GSAP과 다른 점
+│   ├── three.md                 3D 제품 샷 (조명·재질·후처리·에셋), 웹 three.js 예제 옮기기
 │   ├── fonts.md / fonts.json    무드별 폰트 페어링 + admaker 앱 폰트 목록
 │   └── shots/                   샷 카드 7장 (지도 2장 포함)
 └── templates/                   프로젝트 시작 파일
@@ -42,11 +44,12 @@ plugin/skills/admaker/
     ├── render/                  헤드리스 Exporter 렌더 하니스 (Vite + Playwright)
     └── build.sh
 samples/map/                     지도 샘플 샷 (서울 → 부산 배송, 엔진 3.0.5 렌더)
+samples/gsap-three/              GSAP 타임라인 + three.js 커스텀 씬 샘플 (엔진 3.0.7 렌더)
 ```
 
 ## 상태
 
-- 엔진 기준 버전: `@admaker/engine` 3.0.5 (admaker-plugin `14ef6ee`, three 어댑터 + 씬 훅 포함), `@admaker/animation` 2.0.7
-- 렌더 하니스, `motion.mjs`의 입장·룩 스택, `map.mjs`, 지도 샷 카드 2장은 엔진 3.0.5로 렌더해 확인했습니다(`samples/map`). 나머지 샷 카드 5장의 값은 아직 렌더로 검증하지 않았습니다.
+- 엔진 기준 버전: `@admaker/engine` 3.0.7 (admaker-plugin `455c950`, three 어댑터 + 씬 훅 포함), `@admaker/animation` 2.0.8
+- 렌더 하니스, `motion.mjs`의 입장·룩 스택, `map.mjs`, 지도 샷 카드 2장은 엔진 3.0.5로 렌더해 확인했습니다(`samples/map`). `gsapTimeline`과 three 커스텀 씬은 엔진 3.0.7로 렌더해 확인했습니다(`samples/gsap-three`). 나머지 샷 카드 5장의 값은 아직 렌더로 검증하지 않았습니다.
 
 라이선스: 비공개 라이선스입니다. 저작권자의 허락 없이 복제·수정·재배포할 수 없습니다([LICENSE](LICENSE)). 외부 출처 부분은 [ATTRIBUTION.md](ATTRIBUTION.md)의 원 라이선스를 따릅니다.
