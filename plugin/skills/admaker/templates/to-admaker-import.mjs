@@ -13,7 +13,7 @@ const warnings = [];
 const warn = (id, m) => warnings.push(`△ ${id}: ${m}`);
 
 // 앱이 그대로 엔진 모션으로 넘기는 type (그 밖의 type은 앱이 버린다)
-const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline"]);
+const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "lineBoil", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline"]);
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // 트랙 행 순서를 바꿔도 클립 겹침 순서가 유지되도록 앱의 "명시 zIndex" 구간(≥ 1,000,000)으로 옮긴다
