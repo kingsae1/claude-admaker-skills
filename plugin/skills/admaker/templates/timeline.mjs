@@ -1,12 +1,25 @@
 // 단일 진실의 원천: 섹션, 템포, 히트, 카메라, 샷 배치.
 // build-project.mjs, sfx, 자막, 검사 스크립트가 모두 이 파일을 읽는다.
 
-export const FPS = 30;
-export const BPM = 120;
-export const BEAT = 60 / BPM;                 // 초
+import { gridFromAnalysis } from "./beats.mjs";
 
-/** 비트 번호 → 초 (프레임 경계로 스냅) */
-export const beat = (n) => Math.round(n * BEAT * FPS) / FPS;
+export const FPS = 30;
+// 비트 그리드 (director.md §7): 앱 BGM이면 audio.analyzeBeats 결과를 ANALYSIS에 그대로 붙여 넣는다.
+// 없으면 BPM만으로 0초 = 0박. 음악 배치(DROP·trimFrom)를 바꾸면 GRID도 그 값으로 다시 만든다.
+export const ANALYSIS = null; // 예: { bpm: 128, beatSec: 0.469, firstBeatSec: 0.21, bars: [...], peaks: [...], sections: [...] }
+export const BPM = 120;
+export const GRID = gridFromAnalysis(ANALYSIS ?? { beatSec: 60 / BPM, firstBeatSec: 0 }, { fps: FPS });
+export const BEAT = GRID.beatSec;             // 초
+
+/** 비트 번호 → 초 (프레임 경계로 스냅). 0박 = 광고 0초 이후 첫 비트 */
+export const beat = (n) => GRID.at(n);
+
+// 빠른 몽타주(스팅 → 카피 → N컷 몽타주 → 숫자 슬램 → 엔드카드)는 아래 SECTIONS·SHOTS·FOOTAGE를 손으로 쓰지 않고
+// presets/fast-montage.mjs가 박 단위 규칙으로 만든다:
+//   import { fastMontage } from "./presets/fast-montage.mjs";
+//   const M = fastMontage({ analysis: ANALYSIS, durationSec: 15, content: { … }, music: musicPlacement() });
+//   console.log(M.summary, M.warnings);
+//   export const { SECTIONS, SHOTS, FOOTAGE, BIG_HITS, DURATION } = M;
 /** 초 → μs (엔진 단위) */
 export const us = (sec) => Math.round(sec * 1e6);
 
