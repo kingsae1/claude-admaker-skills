@@ -3,7 +3,7 @@
 // 사용: node validate.mjs project.json
 // 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
-import { findFont, hasHangul } from "./fonts.mjs";
+import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold"]);
 const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "perspective", "easing"]);
@@ -37,6 +37,9 @@ const BACKDROPS = new Set(["solid", "gradient", "meshGradient", "noise", "floati
 // Core(Studio 로딩)는 이 타입들만 빈 src를 허용하고 나머지는 클립을 버린다
 const SRC_OPTIONAL = new Set(["Text", "Caption", "Effect", "Transition"]);
 const FPS = p => p.settings?.fps ?? 30;
+// 폰트 파일 이름 → 그 파일의 실제 굵기 (앱 경로 /fonts/… 와 CDN 경로 모두 파일 이름으로 맞춘다)
+const fileName = (u) => decodeURIComponent(String(u ?? "").split(/[\\/]/).pop().split("?")[0]);
+const WEIGHT_OF_FILE = new Map(FONTS.flatMap((f) => f.variants.filter((v) => v.url && !v.derived).map((v) => [fileName(v.url), v.weight])));
 
 const file = process.argv[2] ?? "project.json";
 const p = JSON.parse(fs.readFileSync(file, "utf8"));
@@ -65,6 +68,12 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     }
   }
   if (!SRC_OPTIONAL.has(c.type) && !(c.src && String(c.src).trim())) err(id, `${c.type}에 src 없음 (Core가 클립을 버림. 절차적 클립은 "backdrop"/"shape"/"script"/"three" 같은 표식 값)`);
+  // blob: 주소는 그 앱 세션에서만 읽힘. 새 프로젝트로 불러오면 빈 화면이 된다 (engine-recipes §9)
+  if (/^blob:/.test(String(c.src ?? "").trim())) err(id, "src가 blob: 주소 (새 프로젝트에서 안 보임). 앱에서 가져온 클립이면 metadata._encoding.inputExtras.originalSrc의 CDN 주소를 쓰세요");
+  if (c.type === "Shape") {
+    // 도형 종류는 클립 최상위 shapeType만 읽힘. style 안에 두면 사각형으로 그려진다
+    if (c.style?.shapeType && c.style.shapeType !== c.shapeType) err(id, `style.shapeType "${c.style.shapeType}"은 무시됨 (도형 종류는 클립의 shapeType에: { type: "Shape", shapeType: "${c.style.shapeType}" })`);
+  }
   if (c.type === "Effect" && !FILTERS.has(c.effectKey)) err(id, `모르는 Effect 필터 "${c.effectKey}" (이름은 …Filter 형식)`);
   for (const fx of c.effects ?? []) if (!FILTERS.has(fx.key)) err(id, `clip.effects: 모르는 필터 "${fx.key}"`);
   if (c.type === "Backdrop") {
@@ -82,6 +91,10 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     // 손글씨 폰트 짧은 문구에 lineBoil이 없으면 '손맛'이 빠짐 (engine-recipes §3.2)
     if (hit && /^hand/.test(hit.font.category ?? "") && String(text ?? "").length <= 20 && !(c.animations ?? []).some((a) => a.type === "lineBoil"))
       warn(id, `손글씨 폰트 "${fam}"인데 lineBoil 없음: motion.mjs handwriting()으로 handwrite_in + lineBoil을 붙이세요 (engine-recipes §3.2, 의도했다면 무시)`);
+    // 가는 파일에 굵기를 요청하면 가짜 볼드(획만 두꺼워짐)가 됨. 굵은 파일 하나를 고르세요 (B5, fonts.mjs fontStyle)
+    const fileW = WEIGHT_OF_FILE.get(fileName(c.style?.fontUrl));
+    const wantW = Number(c.style?._weight ?? (c.style?.fontWeight === "bold" ? 700 : c.style?.fontWeight));
+    if (fileW && fileW <= 300 && wantW >= 600) warn(id, `"${fam}" 굵기 ${wantW}를 원하는데 파일은 ${fileW}(${fileName(c.style.fontUrl)}): 가짜 볼드로 보임. fontStyle({ name, weight: ${wantW} })로 굵은 파일을 고르세요`);
     if (fam && c.style?.fontUrl) fontUrls.set(fam, new Set([...(fontUrls.get(fam) ?? []), c.style.fontUrl]));
   }
   const kfs = (c.animations ?? []).filter((a) => a.type === "keyframes");
