@@ -1,0 +1,63 @@
+name: Bump plugin version
+
+# Every push to main that changes the skill bumps the plugin version once,
+# in plugin.json and marketplace.json together, and commits it back.
+# PRs should not edit the version by hand.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugin/**'
+  workflow_dispatch:
+    inputs:
+      level:
+        description: 'Which number to bump'
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+
+permissions:
+  contents: write
+
+# Two merges close together bump one after the other, never in parallel.
+concurrency:
+  group: bump-version
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    # The bump commit is pushed with GITHUB_TOKEN, which does not start new
+    # workflow runs; the actor and message checks are a second guard against loops.
+    if: >-
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message, '[version bump]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bump version
+        id: bump
+        run: |
+          LEVEL="${{ github.event.inputs.level || vars.VERSION_BUMP_LEVEL || 'patch' }}"
+          NEXT=$(node .github/scripts/bump-version.mjs "$LEVEL")
+          echo "version=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "Bumped ($LEVEL) to $NEXT"
+
+      - name: Commit and push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add plugin/.claude-plugin/plugin.json .claude-plugin/marketplace.json
+          git commit -m "chore: plugin ${{ steps.bump.outputs.version }} [version bump] [skip ci]"
+          for i in 1 2 3; do
+            git push origin HEAD:main && exit 0
+            git pull --rebase origin main
+          done
+          exit 1

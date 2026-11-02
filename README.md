@@ -47,6 +47,14 @@ samples/map/                     지도 샘플 샷 (서울 → 부산 배송, �
 samples/gsap-three/              GSAP 타임라인 + three.js 커스텀 씬 샘플 (엔진 3.0.7 렌더)
 ```
 
+## 버전
+
+플러그인 버전(`plugin/.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`)은 직접 고치지 않습니다. `plugin/` 아래가 바뀐 커밋이 `main`에 들어오면 GitHub Action(`.github/workflows/bump-version.yml`)이 두 파일의 버전을 같이 한 칸 올리고 `[version bump]` 커밋을 `main`에 넣습니다. PR 하나를 머지하면 한 번 올라갑니다.
+
+- 기본은 끝자리(patch, 0.2.6 → 0.2.7)입니다. 저장소 변수 `VERSION_BUMP_LEVEL`을 `minor`로 두면 가운데 자리(0.2.6 → 0.3.0)가 올라갑니다.
+- 큰 변경은 Actions 탭에서 "Bump plugin version"을 직접 실행해 `minor`나 `major`를 고릅니다.
+- 로컬에서 확인할 때: `node .github/scripts/bump-version.mjs patch`
+
 ## 상태
 
 - 엔진 기준 버전: `@admaker/engine` 3.0.7 (admaker-plugin `455c950`, three 어댑터 + 씬 훅 포함), `@admaker/animation` 2.0.8
