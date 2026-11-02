@@ -1,7 +1,7 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
 // + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
-// 아래 목록은 @admaker/engine 3.0.5 (three 어댑터 + 씬 훅 포함) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
+// 아래 목록은 @admaker/engine 3.0.5 (three 어댑터 + 씬 훅 포함) 기준, lineBoil은 3.0.7. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { findFont, hasHangul } from "./fonts.mjs";
 
@@ -57,6 +57,9 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     else if (!hit) warn(id, `"${fam}"은 admaker 폰트 목록(fonts.json)에 없음: 앱에서 다른 폰트로 보일 수 있음 (B5)`);
     else if (!hit.font.korean && hasHangul(text)) err(id, `"${fam}"은 한글이 없는 폰트인데 한글 텍스트 (B5)`);
     if (fam && !c.style?.fontUrl) err(id, `"${fam}"에 fontUrl 없음 (엔진이 폰트를 못 불러옴)`);
+    // 손글씨 폰트 짧은 문구에 lineBoil이 없으면 '손맛'이 빠짐 (engine-recipes §3.2)
+    if (hit && /^hand/.test(hit.font.category ?? "") && String(text ?? "").length <= 20 && !(c.animations ?? []).some((a) => a.type === "lineBoil"))
+      warn(id, `손글씨 폰트 "${fam}"인데 lineBoil 없음: motion.mjs handwriting()으로 handwrite_in + lineBoil을 붙이세요 (engine-recipes §3.2, 의도했다면 무시)`);
     if (fam && c.style?.fontUrl) fontUrls.set(fam, new Set([...(fontUrls.get(fam) ?? []), c.style.fontUrl]));
   }
   const kfs = (c.animations ?? []).filter((a) => a.type === "keyframes");

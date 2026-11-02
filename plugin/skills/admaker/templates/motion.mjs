@@ -59,6 +59,20 @@ export function breathe(clipDur, start, { period = 6, scale = 1.015, y = -3 } = 
     params: { "0%": { scale: 1, y: 0, easing: ease }, "50%": { scale, y, easing: ease }, "100%": { scale: 1, y: 0 } } };
 }
 
+/**
+ * 손글씨 (engine-recipes §3.2): 글자별 handwrite_in 입장 + 클립 내내 lineBoil. 앱 텍스트 추천 '손글씨'와 같은 값.
+ * clipDur(초) = 클립 길이. 돌려준 characterAnimation은 Text style에, animations는 클립 animations에 넣는다.
+ * write=false면 입장 없이 lineBoil만(본문·정보 문구용, amount를 1.5 정도로 낮춰 쓴다).
+ */
+export function handwriting(clipDur, { write = true, duration = 0.45, stagger = 0.08, staggerMode = "char", easing = "power2.out",
+  amount = 2.5, scale = 14, fps = 10, variants = 3, exit = false } = {}) {
+  const characterAnimation = [];
+  if (write) characterAnimation.push({ type: "handwrite_in", duration, stagger, staggerMode, easing });
+  if (exit) characterAnimation.push({ type: "fade_out", duration: 0.3 });
+  const animations = [{ type: "lineBoil", options: { duration: us(clipDur), delay: 0, easing: "linear" }, params: { amount, scale, fps, variants } }];
+  return { characterAnimation, animations };
+}
+
 /** 모션 블러 (Q14): 가로 이동 keyframes의 stop에 넣을 값. px/프레임 기준 30 이상일 때만. */
 export const blurFor = (pxPerFrame) => (Math.abs(pxPerFrame) >= 30 ? Math.min(40, Math.round(Math.abs(pxPerFrame) / 3)) : 0);
 
