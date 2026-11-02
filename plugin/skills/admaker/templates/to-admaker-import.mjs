@@ -88,9 +88,37 @@ const engineTracks = (p.tracks ?? []).filter((t) => t.type !== "Transition");
 const topZ = (t) => Math.max(0, ...t.clipIds.map((id) => p.clips[id]?.transform?.zIndex ?? 0));
 const ordered = [...engineTracks].sort((a, b) => topZ(b) - topZ(a));
 
-for (const [row, track] of ordered.entries()) {
+// 트랙 이름: 앱은 트랙을 이름으로 묶으므로(같은 이름이면 뒤 트랙이 앞 트랙을 덮어씀) 이름이 겹치지 않게 만든다.
+// 한글 등 비ASCII 이름은 "_"로 바뀌어 서로 같아지기 쉽다(예: "카피 1"과 "와이프 1" → track____1)
+const usedTrackNames = new Set(["track_bg"]);
+function trackNameFor(track) {
+  const raw = String(track.name ?? track.id).replace(/^t_/, "");
+  const base = `track_${raw.replace(/[^\w-]/g, "_")}`;
+  let name = base, i = 2;
+  while (usedTrackNames.has(name)) name = `${base}_${i++}`;
+  usedTrackNames.add(name);
+  if (/[^\w-]/.test(raw) || name !== base) warn(String(track.id), `트랙 이름 "${raw}"을 "${name}"으로 바꿨습니다 (앱 트랙 이름은 ASCII, 겹치지 않게)`);
+  return name;
+}
+// 레인: 앱 타임라인 행 하나에는 시간이 겹치지 않는 클립만 둔다. 겹치면 같은 트랙을 레인 여러 개로 나눈다(겹침 순서는 zIndex로 유지)
+function splitLanes(clipIds) {
+  const span = (id) => p.clips[id]?.timing?.display ?? { from: 0, to: 0 };
+  const sorted = [...clipIds].filter((id) => p.clips[id]).sort((a, b) => span(a).from - span(b).from);
+  const lanes = [];
+  for (const id of sorted) {
+    const lane = lanes.find((l) => span(l.at(-1)).to <= span(id).from);
+    if (lane) lane.push(id); else lanes.push([id]);
+  }
+  return lanes;
+}
+
+let row = 0;
+for (const track of ordered) {
+  const lanes = track.type === "Audio" ? [track.clipIds] : splitLanes(track.clipIds);
+  const trackName = trackNameFor(track);
+  for (const [lane, laneIds] of lanes.entries()) {
   const clips = [];
-  for (const id of track.clipIds) {
+  for (const id of laneIds) {
     const c = p.clips[id];
     if (!c) continue;
     const d = c.timing?.display ?? { from: 0, to: 0 };
@@ -102,6 +130,7 @@ for (const [row, track] of ordered.entries()) {
       case "Image":
       case "Video": {
         const kind = c.type === "Image" ? "image" : "video";
+        if (/^blob:/.test(String(c.src ?? "").trim())) warn(id, "src가 blob: 주소라 새 프로젝트에서 안 보일 수 있습니다 (originalSrc의 CDN 주소를 쓰세요)");
         const source = inputFor(c.src, kind, { width: c.source?.width ?? c.transform?.width, height: c.source?.height ?? c.transform?.height, ...(kind === "video" ? { duration: sec(c.timing?.duration) } : {}) });
         wc = { ...base, clipType: kind, source, transform: baseTransform(c) };
         if (kind === "video") {
@@ -133,7 +162,16 @@ for (const [row, track] of ordered.entries()) {
         break;
       }
       case "Shape": {
-        wc = { ...base, clipType: "shape", source: "", transform: { ...baseTransform(c), shape: { shapeType: c.shapeType ?? "rectangle", style: { ...(c.style ?? {}) } } } };
+        const style = { ...(c.style ?? {}) };
+        let shapeType = c.shapeType;
+        if (!shapeType && style.shapeType) { shapeType = style.shapeType; warn(id, `style.shapeType "${style.shapeType}"을 shape.shapeType으로 옮겼습니다 (도형 종류는 클립 최상위에)`); }
+        delete style.shapeType;
+        shapeType ??= "rectangle";
+        // 서버 내보내기는 도형을 SVG 사각형(rx = borderRadius)으로 굽는다. pill은 반지름을 적어 두어야 둥글게 나온다
+        const w = c.transform?.width ?? 0, h = c.transform?.height ?? 0;
+        if (shapeType === "pill" && style.borderRadius == null) style.borderRadius = Math.min(w, h) / 2;
+        if (shapeType === "rounded" && style.borderRadius == null) warn(id, "rounded 도형에 style.borderRadius가 없어 사각형으로 그려집니다");
+        wc = { ...base, clipType: "shape", source: "", transform: { ...baseTransform(c), shape: { shapeType, style } } };
         break;
       }
       case "Adapter": {
@@ -165,7 +203,10 @@ for (const [row, track] of ordered.entries()) {
   if (!clips.length) continue;
   const types = new Set(clips.map((x) => x.clipType));
   const type = types.has("audio") ? "audio" : [...types].every((t) => t === "text" || t === "text_segment") ? "text" : [...types].every((t) => t === "image") ? "image" : "video";
-  wireTracks.push({ name: `track_${String(track.name ?? track.id).replace(/^t_/, "").replace(/[^\w-]/g, "_")}`, type, studioRow: row, clips });
+  let name = trackName;
+  if (lane > 0) { name = `${trackName}_l${lane + 1}`; while (usedTrackNames.has(name)) name += "_"; usedTrackNames.add(name); }
+  wireTracks.push({ name, type, studioRow: row++, clips });
+  }
 }
 
 // ③ 전환

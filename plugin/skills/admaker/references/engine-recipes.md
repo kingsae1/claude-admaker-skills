@@ -386,7 +386,7 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 | Image / Video / Audio | `clipType` image / video / audio + `inputs` | 오디오 페이드는 `fadeInSec`/`fadeOutSec` |
 | Text | `text`, 스타일은 transform(`fontName`, `fontSize`, `color`, `align`, …) | `characterAnimation`은 transform에 실어 앱의 text_segment 렌더러가 그림 |
 | Caption | `text_segment` + `_isCaption`, `_captionWords`, `_captionColors` | `wordAnimation`은 빠짐 |
-| Shape | `shape` + `transform.shape {shapeType, style}` | |
+| Shape | `shape` + `transform.shape {shapeType, style}` | pill은 `borderRadius`를 채워 넣음 |
 | Adapter lottie / three(model) | `lottie` + `transform.adapter {adapter, params}` | three 모델은 `params.src`(data URL)에 있어야 함 |
 | animations | `transform.animation[] {type, start, duration, easing, iterCount, params}` | keyframes·마스크·countUp·lineBoil 등 16종만. `stagger`·`direction`은 빠짐 |
 | Transition | `transitions[] {type, duration, from, to, mode}` | xfade 이름(fade, slideleft, …)으로 변환 |
@@ -394,6 +394,15 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 | **빠지는 것** | Backdrop, Effect, `clip.effects`, script 어댑터, three 커스텀 씬 | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
 
 - 변환 후 경고(△)를 읽고, 빠진 것이 화면에 중요하면 대체합니다.
+
+**알려진 함정** (2026-11, 엔진 3.0.7 · 앱 v0.12.1 광고에서 겪은 것. 앞의 셋은 변환기가 처리합니다)
+
+- **트랙 이름**: 앱은 트랙을 이름으로 묶어서 같은 이름이면 뒤 트랙이 앞 트랙을 통째로 덮습니다. 한글 이름은 `_`로 바뀌어 겹치기 쉽습니다(`카피 1`, `와이프 1` → `track____1`). 변환기가 겹치면 `_2`를 붙이고 경고합니다. 트랙 이름은 처음부터 ASCII로 짓습니다(`copy1`, `wipe1`).
+- **레인**: 앱 타임라인 한 행에는 시간이 겹치지 않는 클립만 둡니다. 변환기가 겹치는 클립을 `<트랙>_l2`, `_l3` 행으로 나눕니다. 겹침 순서는 zIndex라 화면은 그대로입니다.
+- **pill**: 서버 내보내기는 도형을 `rx = borderRadius`인 SVG 사각형으로 굽습니다. 변환기가 `pill`에 `borderRadius = min(w, h) / 2`를 넣습니다. `rounded`는 `style.borderRadius`를 직접 적습니다.
+- **도형 종류는 클립 최상위 `shapeType`**: `style.shapeType`에 두면 사각형으로 그려집니다. `validate.mjs`가 오류로 잡습니다.
+- **`blob:` 주소 금지**: 앱 편집기에서 가져온 클립의 `src`가 `blob:`이면 그 세션에서만 보입니다. `metadata._encoding.inputExtras.originalSrc`의 CDN 주소를 씁니다. `validate.mjs`가 오류로 잡습니다.
+- **한글 폰트는 굵은 파일 하나**: 엔진은 폰트 이름 하나에 파일 하나만 등록합니다(B5). 가는 파일(예: `Paperlogy-1Thin`)에 `isBold`를 걸면 가짜 볼드가 됩니다. `fontStyle({ name, weight: 800 })`으로 굵은 파일을 고릅니다.
 - 앱에서 열어 렌더 결과와 같은지 한 번 확인합니다(특히 텍스트 폰트·위치, 겹침 순서). **아직 실제 앱 불러오기로 검증하지 않았습니다.**
 
 ### 9.1 플래너 모드 템플릿 (`template.json`)
