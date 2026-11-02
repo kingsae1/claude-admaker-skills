@@ -32,6 +32,8 @@
 
 ## 지켜야 할 것
 
+- **손글씨 폰트는 손글씨 모션과 같이.** `category`가 `hand`·`handwriting`인 폰트로 쓴 헤드라인·한 줄 문구에는 `handwrite_in` 입장 + `lineBoil`을 붙입니다(`motion.mjs` `handwriting()`, `engine-recipes.md` §3.2). 정적이거나 일반 페이드로 두면 손글씨 느낌이 살지 않습니다.
+
 - **한글 텍스트에는 `korean: true` 폰트만.** Latin 폰트에 한글을 넣으면 대체 폰트로 깨져 보입니다. Latin 폰트는 숫자·영문 단어에만 씁니다(`validate.mjs`가 검사).
 - **패밀리는 최대 3개**(display + body + numeric). 굵기 대비는 같은 패밀리의 다른 굵기보다 **다른 패밀리**로 만듭니다.
 - **한글 폰트는 한 프로젝트에서 한 굵기만.** 엔진은 폰트 이름 하나에 파일 하나만 등록하기 때문입니다(Pretendard 800 제목과 Pretendard 400 본문을 같이 쓰면 하나가 다른 굵기로 그려짐). 같은 패밀리를 두 굵기로 쓰고 싶으면 한쪽을 다른 패밀리로 바꿉니다. Latin 폰트는 굵기마다 이름(postScriptName)이 달라 여러 굵기를 써도 됩니다.
