@@ -42,5 +42,25 @@
 - 참고: `skills/threejs-lighting`, `threejs-materials`, `threejs-postprocessing`, `threejs-loaders`, `threejs-asset-pipeline`, `threejs-animation`의 `SKILL.md` (3점 조명과 환경광, PBR 재질 값, 패스 순서, HDRLoader 이름 변경, glTF 압축과 경량화, 믹서 시간 지정, 흔한 실수 목록)
 - 라이선스: MIT, Copyright (c) 2026 CloudAI-X. 코드는 복사하지 않았고 원칙만 admaker `three` 어댑터(공유 렌더러, 시간 기반 `update`)에 맞게 다시 썼습니다(`references/three.md`, `engine-recipes.md` §7.1, `samples/gsap-three`).
 
+## generative-media-skills
+- 저장소: https://github.com/calesthio/generative-media-skills
+- 참고: `skills/production/creative-direction/cinematic-shot-direction`, `character-design-continuity`, `visual-style-direction`, `skills/production/content-formats/ecommerce-product-imagery`, `skills/production/governance-delivery/asset-continuity-management`의 `SKILL.md` (클립 하나에 동작·카메라 하나, 끝 프레임과 no cuts, 카메라 무브·숏 크기·화각 용어, 높이·각도 분리, 정체성 앵커와 금지 줄, 원장과 버전, 제품 사실·연출·금지·후반 네 덩어리, 만들게 하지 않는 것 목록, 스타일 규칙 한 문장과 고정/변수, 중간 프레임 검수)
+- 라이선스: MIT, Copyright (c) 2026 generative-media-skills contributors. 원문을 옮기지 않고 다시 썼습니다(`references/footage-gen.md`). 프롬프트 템플릿과 예시는 생성 모델이 잘 따르도록 영문으로 새로 썼고, 설명은 한국어입니다. admaker 앱 도구 이름, 4·6·8초 길이, 비트 맞추기, `templates/footage-plan.mjs` 검사는 이 저장소에서 새로 쓴 것입니다.
+
+## pexo-skills
+- 저장소: https://github.com/pexoai/pexo-skills
+- 참고: `skills/veo-3.2-prompter/SKILL.md`, `references/atomic_element_mapping.md`, `references/veo_syntax_guide.md` (Shot → Subject → Environment → Camera → Style 순서, 카메라는 글로 지시, 레퍼런스 우선순위 얼굴 > 제품 > 스타일)
+- 라이선스: MIT, Copyright (c) 2026 Pexo (pexoai). 코드와 Pexo 서비스는 쓰지 않았습니다(`references/footage-gen.md` §2, §7).
+
+## claude-ads
+- 저장소: https://github.com/AgriciDaniel/claude-ads
+- 참고: `skills/ads-photoshoot/SKILL.md` (제품 형태·패키지·로고·라벨·색·재질 보존, 권리 확인, 비용 상한, 사람 검수 필수)
+- 라이선스: MIT. 원문을 옮기지 않고 다시 썼습니다(`references/footage-gen.md` §4.1).
+
+## goose-skills
+- 저장소: https://github.com/gooseworks-ai/goose-skills
+- 참고: `skills/video/create-image-fal/SKILL.md` (빈 패키지·라벨 없는 제품은 치명 결함, 라벨은 2배 확대로 원본과 비교)
+- 라이선스: MIT. 도구와 GooseWorks 서비스는 쓰지 않았습니다(`references/footage-gen.md` §4.1).
+
 ## admaker 엔진
 `@admaker/*` 패키지(kingsae1/admaker-plugin)는 KT 사내 전용 독점 소프트웨어입니다. 이 스킬은 엔진 소스를 포함하지 않고 공개 API 이름만 참조합니다.
