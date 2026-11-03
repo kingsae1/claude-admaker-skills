@@ -2,6 +2,13 @@
 
 admaker 엔진으로 광고 모션그래픽을 만드는 Claude Code 스킬입니다. 결과물은 `@admaker/engine` ProjectJSON이고, 브라우저 `Exporter`로 mp4를 렌더합니다. 같은 JSON은 admaker Studio에서 열어 고칠 수 있습니다.
 
+## 필요 조건
+
+**이 스킬은 admaker 엔진(`@admaker/engine`, 사내 비공개 패키지, 기준 3.0.7)이 있어야 동작합니다.** 엔진이 ProjectJSON을 그리고 브라우저 `Exporter`로 mp4를 렌더합니다. 엔진이 없으면 스킬은 다른 방식으로 대신 만들지 않고, 설치를 안내한 뒤 멈춥니다.
+
+- 엔진은 npm에 없습니다. admaker 앱의 '스킬 설치'가 스킬 폴더의 `vendor/`에 넣어 주고, 광고 작업 폴더마다 `install-engine.mjs`로 버전을 고정해 설치합니다.
+- admaker 앱은 선택입니다. 앱 MCP가 연결되어 있으면 광고 불러오기, AI 이미지·영상·BGM·TTS 생성, `get_ad_guide`, 템플릿을 같이 씁니다.
+
 ## 설치
 
 admaker 데스크톱 앱에서 MCP 메뉴 → **Claude와 연결하기**를 엽니다.
