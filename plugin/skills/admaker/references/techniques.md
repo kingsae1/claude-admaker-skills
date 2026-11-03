@@ -16,7 +16,7 @@ admaker MCP의 강점은 **모션그래픽(엔진) 하나로 끝내지 않고, �
 | 이미지 고치기(img2img) | 사용자 사진의 배경·조명·계절·색감 바꾸기, 텍스트 여백 만들기, 같은 제품으로 장면 여러 벌 | `ai.image.edit { clipRef, prompt }` | 있음 |
 | 누끼·레이어 | 제품·인물만 오려내기, 피사체를 앞 레이어로 분리 | `ai.image.removeBackground`, `ai.image.separateLayers` | 있음 |
 | 영상 생성 | 글로 장면 만들기, 사진을 움직이게, 영상 첫 프레임으로 다시 만들기, 영상 늘리기 | `ai.video.generate`, `ai.video.imageToVideo`, `ai.video.regenerate`, `ai.video.extend` | 큼 |
-| 소리 | BGM, 내레이션(목소리 선택), 효과음 | `ai.bgm.generate`, `ai.voice.generate`(`list_voices`), `ai.sfx.generate` | 있음 |
+| 소리 | BGM, 내레이션(목소리 선택, 대본의 `[excited]`·`[short pause]` 같은 오디오 태그로 감정·말투·쉼 지시: `narration.md`), 효과음 | `ai.bgm.generate`, `ai.voice.generate`(`list_voices`), `ai.sfx.generate` | 있음 |
 | 분석 | BGM의 BPM·마디·피크·씬 경계 후보 | `audio.analyzeBeats` | 없음 |
 | 사용자 소재 | 로고·제품 사진·영상·음원 | `upload_media` → `add_media_to_timeline` | 없음 |
 | 그 밖의 앱 기능 | 패널에만 있는 기능(앵글 바꾸기, 업스케일 등) | `list_menu_commands`, `ui_snapshot` → `ui_*` | 기능마다 |
