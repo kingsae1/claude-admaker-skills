@@ -164,7 +164,32 @@ Preserve these identity anchors exactly. Avoid changing age, face shape, body pr
 4. **원장(ledger)을 남깁니다.** 씬표에 씬마다 시작 이미지, 앵커 버전, 프롬프트, 승인한 생성본, 버린 생성본의 틀어짐 메모를 적습니다. 파일 이름이나 대화 기억으로 관리하지 않습니다. 모델이 바뀌면 같은 프롬프트라도 새 버전으로 봅니다.
 5. **실존 인물은 사용자가 동의를 확인한 경우만.** 공개된 사진이 있다는 것은 동의가 아닙니다. 유명인·아이·일반인 얼굴은 만들지 않습니다.
 
-지금 앱 MCP에는 첫·끝 프레임 지정 영상과 레퍼런스 영상 도구가 없습니다(앱 백엔드에는 있음). 그래서 연속 컷은 2번(같은 시작 이미지)과 `ai.video.extend`로 잇고, 두 컷 사이는 엔진 전환(와이프·마스크)으로 가립니다. 이 도구가 MCP에 열리면 이 절을 갱신합니다.
+### 7.1 일관성 도구 고르기
+
+앱의 `list_studio_tools`에 아래 두 도구가 있으면 씁니다. 없는 앱 버전이면 2번(같은 시작 이미지)과 `ai.video.extend`로 잇고, 두 컷 사이는 엔진 전환(와이프·마스크)으로 가립니다.
+
+| 상황 | 도구 | 넘기는 것 |
+|---|---|---|
+| 앞 컷에서 끊김 없이 이어지는 다음 컷 | `ai.video.framesToVideo` | `firstClipRef`: 앞 컷 **영상** 클립(마지막 프레임을 씀), `lastClipRef`: 이 컷의 끝 장면 이미지 |
+| 정해 둔 시작·끝 장면 사이를 움직임으로 | `ai.video.framesToVideo` | 시작 이미지, 끝 이미지(둘 다 같은 원본에서 `ai.image.edit`로 만든 것) |
+| 같은 인물·제품을 새 장소·새 동작으로 | `ai.video.referenceToVideo` | `clipRefs`: 레퍼런스 이미지 1–3장, 중요한 순서(얼굴 > 제품 > 스타일) |
+| 사진 한 장을 그대로 움직이게 | `ai.video.imageToVideo` | 그 이미지 |
+
+레퍼런스 영상 프롬프트는 레퍼런스를 직접 가리킵니다. 끝 장면을 정했으면 첫·끝 프레임 영상 프롬프트는 그 사이의 움직임만 씁니다.
+
+```text
+The person from the reference image walks into the sunlit kitchen and picks up the product from the second reference image with the right hand.
+Medium shot, single continuous shot, no cuts. Slow truck right following her, ending on a steady frame with the product label facing the camera.
+Keep the face, hair, outfit and the product's shape, color, logo and label exactly as in the reference images.
+No text, no new logos, no extra people, no cuts.
+```
+
+```text
+Single continuous shot, no cuts. The camera slowly arcs a quarter turn around the bottle from the first frame to the last frame while the light shifts from cool morning to warm afternoon.
+The product's shape, color, logo and label stay exactly as in the source images. No text, no morphing, no camera shake.
+```
+
+얼굴이 다른 사람 둘을 한 번에 레퍼런스로 넣지 않습니다. 레퍼런스 슬롯이 모자라면 얼굴 > 제품 > 스타일 > 배경 순으로 남깁니다.
 
 ## 8. 길이와 비트 맞추기
 
