@@ -53,6 +53,10 @@ export const CAMERA = {
 
 // 바닥 소재: 사용자가 준 영상·이미지. 항상 맨 아래(z 2–9)에 프레임 가득 깔리고, 모션 그래픽은 그 위에 얹힌다.
 // from/to: 광고 기준 초. size: 원본 픽셀 크기(cover 맞춤 계산용). trimFrom: 영상의 몇 초부터 쓸지. still: 이미지면 Ken Burns.
+// 앱 AI로 만든 소재는 gen을 붙인다(footage-plan.mjs가 길이·컷·프롬프트를 검사, references/footage-gen.md). 프롬프트는 영문.
+//   { src: "assets/gen/hero.mp4", type: "Video", from: beat(3), to: beat(9), size: [1080, 1920], trimFrom: 0, volume: 0,
+//     gen: { tool: "ai.video.imageToVideo", source: "assets/product.jpg", durationSec: 4, product: true,
+//            prompt: "Product close-up. The bottle stays still and centered while the camera slowly dollies in; soft rim light sweeps left to right. Ends on a clean, steady frame." } },
 export const FOOTAGE = [
   { src: "assets/input.mp4", type: "Video", from: 0, to: SECTIONS.at(-1).to, size: [1080, 1920], trimFrom: 0, volume: 0 },
 ];

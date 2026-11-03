@@ -4,8 +4,9 @@
 // 모션 기본형(entrance/exit/kenBurns/breathe/captionPages)은 motion.mjs 에서 import 한다.
 import fs from "node:fs";
 import path from "node:path";
-import { FPS, DURATION, SHOTS, CAMERA, FOOTAGE, us } from "./timeline.mjs";
+import { FPS, DURATION, SHOTS, CAMERA, FOOTAGE, GRID, us } from "./timeline.mjs";
 import { lookStack, kenBurns } from "./motion.mjs";
+import { checkFootage } from "./footage-plan.mjs";
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (v.startsWith("--") ? [...a, [v.slice(2), arr[i + 1]]] : a), []));
 const [W, H] = (args.size ?? "1080x1920").split("x").map(Number);
@@ -68,6 +69,7 @@ for (const [i, f] of FOOTAGE.entries()) {
   }, "footage", f.type);
 }
 if (!FOOTAGE.length) console.warn("△ FOOTAGE가 비어 있음: 이 스킬의 광고는 사용자 영상·이미지 위에 그래픽을 얹는 구조입니다 (SKILL.md)");
+for (const m of checkFootage(FOOTAGE, { duration: DURATION, grid: GRID, fps: FPS })) console.warn(m); // 생성 소재 길이·컷·프롬프트 (footage-gen.md)
 
 // 룩 스택 (aesthetic-rules Q11): 소재가 있으면 가장자리 비네트(z 99)만(소재를 뿌옇게 하는 틴트·그레인 없음). 소재가 프레임을 다 못 채우면 생성 배경(z 1).
 if (args.look !== "off") {
