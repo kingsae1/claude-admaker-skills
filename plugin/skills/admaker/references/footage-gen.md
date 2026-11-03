@@ -98,6 +98,35 @@ Post-production plan: Headline, price and CTA are added later as motion graphics
 라이프스타일 장면의 소품은 구성품으로 오해받지 않게 합니다("props clearly separate from the product, not looking included").
 여러 색상·용량은 한 프롬프트에 섞지 않고 변형마다 따로 만듭니다.
 
+### 4.1 생성 전 진단과 보정
+
+사용자 사진을 이미지→영상에 넣기 전에 먼저 진단하고, 고칠 곳만 고칩니다. 문제가 있는 사진을 그대로 영상으로 만들면 흐림·색 틀어짐·글자 깨짐이 모든 프레임으로 번집니다.
+**진단은 자동으로, 수정은 사용자 확인 후에** 합니다. 진단표(문제, 고칠 방법, 예상 크레딧)를 보여 주고 고를 수 있게 합니다. 원본은 덮어쓰지 않고 새 파일로 만듭니다(`ai.image.edit`의 기본값, `replaceSource` 쓰지 않음).
+
+| 진단 항목 | 확인 방법 | 고치는 법 |
+|---|---|---|
+| 해상도 | 짧은 변이 출력 해상도(1080px)의 2/3 미만이면 부족 | 앱 업스케일 메뉴(`list_menu_commands`) 또는 사용자에게 원본 요청 |
+| 흐림·노이즈 | 제품 가장자리와 라벨 글자가 2배 확대에서 읽히는지 | 업스케일, 안 되면 원본 요청. 생성 모델로 선명하게 "다시 그리게" 하지 않음 |
+| 밝기·색 | 노출 부족·과다, 색 틀어짐(흰 배경이 누렇거나 파람) | `ai.image.edit` 아래 영문 프롬프트. 제품 색이 달라지면 버림 |
+| 배경 | 어수선함, 다른 제품, 글자 여백 없음 | `ai.image.removeBackground` → 엔진 배경, 또는 `ai.image.edit`로 배경만 교체 |
+| 제품 | 반사·먼지·찌그러짐, 라벨 가림 | 사용자에게 다른 컷 요청이 먼저. 리터칭은 반사·먼지까지만 |
+| 기존 글자 | 사진에 박힌 문구·가격·워터마크 | 지우고(`ai.image.edit`) 문구는 엔진으로 다시 얹음 |
+
+보정 프롬프트는 영문으로, 고칠 것 하나씩 씁니다.
+
+```text
+Correct only the <exposure / white balance / background>: <what to change, e.g. lift shadows slightly and neutralize the yellow cast so the white background reads pure white>.
+Keep the product exactly as in the source photo: same geometry, packaging, logo, label text, color and material. Do not redraw, sharpen or relight the label.
+No new objects, no text, no changes outside the requested correction.
+```
+
+보정본 검수(영상 생성 전에 사용자에게 원본과 나란히 보여 줌):
+
+- 제품 형태·패키지·로고·라벨·색·재질이 원본과 같은가. 사용자가 승인한 변경만 허용합니다.
+- 라벨을 2배 확대해 원본과 비교합니다. 글자가 다시 그려졌거나, 비었거나, 뒤를 보는 패키지가 되었으면 치명 결함으로 버립니다.
+- 보정 때문에 없던 그림자·반사·소품이 생기지 않았나.
+- 두 번 고쳐도 제품이 달라지면 보정을 멈추고 원본(또는 누끼 + 엔진 배경)으로 갑니다.
+
 ## 5. 글자와 로고는 엔진으로
 
 생성 모델은 글자를 잘 깨뜨립니다(한 프레임에서 워드마크 철자가 바뀌는 식). 화면 문구, 가격, 로고, CTA는 전부 엔진 모션그래픽으로 얹고, 프롬프트에는 `No text` 줄을 넣습니다.

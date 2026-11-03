@@ -52,5 +52,15 @@
 - 참고: `skills/veo-3.2-prompter/SKILL.md`, `references/atomic_element_mapping.md`, `references/veo_syntax_guide.md` (Shot → Subject → Environment → Camera → Style 순서, 카메라는 글로 지시, 레퍼런스 우선순위 얼굴 > 제품 > 스타일)
 - 라이선스: MIT, Copyright (c) 2026 Pexo (pexoai). 코드와 Pexo 서비스는 쓰지 않았습니다(`references/footage-gen.md` §2, §7).
 
+## claude-ads
+- 저장소: https://github.com/AgriciDaniel/claude-ads
+- 참고: `skills/ads-photoshoot/SKILL.md` (제품 형태·패키지·로고·라벨·색·재질 보존, 권리 확인, 비용 상한, 사람 검수 필수)
+- 라이선스: MIT. 원문을 옮기지 않고 다시 썼습니다(`references/footage-gen.md` §4.1).
+
+## goose-skills
+- 저장소: https://github.com/gooseworks-ai/goose-skills
+- 참고: `skills/video/create-image-fal/SKILL.md` (빈 패키지·라벨 없는 제품은 치명 결함, 라벨은 2배 확대로 원본과 비교)
+- 라이선스: MIT. 도구와 GooseWorks 서비스는 쓰지 않았습니다(`references/footage-gen.md` §4.1).
+
 ## admaker 엔진
 `@admaker/*` 패키지(kingsae1/admaker-plugin)는 KT 사내 전용 독점 소프트웨어입니다. 이 스킬은 엔진 소스를 포함하지 않고 공개 API 이름만 참조합니다.
