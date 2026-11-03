@@ -1,6 +1,6 @@
 ---
 name: admaker
-description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5) as motion graphics built as admaker engine ProjectJSON and rendered with the browser Exporter. Use when the user asks for an ad, commercial, promo, product video, launch teaser, social ad, bumper or end card (광고, 광고영상, 홍보영상, 프로모션, 제품 영상, 런칭 티저, 숏폼 광고, 엔드카드), or wants a single motion shot for one. Not for trimming or converting existing video files.
+description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5) as motion graphics built as admaker engine ProjectJSON and rendered with the browser Exporter. Use when the user asks for an ad, commercial, promo, product video, launch teaser, social ad, bumper or end card (광고, 광고영상, 홍보영상, 프로모션, 제품 영상, 런칭 티저, 숏폼 광고, 엔드카드), or wants a single motion shot for one. Requires the admaker engine (@admaker/engine). Not for trimming or converting existing video files.
 ---
 
 # admaker: admaker 엔진으로 만드는 광고 모션그래픽
@@ -15,6 +15,15 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 앱에 넣고 배치까지 끝나면 `arrange_tracks { scenes: 씬표 }`로 타임라인을 정리합니다. 앞 씬 행이 위에서부터 계단처럼 놓이고, 화면 전체 층(룩·파티클·어둡게 깔기·배경 영상)과 오디오는 아래로 가며, 행 이름이 '1씬 · 텍스트 · 첫 문구'처럼 붙습니다. 시간이 겹치는 행의 앞/뒤는 그대로라 화면은 바뀌지 않으니 `move_track`을 하나씩 부르지 않습니다.
 MCP가 있으면 모션그래픽만으로 끝내지 않습니다. `references/techniques.md`(MCP에서는 `get_ad_guide({ name: 'techniques.md' })`)의 기법 메뉴에서 씬마다 이미지 생성·img2img·누끼/레이어 분리·이미지→영상·영상 생성·효과음·Lottie·손그림·레터링을 골라 섞고, 씬표에 기법과 예상 크레딧을 적어 제안합니다.
 MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다). 외부 생성 API·스킬·MCP 서버를 따로 설치하거나 API 키를 받아 직접 부르지 않습니다(과금, 키 노출, 고객 자산 유출).
+
+## 필요 조건
+
+**이 스킬은 admaker 엔진(`@admaker/engine`, 사내 비공개 패키지)이 있어야 동작합니다.**
+
+- **엔진(필수)**: ProjectJSON을 그리고 브라우저 `Exporter`로 mp4를 렌더하는 부분입니다. 같이 쓰는 `@admaker/core`·`@admaker/animation`도 엔진과 함께 설치됩니다. 기준 버전은 3.0.7입니다(`references/engine-recipes.md`).
+- **설치 위치**: 광고마다 작업 폴더에 따로 설치하고 버전을 고정합니다(`node <이 스킬 폴더>/templates/install-engine.mjs`). npm에는 없고, admaker 앱의 '스킬 설치'가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일로 설치합니다.
+- **엔진이 없으면 멈춥니다.** 설치 스크립트가 실패하거나 `vendor/`가 없으면, 엔진 없이 HTML·CSS·Remotion 같은 다른 방식으로 대신 만들지 않습니다. 사용자에게 엔진이 필요하다고 알리고 설치 방법(admaker 앱 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭 → '스킬 설치')을 안내한 뒤 기다립니다.
+- **admaker 앱(선택)**: 없어도 스킬은 동작합니다. 앱 MCP가 연결되어 있으면 광고 불러오기(`import_to_admaker`), AI 이미지·영상·BGM·TTS 생성, `get_ad_guide`, 템플릿을 같이 씁니다. 없으면 사용자가 준 소재와 엔진만으로 만들고, 납품은 mp4와 불러오기 파일(`to-admaker-import.mjs`)입니다.
 
 광고의 판단 순서는 **메시지 전달 → 브랜드 기억 → 리듬·사운드 → 카메라 → 장식**입니다.
 
