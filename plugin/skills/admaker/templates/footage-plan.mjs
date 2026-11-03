@@ -10,6 +10,8 @@
 //     lastFrame: "assets/s3_end.png",               // framesToVideo 끝 프레임
 //     references: ["assets/face.png", "assets/product.jpg"], // referenceToVideo 레퍼런스 1–3장 (얼굴 > 제품 > 스타일)
 //     product: true,                                // 실제 제품이 화면에 나오는 씬
+//     continues: true,                              // 바로 앞 씬 영상에서 컷 없이 이어짐 → framesToVideo (footage-gen.md §7.2)
+//     why: "앞 컷 동작이 이어짐",                     // 이 도구를 고른 이유 (씬표에도 적음, 선택)
 //     model: "veo3.1-lite",                         // 앱이 알려 준 모델 (CREDITS용, 선택)
 //   }
 
@@ -77,6 +79,14 @@ export function checkFootage(footage = [], { duration, grid, fps = 30 } = {}) {
       const n = Array.isArray(g.references) ? g.references.length : 0;
       if (n < 1 || n > 3) w(i, `ai.video.referenceToVideo 레퍼런스 ${n}장: 1–3장 (footage-gen.md §7.1)`);
       if (!/reference/i.test(p)) w(i, "레퍼런스 영상 프롬프트에 레퍼런스를 가리키는 말이 없음 (\"the product from the reference image\" 식으로, §7.1)");
+    }
+
+    // 6. 씬별 영상 도구 (footage-gen.md §7.2): 기본은 imageToVideo, 맞는 씬에만 framesToVideo·referenceToVideo
+    if (f.type === "Video" && g.continues) {
+      const prev = footage.filter((x) => x !== f && x.type === "Video" && Math.abs(x.to - f.from) <= frame + 1e-6)[0];
+      if (!prev) w(i, "gen.continues인데 바로 앞에 붙은 영상 씬이 없음: 앞 컷이 영상이어야 framesToVideo로 이을 수 있음");
+      if (g.tool !== "ai.video.framesToVideo") w(i, `앞 씬에서 컷 없이 이어지는 씬(gen.continues)인데 ${g.tool}: ai.video.framesToVideo(첫 프레임 = 앞 씬 영상)가 맞음 (§7.2 1번)`);
+      else if (prev && g.source && g.source !== prev.src) w(i, `framesToVideo 첫 프레임(gen.source ${g.source})이 앞 씬 영상(${prev.src})이 아님`);
     }
   });
   return out;
