@@ -1,0 +1,4038 @@
+{
+ "about": "외부 레퍼런스 색인: video-shotcraft 샷 카드 124장 + lemo-opuscar 필름 스타일 66종. 요약·태그·admaker 구현 힌트는 이 저장소에서 한국어로 새로 쓴 것이고, 원문·영상·코드는 포함하지 않는다(미리보기는 원 저장소 링크). gallery.mjs recommend가 ads.json 예시와 함께 이 목록에서도 후보를 고른다.",
+ "sources": {
+  "shotcraft": {
+   "repo": "https://github.com/Vincentwei1021/video-shotcraft",
+   "license": "Apache-2.0",
+   "site": "https://vincentwei1021.github.io/video-shotcraft/",
+   "snapshot": "1266a3e (2026-10-30)"
+  },
+  "opuscar": {
+   "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+   "license": "MIT (code·docs), CC BY 4.0 (demo films·stills, credit LemoLab)",
+   "site": "https://lemomo-ai.github.io/lemo-opuscar/",
+   "snapshot": "f171360 (2026-10-29)"
+  }
+ },
+ "added": "2026-11-04",
+ "items": [
+  {
+   "id": "shotcraft/assemble-then-type-flyin",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "assemble-then-type-flyin",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "빈 그리드에 글자 없는 UI 뼈대가 사방에서 날아와 붙고, 이어서 글자가 3D로 돌며 날아와 자리잡는 두 단계 조립",
+   "tags": [
+    "3d",
+    "assemble",
+    "effects",
+    "kinetic-typography",
+    "ui"
+   ],
+   "admaker": "Shape 카드 gsapTimeline(x·y) → Text characterAnimation(rotateX) 2단계",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/assemble-then-type-flyin.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/assemble-then-type-flyin.md",
+   "duration_sec": 5.6
+  },
+  {
+   "id": "shotcraft/aurora-bloom-bg-flip",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "aurora-bloom-bg-flip",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "밝은 바탕에서 보라·주황 블러 블롭이 피어오르다 바탕 전체가 0.36초 만에 어둡게 뒤집히고 문구가 블러로 바뀜",
+   "tags": [
+    "bg-flip",
+    "blur",
+    "effects",
+    "glow",
+    "gradient"
+   ],
+   "admaker": "Image(SVG 방사 그라데이션) keyframes + 배경 Shape paint 색 전환",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/aurora-bloom-bg-flip.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/aurora-bloom-bg-flip.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/autolayout-gap-dial",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "autolayout-gap-dial",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "간격 다이얼이 레이아웃을 밀어내고 스프링으로 되돌아오는 '파라미터가 배치를 움직이는' 시각화",
+   "tags": [
+    "interaction",
+    "spring",
+    "ui"
+   ],
+   "admaker": "Shape·Text gsapTimeline(x, back.out)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/autolayout-gap-dial.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/autolayout-gap-dial.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/avatar-bracket-carousel",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "avatar-bracket-carousel",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "문장 속 빈칸의 네 모서리 포커스 프레임 안에서 아바타가 위아래로 스프링 교체",
+   "tags": [
+    "carousel",
+    "kinetic-typography",
+    "slot",
+    "ui-entrance"
+   ],
+   "admaker": "Text + Image 슬롯 gsapTimeline(y) + 모서리 path Shape",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/avatar-bracket-carousel.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/avatar-bracket-carousel.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/basic-3d-scene",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "basic-3d-scene",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "3D 공간에 흩어진 카드들 사이를 카메라가 날아다니며 하나씩 정렬하고 마지막에 전체 보기",
+   "tags": [
+    "3d",
+    "camera",
+    "cards"
+   ],
+   "admaker": "카메라 keyframes(engine-recipes §4) + rotateX/Y, 또는 three 커스텀 씬",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/basic-3d-scene.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/basic-3d-scene.md",
+   "duration_sec": 7.5
+  },
+  {
+   "id": "shotcraft/beat-cut-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "beat-cut-moves",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "하드컷을 박자 악기로: 흰 플래시 세 번에 같은 화면을 전체→카드→클로즈업으로 잘라 보여 줌",
+   "tags": [
+    "beat",
+    "cut",
+    "flash",
+    "rhythm",
+    "zoom"
+   ],
+   "admaker": "beat-flicker-sting + 박마다 scale 점프(keyframes)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/paparazzi-flash.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/beat-cut-moves.md",
+   "duration_sec": 4.7
+  },
+  {
+   "id": "shotcraft/beat-step-list-theme-cycle",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "beat-step-list-theme-cycle",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "형용사 목록이 박마다 한 줄씩 올라가고 가운데 고정 캡슐이 단어를 받아 색이 바뀌며 바탕도 같이 바뀜",
+   "tags": [
+    "beat",
+    "color-cycle",
+    "kinetic-typography",
+    "list",
+    "rhythm"
+   ],
+   "admaker": "Text 목록 gsapTimeline(y 단계) + pill Shape paint + 배경 paint",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/beat-step-list-theme-cycle.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/beat-step-list-theme-cycle.md",
+   "duration_sec": 4.7
+  },
+  {
+   "id": "shotcraft/before-after-slider-scrub",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "before-after-slider-scrub",
+   "category": "data",
+   "category_ko": "데이터·지표",
+   "summary_ko": "전/후 두 장을 겹쳐 두고 분할 막대가 휙 갔다 천천히 쓸며 새 버전을 드러냄",
+   "tags": [
+    "before-after",
+    "data",
+    "slider",
+    "wipe"
+   ],
+   "admaker": "위 레이어 wipe(direction) + 막대 Shape keyframes(x)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/before-after-slider-scrub.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/data/before-after-slider-scrub.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/bezier-source-converge-merge",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "bezier-source-converge-merge",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "왼쪽 네 출처에서 오른쪽 한 점으로 곡선이 그려지고 노드가 곡선을 따라 모여 사라짐",
+   "tags": [
+    "converge",
+    "lines",
+    "strokeDraw",
+    "ui-entrance"
+   ],
+   "admaker": "path Shape strokeDraw + 노드 keyframes 경로(compileAnimation path)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/bezier-source-converge-merge.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/bezier-source-converge-merge.md",
+   "duration_sec": 5.6
+  },
+  {
+   "id": "shotcraft/blur-slide",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "blur-slide",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "제목이 단어별로 위로 올라오며 블러·투명이 같은 이징으로 함께 풀림",
+   "tags": [
+    "blur",
+    "entrance",
+    "kinetic-typography",
+    "typography"
+   ],
+   "admaker": "Text characterAnimation(word, blur) 또는 entrance({ blur })",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/blur-slide.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/blur-slide.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/bottom-push-stack-wipe",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "bottom-push-stack-wipe",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "새 장면이 바탕색째 아래에서 밀고 올라와 옛 장면을 화면 밖으로 밀어냄, 장마다 채도 높은 바탕색",
+   "tags": [
+    "color",
+    "push",
+    "swipe",
+    "transition"
+   ],
+   "admaker": "배경 Shape wipe(up) + 앞 장면 gsapTimeline(y -H); am-push 전환",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/bottom-push-stack-wipe.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/bottom-push-stack-wipe.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/brace-expand",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "brace-expand",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "작은 중괄호 한 쌍이 가운데서 튕기듯 벌어지며 그 사이로 제목이 커튼처럼 드러남",
+   "tags": [
+    "brackets",
+    "kinetic-typography",
+    "reveal",
+    "typography"
+   ],
+   "admaker": "Text 두 개(괄호) gsapTimeline(x, back.out) + 제목 centerExpand 마스크",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/brace-expand.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/brace-expand.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/brand-frame-snap",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "brand-frame-snap",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "브랜드 색 두꺼운 액자 테두리가 먼저 화면을 감싸고, 모드가 바뀔 때 액자 색이 같은 프레임에 뒤집힘",
+   "tags": [
+    "brand",
+    "color-snap",
+    "effects",
+    "frame"
+   ],
+   "admaker": "테두리 Shape(stroke) rectExpand + paint 하드 전환",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/brand-frame-snap.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/brand-frame-snap.md",
+   "duration_sec": 4.7
+  },
+  {
+   "id": "shotcraft/brand-ink-open",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "brand-ink-open",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "먹선 십자 조준선이 그려지고 → 워드마크가 한 글자씩 찍히고 → 타자기 부제 → 1초 정지 후 떠오르며 사라짐",
+   "tags": [
+    "logo",
+    "opening",
+    "strokeDraw",
+    "typewriter"
+   ],
+   "admaker": "path strokeDraw + Text characterAnimation + entrance/exit",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/brand-ink-open.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/brand-ink-open.md",
+   "duration_sec": 2.8
+  },
+  {
+   "id": "shotcraft/canvas-materialize-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "canvas-materialize-moves",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "패널 표의 행이 호를 그리며 날아가 캔버스 카드로 변신",
+   "tags": [
+    "cards",
+    "interaction",
+    "morph",
+    "ui"
+   ],
+   "admaker": "Shape keyframes(x·y·width) 곡선 경로",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/panel-to-canvas.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/canvas-materialize-moves.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/card-flip-reveal",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "card-flip-reveal",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "기능 카드가 Y축으로 180° 뒤집히며 옆면에 빛이 스치고 뒷면에 큰 숫자가 드러남",
+   "tags": [
+    "3d",
+    "card",
+    "countUp",
+    "flip",
+    "transition"
+   ],
+   "admaker": "rotateY keyframes 두 클립(앞·뒤 90°에서 교대) + countUp",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/card-flip-reveal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/card-flip-reveal.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/card-flock-tumble",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "card-flock-tumble",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "UI 카드 세 장이 옆날로 뒤집혀 날아와 계단처럼 서고 천천히 돌다가 가운데로 빨려 들어 연기 고리로 터짐",
+   "tags": [
+    "3d",
+    "cards",
+    "transition",
+    "tumble"
+   ],
+   "admaker": "three 커스텀 씬 또는 rotateY/scale gsapTimeline",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/card-flock-tumble.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/card-flock-tumble.md",
+   "duration_sec": 1.5
+  },
+  {
+   "id": "shotcraft/card-stack",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "card-stack",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "템플릿 카드들이 아래에서 스프링으로 튀어 올라 쌓이고 다 모이면 부채꼴로 한 번에 펼침",
+   "tags": [
+    "cards",
+    "fan",
+    "spring",
+    "stack",
+    "ui-entrance"
+   ],
+   "admaker": "Shape 카드 gsapTimeline(y, back.out) → angle 단계 펼침 (v2 커피 광고 카드 스택)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/card-stack.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/card-stack.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/carousel-3d",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "carousel-3d",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "카드 8장이 원형으로 돌며 45°마다 멈칫하는 3D 캐러셀",
+   "tags": [
+    "3d",
+    "cards",
+    "carousel",
+    "ui-entrance"
+   ],
+   "admaker": "three 커스텀 씬(카드 텍스처) 또는 rotateY+x 사인 keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/carousel-3d.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/carousel-3d.md",
+   "duration_sec": 5.6
+  },
+  {
+   "id": "shotcraft/chart-live-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "chart-live-moves",
+   "category": "data",
+   "category_ko": "데이터·지표",
+   "summary_ko": "살아 있는 차트: 오실로스코프 선, 점 떼가 다시 모이는 단위 점 차트 등",
+   "tags": [
+    "chart",
+    "data",
+    "dots",
+    "line"
+   ],
+   "admaker": "script 어댑터 Canvas2D 또는 path strokeDraw",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/oscilloscope-stream.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/data/chart-live-moves.md",
+   "duration_sec": 6.4
+  },
+  {
+   "id": "shotcraft/chip-grid-single-select-blackout",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "chip-grid-single-select-blackout",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "선택지 칩 다섯 개 중 하나를 누르면 회색 눌림 한 프레임 → 먹색·흰 글자로 바뀌며 아주 살짝 튐",
+   "tags": [
+    "chips",
+    "interaction",
+    "select",
+    "ui"
+   ],
+   "admaker": "pill Shape paint + scale 1→1.04→1",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/chip-grid-single-select-blackout.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/chip-grid-single-select-blackout.md",
+   "duration_sec": 5.5
+  },
+  {
+   "id": "shotcraft/circle-match-iris",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "circle-match-iris",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "화면 속 원형 요소의 중심에서 원형 조리개가 터지며 다음 화면의 원과 정확히 이어지는 매치 컷",
+   "tags": [
+    "circle",
+    "iris",
+    "match-cut",
+    "transition"
+   ],
+   "admaker": "circleReveal 마스크(originX/Y) + transition-match-cut",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/circle-match-iris.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/circle-match-iris.md",
+   "duration_sec": 5.5
+  },
+  {
+   "id": "shotcraft/cloner-depth-echo",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "cloner-depth-echo",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "메인 카드가 반투명 분신 7개를 사선 깊이로 복사해 늘어세웠다가 한꺼번에 빨아들여 합쳐짐",
+   "tags": [
+    "cards",
+    "clone",
+    "depth",
+    "echo",
+    "ui-entrance"
+   ],
+   "admaker": "같은 Shape 7개 gsapTimeline(x·y·scale·opacity 그라데이션)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/cloner-depth-echo.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/cloner-depth-echo.md",
+   "duration_sec": 4.6
+  },
+  {
+   "id": "shotcraft/collab-cursor-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "collab-cursor-moves",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "여러 협업 커서가 엑스트라처럼 날아와 떠다니고 모여 구경함",
+   "tags": [
+    "cursor",
+    "interaction",
+    "ui"
+   ],
+   "admaker": "커서 Image 클립 keyframes 사인 흔들림",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/cast-ensemble.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/collab-cursor-moves.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/countdown-arc-scatter",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "countdown-arc-scatter",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "큰 호를 따라 늘어선 숫자 9개가 96° 돌다 급정지, '5'가 제목 첫 글자로 내려앉고 나머지는 흩어짐",
+   "tags": [
+    "arc",
+    "kinetic-typography",
+    "numbers",
+    "typography"
+   ],
+   "admaker": "Text 9개 angle·x·y keyframes + blur 퇴장",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/countdown-arc-scatter.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/countdown-arc-scatter.md",
+   "duration_sec": 3.3
+  },
+  {
+   "id": "shotcraft/crane-rise-reveal",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "crane-rise-reveal",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "데이터 한 줄 클로즈업에서 카메라가 크레인처럼 올라가며 대시보드 전체가 드러남",
+   "tags": [
+    "camera",
+    "crane",
+    "opening",
+    "reveal",
+    "ui"
+   ],
+   "admaker": "카메라 keyframes(zoom 2→1, y) engine-recipes §4",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/crane-rise-reveal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/crane-rise-reveal.md",
+   "duration_sec": 5.5
+  },
+  {
+   "id": "shotcraft/crash-zoom-punch",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "crash-zoom-punch",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "전체에서 목표 클로즈업으로 6프레임 급줌, 탄성 반동 또는 쾅 멈춤 + 화면 흔들림",
+   "tags": [
+    "camera",
+    "impact",
+    "punch",
+    "zoom"
+   ],
+   "admaker": "카메라 keyframes easeOutBack / shake",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/crash-zoom-punch.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/crash-zoom-punch.md",
+   "duration_sec": 0.5
+  },
+  {
+   "id": "shotcraft/cursor-flyover",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "cursor-flyover",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "페이지 전경에서 카메라가 기능 영역 네 곳을 차례로 줌인, 커서가 먼저 가서 클릭 물결",
+   "tags": [
+    "camera",
+    "cursor",
+    "ui",
+    "zoom"
+   ],
+   "admaker": "카메라 keyframes + 커서 Image + circle ripple scale",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/cursor-flyover.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/cursor-flyover.md",
+   "duration_sec": 8.0
+  },
+  {
+   "id": "shotcraft/dataviz-landscape-open",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "dataviz-landscape-open",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "어두운 화면에 여러 흐름선이 본줄기로 합쳐지는 데이터 지형 위를 카메라가 낮게 날아감",
+   "tags": [
+    "3d",
+    "data",
+    "lines",
+    "opening"
+   ],
+   "admaker": "three 커스텀 씬 또는 path strokeDraw 여러 줄 + 카메라",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/dataviz-landscape-open.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/dataviz-landscape-open.md",
+   "duration_sec": 8.0
+  },
+  {
+   "id": "shotcraft/deck-deal-flyin",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "deck-deal-flyin",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "카드 더미에서 카드를 딜하듯 격자로 던져 넣고 카메라가 따라 올라감",
+   "tags": [
+    "cards",
+    "deal",
+    "grid",
+    "ui-entrance"
+   ],
+   "admaker": "Shape 카드 gsapTimeline(x·y·angle, power4.out) 시차",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/deck-deal-flyin.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/deck-deal-flyin.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/depth-layer-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "depth-layer-moves",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "3개 층이 속도 차로 옆으로 흐르는 패럴랙스, 멈출 때 주인공이 떠오름",
+   "tags": [
+    "camera",
+    "depth",
+    "parallax"
+   ],
+   "admaker": "층마다 keyframes x × depth(0.3/0.6/1.0)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/multiplane.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/depth-layer-moves.md",
+   "duration_sec": 5.5
+  },
+  {
+   "id": "shotcraft/doc-park-left-pill-deal",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "doc-park-left-pill-deal",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "문서가 왼쪽으로 밀려 35%만 보이고 오른쪽에 알약 세 개가 내레이션 박자로 튀어 들어옴",
+   "tags": [
+    "deal",
+    "pills",
+    "ui",
+    "ui-entrance"
+   ],
+   "admaker": "Shape·Text gsapTimeline(x) + pill pop(back.out)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/doc-park-left-pill-deal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/doc-park-left-pill-deal.md",
+   "duration_sec": 5.8
+  },
+  {
+   "id": "shotcraft/document-typewriter-reveal",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "document-typewriter-reveal",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "떠 있는 문서 창이 커서 뒤에서 스스로 써지고, 카메라가 제목 클로즈업에서 뒤로 빠짐",
+   "tags": [
+    "camera",
+    "document",
+    "typewriter",
+    "typography"
+   ],
+   "admaker": "Text characterAnimation(typewriter) + 카메라 keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/document-typewriter-reveal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/document-typewriter-reveal.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/draw-svg-trace",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "draw-svg-trace",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "펜촉 달린 먹선이 요소 윤곽을 한 바퀴 그리고, 닫히는 순간 내용이 나타남",
+   "tags": [
+    "annotation",
+    "strokeDraw",
+    "ui-entrance"
+   ],
+   "admaker": "path Shape strokeDraw (hand-drawn-emphasis)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/draw-svg-trace.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/draw-svg-trace.md",
+   "duration_sec": 4.4
+  },
+  {
+   "id": "shotcraft/element-body-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "element-body-moves",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "카드가 들릴 때 바닥 그림자가 같이 커지고 옅어져 '떠 있음'을 증명",
+   "tags": [
+    "cards",
+    "lift",
+    "shadow",
+    "ui-entrance"
+   ],
+   "admaker": "카드 + 그림자 Shape(blur) keyframes(scale·opacity)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/contact-shadow-lift.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/element-body-moves.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/flying-words",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "flying-words",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "키워드 22개가 깊이 방향으로 멀리서 카메라 앞까지 날아와 스쳐 지나감",
+   "tags": [
+    "3d",
+    "fly-through",
+    "kinetic-typography",
+    "typography",
+    "words"
+   ],
+   "admaker": "Text 여러 개 scale·opacity keyframes(원근 가짜) 또는 three",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/flying-words.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/flying-words.md",
+   "duration_sec": 6.0
+  },
+  {
+   "id": "shotcraft/fracture",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "fracture",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "5×5 타일 조각이 가운데부터 물결처럼 모여 포스터가 되고, 다시 회전하며 흩어져 날아감",
+   "tags": [
+    "3d",
+    "assemble",
+    "opening",
+    "shatter",
+    "tiles"
+   ],
+   "admaker": "타일 Shape/Image 25개 gsapTimeline(x·y·angle·rotateX) 거리 시차",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/fracture.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/fracture.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/fui-hud-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "fui-hud-moves",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "L자 모서리 네 개로 된 조준 프레임이 날아와 튕기며 목표에 고정",
+   "tags": [
+    "brackets",
+    "effects",
+    "hud",
+    "lock-on"
+   ],
+   "admaker": "path Shape 4개 gsapTimeline(x·y, back.out)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/reticle-lock-on.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/fui-hud-moves.md",
+   "duration_sec": 3.0
+  },
+  {
+   "id": "shotcraft/gauge-readout-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "gauge-readout-moves",
+   "category": "data",
+   "category_ko": "데이터·지표",
+   "summary_ko": "게이지 바늘이 끝까지 휘둘렀다 실제 값으로 돌아옴, 테이프 눈금 스크롤",
+   "tags": [
+    "data",
+    "gauge",
+    "needle"
+   ],
+   "admaker": "Shape angle keyframes(easeOutElastic) + countUp",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/needle-sweep-selftest.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/data/gauge-readout-moves.md",
+   "duration_sec": 4.7
+  },
+  {
+   "id": "shotcraft/glass-pill-dictation-typing",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "glass-pill-dictation-typing",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "유리 캡슐이 살짝 크게 튀어나와 내려앉고, 안쪽에 따뜻한 빛이 깔리며 받아쓰기 문장이 타이핑됨",
+   "tags": [
+    "glass",
+    "interaction",
+    "pill",
+    "typing",
+    "ui"
+   ],
+   "admaker": "pill Shape(backdropBlur) pop + Text typewriter",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/glass-pill-dictation-typing.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/glass-pill-dictation-typing.md",
+   "duration_sec": 3.3
+  },
+  {
+   "id": "shotcraft/glitch-cycle",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "glitch-cycle",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "같은 자리에서 상태 문구 4개가 돌아가며, 바뀔 때마다 글자가 깨졌다 돌아오는 글리치",
+   "tags": [
+    "glitch",
+    "kinetic-typography",
+    "typography"
+   ],
+   "admaker": "script 어댑터(랜덤 글자, 시드 RNG) 또는 Text 교체 + RGB 오프셋 복제",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/glitch-cycle.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/glitch-cycle.md",
+   "duration_sec": 5.6
+  },
+  {
+   "id": "shotcraft/glow-flyline-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "glow-flyline-moves",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "어두운 화면의 빛망울, 호를 그리며 잇는 빛줄기",
+   "tags": [
+    "dark",
+    "effects",
+    "glow",
+    "lines"
+   ],
+   "admaker": "Image(방사 그라데이션) + path strokeDraw(glow)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/glow-orb-ambient.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/glow-flyline-moves.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/gradient-transition",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "gradient-transition",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "배경이 선형·방사·원뿔 그라데이션 사이를 부드럽게 넘나듦",
+   "tags": [
+    "background",
+    "gradient",
+    "transition"
+   ],
+   "admaker": "SVG 그라데이션 Image 교차 fade 또는 script",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/gradient-transition.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/gradient-transition.md",
+   "duration_sec": 6.7
+  },
+  {
+   "id": "shotcraft/gradient-word-sweep",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "gradient-word-sweep",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "검은 바탕 문구 속 핵심 단어를 무지개빛이 왼→오로 훑어 '충전'하고 단어가 빛을 머금음",
+   "tags": [
+    "glow",
+    "gradient",
+    "kinetic-typography",
+    "sweep",
+    "typography"
+   ],
+   "admaker": "Text color gradient + wipe(right) 복제 레이어 + 글로우",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/gradient-word-sweep.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/gradient-word-sweep.md",
+   "duration_sec": 2.0
+  },
+  {
+   "id": "shotcraft/grain-dissolve",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "grain-dissolve",
+   "category": "outro",
+   "category_ko": "마무리",
+   "summary_ko": "문장이 끓는 노이즈 입자로 터졌다가 더 큰 빛나는 짧은 워드마크로 응축",
+   "tags": [
+    "dissolve",
+    "outro",
+    "particles"
+   ],
+   "admaker": "particle-logo(script) 응용: 흩어짐→모임",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/grain-dissolve.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/outro/grain-dissolve.md",
+   "duration_sec": 2.0
+  },
+  {
+   "id": "shotcraft/graze-face-tour",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "graze-face-tour",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "UI 표면을 스치듯 낮게 날며 지나가는 큰 기울기 클로즈업, 글자가 차례로 내려앉음",
+   "tags": [
+    "camera",
+    "glide",
+    "tilt",
+    "ui"
+   ],
+   "admaker": "rotateX 강한 원근 + 카메라 keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/graze-face-tour.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/graze-face-tour.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/hashtag-to-pill-materialize",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "hashtag-to-pill-materialize",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "#단어를 타이핑하고 1프레임 컷으로 큰 캡슐 태그로 변신, 작아지며 제자리로",
+   "tags": [
+    "interaction",
+    "morph",
+    "pill",
+    "typing"
+   ],
+   "admaker": "Text typewriter → pill Shape 하드 교체 + keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/hashtag-to-pill-materialize.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/hashtag-to-pill-materialize.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/icon-field-colorize",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "icon-field-colorize",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "회색 아이콘 점들이 화면을 채운 뒤 브랜드 색 가로 띠 물결이 아래로 훑으며 한순간에 색이 켜짐",
+   "tags": [
+    "colorize",
+    "grid",
+    "icons",
+    "opening",
+    "wave"
+   ],
+   "admaker": "아이콘 Image 그리드 + 색 레이어 wipe(down) 여러 띠",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/icon-field-colorize.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/icon-field-colorize.md",
+   "duration_sec": 6.0
+  },
+  {
+   "id": "shotcraft/icon-performance-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "icon-performance-moves",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "아이콘이 관심을 끌려고 점점 높이 튀고 착지할 때 눌림",
+   "tags": [
+    "bounce",
+    "effects",
+    "icon",
+    "squash-stretch"
+   ],
+   "admaker": "squash-bounce 카드",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/attention-bounce.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/icon-performance-moves.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/impact-feedback",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "impact-feedback",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "타격감: 정지 프레임 + 데미지 숫자 + 콤보, 만화식 네거티브·집중선",
+   "tags": [
+    "effects",
+    "flash",
+    "hit",
+    "impact"
+   ],
+   "admaker": "beat-flicker-sting + 집중선 path + countUp",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/hit-counter.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/impact-feedback.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/integration-hub-map",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "integration-hub-map",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "옛 페이지가 180° 뒤집혀 허브가 되고 앱 아이콘 다섯이 동시에 튀어나와 무지개 관으로 이어짐",
+   "tags": [
+    "flip",
+    "hub",
+    "icons",
+    "lines",
+    "ui-entrance"
+   ],
+   "admaker": "rotateY + 아이콘 pop + path strokeDraw(펄스)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/integration-hub-map.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/integration-hub-map.md",
+   "duration_sec": 0.5
+  },
+  {
+   "id": "shotcraft/lead-word-zoom-assemble",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "lead-word-zoom-assemble",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "첫 단어가 2.3배 크기로 가운데를 차지했다가 한 곡선으로 줄어들며 왼쪽으로 가고 나머지 단어가 들어옴",
+   "tags": [
+    "kinetic-typography",
+    "typography",
+    "zoom"
+   ],
+   "admaker": "Text keyframes(scale·x) + 나머지 단어 entrance(x)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/lead-word-zoom-assemble.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/lead-word-zoom-assemble.md",
+   "duration_sec": 2.8
+  },
+  {
+   "id": "shotcraft/letterspace-materialize",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "letterspace-materialize",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "자간 넓은 워드마크의 모든 획이 동시에 손글씨처럼 자라며 단어가 결정처럼 생겨남",
+   "tags": [
+    "handwriting",
+    "logo",
+    "opening",
+    "strokeDraw"
+   ],
+   "admaker": "text_to_path + strokeDraw(drawing.md 글자 패스)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/letterspace-materialize.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/letterspace-materialize.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/light-play-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "light-play-moves",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "스포트라이트가 글자를 훑고, 한 줄기 광택이 스침",
+   "tags": [
+    "effects",
+    "light",
+    "sheen",
+    "sweep"
+   ],
+   "admaker": "흰 그라데이션 Image keyframes(x) + 마스크(Text 위)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/spotlight-sweep.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/light-play-moves.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/line-carry-transition",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "line-carry-transition",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "앞 장면의 진행 막대가 화면 밖으로 뻗고, 카메라가 따라가며 그 선이 꺾여 다음 장면의 카드 틀이 됨",
+   "tags": [
+    "line",
+    "match-cut",
+    "transition"
+   ],
+   "admaker": "path strokeDraw + 카메라 x 이동 (transition-match-cut)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/line-carry-transition.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/line-carry-transition.md",
+   "duration_sec": 6.3
+  },
+  {
+   "id": "shotcraft/list-reveal",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "list-reveal",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "세로 메뉴 6개가 10프레임 간격으로 살짝 넘치며 자리잡고 목록 전체는 계속 천천히 올라감",
+   "tags": [
+    "list",
+    "stagger",
+    "ui-entrance"
+   ],
+   "admaker": "entrance index 시차 + 컨테이너 y keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/list-reveal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/list-reveal.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/list-stack-press",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "list-stack-press",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "목록 카드가 아래에서 한 장씩 날아와 쌓이고 착지마다 더미가 눌렸다 튀며 카운터가 올라감",
+   "tags": [
+    "cards",
+    "countUp",
+    "press",
+    "stack",
+    "ui-entrance"
+   ],
+   "admaker": "Shape gsapTimeline + scaleY 눌림 + countUp",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/list-stack-press.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/list-stack-press.md",
+   "duration_sec": 3.0
+  },
+  {
+   "id": "shotcraft/logo-shrink-wordmark-lockup",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "logo-shrink-wordmark-lockup",
+   "category": "outro",
+   "category_ko": "마무리",
+   "summary_ko": "네온 고리가 가운데 작은 O로 수축하며 로고로 바뀌고, 옆으로 비키며 글자가 하나씩 미끄러져 들어와 로크업",
+   "tags": [
+    "lockup",
+    "logo",
+    "outro"
+   ],
+   "admaker": "circle Shape scale + Text characterAnimation(slide) (endcard-logo-cta)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/logo-shrink-wordmark-lockup.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/outro/logo-shrink-wordmark-lockup.md",
+   "duration_sec": 4.4
+  },
+  {
+   "id": "shotcraft/magician-card-flourish",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "magician-card-flourish",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "남색 어둠에 별빛이 번쩍이고 카드가 그 점에서 회전하며 카메라 쪽으로 튀어나옴",
+   "tags": [
+    "card",
+    "flash",
+    "opening",
+    "spin"
+   ],
+   "admaker": "star Shape + glow + 카드 gsapTimeline(angle·scale)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/magician-card-flourish.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/magician-card-flourish.md",
+   "duration_sec": 0.3
+  },
+  {
+   "id": "shotcraft/marker-underline-title",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "marker-underline-title",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "큰 제목 아래 핵심 단어에 거친 마커 밑줄이 왼→오로 빠르게 그어짐",
+   "tags": [
+    "hand-drawn",
+    "marker",
+    "typography",
+    "underline"
+   ],
+   "admaker": "annotationPath underline + strokeDraw (hand-drawn-emphasis)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/marker-underline-title.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/marker-underline-title.md",
+   "duration_sec": 1.5
+  },
+  {
+   "id": "shotcraft/mosaic-reframe",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "mosaic-reframe",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "타일 12장이 규칙 격자 → 피처 모자이크 → 대각 폭포 배열로 연속 변형",
+   "tags": [
+    "grid",
+    "morph",
+    "mosaic",
+    "transition"
+   ],
+   "admaker": "Shape/Image 12개 keyframes(x·y·width·height) 시차",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/mosaic-reframe.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/mosaic-reframe.md",
+   "duration_sec": 7.1
+  },
+  {
+   "id": "shotcraft/neon-frame-forerun",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "neon-frame-forerun",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "강한 원근의 네온 틀이 먼저 달려와 그려지고 그 안에서 페이지가 밝아지며 요소들이 내려앉음",
+   "tags": [
+    "3d",
+    "frame",
+    "neon",
+    "ui",
+    "ui-entrance"
+   ],
+   "admaker": "path strokeDraw(glow) + rotateY + 요소 drop",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/neon-frame-forerun.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/neon-frame-forerun.md",
+   "duration_sec": 0.7
+  },
+  {
+   "id": "shotcraft/neon-frame-orbit-drop",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "neon-frame-orbit-drop",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "네온 틀을 그린 뒤 카메라가 호를 그리며 돌고 모든 요소가 같은 프레임에 내려앉음",
+   "tags": [
+    "camera",
+    "neon",
+    "orbit",
+    "ui-entrance"
+   ],
+   "admaker": "rotateY keyframes + 동시 drop",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/neon-frame-orbit-drop.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/neon-frame-orbit-drop.md",
+   "duration_sec": 0.5
+  },
+  {
+   "id": "shotcraft/neon-triple-marquee",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "neon-triple-marquee",
+   "category": "outro",
+   "category_ko": "마무리",
+   "summary_ko": "벽돌 벽에 빈 네온관 큰 글자 3줄이 홀짝 반대로 끝없이 흐르고 1/3 위상으로 번갈아 켜짐",
+   "tags": [
+    "kinetic-typography",
+    "marquee",
+    "neon",
+    "outro"
+   ],
+   "admaker": "Text(stroke) 3줄 keyframes(x 반복) + opacity 위상 (v2 커피 광고 마키)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/neon-triple-marquee.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/outro/neon-triple-marquee.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/orbit-ring-title-open",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "orbit-ring-title-open",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "어두운 화면에서 콘텐츠 카드 8장이 타원 궤도를 공전하며 가운데 제목이 열림",
+   "tags": [
+    "cards",
+    "opening",
+    "orbit"
+   ],
+   "admaker": "카드 8개 x·y 사인 keyframes(깊이는 scale ±12%)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/orbit-ring-title-open.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/orbit-ring-title-open.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/outline-word-fill",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "outline-word-fill",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "속 빈 외곽선 단어가 3.2배에서 줄며 자리잡고 점선 원이 둘러 천천히 돌다 글자가 채워짐",
+   "tags": [
+    "fill",
+    "kinetic-typography",
+    "outline",
+    "typography"
+   ],
+   "admaker": "Text stroke만 → paint 채우기 + 점선 circle Shape angle",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/outline-word-fill.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/outline-word-fill.md",
+   "duration_sec": 3.0
+  },
+  {
+   "id": "shotcraft/outro-group-photo-launch",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "outro-group-photo-launch",
+   "category": "outro",
+   "category_ko": "마무리",
+   "summary_ko": "영상의 모든 요소가 사방에서 날아와 워드마크를 둘러싸고 단체 사진처럼 서는 발표회 마무리",
+   "tags": [
+    "gather",
+    "logo",
+    "outro"
+   ],
+   "admaker": "요소 클립들 gsapTimeline(x·y) 모임 + 무대 빛",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/outro-group-photo-launch.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/outro/outro-group-photo-launch.md",
+   "duration_sec": 4.8
+  },
+  {
+   "id": "shotcraft/overhead-camera-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "overhead-camera-moves",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "부감 공개: 위에서 내려다보다 고개를 들며 드러냄, 탁자 위 카드 배열로 급강하",
+   "tags": [
+    "camera",
+    "overhead",
+    "tilt"
+   ],
+   "admaker": "rotateX keyframes + 카메라 zoom",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/tilt-reveal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/overhead-camera-moves.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/page-turn-transitions",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "page-turn-transitions",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "옛 화면이 양문처럼 반으로 갈라져 밀려나고 새 화면이 다가옴",
+   "tags": [
+    "doors",
+    "split",
+    "transition"
+   ],
+   "admaker": "앞 화면 두 Image(왼/오 crop) keyframes(x)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/barn-door-split.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/page-turn-transitions.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/page-waterfall-wall",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "page-waterfall-wall",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "페이지 캡처를 3–4열로 잘라 뒤로 기운 3D 벽에서 서로 반대로 끝없이 흐르게",
+   "tags": [
+    "3d",
+    "parallax",
+    "scroll",
+    "ui-entrance",
+    "wall"
+   ],
+   "admaker": "Image 열 keyframes(y 반복) + rotateX",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/page-waterfall-wall.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/page-waterfall-wall.md",
+   "duration_sec": 6.0
+  },
+  {
+   "id": "shotcraft/panel-grid-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "panel-grid-moves",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "만화 사선 칸으로 같은 피사체의 세 각도를 착착착 보여 주고 마지막 칸이 화면을 먹음",
+   "tags": [
+    "beat",
+    "comic",
+    "panels",
+    "rhythm",
+    "split"
+   ],
+   "admaker": "Image 3장 + angleWipe 마스크 박마다",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/comic-panel-split.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/panel-grid-moves.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/paper-title-card",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "paper-title-card",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "한 문장이 단어별로 종이에 찍히고 한 단어만 강조색 기울임, 짧은 대시로 마무리",
+   "tags": [
+    "kinetic-typography",
+    "paper",
+    "title",
+    "typography"
+   ],
+   "admaker": "Text characterAnimation(word stamp) + 강조 단어 별도 클립",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/paper-title-card.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/paper-title-card.md",
+   "duration_sec": 1.8
+  },
+  {
+   "id": "shotcraft/picker-carousel-feature-cycle",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "picker-carousel-feature-cycle",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "고정된 초점 캡슐을 내용이 통과하는 세로 피커, 항목마다 강한 감속으로 딱 멈춤",
+   "tags": [
+    "carousel",
+    "interaction",
+    "picker",
+    "slot"
+   ],
+   "admaker": "Text 목록 gsapTimeline(y, expo.out 단계) + pill",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/picker-carousel-feature-cycle.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/picker-carousel-feature-cycle.md",
+   "duration_sec": 3.6
+  },
+  {
+   "id": "shotcraft/pill-chip-slot-cycle-handled",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "pill-chip-slot-cycle-handled",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "'Your [칩] Handled' 문장에서 캡슐 안 단어가 세로로 돌고 캡슐 폭이 부드럽게 늘었다 줄어 양옆 글자가 밀림",
+   "tags": [
+    "kinetic-typography",
+    "pill",
+    "slot",
+    "typography"
+   ],
+   "admaker": "pill Shape width keyframes + 슬롯 Text y + 양옆 Text x",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/pill-chip-slot-cycle-handled.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/pill-chip-slot-cycle-handled.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/pill-slot-cycle",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "pill-slot-cycle",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "고정 문장 끝 알약 배지가 0.7초마다 슬롯머신처럼 한 칸씩 돌며 기능을 나열",
+   "tags": [
+    "kinetic-typography",
+    "pill",
+    "slot",
+    "typography"
+   ],
+   "admaker": "pill + Text 여러 개 gsapTimeline(y·blur) 0.7초 간격",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/pill-slot-cycle.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/pill-slot-cycle.md",
+   "duration_sec": 6.7
+  },
+  {
+   "id": "shotcraft/print-texture-transitions",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "print-texture-transitions",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "잉크가 번지며 옛 장면을 먹어 들어가는 인쇄 질감 전환",
+   "tags": [
+    "bleed",
+    "ink",
+    "print",
+    "transition"
+   ],
+   "admaker": "Image(잉크 마스크 SVG) scale + blend, 또는 셰이더 전환",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/ink-bleed-reveal.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/print-texture-transitions.md",
+   "duration_sec": 4.5
+  },
+  {
+   "id": "shotcraft/product-card-progressive-assemble",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "product-card-progressive-assemble",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "상세 카드가 필드별로 긁어 오듯 스스로 조립: 이미지→제목→분류 알약→원가에 취소선→새 가격",
+   "tags": [
+    "assemble",
+    "card",
+    "price",
+    "ui",
+    "ui-entrance"
+   ],
+   "admaker": "요소 entrance 시차 + strike annotation + countUp (price-countup)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/product-card-progressive-assemble.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/product-card-progressive-assemble.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/quad-split-parallel-scenes",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "quad-split-parallel-scenes",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "화면을 2×2로 하드컷해 네 칸이 각자 작은 장면을 3–6프레임 어긋나게 동시에 진행",
+   "tags": [
+    "grid",
+    "montage",
+    "rhythm",
+    "split-screen"
+   ],
+   "admaker": "칸마다 클립 그룹 + rectExpand, 박 어긋남",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/quad-split-parallel-scenes.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/quad-split-parallel-scenes.md",
+   "duration_sec": 3.0
+  },
+  {
+   "id": "shotcraft/radial-ripple-phone-chips",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "radial-ripple-phone-chips",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "모래색 바탕에 동심원 4겹이 물결처럼 숨쉬고 가운데 폰 화면이 스크롤되며 양옆 칩이 튀어나옴",
+   "tags": [
+    "chips",
+    "effects",
+    "phone",
+    "ripple"
+   ],
+   "admaker": "circle Shape scale 반복 시차 + 폰 Image + pill pop",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/radial-ripple-phone-chips.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/radial-ripple-phone-chips.md",
+   "duration_sec": 5.6
+  },
+  {
+   "id": "shotcraft/radial-wave",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "radial-wave",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "17×9 점 격자가 파원에서의 거리 순으로 켜지며 1.5배로 넘쳤다 돌아오고, 두 번째 파동이 바깥에서 안으로 수렴",
+   "tags": [
+    "dots",
+    "grid",
+    "ui-entrance",
+    "wave"
+   ],
+   "admaker": "점 Shape 153개 거리 시차 keyframes 또는 script",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/radial-wave.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/radial-wave.md",
+   "duration_sec": 3.8
+  },
+  {
+   "id": "shotcraft/research-card-stack-scroll",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "research-card-stack-scroll",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "어두운 카드가 12프레임마다 사선 축으로 날아와 겹쳐 쌓이고, 맨 위만 선명하고 아래는 점점 흐리고 어두워짐",
+   "tags": [
+    "blur",
+    "cards",
+    "depth",
+    "stack",
+    "ui-entrance"
+   ],
+   "admaker": "Shape gsapTimeline + 깊이별 blur·brightness",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/research-card-stack-scroll.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/research-card-stack-scroll.md",
+   "duration_sec": 4.8
+  },
+  {
+   "id": "shotcraft/rhythm-interrupt-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "rhythm-interrupt-moves",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "같은 구도를 보간 없이 세 번 하드 점프로 확대해 목표에 다가가는 점프컷 펀치인",
+   "tags": [
+    "beat",
+    "jump-cut",
+    "rhythm",
+    "zoom"
+   ],
+   "admaker": "keyframes scale 계단(보간 없음: 같은 값 stop 두 개)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/jump-cut-punch-in.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/rhythm-interrupt-moves.md",
+   "duration_sec": 4.5
+  },
+  {
+   "id": "shotcraft/riso-print-hits",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "riso-print-hits",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "제목이 멈추는 순간 리소 두 색 판으로 어긋났다가 두 번 떨고 '탁' 맞춰짐",
+   "tags": [
+    "effects",
+    "impact",
+    "misregistration",
+    "print",
+    "riso"
+   ],
+   "admaker": "같은 Text 두 색 복제 x·y 오프셋 keyframes → 0",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/misregistration-hit.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/riso-print-hits.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/row-embed",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "row-embed",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "콘텐츠 행이 공중에서 내려와 rotateX로 평평해지며 박히는 순간 아래 모서리에 강조색 선이 번쩍",
+   "tags": [
+    "3d",
+    "drop",
+    "row",
+    "ui-entrance"
+   ],
+   "admaker": "rotateX keyframes + 선 Shape flash",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/row-embed.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/row-embed.md",
+   "duration_sec": 2.0
+  },
+  {
+   "id": "shotcraft/sakuga-timing-shift",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "sakuga-timing-shift",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "3프레임에 한 번씩 뚝뚝 끊어 움직이다 절정에서 매 프레임 부드러운 질주로 바뀌는 작화 타이밍",
+   "tags": [
+    "anime",
+    "rhythm",
+    "stepped",
+    "timing"
+   ],
+   "admaker": "keyframes 계단 stop(3프레임 간격) → 연속 구간",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/sakuga-timing-shift.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/sakuga-timing-shift.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/scan-bracket-sweep",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "scan-bracket-sweep",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "문서가 가운데로 튀어나오고 네 모서리 괄호가 내려앉고, 그라데이션 꼬리의 스캔 빛띠가 다섯 번 왕복",
+   "tags": [
+    "brackets",
+    "effects",
+    "hud",
+    "scan"
+   ],
+   "admaker": "괄호 path + 빛띠 Image keyframes(y 왕복)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/scan-bracket-sweep.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/scan-bracket-sweep.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/scanline-annotate-focus",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "scanline-annotate-focus",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "스캔선이 위→아래로 지나가며 지나친 블록마다 모서리 프레임이 스프링으로 조여 맞추고 라벨이 타이핑됨",
+   "tags": [
+    "annotate",
+    "brackets",
+    "effects",
+    "scan"
+   ],
+   "admaker": "선 Shape y keyframes + 블록마다 brackets pop + typewriter",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/scanline-annotate-focus.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/scanline-annotate-focus.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/scanline-assemble-flyin",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "scanline-assemble-flyin",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "격자·점선 슬롯만 있는 청사진에 스캔선이 지나가면 그 칸 요소가 날아와 넘치며 딱 붙음",
+   "tags": [
+    "assemble",
+    "blueprint",
+    "effects",
+    "scan"
+   ],
+   "admaker": "선 keyframes + 요소 gsapTimeline(back.out) 스캔 시각에 맞춤",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/scanline-assemble-flyin.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/scanline-assemble-flyin.md",
+   "duration_sec": 5.2
+  },
+  {
+   "id": "shotcraft/scroll-brake-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "scroll-brake-moves",
+   "category": "data",
+   "category_ko": "데이터·지표",
+   "summary_ko": "긴 목록이 고속으로 스크롤되다 지수 감속으로 정확히 멈추고 목표 항목이 떠오름",
+   "tags": [
+    "brake",
+    "data",
+    "list",
+    "scroll"
+   ],
+   "admaker": "목록 그룹 y keyframes(easeOutExpo) + 목표 scale",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/changelog-scroll-brake.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/data/scroll-brake-moves.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/segmented-thumb-hero",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "segmented-thumb-hero",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "거대한 세그먼트 컨트롤이 스프링으로 떠오르고 커서가 눌러 흰 썸이 미끄러짐",
+   "tags": [
+    "interaction",
+    "thumb",
+    "toggle",
+    "ui"
+   ],
+   "admaker": "pill Shape 2개 + 썸 x keyframes(back.out)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/segmented-thumb-hero.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/segmented-thumb-hero.md",
+   "duration_sec": 3.5
+  },
+  {
+   "id": "shotcraft/shot-transitions",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "shot-transitions",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "샷 넘김 3종: 밀며 흰빛 흐름, 휩팬(급정지), 창 너머로 마스크 와이프",
+   "tags": [
+    "transition",
+    "whip",
+    "wipe",
+    "zoom"
+   ],
+   "admaker": "transition-zoom-through, hf-whip-pan, wipe 마스크",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/flash-cut.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/shot-transitions.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/slam-entrance-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "slam-entrance-moves",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "고에너지 꽂힘 3종: 원근 급정지, 점수 쾅 떨어짐, 충격 폭발",
+   "tags": [
+    "effects",
+    "impact",
+    "kinetic-typography",
+    "slam"
+   ],
+   "admaker": "hook-number-slam, kinetic-typo-beat",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/kanada-perspective-snap.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/slam-entrance-moves.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/space-camera-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "space-camera-moves",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "3D 공간 카메라 무브: 부품이 Z로 분해됐다 합체, 드론 급강하 착지",
+   "tags": [
+    "3d",
+    "camera",
+    "exploded"
+   ],
+   "admaker": "three 커스텀 씬(model 분해) 또는 층별 scale keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/exploded-view.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/space-camera-moves.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/speed-ramp-freeze",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "speed-ramp-freeze",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "흐르다 정지 프레임에 원 주석 → 다시 흐르는 속도 램프",
+   "tags": [
+    "annotate",
+    "freeze",
+    "rhythm",
+    "speed-ramp"
+   ],
+   "admaker": "Video playbackRate 구간 분할 + annotation strokeDraw",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/freeze-annotate.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/speed-ramp-freeze.md",
+   "duration_sec": 5.3
+  },
+  {
+   "id": "shotcraft/spotlight-hero-card",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "spotlight-hero-card",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "불 꺼진 극장에서 체적광 스포트라이트가 페이지를 훑다 카드 하나를 고정, 카드가 떠오르고 빛줄기가 윤곽을 두 번 돎",
+   "tags": [
+    "card",
+    "dark",
+    "hero",
+    "opening",
+    "spotlight"
+   ],
+   "admaker": "방사 그라데이션 Image 마스크 keyframes + 카드 lift + 윤곽 strokeDraw",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/spotlight-hero-card.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/spotlight-hero-card.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/spotlight-sweep-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "spotlight-sweep-moves",
+   "category": "effects",
+   "category_ko": "빛·강조",
+   "summary_ko": "어둠 속 스포트라이트가 지나가는 곳만 밝아지는 현상 기법 3종",
+   "tags": [
+    "dark",
+    "effects",
+    "spotlight",
+    "sweep"
+   ],
+   "admaker": "검은 Image(구멍 방사 그라데이션) keyframes(x)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/glow-wake-sleep-panel.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/spotlight-sweep-moves.md",
+   "duration_sec": 4.5
+  },
+  {
+   "id": "shotcraft/steep-tilt-glide",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "steep-tilt-glide",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "60° 강한 원근으로 선 페이지가 자기 평면 방향으로 미끄러져 카메라를 스침, 속도 잔상",
+   "tags": [
+    "3d",
+    "camera",
+    "glide",
+    "motion-blur",
+    "tilt"
+   ],
+   "admaker": "rotateY 60 + x keyframes + motionBlurEffect",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/steep-tilt-glide.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/steep-tilt-glide.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/stroke-segment-build",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "stroke-segment-build",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "제목을 서로 떨어진 획 십여 개로 쪼개 무작위로 하나씩 켜다, 마지막 획에서 '탁' 하고 읽힘",
+   "tags": [
+    "build",
+    "logo",
+    "opening",
+    "strokes"
+   ],
+   "admaker": "text_to_path 획 분리 path 여러 개 strokeDraw 무작위 시차",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/stroke-segment-build.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/stroke-segment-build.md",
+   "duration_sec": 5.5
+  },
+  {
+   "id": "shotcraft/tear-streak-transitions",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "tear-streak-transitions",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "노이즈 찢김: 16개 가로 띠가 어긋나 떨리는 사이 하드컷",
+   "tags": [
+    "glitch",
+    "tear",
+    "transition"
+   ],
+   "admaker": "가로 띠 Image 16개 x 오프셋 keyframes 또는 셰이더",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/glitch-displace.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/tear-streak-transitions.md",
+   "duration_sec": 4.5
+  },
+  {
+   "id": "shotcraft/tension-camera-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "tension-camera-moves",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "감정 카메라 무브: 불릿타임 정지 회전, 멀리 빠지며 고립",
+   "tags": [
+    "bullet-time",
+    "camera",
+    "pull-back"
+   ],
+   "admaker": "rotateY + zoom keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/bullet-time-freeze-orbit.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/tension-camera-moves.md",
+   "duration_sec": 6.0
+  },
+  {
+   "id": "shotcraft/terminal-3d",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "terminal-3d",
+   "category": "camera",
+   "category_ko": "카메라·공간",
+   "summary_ko": "터미널 창 세 개가 3D 공간에 흩어져 있고 카메라가 창 사이를 날며 명령이 타이핑되고 결과가 줄줄이 나옴",
+   "tags": [
+    "3d",
+    "camera",
+    "terminal",
+    "typing"
+   ],
+   "admaker": "Text typewriter + 카메라 keyframes",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/terminal-3d.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/camera/terminal-3d.md",
+   "duration_sec": 8.2
+  },
+  {
+   "id": "shotcraft/text-as-mask",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "text-as-mask",
+   "category": "opening",
+   "category_ko": "오프닝·브랜드",
+   "summary_ko": "흰 무대에 아주 굵은 제목을 뚫어 그 안으로 어두운 제품 화면이 흐르고, 끝에 글자가 46배로 확대되며 안쪽 화면이 화면을 차지",
+   "tags": [
+    "opening",
+    "text-mask",
+    "zoom-through"
+   ],
+   "admaker": "Text 마스크(regionFilters/blendMode, engine 3.1) + scale 46 (transition-zoom-through)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/text-as-mask.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/text-as-mask.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/text-column-converge",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "text-column-converge",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "왼쪽 'NEW'와 오른쪽 기능 단어가 양끝에 고정된 채 하드컷으로 교체되다, 마지막 단어에서만 가운데로 미끄러져 맞물림",
+   "tags": [
+    "converge",
+    "kinetic-typography",
+    "typography"
+   ],
+   "admaker": "Text 두 개 교체 + 마지막 x keyframes easeInOut",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/text-column-converge.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/text-column-converge.md",
+   "duration_sec": 6.0
+  },
+  {
+   "id": "shotcraft/theme-switch-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "theme-switch-moves",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "테마 전환: 사선으로 쓸며 그 자리에서 스킨이 바뀌거나, 팔레트 물결이 점에서 퍼짐",
+   "tags": [
+    "interaction",
+    "ripple",
+    "sweep",
+    "switch",
+    "theme"
+   ],
+   "admaker": "angleWipe 또는 circleReveal 마스크로 다음 색 화면",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/theme-sweep-toggle.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/theme-switch-moves.md",
+   "duration_sec": 4.7
+  },
+  {
+   "id": "shotcraft/timeline-travel",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "timeline-travel",
+   "category": "data",
+   "category_ko": "데이터·지표",
+   "summary_ko": "카메라가 가로 눈금축을 따라 가속하며 버전 눈금마다 카드가 튀어 서고 마지막 눈금에서 급정지 줌인",
+   "tags": [
+    "camera",
+    "cards",
+    "data",
+    "timeline"
+   ],
+   "admaker": "카메라 x keyframes 계단 + 카드 pop",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/timeline-travel.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/data/timeline-travel.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/title-demote-to-label",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "title-demote-to-label",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "가운데 큰 제목이 한 박 서 있다가 0.3배로 줄며 왼쪽 위 섹션 라벨로 내려가고 그 아래 내용이 자람",
+   "tags": [
+    "demote",
+    "kinetic-typography",
+    "label",
+    "title",
+    "typography"
+   ],
+   "admaker": "Text keyframes(scale·x·y) 연속 + 내용 entrance",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/title-demote-to-label.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/title-demote-to-label.md",
+   "duration_sec": 3.7
+  },
+  {
+   "id": "shotcraft/trailer-grammar-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "trailer-grammar-moves",
+   "category": "rhythm",
+   "category_ko": "리듬·몽타주",
+   "summary_ko": "예고편 문법: 9프레임짜리 세 컷 속편집 훅 + 블랙 정적 한 박 → 오프닝 제목",
+   "tags": [
+    "bumper",
+    "cut",
+    "rhythm",
+    "trailer"
+   ],
+   "admaker": "짧은 컷 3개 + 1박 블랙 + 제목 slam",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/trailer-bumper.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/rhythm/trailer-grammar-moves.md",
+   "duration_sec": 4.7
+  },
+  {
+   "id": "shotcraft/transition-hidden-cut",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "transition-hidden-cut",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "숨은 컷 3종: 전경 가림, 맞부딪혀 열기, 따뜻한 빛샘 — 컷을 1–3프레임 가림·충돌·빛 피크에 숨김",
+   "tags": [
+    "hidden-cut",
+    "light-leak",
+    "transition"
+   ],
+   "admaker": "전경 Shape wipe + 컷, 또는 흰/주황 flash (transition-flash-streak)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/invisible-cut.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/transition-hidden-cut.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/transition-travel",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "transition-travel",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "거대한 장 제목의 글자 획이 창이 되어 카메라가 그 안으로 파고들며 장면 전환",
+   "tags": [
+    "text",
+    "transition",
+    "zoom-through"
+   ],
+   "admaker": "transition-zoom-through + 글자 마스크",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/letterform-zoom.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/transition-travel.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/type-and-filter",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "type-and-filter",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "실제 UI에 검색어를 치면 격자가 카드 한 장으로 수렴하고 클릭하면 상세 화면으로",
+   "tags": [
+    "filter",
+    "interaction",
+    "search",
+    "ui"
+   ],
+   "admaker": "Text typewriter + 카드 그룹 keyframes 수렴",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/type-and-filter.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/type-and-filter.md",
+   "duration_sec": 2.5
+  },
+  {
+   "id": "shotcraft/type-assembly-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "type-assembly-moves",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "글자 집결 3종: 글자별로 갈라져 오르기, 떠다니다 모이기, 경로 위 글자",
+   "tags": [
+    "assemble",
+    "kinetic-typography",
+    "split-text",
+    "typography"
+   ],
+   "admaker": "Text characterAnimation(stagger char)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/split-text-stagger.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/type-assembly-moves.md",
+   "duration_sec": 5.5
+  },
+  {
+   "id": "shotcraft/type-entrance-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "type-entrance-moves",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "글자가 중력으로 떨어져 튀고 비뚤게 섰다가 마지막 박에 일제히 차렷",
+   "tags": [
+    "bounce",
+    "drop",
+    "kinetic-typography",
+    "typography"
+   ],
+   "admaker": "characterAnimation(drop, easeOutBounce) + 마지막 angle 0",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/letter-drop-physics.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/type-entrance-moves.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/type-rhythm-sync",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "type-rhythm-sync",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "소리에 맞춘 글자: 북소리마다 획이 굵어졌다 돌아오는 굵기 펌프, 노래방식 채우기",
+   "tags": [
+    "beat",
+    "karaoke",
+    "kinetic-typography",
+    "typography"
+   ],
+   "admaker": "Text scaleX 펌프 박마다 + Caption 단어 하이라이트",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/font-weight-pump.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/type-rhythm-sync.md",
+   "duration_sec": null
+  },
+  {
+   "id": "shotcraft/typewriter-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "typewriter-moves",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "타자기 '말 바꾸기': 평범한 단어 → 머뭇 → 백스페이스 → 더 빠르게 셀링 포인트",
+   "tags": [
+    "kinetic-typography",
+    "typewriter",
+    "typography"
+   ],
+   "admaker": "Text 교체 클립 2개 + typewriter characterAnimation",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/error-retype.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/typewriter-moves.md",
+   "duration_sec": 5.3
+  },
+  {
+   "id": "shotcraft/ui-strip-away-outro",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "ui-strip-away-outro",
+   "category": "outro",
+   "category_ko": "마무리",
+   "summary_ko": "Publish를 누르면 편집기 UI가 바깥부터 층층이 증발하고 버튼만 남아 가운데로 커졌다 워드마크로",
+   "tags": [
+    "outro",
+    "strip-away",
+    "ui"
+   ],
+   "admaker": "요소 exit 시차(바깥→안) + 버튼 keyframes → endcard",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/ui-strip-away-outro.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/outro/ui-strip-away-outro.md",
+   "duration_sec": 4.8
+  },
+  {
+   "id": "shotcraft/ui-to-brand-morph",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "ui-to-brand-morph",
+   "category": "outro",
+   "category_ko": "마무리",
+   "summary_ko": "아이콘이 Y축으로 납작해져 세로선이 됐다가 브랜드 로고로 펼쳐지고 워드마크가 따라옴",
+   "tags": [
+    "logo",
+    "morph",
+    "outro"
+   ],
+   "admaker": "rotateY 90 교대 클립 + 로고 unfold",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/icon-flip-bloom.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/outro/ui-to-brand-morph.md",
+   "duration_sec": 4.3
+  },
+  {
+   "id": "shotcraft/value-stagger-gradient",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "value-stagger-gradient",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "막대 16개가 시차로 들어오며 높이·색상·위치·블러가 처음부터 끝까지 값 그라데이션으로 이어짐",
+   "tags": [
+    "bars",
+    "data",
+    "gradient",
+    "stagger",
+    "ui-entrance"
+   ],
+   "admaker": "Shape 16개 keyframes, 값을 index로 보간",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/value-stagger-gradient.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/value-stagger-gradient.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/vertical-word-roll-blur-cycle",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "vertical-word-roll-blur-cycle",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "문장 끝 단어가 세로 롤러로 0.55초마다 바뀌고 이웃 줄은 거리만큼 세로 블러",
+   "tags": [
+    "blur",
+    "kinetic-typography",
+    "roll",
+    "slot",
+    "typography"
+   ],
+   "admaker": "Text 여러 개 gsapTimeline(y·blur) expo.out",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/vertical-word-roll-blur-cycle.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/vertical-word-roll-blur-cycle.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/voice-waveform-live",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "voice-waveform-live",
+   "category": "interaction",
+   "category_ko": "인터랙션·기능 시연",
+   "summary_ko": "녹음 캡슐 안 64개 세로 막대가 말할 때 솟고 멈추면 점선으로 줄어드는 실시간 파형",
+   "tags": [
+    "audio",
+    "interaction",
+    "ui",
+    "waveform"
+   ],
+   "admaker": "script 어댑터(시드 RNG 파형) 또는 막대 Shape scaleY",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/voice-waveform-live.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/interaction/voice-waveform-live.md",
+   "duration_sec": 5.7
+  },
+  {
+   "id": "shotcraft/wall-reveal-moves",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "wall-reveal-moves",
+   "category": "ui-entrance",
+   "category_ko": "UI 등장·진열",
+   "summary_ko": "벽 전체 일괄 등장: 벤토 칸이 차례로 켜지거나 청사진 선이 그려지며 제자리에서 나타남",
+   "tags": [
+    "bento",
+    "grid",
+    "reveal",
+    "ui-entrance"
+   ],
+   "admaker": "칸 Shape opacity/rectExpand 시차, path strokeDraw",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/bento-light-up.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/ui-entrance/wall-reveal-moves.md",
+   "duration_sec": 5.0
+  },
+  {
+   "id": "shotcraft/white-flash-logo-simplify-cut",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "white-flash-logo-simplify-cut",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "액체 금속 질감 컬러 워드마크가 힘을 모았다 흰 플래시로 과노출, 빛이 빠지면 같은 자리에 평면 워드마크",
+   "tags": [
+    "flash",
+    "logo",
+    "simplify",
+    "transition"
+   ],
+   "admaker": "Image 로고 + 흰 flash + 평면 로고 교체 (transition-flash-streak)",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/white-flash-logo-simplify-cut.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/white-flash-logo-simplify-cut.md",
+   "duration_sec": 4.0
+  },
+  {
+   "id": "shotcraft/wipe-transitions",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "wipe-transitions",
+   "category": "transition",
+   "category_ko": "전환",
+   "summary_ko": "기하 와이프 전환: 3D 블라인드 12장이 물결처럼 뒤집히며 A에서 B로",
+   "tags": [
+    "3d",
+    "blinds",
+    "transition",
+    "wipe"
+   ],
+   "admaker": "띠 Shape 12개 rotateX 시차 또는 blockReveal 마스크",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/blinds-slice.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/wipe-transitions.md",
+   "duration_sec": 4.4
+  },
+  {
+   "id": "shotcraft/word-relay-filmstrip",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "word-relay-filmstrip",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "왼쪽 흑백 페이지 카드가 한 칸씩 스크롤되고 오른쪽 세리프 큰 단어가 동사만 바뀌며 이어달리기",
+   "tags": [
+    "filmstrip",
+    "kinetic-typography",
+    "relay",
+    "typography"
+   ],
+   "admaker": "카드 열 y 계단 keyframes + Text 교체",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/word-relay-filmstrip.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/word-relay-filmstrip.md",
+   "duration_sec": 2.0
+  },
+  {
+   "id": "shotcraft/word-relay-geometry",
+   "source": "shotcraft",
+   "kind": "shot",
+   "title": "word-relay-geometry",
+   "category": "typography",
+   "category_ko": "타이포·자막 카드",
+   "summary_ko": "혜택 단어 셋이 각자 기하 도형 릴레이(점선 원 회전 → 혜성 호 → 원 세 개 모임 → 크롬 광택)",
+   "tags": [
+    "geometry",
+    "kinetic-typography",
+    "relay",
+    "typography"
+   ],
+   "admaker": "circle·path Shape strokeDraw/angle + Text 교체",
+   "preview": "https://vincentwei1021.github.io/video-shotcraft/media/word-relay-geometry.mp4",
+   "preview_type": "video",
+   "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/typography/word-relay-geometry.md",
+   "duration_sec": 6.0
+  },
+  {
+   "id": "opuscar/caption-news",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "자막 뉴스 (Caption News)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "소리 없이도 읽히는 소셜 뉴스: 실제 영상·문서 위에 큰 자막 카드",
+   "tags": [
+    "caption",
+    "footage",
+    "news",
+    "social"
+   ],
+   "admaker": "바닥 소재 + Caption 단어 하이라이트 + 숫자 countUp",
+   "uses": [
+    "Social news",
+    "Report explainers",
+    "Data shorts"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/caption-news/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/caption-news"
+  },
+  {
+   "id": "opuscar/newsreel",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "1920년대 뉴스릴 (1920s Newsreel)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "탐조등·지구본 아이덴트, 황동 자막판, 흑백 아카이브 편집",
+   "tags": [
+    "black-white",
+    "newsreel",
+    "retro"
+   ],
+   "admaker": "흑백 소재 + 그레인·플리커 룩 + 세리프 자막판",
+   "uses": [
+    "History stories",
+    "Fads & eras",
+    "Anniversaries"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/newsreel/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/newsreel"
+  },
+  {
+   "id": "opuscar/countdown",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "실시간 카운트다운 분할 화면 (Live Countdown Split-screen)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "한 사건의 마지막 1분을 칸이 1→9개로 열렸다 0초에 하나로 합쳐지는 편집",
+   "tags": [
+    "countdown",
+    "grid",
+    "split-screen"
+   ],
+   "admaker": "rectExpand 칸 + countUp(역순)",
+   "uses": [
+    "Launches",
+    "Countdowns",
+    "Live events"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/countdown/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/countdown"
+  },
+  {
+   "id": "opuscar/city-symphony",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "타임랩스 심포니 (Time-lapse Symphony)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "미니멀 음악처럼 자른 도시 타임랩스: 차량·구름이 빛의 강이 됨",
+   "tags": [
+    "beat",
+    "city",
+    "montage",
+    "timelapse"
+   ],
+   "admaker": "fast-montage 프리셋 + 박 컷",
+   "uses": [
+    "City films",
+    "Music montages",
+    "Openers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/city-symphony/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/city-symphony"
+  },
+  {
+   "id": "opuscar/visual-investigation",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "시각 탐사 (Visual Investigation)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "한 사건의 영상·사진·문서·지도를 차가운 책상 위에 펼치고 연결선으로 추적",
+   "tags": [
+    "evidence",
+    "investigation",
+    "lines",
+    "map"
+   ],
+   "admaker": "Image 카드 + path strokeDraw 연결 + 카메라",
+   "uses": [
+    "Reconstructions",
+    "Fact-checks",
+    "Incident reports"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/visual-investigation/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/visual-investigation"
+  },
+  {
+   "id": "opuscar/kino-montage",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "구성주의 몽타주 (Constructivist Montage)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "아카이브 자료를 빨강 하나 쓴 잉크·종이 포스터로 인쇄해 대각선 구도로 편집",
+   "tags": [
+    "constructivist",
+    "diagonal",
+    "poster",
+    "red"
+   ],
+   "admaker": "흑백 소재 + 빨강 Shape angleWipe + 굵은 산세리프",
+   "uses": [
+    "Industry histories",
+    "Milestones",
+    "Collective effort"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/kino-montage/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/kino-montage"
+  },
+  {
+   "id": "opuscar/telestrator",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "스포츠 텔레스트레이터 (Sports Telestrator)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "축구 분석처럼 재생·되감기·정지 후 화면에 선을 그림",
+   "tags": [
+    "annotate",
+    "freeze",
+    "sports"
+   ],
+   "admaker": "Video 구간 분할 + annotation strokeDraw",
+   "uses": [
+    "Sports analysis",
+    "Match recaps",
+    "Coaching"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/telestrator/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/telestrator"
+  },
+  {
+   "id": "opuscar/news-package",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "방송 뉴스 패키지 (Broadcast News Package)",
+   "category": "Edit & Documentary",
+   "category_ko": "Edit & Documentary",
+   "summary_ko": "채널 로고가 되는 스팅, 런다운, 하단 자막 바를 코드로",
+   "tags": [
+    "broadcast",
+    "lower-third",
+    "news"
+   ],
+   "admaker": "Shape 바 wipe + Text + 로고 sting",
+   "uses": [
+    "News round-ups",
+    "Bulletins",
+    "Market updates"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/news-package/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/news-package"
+  },
+  {
+   "id": "opuscar/satellite-briefing",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "위성 브리핑 (Satellite Briefing)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "회색으로 누른 위성 사진 위에 흰 측정선이 그려지는 분석 브리핑",
+   "tags": [
+    "map",
+    "measure",
+    "satellite"
+   ],
+   "admaker": "map.mjs + 흰 선 strokeDraw + 카메라 줌",
+   "uses": [
+    "Climate",
+    "News explainers",
+    "Geography"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/satellite-briefing/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/satellite-briefing"
+  },
+  {
+   "id": "opuscar/briefing-board",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "엔지니어링 브리핑 보드 (Engineering Briefing Board)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "실제 화이트보드 벽에 사진 오려 붙이고 마커로 연결",
+   "tags": [
+    "board",
+    "cutout",
+    "whiteboard"
+   ],
+   "admaker": "보드 사진 바닥 + Image 카드 + 손그림 annotation",
+   "uses": [
+    "Engineering",
+    "Option comparisons",
+    "Briefings"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/briefing-board/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/briefing-board"
+  },
+  {
+   "id": "opuscar/lidar-survey",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "라이다 측량 (LiDAR Survey)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "어둠 속에 떠 있는 실측 점구름을 스캔선이 지나감",
+   "tags": [
+    "3d",
+    "dark",
+    "lidar",
+    "points",
+    "scan"
+   ],
+   "admaker": "three 커스텀 씬(Points) + 스캔선",
+   "uses": [
+    "Heritage",
+    "Environment",
+    "Site surveys"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/lidar-survey/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/lidar-survey"
+  },
+  {
+   "id": "opuscar/white-model",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "흰 모형 위 프로젝션 (Projection on White Model)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "흰 매스 모형 위에 프로젝터가 데이터를 비춤",
+   "tags": [
+    "3d",
+    "data",
+    "projection",
+    "white-model"
+   ],
+   "admaker": "three 커스텀 씬 + 투사 텍스처",
+   "uses": [
+    "Urban planning",
+    "Exhibitions",
+    "City data"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/white-model/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/white-model"
+  },
+  {
+   "id": "opuscar/data-physical",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "데이터 실물화 (Data Physicalization)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "통계 단위 하나하나를 접시·블록·동전 같은 실물로 쌓음",
+   "tags": [
+    "3d",
+    "data",
+    "physical",
+    "stack"
+   ],
+   "admaker": "three 인스턴스 쌓기 또는 Shape 블록 squash",
+   "uses": [
+    "Annual reports",
+    "Investor decks",
+    "Energy data"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/data-physical/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/data-physical"
+  },
+  {
+   "id": "opuscar/teardown",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "분해 티어다운 (Exploded Teardown)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "실제 제품을 CAD로 스튜디오 조명 아래 분해",
+   "tags": [
+    "3d",
+    "exploded",
+    "product"
+   ],
+   "admaker": "three model + 부품 오프셋 keyframes",
+   "uses": [
+    "Hardware launches",
+    "Product pages",
+    "Spec explainers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/teardown/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/teardown"
+  },
+  {
+   "id": "opuscar/microscope",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "현미경 이야기 (Microscope Story)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "실제 현미경 사진, 한 번의 연속 배율 변화로 이야기",
+   "tags": [
+    "microscope",
+    "scale",
+    "zoom"
+   ],
+   "admaker": "Image 단계 + 연속 zoom-through",
+   "uses": [
+    "Biomedicine",
+    "Materials science",
+    "Skincare science"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/microscope/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/microscope"
+  },
+  {
+   "id": "opuscar/archive-lighttable",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "아카이브 라이트테이블 (Archive Light Table)",
+   "category": "Evidence Films",
+   "category_ko": "Evidence Films",
+   "summary_ko": "유리 원판·편지·스크랩을 차가운 라이트테이블 위에 놓고 비춤",
+   "tags": [
+    "archive",
+    "documents",
+    "lighttable"
+   ],
+   "admaker": "Image 카드 + 백라이트 글로우 + 카메라",
+   "uses": [
+    "Brand history",
+    "Archive stories",
+    "Museums"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/archive-lighttable/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/archive-lighttable"
+  },
+  {
+   "id": "opuscar/crayon-book",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "크레용 그림책 (Crayon Picture Book)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "거친 종이에 크레용으로 그리고 수채 워시가 드러냄",
+   "tags": [
+    "crayon",
+    "hand-drawn",
+    "kids",
+    "paper"
+   ],
+   "admaker": "brush Shape(simulate) + 종이 질감 Image + wipe",
+   "uses": [
+    "Picture books",
+    "Bedtime stories",
+    "Kids' learning"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/crayon-book/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/crayon-book"
+  },
+  {
+   "id": "opuscar/watercolor",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "수채 붓 (Watercolor Brush)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "스스로 그려지는 손그림 일기장: 반투명 붓 터치와 마른붓 흰 자국",
+   "tags": [
+    "brush",
+    "paper",
+    "watercolor"
+   ],
+   "admaker": "brush Shape + paint, 종이 질감",
+   "uses": [
+    "Nature documentary",
+    "Travel",
+    "Science explainers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/watercolor/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/watercolor"
+  },
+  {
+   "id": "opuscar/ink-wash",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "수묵화 (Chinese Ink Wash)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "화선지 위 사의화: 여백이 공간, 한 획이 산·파도",
+   "tags": [
+    "brush",
+    "east-asian",
+    "ink-wash"
+   ],
+   "admaker": "brush Shape strokeDraw + 먹 번짐 Image",
+   "uses": [
+    "Wuxia",
+    "Cultural brands",
+    "Poetry"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/ink-wash/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ink-wash"
+  },
+  {
+   "id": "opuscar/impasto",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "임파스토 유화 (Impasto Oil Painting)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "나이프로 두껍게 바른 날 선 색면이 빛에 결이 드러남",
+   "tags": [
+    "oil-paint",
+    "texture"
+   ],
+   "admaker": "질감 Image + 면 paint",
+   "uses": [
+    "Music videos",
+    "Art & culture",
+    "Emotional ads"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/impasto/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/impasto"
+  },
+  {
+   "id": "opuscar/one-line",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "한붓 그리기 (One-line Drawing)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "종이에서 떨어지지 않는 한 줄이 모든 것을 그리며 장면이 이어짐",
+   "tags": [
+    "drawing",
+    "one-line",
+    "strokeDraw"
+   ],
+   "admaker": "긴 path 하나 strokeDraw 구간별 (drawing.md)",
+   "uses": [
+    "Brand stories",
+    "Life milestones",
+    "Minimal ads"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/one-line/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/one-line"
+  },
+  {
+   "id": "opuscar/whiteboard",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "화이트보드 설명 (Whiteboard Explainer)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "광택 보드에 실제 획순으로 써지는 손글씨 설명 영상",
+   "tags": [
+    "explainer",
+    "handwriting",
+    "whiteboard"
+   ],
+   "admaker": "handwritten-title + annotation",
+   "uses": [
+    "Explainers",
+    "Online courses",
+    "Science"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/whiteboard/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/whiteboard"
+  },
+  {
+   "id": "opuscar/urban-sketch",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "어반 스케치 펜·워시 (Urban Sketch · Pen & Wash)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "현장 스케치북: 흔들리고 넘치는 세피아 선과 맑은 워시",
+   "tags": [
+    "pen",
+    "sketch",
+    "wash"
+   ],
+   "admaker": "roughenPath + strokeDraw + 워시 Image",
+   "uses": [
+    "City & travel",
+    "Architecture",
+    "Lifestyle brands"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/urban-sketch/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/urban-sketch"
+  },
+  {
+   "id": "opuscar/chalkboard",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "칠판 (Chalkboard)",
+   "category": "Hand-drawn & Painting",
+   "category_ko": "Hand-drawn & Painting",
+   "summary_ko": "칠판에 분필 글씨가 획순대로 스스로 써짐",
+   "tags": [
+    "chalkboard",
+    "handwriting"
+   ],
+   "admaker": "handwritten-title(분필 폰트) + lineBoil",
+   "uses": [
+    "Word origins",
+    "Myth-busting",
+    "Lessons"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/chalkboard/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/chalkboard"
+  },
+  {
+   "id": "opuscar/shadow-puppet",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "그림자극 (Shadow Puppetry)",
+   "category": "East Asian Traditions",
+   "category_ko": "East Asian Traditions",
+   "summary_ko": "레이스처럼 조각된 반투명 가죽 인형을 천 스크린에 비춤",
+   "tags": [
+    "east-asian",
+    "shadow-puppet",
+    "silhouette"
+   ],
+   "admaker": "실루엣 Image 관절 angle keyframes + 백라이트",
+   "uses": [
+    "Myths & folklore",
+    "Heritage",
+    "Festivals"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/shadow-puppet/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/shadow-puppet"
+  },
+  {
+   "id": "opuscar/ukiyoe",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "우키요에 (Ukiyo-e)",
+   "category": "East Asian Traditions",
+   "category_ko": "East Asian Traditions",
+   "summary_ko": "에도 목판화: 평면 색 블록, 새긴 먹선, 보카시 하늘",
+   "tags": [
+    "east-asian",
+    "flat",
+    "ukiyoe",
+    "woodblock"
+   ],
+   "admaker": "SVG 평면 Image 층 + 패럴랙스",
+   "uses": [
+    "Travel",
+    "Japanese culture",
+    "Poetry"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/ukiyoe/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ukiyoe"
+  },
+  {
+   "id": "opuscar/papercut-red",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "붉은 종이오리기 (Red Paper-cut)",
+   "category": "East Asian Traditions",
+   "category_ko": "East Asian Traditions",
+   "summary_ko": "창화 전지: 관절 달린 붉은 오리기가 종이 위에서 움직임",
+   "tags": [
+    "east-asian",
+    "papercut",
+    "red"
+   ],
+   "admaker": "빨강 path Shape + 관절 angle",
+   "uses": [
+    "Lunar New Year",
+    "Festive greetings",
+    "Folk tales"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/papercut-red/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/papercut-red"
+  },
+  {
+   "id": "opuscar/paper-lantern",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "종이 조각 라이트박스 (Paper-cut Lightbox)",
+   "category": "East Asian Traditions",
+   "category_ko": "East Asian Traditions",
+   "summary_ko": "뒤에서 비추는 6–9겹 종이 조각 상자",
+   "tags": [
+    "depth",
+    "layers",
+    "lightbox",
+    "papercut"
+   ],
+   "admaker": "층별 Image 패럴랙스 + 백라이트 글로우",
+   "uses": [
+    "Festivals",
+    "Gift brands",
+    "Cultural stories"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/paper-lantern/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/paper-lantern"
+  },
+  {
+   "id": "opuscar/risograph",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "리소그래프 (Risograph Print)",
+   "category": "Print & Printmaking",
+   "category_ko": "Print & Printmaking",
+   "summary_ko": "스텐실 인쇄기로 찍은 듯한 2–3색 반투명 별색 + 어긋남",
+   "tags": [
+    "grain",
+    "misregistration",
+    "print",
+    "riso"
+   ],
+   "admaker": "riso-print-hits 기법 + 그레인 + multiply",
+   "uses": [
+    "Indie brands",
+    "Zines",
+    "Lifestyle"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/risograph/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/risograph"
+  },
+  {
+   "id": "opuscar/halftone-dossier",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "하프톤 도시에 (Halftone Dossier)",
+   "category": "Print & Printmaking",
+   "category_ko": "Print & Printmaking",
+   "summary_ko": "크림 아카이브 종이, 하프톤 점, 거대한 굵은 헤드라인의 레트로 사건 파일",
+   "tags": [
+    "halftone",
+    "headline",
+    "print",
+    "retro"
+   ],
+   "admaker": "하프톤 SVG Image + 굵은 디스플레이 Text",
+   "uses": [
+    "Humour",
+    "Pet content",
+    "Social shorts"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/halftone-dossier/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/halftone-dossier"
+  },
+  {
+   "id": "opuscar/woodcut",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "목판화 (Woodcut Print)",
+   "category": "Print & Printmaking",
+   "category_ko": "Print & Printmaking",
+   "summary_ko": "검은 목판에 칼이 지나간 곳에만 빛이 있는, 스스로 새겨지는 판화",
+   "tags": [
+    "carve",
+    "print",
+    "woodcut"
+   ],
+   "admaker": "흰 path strokeDraw on 검정",
+   "uses": [
+    "Folk tales",
+    "Craft brands",
+    "Book trailers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/woodcut/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/woodcut"
+  },
+  {
+   "id": "opuscar/engraving",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "동판화 (Copperplate Engraving)",
+   "category": "Print & Printmaking",
+   "category_ko": "Print & Printmaking",
+   "summary_ko": "뷰린이 구리판에 부푼 선을 새기고 찍어 내는 인그레이빙",
+   "tags": [
+    "copperplate",
+    "engraving",
+    "line"
+   ],
+   "admaker": "가는 path 해칭 strokeDraw",
+   "uses": [
+    "Museum labels",
+    "Science explainers",
+    "Brand heritage"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/engraving/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/engraving"
+  },
+  {
+   "id": "opuscar/silkscreen-poster",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "실크스크린 여행 포스터 (Silkscreen Travel Poster)",
+   "category": "Print & Printmaking",
+   "category_ko": "Print & Printmaking",
+   "summary_ko": "4–6색 불투명 평면 잉크를 한 색씩 밀어 찍은 포스터",
+   "tags": [
+    "flat",
+    "poster",
+    "silkscreen",
+    "travel"
+   ],
+   "admaker": "색 층 Image wipe 순서대로",
+   "uses": [
+    "Destination guides",
+    "Tourism",
+    "Event posters"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/silkscreen-poster/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/silkscreen-poster"
+  },
+  {
+   "id": "opuscar/printed-long-take",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "인쇄 롱테이크 (Printed Long Take)",
+   "category": "Print & Printmaking",
+   "category_ko": "Print & Printmaking",
+   "summary_ko": "스크래치보드 판화로 그린 3D 세계를 빨강 하나와 함께 끊김 없이 지나감",
+   "tags": [
+    "3d",
+    "long-take",
+    "scratchboard"
+   ],
+   "admaker": "three + 선화 셰이더",
+   "uses": [
+    "Journeys",
+    "Wildlife",
+    "Landscapes"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/printed-long-take/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/printed-long-take"
+  },
+  {
+   "id": "opuscar/swiss-motion",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "스위스 모션그래픽 (Swiss Motion Graphics)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "모듈 그리드, 서체 하나, 신호색 하나, 설명으로서의 움직임",
+   "tags": [
+    "grid",
+    "minimal",
+    "modern",
+    "swiss",
+    "typography"
+   ],
+   "admaker": "에디토리얼 그리드 Text + Shape 선 wipe (v2 커피 광고 라벨·선)",
+   "uses": [
+    "Brand identity",
+    "Events",
+    "Design education"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/swiss-motion/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/swiss-motion"
+  },
+  {
+   "id": "opuscar/spy-titles",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "60년대 스파이 타이틀 (60s Spy Title Sequence)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "오린 종이 4색 오프닝 타이틀, 실루엣이 평면 세트를 지나감",
+   "tags": [
+    "retro",
+    "silhouette",
+    "spy",
+    "titles"
+   ],
+   "admaker": "평면 Shape + 실루엣 Image + 박 컷",
+   "uses": [
+    "Title sequences",
+    "Event openers",
+    "Trailers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/spy-titles/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/spy-titles"
+  },
+  {
+   "id": "opuscar/art-deco",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "아르데코 (Art Deco)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "검은 옻칠, 새긴 금선, 에어브러시 기하: 움직이는 1930년대 포스터",
+   "tags": [
+    "art-deco",
+    "geometry",
+    "gold",
+    "luxury"
+   ],
+   "admaker": "금 그라데이션 stroke path strokeDraw + 중앙축 unfold",
+   "uses": [
+    "Luxury & hospitality",
+    "Galas",
+    "Invitations"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/art-deco/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/art-deco"
+  },
+  {
+   "id": "opuscar/blueprint",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "블루프린트 (Blueprint)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "청사진 위에 흰 기술 선화가 살아남",
+   "tags": [
+    "blueprint",
+    "lines",
+    "technical"
+   ],
+   "admaker": "흰 path strokeDraw on 프러시안 블루 + 치수선",
+   "uses": [
+    "Engineering",
+    "Hardware launches",
+    "Tech explainers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/blueprint/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/blueprint"
+  },
+  {
+   "id": "opuscar/stained-glass",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "스테인드글라스 (Stained Glass)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "어두운 석조 홀 안, 햇빛이 닿는 곳만 살아나는 유리창",
+   "tags": [
+    "light",
+    "stained-glass"
+   ],
+   "admaker": "색 path Shape + 빛 마스크 keyframes",
+   "uses": [
+    "Legends",
+    "Heritage",
+    "Holiday stories"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/stained-glass/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/stained-glass"
+  },
+  {
+   "id": "opuscar/pictogram-motion",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "픽토그램 모션 (Pictogram Motion)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "원·반원 정사각 격자 '코어 그래픽'으로 박에 맞춘 플래시 카드",
+   "tags": [
+    "beat",
+    "flat",
+    "grid",
+    "pictogram"
+   ],
+   "admaker": "기본 Shape 격자 + 박 교체",
+   "uses": [
+    "Sports events",
+    "Visual identity",
+    "Event openers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/pictogram-motion/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/pictogram-motion"
+  },
+  {
+   "id": "opuscar/ascii-crt",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "ASCII / CRT 터미널 (ASCII / CRT Terminal)",
+   "category": "Graphic & Type",
+   "category_ko": "Graphic & Type",
+   "summary_ko": "모든 것이 모노스페이스 격자의 문자, 오래된 CRT 형광",
+   "tags": [
+    "ascii",
+    "crt",
+    "retro",
+    "terminal"
+   ],
+   "admaker": "script 어댑터(문자 격자) + 글로우",
+   "uses": [
+    "Developer tools",
+    "Sci-fi",
+    "Tech brands"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/ascii-crt/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ascii-crt"
+  },
+  {
+   "id": "opuscar/dataviz",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "데이터 스토리텔링 (Data Storytelling)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "크림 종이에 빨강·파랑 연필로 한 획씩 그려지는 차트와 손글씨 주석",
+   "tags": [
+    "chart",
+    "dataviz",
+    "hand-drawn"
+   ],
+   "admaker": "path strokeDraw 차트 + annotation",
+   "uses": [
+    "Data journalism",
+    "Reports",
+    "Climate & science"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/dataviz/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/dataviz"
+  },
+  {
+   "id": "opuscar/iso-infographic",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "아이소메트릭 인포그래픽 (Isometric Infographic)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "평면 3톤 블록 아이소 디오라마에 가는 라벨과 아이소타입 숫자",
+   "tags": [
+    "infographic",
+    "isometric"
+   ],
+   "admaker": "iso-build-up 카드",
+   "uses": [
+    "Process explainers",
+    "Supply chains",
+    "Annual reports"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/iso-infographic/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/iso-infographic"
+  },
+  {
+   "id": "opuscar/dark-keynote",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "다크 테크 키노트 (Dark Tech Keynote)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "검정 그라데이션, 가는 그리드, 부드러운 빛, 인터페이스가 주인공인 발표 영상",
+   "tags": [
+    "dark",
+    "keynote",
+    "modern",
+    "tech",
+    "ui"
+   ],
+   "admaker": "어두운 그라데이션 + UI 카드 + 글로우 (dark tech)",
+   "uses": [
+    "Product launches",
+    "SaaS",
+    "Keynotes"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/dark-keynote/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/dark-keynote"
+  },
+  {
+   "id": "opuscar/living-screencast",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "살아 있는 스크린캐스트 (Living Screencast)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "실제 화면 녹화 같은 제품 시연 속에 작은 마스코트가 삶",
+   "tags": [
+    "mascot",
+    "screencast",
+    "ui"
+   ],
+   "admaker": "UI Image + 마스코트 Lottie",
+   "uses": [
+    "Product tutorials",
+    "Feature launches",
+    "Onboarding"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/living-screencast/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/living-screencast"
+  },
+  {
+   "id": "opuscar/hologram-hud",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "SF 홀로그램 HUD (Sci-fi Hologram HUD)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "물체가 와이어프레임으로 스캔되고 조준 상자가 부품을 잡아 분해",
+   "tags": [
+    "hologram",
+    "hud",
+    "scan",
+    "wireframe"
+   ],
+   "admaker": "three wireframe + brackets lock-on",
+   "uses": [
+    "Spec walkthroughs",
+    "Launch videos",
+    "Trade shows"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/hologram-hud/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/hologram-hud"
+  },
+  {
+   "id": "opuscar/transit-map",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "지하철 노선도 (Transit Map)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "8방향 선, 흰 역, 테두리 환승역의 인쇄 노선도",
+   "tags": [
+    "lines",
+    "transit-map"
+   ],
+   "admaker": "path strokeDraw(8방향) + 역 circle pop",
+   "uses": [
+    "Transport",
+    "Growth over time",
+    "Networks"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/transit-map/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/transit-map"
+  },
+  {
+   "id": "opuscar/isometric-picture-book",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "아이소메트릭 그림책 (Isometric Picture Book)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "실제 장소를 평면 아이소로 그린 차분한 생활 규칙 설명",
+   "tags": [
+    "calm",
+    "isometric",
+    "picture-book"
+   ],
+   "admaker": "iso-build-up + 캐릭터 Lottie",
+   "uses": [
+    "Everyday rules",
+    "Queues",
+    "Comparisons"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/isometric-picture-book/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/isometric-picture-book"
+  },
+  {
+   "id": "opuscar/circuit-board",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "회로 기판 (Circuit Board)",
+   "category": "Information & Keynote",
+   "category_ko": "Information & Keynote",
+   "summary_ko": "위에서 본 인쇄 회로 기판으로 그린 세계",
+   "tags": [
+    "circuit",
+    "lines",
+    "tech"
+   ],
+   "admaker": "path strokeDraw 회로 + 신호 펄스",
+   "uses": [
+    "Energy",
+    "Supply chains",
+    "Devices"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/circuit-board/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/circuit-board"
+  },
+  {
+   "id": "opuscar/rubber-hose",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "1930년대 러버호스 카툰 (1930s Rubber Hose Cartoon)",
+   "category": "Cartoon & Anime",
+   "category_ko": "Cartoon & Anime",
+   "summary_ko": "모든 물체가 살아 재즈에 맞춰 흔들리는 흑백 카툰",
+   "tags": [
+    "cartoon",
+    "retro",
+    "rubber-hose"
+   ],
+   "admaker": "Lottie 캐릭터 + 흑백 룩",
+   "uses": [
+    "Food & drink",
+    "Retro ads",
+    "Kids"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/rubber-hose/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/rubber-hose"
+  },
+  {
+   "id": "opuscar/cel-anime-80s",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "80년대 셀 애니 (80s Cel Anime)",
+   "category": "Cartoon & Anime",
+   "category_ko": "Cartoon & Anime",
+   "summary_ko": "황금기 OVA 셀화: 평면 2톤 셀과 그린 배경",
+   "tags": [
+    "cel-anime",
+    "retro"
+   ],
+   "admaker": "평면 Image 층 + 스텝 타이밍",
+   "uses": [
+    "Music videos",
+    "Game trailers",
+    "Nostalgia"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/cel-anime-80s/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/cel-anime-80s"
+  },
+  {
+   "id": "opuscar/scifi-toon",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "SF 시트콤 툰 (Sci-Fi Sitcom Toon)",
+   "category": "Cartoon & Anime",
+   "category_ko": "Cartoon & Anime",
+   "summary_ko": "끓는 두꺼운 외곽선, 평면 색, 엇박 반응의 성인 애니",
+   "tags": [
+    "boil",
+    "cartoon",
+    "outline"
+   ],
+   "admaker": "lineBoil + 평면 Shape",
+   "uses": [
+    "Comedy",
+    "Tech brands",
+    "Social shorts"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/scifi-toon/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/scifi-toon"
+  },
+  {
+   "id": "opuscar/midcentury-toon",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "미드센추리 카툰 (Mid-century Cartoon)",
+   "category": "Cartoon & Anime",
+   "category_ko": "Cartoon & Anime",
+   "summary_ko": "1950년대 평면 색, 판이 몇 픽셀 어긋난 리미티드 애니",
+   "tags": [
+    "flat",
+    "midcentury",
+    "retro"
+   ],
+   "admaker": "평면 Shape + 색 오프셋",
+   "uses": [
+    "Set-up guides",
+    "Help centres",
+    "How-to"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/midcentury-toon/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/midcentury-toon"
+  },
+  {
+   "id": "opuscar/pixel-rpg",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "16비트 픽셀 RPG (16-bit Pixel RPG)",
+   "category": "Games",
+   "category_ko": "Games",
+   "summary_ko": "320×180 픽셀, 제한 팔레트, 90년대 콘솔 RPG처럼 보이고 행동함",
+   "tags": [
+    "game",
+    "pixel",
+    "retro"
+   ],
+   "admaker": "픽셀 폰트 + 스프라이트 Image 스텝",
+   "uses": [
+    "Game trailers",
+    "Recaps",
+    "Nostalgia"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/pixel-rpg/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/pixel-rpg"
+  },
+  {
+   "id": "opuscar/hd-2d",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "HD-2D (HD-2D)",
+   "category": "Games",
+   "category_ko": "Games",
+   "summary_ko": "조명·안개 낀 3D 디오라마 속 종이 인형 같은 픽셀 스프라이트",
+   "tags": [
+    "3d",
+    "diorama",
+    "hd-2d",
+    "pixel"
+   ],
+   "admaker": "three + 스프라이트 텍스처",
+   "uses": [
+    "Game trailers",
+    "Fantasy",
+    "Story films"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/hd-2d/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/hd-2d"
+  },
+  {
+   "id": "opuscar/microgame",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "마이크로게임 광란 (Microgame Frenzy)",
+   "category": "Games",
+   "category_ko": "Games",
+   "summary_ko": "명령어 하나, 몇 초, 동작 하나의 빠른 파티 게임 연속",
+   "tags": [
+    "beat",
+    "fast",
+    "game",
+    "microgame"
+   ],
+   "admaker": "박 컷 몽타주 + 큰 명령어 slam",
+   "uses": [
+    "Game trailers",
+    "Onboarding",
+    "Social shorts"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/microgame/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/microgame"
+  },
+  {
+   "id": "opuscar/game-show",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "게임쇼 플랫 (Game Show Flat)",
+   "category": "Games",
+   "category_ko": "Games",
+   "summary_ko": "사탕색 줄무늬 위 두꺼운 외곽선 마스코트의 리듬 게임 예능",
+   "tags": [
+    "candy",
+    "flat",
+    "game-show"
+   ],
+   "admaker": "평면 Shape + squash-bounce + 줄무늬 배경",
+   "uses": [
+    "Tech timelines",
+    "Year in review",
+    "Variety shows"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/game-show/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/game-show"
+  },
+  {
+   "id": "opuscar/silent-film",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "1920년대 무성영화 (1920s Silent Film)",
+   "category": "Cinema & Eras",
+   "category_ko": "Cinema & Eras",
+   "summary_ko": "먹선·은빛 워시 인그레이빙 무성영화, 4:3 필름과 자막 카드",
+   "tags": [
+    "intertitle",
+    "retro",
+    "silent-film"
+   ],
+   "admaker": "흑백 + 자막 카드 Text + 플리커",
+   "uses": [
+    "Comedy",
+    "Retro brands",
+    "Silent storytelling"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/silent-film/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/silent-film"
+  },
+  {
+   "id": "opuscar/backrooms",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "리미널 파운드 푸티지 (Liminal Found Footage)",
+   "category": "Cinema & Eras",
+   "category_ko": "Cinema & Eras",
+   "summary_ko": "형광등 켜진 끝없는 빈 공간의 캠코더 테이프",
+   "tags": [
+    "found-footage",
+    "liminal",
+    "vhs"
+   ],
+   "admaker": "VHS 룩(Effect) + 소재",
+   "uses": [
+    "Horror",
+    "Mystery & ARG",
+    "Game teasers"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/backrooms/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/backrooms"
+  },
+  {
+   "id": "opuscar/brick-toy",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "브릭 토이 (Brick Toy)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "책상 위 매크로로 찍은 블록 장난감 스톱모션",
+   "tags": [
+    "3d",
+    "brick",
+    "stop-motion",
+    "toy"
+   ],
+   "admaker": "three 블록 + 스텝 타이밍",
+   "uses": [
+    "Toys & kids",
+    "Product builds",
+    "Space"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/brick-toy/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/brick-toy"
+  },
+  {
+   "id": "opuscar/paper-popup",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "종이 팝업북 (Paper Pop-up Book)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "책상 위 팝업북이 무대가 되어 흰 테두리 종이 인형이 연기",
+   "tags": [
+    "paper",
+    "popup"
+   ],
+   "admaker": "Image 층 rotateX unfold",
+   "uses": [
+    "Children's books",
+    "Game trailers",
+    "Story films"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/paper-popup/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/paper-popup"
+  },
+  {
+   "id": "opuscar/tilt-shift",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "틸트시프트 미니어처 (Tilt-Shift Miniature)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "높은 곳에서 틸트 렌즈 타임랩스로 찍어 세상이 장난감처럼",
+   "tags": [
+    "miniature",
+    "tilt-shift"
+   ],
+   "admaker": "소재 + 위아래 blur 마스크",
+   "uses": [
+    "City promos",
+    "Real estate",
+    "Transport"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/tilt-shift/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/tilt-shift"
+  },
+  {
+   "id": "opuscar/lowpoly-island",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "로우폴리 아이소 섬 (Low-poly Isometric Island)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "직교 아이소 렌즈로 본 각진 작은 세계",
+   "tags": [
+    "3d",
+    "isometric",
+    "lowpoly"
+   ],
+   "admaker": "iso-city-3d 카드",
+   "uses": [
+    "Game trailers",
+    "World building",
+    "Calm content"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/lowpoly-island/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/lowpoly-island"
+  },
+  {
+   "id": "opuscar/glass-product",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "유리 제품 렌더 (Glass Product Render)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "어두운 스튜디오, 스트립 조명이 스치는 투명·반투명 유리 제품 렌더",
+   "tags": [
+    "3d",
+    "glass",
+    "premium",
+    "product"
+   ],
+   "admaker": "three MeshPhysicalMaterial(transmission) + 스트립 조명 스윕",
+   "uses": [
+    "Product launches",
+    "Consumer tech",
+    "Beauty"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/glass-product/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/glass-product"
+  },
+  {
+   "id": "opuscar/memphis-diorama",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "멤피스 디오라마 (Memphis Diorama)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "따뜻한 흰 종이 위 유기적인 거친 틀이 열리고 그 안에 작은 탁상 모형 세계",
+   "tags": [
+    "diorama",
+    "memphis",
+    "playful"
+   ],
+   "admaker": "Shape 도형 pop + 종이 질감",
+   "uses": [
+    "Web heroes",
+    "Ambient loops",
+    "Seasons"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/memphis-diorama/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/memphis-diorama"
+  },
+  {
+   "id": "opuscar/desktop-flythrough",
+   "source": "opuscar",
+   "kind": "style",
+   "title": "데스크톱 플라이스루 (Desktop Flythrough)",
+   "category": "Materials & 3D",
+   "category_ko": "Materials & 3D",
+   "summary_ko": "햇빛 드는 책상 위에 종이 카드로 인쇄된 앱 화면 사이를 날아다님",
+   "tags": [
+    "3d",
+    "cards",
+    "desktop",
+    "flythrough"
+   ],
+   "admaker": "three 또는 카드 Image + 카메라",
+   "uses": [
+    "App explainers",
+    "Workflows",
+    "Products"
+   ],
+   "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/desktop-flythrough/poster.jpg",
+   "preview_type": "image",
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/desktop-flythrough"
+  }
+ ]
+}

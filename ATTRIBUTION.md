@@ -6,10 +6,12 @@
 - 저장소: https://github.com/lemomo-ai/lemo-opuscar
 - 참고: `DIRECTOR.md`, `TECHNIQUE.md`, `styles/*/STYLE.md` (연출 순서, 트리트먼트 양식, 사운드 3레이어, 리듬·카메라 원칙, 결정적 렌더링)
 - 라이선스: 코드와 문서 MIT, Copyright (c) 2026 LemoLab
+- 레퍼런스 색인(`gallery/data/references.json`, 2026-11-04, 스냅샷 f171360): `styleboard/catalog.json`과 `styles/*/STYLE.md` 첫 문단을 보고 스타일 66종의 한국어 이름·요약·admaker 구현 힌트를 새로 썼습니다. 데모 영상·스틸(CC BY 4.0, LemoLab)은 넣지 않고 원 저장소 poster.jpg 링크만 둡니다.
 
 ## video-shotcraft
 - 저장소: https://github.com/Vincentwei1021/video-shotcraft
 - 참고: `SKILL.md`, `references/aesthetic-rules.md`, `references/sequences/promo-energy-arc.md`, `references/shots/*` (에너지 골격, 미학 규칙 R/Q/S, 샷 카드 형식)
+- 레퍼런스 색인(`gallery/data/references.json`, 2026-11-04, 스냅샷 1266a3e): `gallery/api/library.json`의 샷 카드 124장을 보고 한국어 요약·태그·admaker 구현 힌트를 새로 썼습니다. 카드 원문·데모 코드·미리보기 영상은 넣지 않고 원 저장소와 GitHub Pages 링크만 둡니다. shotcraft 카드 일부는 공개 제품 영상의 손법을 다시 구현한 것이라(그 저장소 `references/shots/ATTRIBUTION.md`), 우리도 손법만 참고하고 원작 화면·문구·브랜드는 옮기지 않습니다.
 - 라이선스: Apache License 2.0. 이 저장소의 해당 문서는 원문을 수정한 파생물입니다(광고·admaker 엔진용으로 재작성, 한국어 번역, 규칙 추가·삭제).
 
 ## claude-remotion-skill
