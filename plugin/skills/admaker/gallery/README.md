@@ -3,7 +3,7 @@
 이 스킬로 만든 예시 광고 모음입니다. 항목마다 **요청 프롬프트(영문), 쓴 샷 카드와 기법, 엔진 버전, 결과 영상**을 한 줄로 묶습니다. 형식은 yihui-dev/awesome-opus5-5-videos의 `prompts/` + `data/videos.json` 구조를 admaker 광고에 맞게 바꾼 것입니다(ATTRIBUTION).
 
 - `data/ads.json`: 우리가 렌더한 예시 목록(빌드 키트 있음).
-- `data/references.json`: 외부 레퍼런스 색인 190개(video-shotcraft 샷 카드 124장, lemo-opuscar 필름 스타일 66종). 항목마다 한국어 요약, 태그, "admaker로 만들면" 힌트, 원문·미리보기 링크. 원문·영상·코드는 넣지 않았고 미리보기는 원 저장소에서 불러옵니다. 빌드 키트가 없으니 샷 카드로 새로 짤 때 연출 후보로 씁니다.
+- `data/references.json`: 외부 레퍼런스 색인 190개(video-shotcraft 샷 카드 124장, lemo-opuscar 필름 스타일 66종). 항목마다 한국어 요약, 태그, "admaker로 만들면" 힌트, 원문·미리보기 링크. opuscar 66종은 `demo`(데모 영상 제목·길이·mp4 링크, 원 저장소 Releases `films`)도 있습니다. 영상 한 편이 4–283MB(대부분 수십 MB)라 저장소에는 넣지 않고 링크만 둡니다(CC BY 4.0, LemoLab 표기). 원문·영상·코드는 넣지 않았고 미리보기는 원 저장소에서 불러옵니다. 빌드 키트가 없으니 샷 카드로 새로 짤 때 연출 후보로 씁니다.
 - (아래 `ads.json` 설명) 스킬이 비슷한 요청을 받으면 `techniques`·`shots`·`category`로 가까운 항목을 찾아 트리트먼트 출발점으로 씁니다.
 - `prompts/<slug>.md`: 사람이 읽는 항목 한 장. 요청 프롬프트, 결과, 다시 만들기.
 - `kits/<slug>/`: 다시 만드는 빌드 키트(빌드 스크립트, 씬, 자리표시 소재 생성기). 스킬 설치본에 들어 있습니다.
