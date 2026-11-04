@@ -35,7 +35,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 광고 한 편 → 아래 워크플로.
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
-   - 내레이션 대본(TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
+   - 내레이션(연출표: 화면 문구와 읽을 문장 분리·숫자/기호 읽기·강조·큐 단어, 스타일, 분량, 줄 단위 생성과 비트 싱크, TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
@@ -46,7 +46,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 제품/서비스, 이 광고의 **단 하나의 메시지**, CTA 문구와 URL
    - 매체와 규격 → `references/ad-formats.md`
    - **바닥에 깔 영상·이미지**(필수, 여러 개면 순서와 길이), 브랜드 자산: 로고(SVG 권장), 컬러, 폰트, 금지 표현
-   - 내레이션(TTS/본인 녹음/없음), 음악 보유 여부. TTS면 대본에 오디오 태그를 넣습니다(`references/narration.md`)
+   - 내레이션(TTS/본인 녹음/없음), 음악 보유 여부. TTS면 줄마다 연출표(화면 문구·읽을 문장·강조·큐)를 만들고 오디오 태그를 넣습니다(`references/narration.md`)
    - 스토리보드를 먼저 볼지(기본: 아니요)
    답을 받으면 나머지는 기본값으로 채우고 브리프를 몇 줄로 요약해 시작합니다. 다시 묻지 않습니다.
 4. **모드**: 기본은 자율 진행. 사용자가 "같이 정하자"고 하면 브리프 → 비주얼 방향 → 스토리보드 세 지점에서만 확인을 받습니다.
