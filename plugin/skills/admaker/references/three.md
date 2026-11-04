@@ -67,7 +67,10 @@
 
 ## 6. 커스텀 씬 뼈대
 
-샘플: `samples/gsap-three/scenes/orbit-hero.js` (유리·크롬 링이 도는 히어로, GSAP 카메라 안무).
+샘플: `samples/gsap-three/scenes/orbit-hero.js` (유리·크롬 링이 도는 히어로, GSAP 카메라 안무). 바로 복사해 쓰는 씬은 `templates/scenes/`에 있습니다: `liquid-blobs.js`(메타볼 액체 방울, `MarchingCubes`), `iso-city.js`(정사영 아이소메트릭 블록 도시). 샷 카드 `liquid-blobs`, `iso-build-up`.
+
+- 정사영 카메라(`OrthographicCamera`)는 어댑터가 aspect를 맞춰 주지 않습니다. `update({ width, height })`에서 left/right/top/bottom을 직접 정합니다(`iso-city.js`).
+- 진한 브랜드 색·파스텔은 ACES에서 바랩니다(파랑 → 보라, 파스텔 → 회색빛). 색이 정확해야 하는 그래픽 3D는 `NeutralToneMapping`.
 
 ```js
 // scenes/<이름>.js — 렌더 하니스가 파일 이름으로 registerThreeScene

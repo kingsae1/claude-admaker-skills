@@ -27,6 +27,26 @@
 | [transition-match-cut](transition-match-cut.md) | 전환 | 중 | 컷 ±0.2초 | 컷 양쪽 움직임 방향을 맞추고, 링이 다음 물체 자리에 정확히 착지 |
 | [transition-flash-streak](transition-flash-streak.md) | 전환 | 최고 | 0.3–0.4초 | 빠른 사선 몇 가닥이 지나가고 화면이 브랜드 색으로 번쩍이며 컷 (훅·드롭) |
 | [transition-footage-card](transition-footage-card.md) | 전환 | 중 | 0.9–1.1초 | 소재가 카드로 줄며 기울어 빠지고, 다음 소재 카드가 정면으로 펴짐 (2D ↔ 2.5D) |
+| [kinetic-typo-beat](kinetic-typo-beat.md) | 훅·상승부·엔드카드 | 중고 | 박 × (줄 수 + 2–3) | 짧은 단어 줄이 박마다 꽂히고 강조 줄 뒤로 색 띠, 다 나오면 전체가 눌렸다 펴짐 |
+| [squash-bounce](squash-bounce.md) | 훅·로딩·엔드카드 장식 | 중 | 2.5–3.5초 | 공이 위상을 달리해 통통 튀며 납작해졌다 늘어나고, 출렁이며 멈춤 |
+| [iso-build-up](iso-build-up.md) | 주인공·상승부 | 중 | 2.5–3.5초 | 아이소메트릭 블록이 뒤에서 앞으로 솟음. 평면(SVG, 앱까지 감) / 입체(three, 카메라가 돎) |
+| [liquid-blobs](liquid-blobs.md) | 훅·주인공 배경·엔드카드 | 저–중 | 3–6초 | 광택 액체 방울이 일렁이며 붙었다 떨어짐 (three 커스텀 씬, 브라우저 전용) |
+| [particle-logo](particle-logo.md) | 훅·엔드카드 | 중고 | 2.5–3.5초 | 흩어진 입자가 소용돌이치며 모여 워드마크가 됨 (script, 브라우저 전용) |
+
+### 모션 스타일 카드 고르는 법
+
+`samples/motion-styles`에 다섯 가지를 한 영상으로 렌더해 두었습니다. 앱 불러오기까지 가야 하는지가 먼저입니다.
+
+| 스타일 | 카드 | 앱 불러오기 | 어울리는 톤 |
+|---|---|---|---|
+| 키네틱 타이포 | `kinetic-typo-beat` | 그대로 | 음악이 있는 광고 전반, 슬로건 |
+| 스쿼시 앤 스트레치 | `squash-bounce` | 그대로 | 귀여움·친근함(키즈, 푸드, 앱), 로딩·곧 공개 |
+| 아이소메트릭 | `iso-build-up` 평면형 / 입체형 | 평면 그대로, 입체는 영상으로 구워 넣음 | 지도·구성도·진열, 정보형 |
+| 리퀴드 | `liquid-blobs` | 영상으로 구워 넣음 | 뷰티, 음료, 테크 무드 |
+| 파티클 로고 | `particle-logo` | 영상으로 구워 넣음 | 로고 스팅, 런칭 훅 |
+
+- 브라우저 전용 카드(three 커스텀 씬, script)는 씬·스크립트 파일을 프로젝트 `scenes/`·`scripts/`로 복사해야 렌더 하니스가 등록합니다(`templates/scenes/`, `templates/scripts/`).
+- 한 광고에 이 중 주인공 스타일은 하나. 키네틱 타이포는 다른 스타일 위 문구로 같이 써도 됩니다.
 
 ### 전환 카드 고르는 법
 
@@ -48,7 +68,7 @@
 
 ## 카드 형식
 
-> `map-*` 2장은 엔진 3.0.5로, `transition-*` 5장은 엔진 3.0.7로 렌더해 확인한 값입니다. 나머지 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
+> `map-*` 2장은 엔진 3.0.5로, `transition-*` 5장은 엔진 3.0.7로, 모션 스타일 5장(`kinetic-typo-beat`, `squash-bounce`, `iso-build-up`, `liquid-blobs`, `particle-logo`)은 엔진 3.0.8로 렌더해 확인한 값입니다. 처음 5장(`hook-number-slam` 등)의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
 
 새 카드는 아래 형식으로 씁니다. 실제로 렌더해 확인한 값만 파라미터 표에 적습니다.
 
