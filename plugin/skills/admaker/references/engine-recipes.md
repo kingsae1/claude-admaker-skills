@@ -254,7 +254,9 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 - 이어지는 바는 한 Shape로 그립니다(이음새 방지).
 - `Backdrop`: 단색/그라디언트 배경.
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
-- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만.
+- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. `to-admaker-import.mjs`는 fade·slide·wipe·cover 계열만 앱 xfade 이름으로 바꾸고 나머지는 이름 그대로 넘기며 경고합니다.
+- 소재 사이 전환 샷(`shots/transition-*.mjs`)은 그래픽 클립과 함께 **바닥 소재 클립에 붙일 모션**을 `footage: { FOOTAGE 번호: [animations] }`로 돌려주고, `build-project.mjs`가 그 소재 클립의 animations 뒤에 더합니다. 두 소재가 겹쳐야 하는 전환(줌 스루, 카드)은 `FOOTAGE`의 from/to를 카드에 적힌 대로 겹쳐 둡니다.
+- **렌더 하니스(Preview·Exporter)의 겹침 순서는 트랙 순서가 먼저입니다.** 뒤에 만든 트랙이 위에 그려져서, footage 트랙 다음에 만든 Shape는 zIndex를 1로 줘도 소재를 덮습니다(엔진 3.0.7 렌더로 확인). 소재 아래에 깔 것은 `settings.backgroundColor`나 소재보다 먼저 만든 트랙(`lookStack`의 배경)으로 둡니다.
 
 ### 5.1 소재 + 그래픽 층 (aesthetic-rules Q11)
 

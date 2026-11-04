@@ -1,0 +1,109 @@
+[
+  {
+    "slug": "transitions-four-ways",
+    "title": "소재 5컷을 잇는 전환 4종",
+    "category": "transition",
+    "duration": 9,
+    "aspect": "9:16",
+    "fps": 30,
+    "engine": "3.0.7",
+    "footage": "placeholder",
+    "shots": [
+      "transition-cover-flood",
+      "transition-zoom-through",
+      "transition-match-cut",
+      "transition-footage-card"
+    ],
+    "techniques": [
+      "cover",
+      "zoom-through",
+      "match-cut",
+      "dimension",
+      "keyframes",
+      "mask-reveal"
+    ],
+    "prompt": "A 9-second 9:16 reel that joins five footage clips with four different transitions, all built inside the graphic language and never as crossfades. 1) Cover: a small accent dot near the bottom grows into a circle that floods the frame, the footage swaps under it, and the circle shrinks into the round window of the next clip. 2) Zoom-through: the camera pushes into that window while the next clip opens inside it and fills the frame. 3) Match cut: the frame pushes left with motion blur at the cut, and a white ring around the yellow circle lands exactly on the orange circle of the next clip. 4) Dimension shift: the clip shrinks into a tilted card and slides away while the next card swings in and flattens to full frame. Keep the footage at full clarity, no dim or haze.",
+    "preview": "samples/transitions/transitions_sample.gif",
+    "build": "samples/transitions/README.md",
+    "app_import": "unverified",
+    "added": "2026-11-04",
+    "verified": true,
+    "prompt_file": "prompts/transitions-four-ways.md"
+  },
+  {
+    "slug": "map-route-delivery",
+    "title": "지도 경로: 서울 → 부산 배송",
+    "category": "map",
+    "duration": 6,
+    "aspect": "9:16",
+    "fps": 30,
+    "engine": "3.0.5",
+    "footage": "placeholder",
+    "shots": [
+      "map-region-pin",
+      "map-route-draw"
+    ],
+    "techniques": [
+      "map",
+      "strokeDraw",
+      "keyframes",
+      "mask-reveal"
+    ],
+    "prompt": "A 6-second 9:16 delivery ad over night-street footage. An outline map of Korea (white borders with a soft shadow, no fill) fades in, Seoul fills with the accent color and a pin pops, then a curved route draws from Seoul to Busan while the map zooms 1.55x toward the route. Busan lights up with its own pin and label. A bottom text band (30% height, max 0.6 opacity) carries a sub line and a headline with an underline wipe. Footage stays clearly visible.",
+    "preview": "samples/map/map_sample.gif",
+    "build": "samples/map/sample-map.mjs",
+    "app_import": "full",
+    "added": "2026-10-30",
+    "verified": true,
+    "prompt_file": "prompts/map-route-delivery.md"
+  },
+  {
+    "slug": "gsap-three-earbuds-teaser",
+    "title": "GSAP + three.js 무선 이어폰 런칭 티저",
+    "category": "3d",
+    "duration": 6,
+    "aspect": "9:16",
+    "fps": 30,
+    "engine": "3.0.7",
+    "footage": "placeholder",
+    "shots": [],
+    "techniques": [
+      "three",
+      "gsapTimeline",
+      "keyframes",
+      "mask-reveal"
+    ],
+    "prompt": "A 6-second 9:16 launch teaser for wireless earbuds called AURA Buds, over the user's footage. A 3D ring object rises from below while the camera inside the scene pushes in and the ring settles with a back-out ease. A hook line rises, then a two-line headline lands with a small punch, the second line four frames late. Three spec chips pop one per beat and the 3D core pulses on the same beats. Copy exits at half its entrance length, the 3D lifts away, and the wordmark with CTA and an underline wipe holds for over a second. The 3D background is transparent so the footage stays visible.",
+    "preview": "samples/gsap-three/gsap_three_sample.gif",
+    "build": "samples/gsap-three/sample-gsap-three.mjs",
+    "app_import": "partial",
+    "added": "2026-11-02",
+    "verified": true,
+    "prompt_file": "prompts/gsap-three-earbuds-teaser.md"
+  },
+  {
+    "slug": "handwriting-thank-you",
+    "title": "손글씨: 오늘도 수고했어요 / thank you",
+    "category": "typography",
+    "duration": 5,
+    "aspect": "9:16",
+    "fps": 30,
+    "engine": "3.0.7",
+    "footage": "placeholder",
+    "shots": [
+      "handwritten-title"
+    ],
+    "techniques": [
+      "handwriting",
+      "strokeDraw",
+      "keyframes"
+    ],
+    "prompt": "A 5-second 9:16 warm closing card over a still photo. The Korean line \"오늘도 수고했어요\" in a pen-script font writes on letter by letter and keeps a subtle hand-drawn boil the whole time. Below it, \"thank you\" in a casual script is drawn stroke by stroke in warm yellow, slightly tilted, then fills. No dimming over the photo; legibility comes from a soft text shadow only.",
+    "preview": "samples/handwriting/handwriting.gif",
+    "build": "samples/handwriting/build.mjs",
+    "app_import": "full",
+    "added": "2026-11-02",
+    "verified": true,
+    "prompt_file": "prompts/handwriting-thank-you.md"
+  }
+]

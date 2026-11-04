@@ -22,10 +22,31 @@
 | [hand-drawn-emphasis](hand-drawn-emphasis.md) | 상승부·엔드카드 | 중 | 0.5–0.8초 (얹는 샷) | 핵심 단어·가격 둘레에 손그림 동그라미·밑줄이 그려짐 (`draw.mjs`) |
 | [beat-flicker-sting](beat-flicker-sting.md) | 훅 | 최고 | 1마디 + 카피 | 막대가 솟고 컬러 바가 2프레임씩 깜빡이다 워드마크가 박에 슬램 (`presets/fast-montage.mjs`) |
 | [beat-montage-wipe](beat-montage-wipe.md) | 상승부 | 중고 | 블록당 k박 (0.8–1.4초) | 소재 컷마다 라벨·제목, 컷 사이를 투톤 사선 띠가 덮음 (`presets/fast-montage.mjs`) |
+| [transition-cover-flood](transition-cover-flood.md) | 전환 | 중고 | 0.6–0.7초 | 앞 장면의 점이 원으로 부풀어 화면을 덮고, 다음 장면의 점으로 줄어들며 열림 |
+| [transition-zoom-through](transition-zoom-through.md) | 전환 | 중고 | 0.6–0.8초 | 소재 속 둥근 물체로 다가가면 그 안이 다음 소재로 열림 (시그니처 샷 후보) |
+| [transition-match-cut](transition-match-cut.md) | 전환 | 중 | 컷 ±0.2초 | 컷 양쪽 움직임 방향을 맞추고, 링이 다음 물체 자리에 정확히 착지 |
+| [transition-footage-card](transition-footage-card.md) | 전환 | 중 | 0.9–1.1초 | 소재가 카드로 줄며 기울어 빠지고, 다음 소재 카드가 정면으로 펴짐 (2D ↔ 2.5D) |
+
+### 전환 카드 고르는 법
+
+슬롯 사이(컷)마다 "나가는 방식"을 하나 고릅니다(`TREATMENT.md` 샷 리스트). 6가지 기법과 이 스킬에서 쓰는 방법입니다.
+
+| 기법 | 쓰는 것 | 언제 |
+|---|---|---|
+| 스와이프(닦아내기) | `beat-montage-wipe`의 사선 띠, 마스크 `wipe`·`angleWipe`, 큰 글자·물체가 화면 앞을 지나가게 | 빠른 나열, 인트로·엔딩 타이틀 |
+| 커버(덮기) | `transition-cover-flood` | 장면 성격이 바뀔 때, 화면 속 점이 있을 때 |
+| 매치 컷 | `transition-match-cut`, 생성 소재면 첫·끝 프레임을 맞춰 생성(`footage-gen.md`) | 비슷한 모양·움직임이 양쪽에 있을 때 |
+| 차원 이동(2D↔3D) | `transition-footage-card`, `hero-tilt-push`, three 어댑터(`three.md`) | 여러 소재를 넘겨 보여 줄 때 |
+| 몰핑 | 그래픽 도형끼리만. 같은 자리·크기의 두 Shape를 교차(`gsap.md`), 경로 보간은 Adapter `script` | 아이콘·도형이 다음 요소가 될 때. 제품 소재는 모양을 바꾸지 않음 |
+| 공간 전환(줌) | `transition-zoom-through`, 장면 카메라(engine-recipes §4) | 창·화면·렌즈처럼 "안"이 있는 물체가 소재에 있을 때 |
+
+- 한 광고에 전환 기법은 2–3종, 같은 전환을 연속 세 번 쓰지 않습니다.
+- 셰이더 전환(`Transition` 클립, gl-transitions·`hf-*`)은 브라우저 렌더에서는 나오지만 앱 불러오기에서는 fade·slide·wipe·cover 계열만 이름이 맞춰집니다(`to-admaker-import.mjs`). 앱으로 넘길 광고는 위 카드처럼 마스크·keyframes로 만든 전환을 씁니다.
+- 전환을 넣었으면 `render/sheet.mjs`로 전환 구간 밀집 시트를 뽑아 검수합니다(aesthetic-rules Q18).
 
 ## 카드 형식
 
-> `map-*` 2장은 엔진 3.0.5로 렌더해 확인한 값입니다. 나머지 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
+> `map-*` 2장은 엔진 3.0.5로, `transition-*` 4장은 엔진 3.0.7로 렌더해 확인한 값입니다. 나머지 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
 
 새 카드는 아래 형식으로 씁니다. 실제로 렌더해 확인한 값만 파라미터 표에 적습니다.
 

@@ -48,10 +48,13 @@ plugin/skills/admaker/
     ├── install-engine.mjs       스킬과 같이 받은 엔진(vendor/*.tgz)을 프로젝트에 설치
     ├── to-admaker-template.mjs  → admaker 플래너 모드 템플릿(씬 오버레이, template.json)
     ├── shots/*.mjs              샷 카드별 클립 생성 함수
-    ├── render/                  헤드리스 Exporter 렌더 하니스 (Vite + Playwright)
+    ├── render/                  헤드리스 Exporter 렌더 하니스 (Vite + Playwright), sheet.mjs 전환 구간 밀집 시트
     └── build.sh
 samples/map/                     지도 샘플 샷 (서울 → 부산 배송, 엔진 3.0.5 렌더)
 samples/gsap-three/              GSAP 타임라인 + three.js 커스텀 씬 샘플 (엔진 3.0.7 렌더)
+samples/transitions/             소재 사이 전환 4종 샘플 (커버·줌 스루·매치 컷·카드, 엔진 3.0.7 렌더)
+samples/handwriting/             손글씨 샘플 (handwrite_in + strokeDraw, 엔진 3.0.7 렌더)
+plugin/skills/admaker/gallery/   예시 갤러리: data/ads.json + prompts/<slug>.md (예시 영상·프롬프트·쓴 기법)
 ```
 
 ## 버전
@@ -65,6 +68,6 @@ samples/gsap-three/              GSAP 타임라인 + three.js 커스텀 씬 샘�
 ## 상태
 
 - 엔진 기준 버전: `@admaker/engine` 3.0.7 (admaker-plugin `455c950`, three 어댑터 + 씬 훅 포함), `@admaker/animation` 2.0.8
-- 렌더 하니스, `motion.mjs`의 입장·룩 스택, `map.mjs`, 지도 샷 카드 2장은 엔진 3.0.5로 렌더해 확인했습니다(`samples/map`). `gsapTimeline`과 three 커스텀 씬은 엔진 3.0.7로 렌더해 확인했습니다(`samples/gsap-three`). 나머지 샷 카드 5장의 값은 아직 렌더로 검증하지 않았습니다.
+- 렌더 하니스, `motion.mjs`의 입장·룩 스택, `map.mjs`, 지도 샷 카드 2장은 엔진 3.0.5로 렌더해 확인했습니다(`samples/map`). `gsapTimeline`과 three 커스텀 씬은 엔진 3.0.7로 렌더해 확인했습니다(`samples/gsap-three`). 전환 샷 카드 4장도 엔진 3.0.7로 렌더해 확인했습니다(`samples/transitions`). 나머지 샷 카드 5장의 값은 아직 렌더로 검증하지 않았습니다.
 
 라이선스: 비공개 라이선스입니다. 저작권자의 허락 없이 복제·수정·재배포할 수 없습니다([LICENSE](LICENSE)). 외부 출처 부분은 [ATTRIBUTION.md](ATTRIBUTION.md)의 원 라이선스를 따릅니다.
