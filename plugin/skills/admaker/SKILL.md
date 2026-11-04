@@ -39,6 +39,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
+   - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
    - 한 클립의 여러 단계 동작(올라오며 펀치, 비트 펀치, 카드 뒤집기) → `references/gsap.md` (`gsapTimeline`). 3D 제품·오브젝트 샷 → `references/three.md` + `engine-recipes.md` §7.1. 웹용 GSAP·three.js 예제(ScrollTrigger, rAF, Clock, `new WebGLRenderer`)는 그대로 쓰지 않고 이 두 문서의 변환표대로 바꿉니다.
 2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.

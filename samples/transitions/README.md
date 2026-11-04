@@ -1,6 +1,6 @@
-# 전환 샘플: 소재 5컷을 잇는 전환 4종
+# 전환 샘플: 소재 컷을 잇는 전환 5종
 
-1080×1920, 9초, 30fps. `@admaker/engine` 3.0.7 렌더 하니스(Preview 스틸, 브라우저 Exporter mp4)로 렌더했습니다. 바닥 소재는 직접 만든 자리표시 영상(`make-placeholder-footage.cjs`: 그라데이션 + 둥근 물체 + SHOT 라벨)입니다.
+1080×1920, 11초, 30fps. `@admaker/engine` 3.0.7 렌더 하니스(Preview 스틸, 브라우저 Exporter mp4)로 렌더했습니다. 바닥 소재는 직접 만든 자리표시 영상(`make-placeholder-footage.cjs`: 그라데이션 + 둥근 물체 + SHOT 라벨)입니다.
 
 ![미리보기](transitions_sample.gif)
 
@@ -12,6 +12,7 @@
 | 3.3–4.0초 | 공간 전환(줌) | `transition-zoom-through` | 창을 향해 4.6배 다가가며 창 안이 다음 소재로 열림, 흰 링 |
 | 5.2–6.0초 | 매치 컷 | `transition-match-cut` | 왼쪽으로 밀리며 컷, 노란 원을 감싼 링이 다음 소재의 주황 원에 착지 |
 | 7.0–8.0초 | 차원 이동 | `transition-footage-card` | 소재가 카드로 줄며 기울어 빠지고, 다음 소재 카드가 정면으로 펴짐 |
+| 9.3–9.6초 | 플래시 | `transition-flash-streak` | 흰색·분홍 선 4가닥이 사선으로 지나가고 화면이 분홍으로 번쩍이며 컷 |
 
 ## 다시 만들기
 
@@ -32,6 +33,7 @@ node build-project.mjs --out project.import.json && node to-admaker-import.mjs p
 
 - 매치 컷 링이 다음 소재가 밀려 들어오는 0.2초 동안 물체와 어긋났습니다. 컷 순간 위치에 다음 소재의 밀림을 얹고 같은 이징으로 내려앉게 고쳤습니다.
 - 카드 전환 뒤 배경을 Shape(z 1)로 깔았더니 화면이 배경색만 나왔습니다. 렌더 하니스는 뒤 트랙을 위에 그립니다. 배경은 `settings.backgroundColor`로 바꿨습니다.
+- 플래시: 분홍 선이 초록 소재 위에서 묻혀 `blendMode: "add"`로, 번쩍임은 `screen`이 밝은 소재에서 거의 안 보여 기본을 `normal`로 바꿨습니다.
 - 카드가 기울면 x 이동이 덜 보여서 빠지는 쪽 이동을 0.95W → 1.5W로 늘렸습니다.
 
 ## 앱으로 넘길 때

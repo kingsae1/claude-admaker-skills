@@ -57,7 +57,7 @@
 
 ### 2.2 이징 매핑
 
-엔진은 cubic-bezier를 받지 않습니다. 이름형 이징(`easeOutCubic` 등, `easeOutBack` 같은 별칭)과 gsap-core 문자열(`"power2.out"`, 설정값이 있는 `"back.out(1.7)"`, `"elastic.out(1,0.4)"`, `"steps(6)"`, `"none"`; 방향을 빼면 `.out`)만 받고, 모르는 이름은 **선형으로 조용히 처리**하므로 오타에 주의합니다. CustomEase·EasePack(`rough`, `slow(…)`, `expoScale`)·CustomWiggle은 등록되어 있지 않아 역시 선형이 됩니다. 고르는 법은 `references/gsap.md` §3.
+엔진은 cubic-bezier를 받지 않습니다. 이름형 이징(`easeOutCubic` 등, `easeOutBack` 같은 별칭)과 gsap-core 문자열(`"power2.out"`, 설정값이 있는 `"back.out(1.7)"`, `"elastic.out(1,0.4)"`, `"steps(6)"`, `"none"`; 방향을 빼면 `.out`)만 받고, 모르는 이름은 **선형으로 조용히 처리**하므로 오타에 주의합니다. CustomEase·EasePack(`rough`, `slow(…)`, `expoScale`)·CustomWiggle은 등록되어 있지 않아 역시 선형이 됩니다. 고르는 법은 `references/easing.md`(용도별 토큰과 31종 표)와 `references/gsap.md` §3.
 
 | 원래 의도 | 쓸 이름 |
 |---|---|
@@ -254,7 +254,7 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 - 이어지는 바는 한 Shape로 그립니다(이음새 방지).
 - `Backdrop`: 단색/그라디언트 배경.
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
-- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. `to-admaker-import.mjs`는 fade·slide·wipe·cover 계열만 앱 xfade 이름으로 바꾸고 나머지는 이름 그대로 넘기며 경고합니다.
+- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. admaker 전환 팩 `am-*` 5종(엔진 PR #24 이후, `registerAdmakerTransitions()`로 등록): `am-flash-streak`(사선 빛줄기 + 색 번쩍), `am-cover-flood`(색이 번져 덮기), `am-zoom-through`(링 안으로 줌), `am-card-swap`(카드 넘김), `am-push`(다음 화면이 밀어내기, `direction`·`blur`). 요소 하나를 화면 밖에서 밀어 넣거나 밀어 낼 때는 애니메이션 에셋 `push`(`@admaker/animation`)를 씁니다. 전환 클립의 `values`로 색·위치를 클립마다 바꾸고(`{ "color": [1, 0.85, 0.1], "origin": [0.25, 0.8] }`, 색은 0–1 RGB, 위치는 화면 비율·위가 0), `easing`으로 진행 곡선을 줍니다(`easing.md` §4). `to-admaker-import.mjs`는 fade·slide·wipe·cover 계열만 앱 xfade 이름으로 바꾸고 나머지는 이름 그대로 넘기며 경고합니다.
 - 소재 사이 전환 샷(`shots/transition-*.mjs`)은 그래픽 클립과 함께 **바닥 소재 클립에 붙일 모션**을 `footage: { FOOTAGE 번호: [animations] }`로 돌려주고, `build-project.mjs`가 그 소재 클립의 animations 뒤에 더합니다. 두 소재가 겹쳐야 하는 전환(줌 스루, 카드)은 `FOOTAGE`의 from/to를 카드에 적힌 대로 겹쳐 둡니다.
 - **렌더 하니스(Preview·Exporter)의 겹침 순서는 트랙 순서가 먼저입니다.** 뒤에 만든 트랙이 위에 그려져서, footage 트랙 다음에 만든 Shape는 zIndex를 1로 줘도 소재를 덮습니다(엔진 3.0.7 렌더로 확인). 소재 아래에 깔 것은 `settings.backgroundColor`나 소재보다 먼저 만든 트랙(`lookStack`의 배경)으로 둡니다.
 

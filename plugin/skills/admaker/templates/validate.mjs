@@ -65,8 +65,10 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (a.type === "keyframes") for (const [stop, v] of Object.entries(a.params ?? {})) {
       for (const k of Object.keys(v)) if (!KEYFRAME_KEYS.has(k)) err(id, `keyframes ${stop}: 모르는 키 "${k}"`);
       if (v.easing && !EASINGS.has(v.easing) && !isGsapEase(v.easing)) err(id, `keyframes ${stop}: 모르는 easing "${v.easing}"`);
+      if ("opacity" in v && /Back|Elastic|^back|^elastic/.test(String(v.easing ?? ""))) warn(id, `keyframes ${stop}: opacity 구간에 넘치는 이징 "${v.easing}" (0..1 밖으로 나감, easing.md §2)`);
     }
   }
+  if (c.type === "Transition" && c.easing && !EASINGS.has(c.easing) && !isGsapEase(c.easing)) err(id, `전환 easing "${c.easing}"을 엔진이 모름 (선형으로 처리됨)`);
   if (!SRC_OPTIONAL.has(c.type) && !(c.src && String(c.src).trim())) err(id, `${c.type}에 src 없음 (Core가 클립을 버림. 절차적 클립은 "backdrop"/"shape"/"script"/"three" 같은 표식 값)`);
   // blob: 주소는 그 앱 세션에서만 읽힘. 새 프로젝트로 불러오면 빈 화면이 된다 (engine-recipes §9)
   if (/^blob:/.test(String(c.src ?? "").trim())) err(id, "src가 blob: 주소 (새 프로젝트에서 안 보임). 앱에서 가져온 클립이면 metadata._encoding.inputExtras.originalSrc의 CDN 주소를 쓰세요");
