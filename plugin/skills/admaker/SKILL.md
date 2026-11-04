@@ -15,6 +15,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 이때 `timeline.mjs`의 BPM·비트·섹션은 분석값을 그대로 쓰고, 소리는 ProjectJSON에 넣지 않고 `import_to_admaker { keepAudio: true }`로 앱에서 먼저 만든 BGM을 그대로 옮깁니다. AI 생성 전에는 예상 크레딧과 프롬프트를 보여 주고 확인받습니다.
 앱에 넣고 배치까지 끝나면 `arrange_tracks { scenes: 씬표 }`로 타임라인을 정리합니다. 앞 씬 행이 위에서부터 계단처럼 놓이고, 화면 전체 층(룩·파티클·어둡게 깔기·배경 영상)과 오디오는 아래로 가며, 행 이름이 '1씬 · 텍스트 · 첫 문구'처럼 붙습니다. 시간이 겹치는 행의 앞/뒤는 그대로라 화면은 바뀌지 않으니 `move_track`을 하나씩 부르지 않습니다.
 이미 앱에 있는 광고를 고칠 때는 `get_editor_state`로 행 목록을 보고, `get_timeline_items { trackIndexes | trackIds | clipIds, fromSec?, toSec?, types? }`로 고칠 행(Row)이나 클립만 불러와 `raw` 필드 이름 그대로 `update_clip` 합니다. 행·클립이 많아 결과가 크면 `outputPath`(작업 폴더의 .json)로 파일에 받습니다.
+이미지·영상 소재에 자막·워터마크·검은 띠가 있거나 비율이 캔버스와 맞지 않으면 `view_clip_media`로 원본을 보고 `crop_clip`으로 자릅니다. 영역은 `region`(원본 대비 0~1 비율, 예: 아래 20% 빼기 `{ x: 0, y: 0, width: 1, height: 0.8 }`)이나 `aspect`(`'9:16'` 등) + `focusX`/`focusY`(주체가 있는 쪽)로 주고, `fit`은 `keep`(보이던 자리 그대로, 기본)·`cover`(캔버스 채우기)·`contain` 중에서 고릅니다. 원본은 그대로라 `reset: true`로 되돌릴 수 있습니다. 위치·크기만 바꿀 때는 `update_clip`을 씁니다.
 MCP가 있으면 모션그래픽만으로 끝내지 않습니다. `references/techniques.md`(MCP에서는 `get_ad_guide({ name: 'techniques.md' })`)의 기법 메뉴에서 씬마다 이미지 생성·img2img·누끼/레이어 분리·이미지→영상·영상 생성·효과음·Lottie·손그림·레터링을 골라 섞고, 씬표에 기법과 예상 크레딧을 적어 제안합니다.
 MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다). 외부 생성 API·스킬·MCP 서버를 따로 설치하거나 API 키를 받아 직접 부르지 않습니다(과금, 키 노출, 고객 자산 유출).
 
