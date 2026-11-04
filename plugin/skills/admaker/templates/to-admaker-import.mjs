@@ -16,6 +16,8 @@ const warn = (id, m) => warnings.push(`△ ${id}: ${m}`);
 const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "lineBoil", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline"]);
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
+// admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)
+const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft" };
 // 트랙 행 순서를 바꿔도 클립 겹침 순서가 유지되도록 앱의 "명시 zIndex" 구간(≥ 1,000,000)으로 옮긴다
 const Z_BASE = 1_000_000;
 
@@ -215,8 +217,9 @@ for (const [id, c] of Object.entries(p.clips)) {
   if (c.type !== "Transition") continue;
   if (skipped.has(c.fromClipId) || skipped.has(c.toClipId)) { warn(id, "전환의 앞뒤 클립이 빠져서 전환도 뺐습니다"); continue; }
   const key = c.transitionKey ?? "fade";
-  const type = TRANSITION_TO_WIRE[key] ?? String(key).toLowerCase();
-  if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 앱에서 이름 그대로 넘깁니다. 앱에서 지원하는지 확인하세요`);
+  const type = TRANSITION_TO_WIRE[key] ?? AM_TRANSITION_XFADE[key] ?? String(key).toLowerCase();
+  if (AM_TRANSITION_XFADE[key]) warn(id, `전환 "${key}"는 앱 서버 인코딩에서 "${type}"(xfade)로 바뀝니다. 클립별 색·위치(values)와 easing은 엔진(브라우저 Exporter) 렌더에서만 보입니다`);
+  else if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 앱에서 이름 그대로 넘깁니다. 앱에서 지원하는지 확인하세요`);
   transitions.push({ id, type, duration: sec(c.timing?.duration ?? (c.timing?.display?.to - c.timing?.display?.from)), from: c.fromClipId ?? "", to: c.toClipId ?? "", mode: "crossover" });
 }
 

@@ -4,6 +4,36 @@ import { FPS, us } from "./timeline.mjs";
 
 const frames = (n) => n / FPS; // 프레임 → 초
 
+/**
+ * 모션 토큰 (references/easing.md §1). 용도 → 이징 이름 + 권장 길이(초).
+ * 엔진 MOTION_TOKENS(@admaker/engine)와 같은 표. JSON에는 토큰이 아니라 easing 이름이 들어간다.
+ */
+export const EASE = Object.freeze({
+  enter: { easing: "easeOutCubic", dur: [0.3, 0.6] },
+  exit: { easing: "easeInCubic", dur: [0.2, 0.4] },
+  move: { easing: "easeInOutCubic", dur: [0.4, 0.9] },
+  snap: { easing: "easeOutExpo", dur: [0.2, 0.45] },
+  whip: { easing: "easeInOutExpo", dur: [0.25, 0.5] },
+  glide: { easing: "easeOutQuart", dur: [0.8, 2.0] },
+  drift: { easing: "easeInOutSine", dur: [1.5, 4.0] },
+  pop: { easing: "easeOutBack", dur: [0.25, 0.5] },
+  anticipate: { easing: "easeInBack", dur: [0.25, 0.45] },
+  wobble: { easing: "easeOutElastic", dur: [0.6, 1.2] },
+  drop: { easing: "easeOutBounce", dur: [0.6, 1.0] },
+  count: { easing: "easeOutQuint", dur: [0.8, 1.5] },
+});
+
+const FAMILIES = ["Sine", "Quad", "Cubic", "Quart", "Quint", "Expo", "Circ", "Back", "Elastic", "Bounce"];
+/** 엔진이 해석하는 이징 이름 31종 (linear + 10계열 × In/Out/InOut). */
+export const EASING_NAMES = Object.freeze(["linear", ...FAMILIES.flatMap((f) => ["In", "Out", "InOut"].map((d) => `ease${d}${f}`))]);
+
+/** 토큰이나 이징 이름 → 이징 이름. 모르는 이름은 엔진이 조용히 선형으로 바꾸므로 여기서 막는다. */
+export function ease(nameOrToken) {
+  if (EASE[nameOrToken]) return EASE[nameOrToken].easing;
+  if (EASING_NAMES.includes(nameOrToken) || /^(power[1-4]|sine|expo|circ|back|elastic|bounce|steps|none)\b/.test(nameOrToken)) return nameOrToken;
+  throw new Error(`알 수 없는 이징/토큰: ${nameOrToken} (references/easing.md)`);
+}
+
 /** 입장 (R6, R7): opacity + y + scale. index를 주면 3–6프레임 시차를 delay로 더한다. */
 export function entrance({ dur = 0.6, delay = 0, index = 0, gap = 4, y = 40, x = 0, scale = 0.96, blur = 0, easing = "easeOutExpo" } = {}) {
   const from = { opacity: 0, easing };
