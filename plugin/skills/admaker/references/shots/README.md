@@ -25,6 +25,7 @@
 | [transition-cover-flood](transition-cover-flood.md) | 전환 | 중고 | 0.6–0.7초 | 앞 장면의 점이 원으로 부풀어 화면을 덮고, 다음 장면의 점으로 줄어들며 열림 |
 | [transition-zoom-through](transition-zoom-through.md) | 전환 | 중고 | 0.6–0.8초 | 소재 속 둥근 물체로 다가가면 그 안이 다음 소재로 열림 (시그니처 샷 후보) |
 | [transition-match-cut](transition-match-cut.md) | 전환 | 중 | 컷 ±0.2초 | 컷 양쪽 움직임 방향을 맞추고, 링이 다음 물체 자리에 정확히 착지 |
+| [transition-flash-streak](transition-flash-streak.md) | 전환 | 최고 | 0.3–0.4초 | 빠른 사선 몇 가닥이 지나가고 화면이 브랜드 색으로 번쩍이며 컷 (훅·드롭) |
 | [transition-footage-card](transition-footage-card.md) | 전환 | 중 | 0.9–1.1초 | 소재가 카드로 줄며 기울어 빠지고, 다음 소재 카드가 정면으로 펴짐 (2D ↔ 2.5D) |
 
 ### 전환 카드 고르는 법
@@ -34,6 +35,7 @@
 | 기법 | 쓰는 것 | 언제 |
 |---|---|---|
 | 스와이프(닦아내기) | `beat-montage-wipe`의 사선 띠, 마스크 `wipe`·`angleWipe`, 큰 글자·물체가 화면 앞을 지나가게 | 빠른 나열, 인트로·엔딩 타이틀 |
+| 플래시(스와이프 + 커버) | `transition-flash-streak` | 드롭, 훅 직후. 화면 전체 충격(R4)에 셈 |
 | 커버(덮기) | `transition-cover-flood` | 장면 성격이 바뀔 때, 화면 속 점이 있을 때 |
 | 매치 컷 | `transition-match-cut`, 생성 소재면 첫·끝 프레임을 맞춰 생성(`footage-gen.md`) | 비슷한 모양·움직임이 양쪽에 있을 때 |
 | 차원 이동(2D↔3D) | `transition-footage-card`, `hero-tilt-push`, three 어댑터(`three.md`) | 여러 소재를 넘겨 보여 줄 때 |
@@ -46,7 +48,7 @@
 
 ## 카드 형식
 
-> `map-*` 2장은 엔진 3.0.5로, `transition-*` 4장은 엔진 3.0.7로 렌더해 확인한 값입니다. 나머지 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
+> `map-*` 2장은 엔진 3.0.5로, `transition-*` 5장은 엔진 3.0.7로 렌더해 확인한 값입니다. 나머지 5장의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
 
 새 카드는 아래 형식으로 씁니다. 실제로 렌더해 확인한 값만 파라미터 표에 적습니다.
 

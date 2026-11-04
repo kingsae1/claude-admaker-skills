@@ -1,9 +1,9 @@
 [
   {
     "slug": "transitions-four-ways",
-    "title": "소재 5컷을 잇는 전환 4종",
+    "title": "소재 컷을 잇는 전환 5종",
     "category": "transition",
-    "duration": 9,
+    "duration": 11,
     "aspect": "9:16",
     "fps": 30,
     "engine": "3.0.7",
@@ -12,7 +12,8 @@
       "transition-cover-flood",
       "transition-zoom-through",
       "transition-match-cut",
-      "transition-footage-card"
+      "transition-footage-card",
+      "transition-flash-streak"
     ],
     "techniques": [
       "cover",
@@ -20,9 +21,11 @@
       "match-cut",
       "dimension",
       "keyframes",
-      "mask-reveal"
+      "mask-reveal",
+      "swipe",
+      "flash"
     ],
-    "prompt": "A 9-second 9:16 reel that joins five footage clips with four different transitions, all built inside the graphic language and never as crossfades. 1) Cover: a small accent dot near the bottom grows into a circle that floods the frame, the footage swaps under it, and the circle shrinks into the round window of the next clip. 2) Zoom-through: the camera pushes into that window while the next clip opens inside it and fills the frame. 3) Match cut: the frame pushes left with motion blur at the cut, and a white ring around the yellow circle lands exactly on the orange circle of the next clip. 4) Dimension shift: the clip shrinks into a tilted card and slides away while the next card swings in and flattens to full frame. Keep the footage at full clarity, no dim or haze.",
+    "prompt": "An 11-second 9:16 reel that joins six footage cuts with five different transitions, all built inside the graphic language and never as crossfades. 1) Cover: a small accent dot near the bottom grows into a circle that floods the frame, the footage swaps under it, and the circle shrinks into the round window of the next clip. 2) Zoom-through: the camera pushes into that window while the next clip opens inside it and fills the frame. 3) Match cut: the frame pushes left with motion blur at the cut, and a white ring around the yellow circle lands exactly on the orange circle of the next clip. 4) Dimension shift: the clip shrinks into a tilted card and slides away while the next card swings in and flattens to full frame. 5) Flash: four fast diagonal streaks in white and brand pink cross the frame, and as the last thick one passes the screen flashes pink for six frames while the footage cuts. Keep the footage at full clarity, no dim or haze.",
     "preview": "samples/transitions/transitions_sample.gif",
     "build": "samples/transitions/README.md",
     "app_import": "unverified",
