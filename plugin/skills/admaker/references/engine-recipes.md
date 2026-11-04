@@ -301,6 +301,7 @@ registerScript("brand-grid-snap", (ctx, { width, height, time, params }) => {
 클립: `{ "type": "Adapter", "adapter": "script", "params": { "name": "brand-grid-snap", … } }`
 
 - Canvas2D만 씁니다(WebGL 컨텍스트가 아님). 3D는 아래 §7.1의 `three` 어댑터를 씁니다.
+- 바로 복사해 쓰는 스크립트: `templates/scripts/particle-logo.js`(흩어진 입자가 모여 워드마크, 샷 카드 `particle-logo`). 폰트로 글자를 그릴 때는 엔진처럼 `400` 굵기로 그리고 `fontUrl`을 직접 불러옵니다(엔진은 굵은 파일을 normal로 등록).
 - **코드는 JSON에 실리지 않습니다.** 프로젝트 폴더의 `scripts/*.js`로 두고, 렌더 하니스(`templates/render/`)와 admaker 앱 양쪽에서 같은 이름으로 등록해야 합니다. 등록되지 않으면 회색 X 박스가 그려집니다.
 - Lottie: `import "@admaker/engine/adapters/lottie"`로 어댑터를 등록한 뒤 `{ "type": "Adapter", "adapter": "lottie", "params": { "animationData": … } }`. 브랜드가 Lottie 자산을 줬을 때만.
 

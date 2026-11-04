@@ -29,7 +29,7 @@
 | `engine` | 렌더한 `@admaker/engine` 버전 |
 | `footage` | `user`(사용자 소재 자리) · `generated`(앱 AI 생성) · `placeholder`(자리표시) |
 | `shots` | 쓴 샷 카드 이름 (`references/shots/`) |
-| `techniques` | 기법 태그: `swipe` `flash` `cover` `match-cut` `dimension` `morph` `zoom-through` `mask-reveal` `keyframes` `gsapTimeline` `three` `handwriting` `strokeDraw` `map` `countUp` |
+| `techniques` | 기법 태그: `swipe` `flash` `cover` `match-cut` `dimension` `morph` `zoom-through` `mask-reveal` `keyframes` `gsapTimeline` `three` `handwriting` `strokeDraw` `map` `countUp` `kinetic-typography` `squash-stretch` `isometric` `metaball` `particles` `script` |
 | `prompt` | 요청 프롬프트 전문 (영문) |
 | `prompt_file` | `prompts/<slug>.md` |
 | `preview` | 결과 gif (저장소 경로) |
