@@ -1,6 +1,7 @@
 // timeline.mjs + brand.json → project.json (@admaker/engine ProjectJSON)
 // 사용: node build-project.mjs [--size 1080x1920] [--out project.json] [--look off|light]
-// 샷 함수는 shots/<card>.mjs 에 둔다: export default (ctx) => ({ clips: {...}, trackOf: {clipId: trackName} })
+// 샷 함수는 shots/<card>.mjs 에 둔다: export default (ctx) => ({ clips: {...}, trackOf: {clipId: trackName}, footage?: {FOOTAGE 번호: [animations]} })
+// footage: 전환 샷(transition-*)이 바닥 소재 클립에 붙일 모션. 소재 클립의 animations 뒤에 더해진다(합성).
 // 모션 기본형(entrance/exit/kenBurns/breathe/captionPages)은 motion.mjs 에서 import 한다.
 import fs from "node:fs";
 import path from "node:path";
@@ -79,7 +80,12 @@ if (args.look !== "off") {
 
 for (const [shotIndex, shot] of SHOTS.entries()) {
   const mod = await import(path.resolve("shots", `${shot.card}.mjs`));
-  const out = mod.default({ shot, shotIndex, brand, W, H, FPS, us });
+  const out = mod.default({ shot, shotIndex, brand, W, H, FPS, us, FOOTAGE });
+  for (const [i, anims] of Object.entries(out.footage ?? {})) {
+    const clip = project.clips[`footage_${i}`];
+    if (!clip) throw new Error(`${shot.card}: FOOTAGE[${i}] 없음`);
+    clip.animations = [...(clip.animations ?? []), ...anims];
+  }
   for (const [id, clip] of Object.entries(out.clips)) {
     const cam = cameraKeyframes(shot.section, clip, shot.from);
     if (cam && clip.transform) clip.animations = [...(clip.animations ?? []), cam];

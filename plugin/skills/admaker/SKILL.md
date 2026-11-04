@@ -57,12 +57,12 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 | 1. 브리프 | 질문 한 번, 브리프 요약 | `references/ad-formats.md` |
 | 2. 트리트먼트 | `TREATMENT.md`: 문구(시청자 단계, 훅 후보 3개, 근거 표), 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵(드롭, 섹션별 음악 사건 수), 사운드 표 | `references/director.md`, `references/copy.md`, `templates/TREATMENT.md` |
 | 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
-| 4. 샷 선택 | 에너지 골격의 슬롯마다 샷 카드를 고름. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문 |
+| 4. 샷 선택 | `gallery/data/ads.json`에서 기법·샷 카드가 가까운 예시가 있으면 그 프롬프트와 빌드 스크립트를 출발점으로 삼음. 에너지 골격의 슬롯마다 샷 카드를 고르고, 컷마다 나가는 방식(전환 카드)과 이어받는 요소를 정함. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문, `gallery/README.md` |
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀. `analyzeBeats` 결과는 `ANALYSIS`에. 빠른 몽타주는 `presets/fast-montage.mjs`가 박 단위로 생성 | `templates/timeline.mjs`, `templates/presets/` |
 | 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조. 폰트 후보가 여럿이면 여기서 하나로 정함 | `references/engine-recipes.md` §8 |
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
 | 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
-| 9. 검수 | 숫자 체크리스트 + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
+| 9. 검수 | 숫자 체크리스트 + 전환 구간 밀집 시트(`render/sheet.mjs`) + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
 | 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일, `to-admaker-template.mjs`로 플래너 템플릿 생성 → 아래 목록 | `references/engine-recipes.md` §9, §9.1 |
 
 ## 반드시 지킬 원칙

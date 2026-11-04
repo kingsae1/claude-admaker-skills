@@ -64,3 +64,12 @@
 
 ## admaker 엔진
 `@admaker/*` 패키지(kingsae1/admaker-plugin)는 KT 사내 전용 독점 소프트웨어입니다. 이 스킬은 엔진 소스를 포함하지 않고 공개 API 이름만 참조합니다.
+
+## awesome-opus5-5-videos
+- 저장소: https://github.com/yihui-dev/awesome-opus5-5-videos
+- 참고: `data/videos.json`과 `prompts/` 구조(예시 영상 + 프롬프트 + 분류 태그를 한 항목으로), 상위 프롬프트들에 공통된 모션 원칙(앞에 있는 것이 전환이 됨, 한 요소가 컷을 건너감, 맞을 때만 하드컷, 전환 구간 밀집 프레임 검수)과 함정(덮는 원은 다 덮은 뒤 사각형으로).
+- 라이선스: 저장소 MIT, 각 영상과 프롬프트는 제작자 소유. 프롬프트 원문은 옮기지 않았고, 구조와 원칙만 한국어로 다시 썼습니다(`gallery/`, `director.md` §8, aesthetic-rules Q18, `shots/transition-*`). 갤러리 항목의 프롬프트는 이 저장소 샘플을 위해 새로 쓴 것입니다.
+
+## 6가지 화면 전환 기법 분류
+- 출처: JohnKOBA Design, "모션그래픽의 꽃, 6가지 화면 전환 기법(트랜지션)" (YouTube, https://www.youtube.com/watch?v=Zz4O86pN5iU)
+- 참고: 스와이프, 커버, 매치 컷, 차원 이동(2D↔3D), 몰핑, 공간 전환(줌) 분류. 구현과 값은 admaker 엔진으로 새로 만들고 렌더로 확인했습니다(`shots/README.md` 전환 카드).

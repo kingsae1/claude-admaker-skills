@@ -174,3 +174,13 @@ export function captionPages(words, { maxWords = 3, maxGap = 0.35, maxDur = 1.2,
     };
   });
 }
+
+/**
+ * 한 점 P를 화면에 고정한 채 클립을 k배로 키우는 keyframes 값 (줌 스루·매치 컷).
+ * 엔진 scale은 클립 중심 C 기준이라 오프셋 (P − C)(1 − k)를 더한다. 같은 이징이면 중간에도 P가 고정된다.
+ * center: 클립 중심 [cx, cy] (프레임 가득 소재면 [W/2, H/2]).
+ */
+export const zoomAbout = ([px, py], k, [cx, cy]) => ({ scale: k, x: Math.round((px - cx) * (1 - k)), y: Math.round((py - cy) * (1 - k)) });
+
+/** 점 [x, y]에서 프레임의 가장 먼 모서리까지 거리 (커버·아이리스 원의 반지름). */
+export const farCorner = ([x, y], W, H) => Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y));
