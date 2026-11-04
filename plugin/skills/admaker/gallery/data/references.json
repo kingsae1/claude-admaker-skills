@@ -1,5 +1,5 @@
 {
- "about": "외부 레퍼런스 색인: video-shotcraft 샷 카드 124장 + lemo-opuscar 필름 스타일 66종. 요약·태그·admaker 구현 힌트는 이 저장소에서 한국어로 새로 쓴 것이고, 원문·영상·코드는 포함하지 않는다(미리보기는 원 저장소 링크). gallery.mjs recommend가 ads.json 예시와 함께 이 목록에서도 후보를 고른다.",
+ "about": "외부 레퍼런스 색인: video-shotcraft 샷 카드 124장 + lemo-opuscar 필름 스타일 66종. 요약·태그·admaker 구현 힌트는 이 저장소에서 한국어로 새로 쓴 것이고, 원문·영상·코드는 포함하지 않는다(미리보기·데모 영상은 원 저장소 링크). gallery.mjs recommend가 ads.json 예시와 함께 이 목록에서도 후보를 고른다.",
  "sources": {
   "shotcraft": {
    "repo": "https://github.com/Vincentwei1021/video-shotcraft",
@@ -11,7 +11,9 @@
    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
    "license": "MIT (code·docs), CC BY 4.0 (demo films·stills, credit LemoLab)",
    "site": "https://lemomo-ai.github.io/lemo-opuscar/",
-   "snapshot": "f171360 (2026-10-29)"
+   "snapshot": "f171360 (2026-10-29)",
+   "demo_videos": "https://github.com/lemomo-ai/lemo-opuscar/releases/tag/films",
+   "demo_snapshot": "bebbbe1 (2026-11-01)"
   }
  },
  "added": "2026-11-04",
@@ -2518,7 +2520,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/caption-news/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/caption-news"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/caption-news",
+   "demo": {
+    "title": "The Bee Ledger",
+    "duration": 59.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/caption-news.mp4",
+    "size_mb": 32
+   }
   },
   {
    "id": "opuscar/newsreel",
@@ -2541,7 +2549,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/newsreel/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/newsreel"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/newsreel",
+   "demo": {
+    "title": "Knock-Knee Alert",
+    "duration": 54.6,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/newsreel.mp4",
+    "size_mb": 270
+   }
   },
   {
    "id": "opuscar/countdown",
@@ -2564,7 +2578,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/countdown/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/countdown"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/countdown",
+   "demo": {
+    "title": "Counting Itself Down",
+    "duration": 59.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/countdown.mp4",
+    "size_mb": 30
+   }
   },
   {
    "id": "opuscar/city-symphony",
@@ -2588,7 +2608,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/city-symphony/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/city-symphony"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/city-symphony",
+   "demo": {
+    "title": "One Day in New York",
+    "duration": 52.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/city-symphony.mp4",
+    "size_mb": 145
+   }
   },
   {
    "id": "opuscar/visual-investigation",
@@ -2612,7 +2638,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/visual-investigation/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/visual-investigation"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/visual-investigation",
+   "demo": {
+    "title": "The Hindenburg: Four Minutes, 32 Seconds",
+    "duration": 60.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/visual-investigation.mp4",
+    "size_mb": 56
+   }
   },
   {
    "id": "opuscar/kino-montage",
@@ -2636,7 +2668,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/kino-montage/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/kino-montage"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/kino-montage",
+   "demo": {
+    "title": "410 Days",
+    "duration": 60.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/kino-montage.mp4",
+    "size_mb": 112
+   }
   },
   {
    "id": "opuscar/telestrator",
@@ -2659,7 +2697,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/telestrator/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/telestrator"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/telestrator",
+   "demo": {
+    "title": "Freeze Frame",
+    "duration": 54.4,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/telestrator.mp4",
+    "size_mb": 47
+   }
   },
   {
    "id": "opuscar/news-package",
@@ -2682,7 +2726,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/news-package/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/news-package"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/news-package",
+   "demo": {
+    "title": "The Week in AI",
+    "duration": 53.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/news-package.mp4",
+    "size_mb": 15
+   }
   },
   {
    "id": "opuscar/satellite-briefing",
@@ -2705,7 +2755,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/satellite-briefing/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/satellite-briefing"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/satellite-briefing",
+   "demo": {
+    "title": "The Map Still Says Sea",
+    "duration": 37.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/satellite-briefing.mp4",
+    "size_mb": 66
+   }
   },
   {
    "id": "opuscar/briefing-board",
@@ -2728,7 +2784,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/briefing-board/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/briefing-board"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/briefing-board",
+   "demo": {
+    "title": "The Ship Decides",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/briefing-board.mp4",
+    "size_mb": 30
+   }
   },
   {
    "id": "opuscar/lidar-survey",
@@ -2753,7 +2815,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/lidar-survey/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/lidar-survey"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/lidar-survey",
+   "demo": {
+    "title": "The Fields Under the Forest",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/lidar-survey.mp4",
+    "size_mb": 88
+   }
   },
   {
    "id": "opuscar/white-model",
@@ -2777,7 +2845,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/white-model/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/white-model"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/white-model",
+   "demo": {
+    "title": "How a Flattened City Grew Back",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/white-model.mp4",
+    "size_mb": 43
+   }
   },
   {
    "id": "opuscar/data-physical",
@@ -2801,7 +2875,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/data-physical/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/data-physical"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/data-physical",
+   "demo": {
+    "title": "Two Spirals",
+    "duration": 39.4,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/data-physical.mp4",
+    "size_mb": 41
+   }
   },
   {
    "id": "opuscar/teardown",
@@ -2824,7 +2904,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/teardown/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/teardown"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/teardown",
+   "demo": {
+    "title": "21 Keys, Opened",
+    "duration": 38.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/teardown.mp4",
+    "size_mb": 17
+   }
   },
   {
    "id": "opuscar/microscope",
@@ -2847,7 +2933,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/microscope/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/microscope"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/microscope",
+   "demo": {
+    "title": "Measured Blue",
+    "duration": 39.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/microscope.mp4",
+    "size_mb": 116
+   }
   },
   {
    "id": "opuscar/archive-lighttable",
@@ -2870,7 +2962,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/archive-lighttable/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/archive-lighttable"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/archive-lighttable",
+   "demo": {
+    "title": "Two Seconds Short",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/archive-lighttable.mp4",
+    "size_mb": 113
+   }
   },
   {
    "id": "opuscar/crayon-book",
@@ -2894,7 +2992,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/crayon-book/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/crayon-book"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/crayon-book",
+   "demo": {
+    "title": "The Moon Can't Sleep",
+    "duration": 52.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/crayon-book.mp4",
+    "size_mb": 73
+   }
   },
   {
    "id": "opuscar/watercolor",
@@ -2917,7 +3021,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/watercolor/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/watercolor"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/watercolor",
+   "demo": {
+    "title": "Follow the Rain",
+    "duration": 113.6,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/watercolor.mp4",
+    "size_mb": 99
+   }
   },
   {
    "id": "opuscar/ink-wash",
@@ -2940,7 +3050,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/ink-wash/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ink-wash"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ink-wash",
+   "demo": {
+    "title": "The Swordsman and the River",
+    "duration": 48.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/ink-wash.mp4",
+    "size_mb": 46
+   }
   },
   {
    "id": "opuscar/impasto",
@@ -2962,7 +3078,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/impasto/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/impasto"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/impasto",
+   "demo": {
+    "title": "The Colour of Rain",
+    "duration": 39.7,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/impasto.mp4",
+    "size_mb": 85
+   }
   },
   {
    "id": "opuscar/one-line",
@@ -2985,7 +3107,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/one-line/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/one-line"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/one-line",
+   "demo": {
+    "title": "The Line That Never Lifted",
+    "duration": 47.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/one-line.mp4",
+    "size_mb": 27
+   }
   },
   {
    "id": "opuscar/whiteboard",
@@ -3008,7 +3136,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/whiteboard/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/whiteboard"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/whiteboard",
+   "demo": {
+    "title": "Einstein in Your Pocket",
+    "duration": 111.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/whiteboard.mp4",
+    "size_mb": 56
+   }
   },
   {
    "id": "opuscar/urban-sketch",
@@ -3031,7 +3165,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/urban-sketch/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/urban-sketch"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/urban-sketch",
+   "demo": {
+    "title": "Where the Wind Went",
+    "duration": 32.4,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/urban-sketch.mp4",
+    "size_mb": 69
+   }
   },
   {
    "id": "opuscar/chalkboard",
@@ -3053,7 +3193,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/chalkboard/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/chalkboard"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/chalkboard",
+   "demo": {
+    "title": "The Story of Chinese Characters",
+    "duration": 49.3,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/chalkboard.mp4",
+    "size_mb": 36
+   }
   },
   {
    "id": "opuscar/shadow-puppet",
@@ -3076,7 +3222,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/shadow-puppet/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/shadow-puppet"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/shadow-puppet",
+   "demo": {
+    "title": "Hou Yi Shoots the Suns",
+    "duration": 54.4,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/shadow-puppet.mp4",
+    "size_mb": 35
+   }
   },
   {
    "id": "opuscar/ukiyoe",
@@ -3100,7 +3252,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/ukiyoe/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ukiyoe"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ukiyoe",
+   "demo": {
+    "title": "Toward the Mountain",
+    "duration": 44.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/ukiyoe.mp4",
+    "size_mb": 31
+   }
   },
   {
    "id": "opuscar/papercut-red",
@@ -3123,7 +3281,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/papercut-red/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/papercut-red"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/papercut-red",
+   "demo": {
+    "title": "Nian Comes to Town",
+    "duration": 49.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/papercut-red.mp4",
+    "size_mb": 45
+   }
   },
   {
    "id": "opuscar/paper-lantern",
@@ -3147,7 +3311,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/paper-lantern/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/paper-lantern"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/paper-lantern",
+   "demo": {
+    "title": "The Last Night Train",
+    "duration": 51.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/paper-lantern.mp4",
+    "size_mb": 23
+   }
   },
   {
    "id": "opuscar/risograph",
@@ -3171,7 +3341,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/risograph/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/risograph"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/risograph",
+   "demo": {
+    "title": "Sunday Ride",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/risograph.mp4",
+    "size_mb": 283
+   }
   },
   {
    "id": "opuscar/halftone-dossier",
@@ -3195,7 +3371,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/halftone-dossier/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/halftone-dossier"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/halftone-dossier",
+   "demo": {
+    "title": "Case File: Chubby",
+    "duration": 30.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/halftone-dossier.mp4",
+    "size_mb": 74
+   }
   },
   {
    "id": "opuscar/woodcut",
@@ -3218,7 +3400,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/woodcut/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/woodcut"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/woodcut",
+   "demo": {
+    "title": "The Bell Founder",
+    "duration": 58.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/woodcut.mp4",
+    "size_mb": 93
+   }
   },
   {
    "id": "opuscar/engraving",
@@ -3241,7 +3429,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/engraving/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/engraving"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/engraving",
+   "demo": {
+    "title": "The Honeybee, Plate VII",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/engraving.mp4",
+    "size_mb": 78
+   }
   },
   {
    "id": "opuscar/silkscreen-poster",
@@ -3265,7 +3459,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/silkscreen-poster/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/silkscreen-poster"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/silkscreen-poster",
+   "demo": {
+    "title": "The Long Way Home",
+    "duration": 50.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/silkscreen-poster.mp4",
+    "size_mb": 39
+   }
   },
   {
    "id": "opuscar/printed-long-take",
@@ -3288,7 +3488,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/printed-long-take/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/printed-long-take"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/printed-long-take",
+   "demo": {
+    "title": "Thirty-Three Cranes",
+    "duration": 60.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/printed-long-take.mp4",
+    "size_mb": 215
+   }
   },
   {
    "id": "opuscar/swiss-motion",
@@ -3313,7 +3519,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/swiss-motion/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/swiss-motion"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/swiss-motion",
+   "demo": {
+    "title": "Five Rules for a Poster",
+    "duration": 44.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/swiss-motion.mp4",
+    "size_mb": 4
+   }
   },
   {
    "id": "opuscar/spy-titles",
@@ -3337,7 +3549,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/spy-titles/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/spy-titles"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/spy-titles",
+   "demo": {
+    "title": "The Velvet Cipher",
+    "duration": 44.1,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/spy-titles.mp4",
+    "size_mb": 19
+   }
   },
   {
    "id": "opuscar/art-deco",
@@ -3361,7 +3579,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/art-deco/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/art-deco"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/art-deco",
+   "demo": {
+    "title": "Midnight at the Starlight Hotel",
+    "duration": 58.4,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/art-deco.mp4",
+    "size_mb": 55
+   }
   },
   {
    "id": "opuscar/blueprint",
@@ -3384,7 +3608,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/blueprint/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/blueprint"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/blueprint",
+   "demo": {
+    "title": "Patent Pending: The Cloud Catcher",
+    "duration": 46.7,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/blueprint.mp4",
+    "size_mb": 96
+   }
   },
   {
    "id": "opuscar/stained-glass",
@@ -3406,7 +3636,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/stained-glass/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/stained-glass"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/stained-glass",
+   "demo": {
+    "title": "The Dragon of the East Window",
+    "duration": 56.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/stained-glass.mp4",
+    "size_mb": 33
+   }
   },
   {
    "id": "opuscar/pictogram-motion",
@@ -3430,7 +3666,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/pictogram-motion/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/pictogram-motion"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/pictogram-motion",
+   "demo": {
+    "title": "Left Behind",
+    "duration": 50.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/pictogram-motion.mp4",
+    "size_mb": 24
+   }
   },
   {
    "id": "opuscar/ascii-crt",
@@ -3454,7 +3696,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/ascii-crt/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ascii-crt"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/ascii-crt",
+   "demo": {
+    "title": "Tranquility.log",
+    "duration": 59.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/ascii-crt.mp4",
+    "size_mb": 40
+   }
   },
   {
    "id": "opuscar/dataviz",
@@ -3477,7 +3725,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/dataviz/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/dataviz"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/dataviz",
+   "demo": {
+    "title": "A Hundred Summers",
+    "duration": 50.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/dataviz.mp4",
+    "size_mb": 26
+   }
   },
   {
    "id": "opuscar/iso-infographic",
@@ -3499,7 +3753,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/iso-infographic/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/iso-infographic"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/iso-infographic",
+   "demo": {
+    "title": "From Bean to Cup",
+    "duration": 58.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/iso-infographic.mp4",
+    "size_mb": 31
+   }
   },
   {
    "id": "opuscar/dark-keynote",
@@ -3524,7 +3784,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/dark-keynote/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/dark-keynote"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/dark-keynote",
+   "demo": {
+    "title": "Room to Think",
+    "duration": 42.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/dark-keynote.mp4",
+    "size_mb": 21
+   }
   },
   {
    "id": "opuscar/living-screencast",
@@ -3547,7 +3813,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/living-screencast/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/living-screencast"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/living-screencast",
+   "demo": {
+    "title": "Clawd Moves In",
+    "duration": 59.4,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/living-screencast.mp4",
+    "size_mb": 11
+   }
   },
   {
    "id": "opuscar/hologram-hud",
@@ -3571,7 +3843,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/hologram-hud/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/hologram-hud"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/hologram-hud",
+   "demo": {
+    "title": "Volt · Spec Scan",
+    "duration": 39.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/hologram-hud.mp4",
+    "size_mb": 37
+   }
   },
   {
    "id": "opuscar/transit-map",
@@ -3593,7 +3871,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/transit-map/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/transit-map"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/transit-map",
+   "demo": {
+    "title": "6 Kilometres",
+    "duration": 47.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/transit-map.mp4",
+    "size_mb": 29
+   }
   },
   {
    "id": "opuscar/isometric-picture-book",
@@ -3616,7 +3900,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/isometric-picture-book/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/isometric-picture-book"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/isometric-picture-book",
+   "demo": {
+    "title": "Seventy-Two Seats",
+    "duration": 59.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/isometric-picture-book.mp4",
+    "size_mb": 29
+   }
   },
   {
    "id": "opuscar/circuit-board",
@@ -3639,7 +3929,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/circuit-board/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/circuit-board"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/circuit-board",
+   "demo": {
+    "title": "Seven Milliseconds",
+    "duration": 60.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/circuit-board.mp4",
+    "size_mb": 49
+   }
   },
   {
    "id": "opuscar/rubber-hose",
@@ -3662,7 +3958,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/rubber-hose/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/rubber-hose"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/rubber-hose",
+   "demo": {
+    "title": "Coffee Cup Chase",
+    "duration": 50.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/rubber-hose.mp4",
+    "size_mb": 35
+   }
   },
   {
    "id": "opuscar/cel-anime-80s",
@@ -3684,7 +3986,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/cel-anime-80s/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/cel-anime-80s"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/cel-anime-80s",
+   "demo": {
+    "title": "City Lights, 1987",
+    "duration": 59.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/cel-anime-80s.mp4",
+    "size_mb": 31
+   }
   },
   {
    "id": "opuscar/scifi-toon",
@@ -3707,7 +4015,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/scifi-toon/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/scifi-toon"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/scifi-toon",
+   "demo": {
+    "title": "Coffee Run",
+    "duration": 57.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/scifi-toon.mp4",
+    "size_mb": 30
+   }
   },
   {
    "id": "opuscar/midcentury-toon",
@@ -3730,7 +4044,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/midcentury-toon/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/midcentury-toon"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/midcentury-toon",
+   "demo": {
+    "title": "Meet Pip",
+    "duration": 40.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/midcentury-toon.mp4",
+    "size_mb": 63
+   }
   },
   {
    "id": "opuscar/pixel-rpg",
@@ -3753,7 +4073,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/pixel-rpg/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/pixel-rpg"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/pixel-rpg",
+   "demo": {
+    "title": "The Last Save Point",
+    "duration": 54.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/pixel-rpg.mp4",
+    "size_mb": 11
+   }
   },
   {
    "id": "opuscar/hd-2d",
@@ -3777,7 +4103,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/hd-2d/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/hd-2d"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/hd-2d",
+   "demo": {
+    "title": "The Lampbearer",
+    "duration": 76.5,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/hd-2d.mp4",
+    "size_mb": 53
+   }
   },
   {
    "id": "opuscar/microgame",
@@ -3801,7 +4133,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/microgame/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/microgame"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/microgame",
+   "demo": {
+    "title": "Five-Second Astronaut",
+    "duration": 59.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/microgame.mp4",
+    "size_mb": 61
+   }
   },
   {
    "id": "opuscar/game-show",
@@ -3824,7 +4162,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/game-show/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/game-show"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/game-show",
+   "demo": {
+    "title": "Rhythm of AI, 1997 → 2026",
+    "duration": 148.8,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/game-show.mp4",
+    "size_mb": 64
+   }
   },
   {
    "id": "opuscar/silent-film",
@@ -3847,7 +4191,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/silent-film/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/silent-film"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/silent-film",
+   "demo": {
+    "title": "The Runaway Loaf",
+    "duration": 54.2,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/silent-film.mp4",
+    "size_mb": 77
+   }
   },
   {
    "id": "opuscar/backrooms",
@@ -3870,7 +4220,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/backrooms/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/backrooms"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/backrooms",
+   "demo": {
+    "title": "Night Shift Orientation",
+    "duration": 59.7,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/backrooms.mp4",
+    "size_mb": 47
+   }
   },
   {
    "id": "opuscar/brick-toy",
@@ -3894,7 +4250,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/brick-toy/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/brick-toy"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/brick-toy",
+   "demo": {
+    "title": "Rocket from Spare Parts",
+    "duration": 54.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/brick-toy.mp4",
+    "size_mb": 24
+   }
   },
   {
    "id": "opuscar/paper-popup",
@@ -3916,7 +4278,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/paper-popup/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/paper-popup"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/paper-popup",
+   "demo": {
+    "title": "Pip's Paper Adventure",
+    "duration": 133.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/paper-popup.mp4",
+    "size_mb": 146
+   }
   },
   {
    "id": "opuscar/tilt-shift",
@@ -3938,7 +4306,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/tilt-shift/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/tilt-shift"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/tilt-shift",
+   "demo": {
+    "title": "Toy Town Rush Hour",
+    "duration": 38.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/tilt-shift.mp4",
+    "size_mb": 61
+   }
   },
   {
    "id": "opuscar/lowpoly-island",
@@ -3961,7 +4335,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/lowpoly-island/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/lowpoly-island"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/lowpoly-island",
+   "demo": {
+    "title": "The Island That Grew",
+    "duration": 53.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/lowpoly-island.mp4",
+    "size_mb": 26
+   }
   },
   {
    "id": "opuscar/glass-product",
@@ -3985,7 +4365,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/glass-product/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/glass-product"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/glass-product",
+   "demo": {
+    "title": "Aura — Hear the Light",
+    "duration": 32.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/glass-product.mp4",
+    "size_mb": 18
+   }
   },
   {
    "id": "opuscar/memphis-diorama",
@@ -4008,7 +4394,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/memphis-diorama/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/memphis-diorama"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/memphis-diorama",
+   "demo": {
+    "title": "Four Seasons in Pomelo Town",
+    "duration": 45.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/memphis-diorama.mp4",
+    "size_mb": 128
+   }
   },
   {
    "id": "opuscar/desktop-flythrough",
@@ -4032,7 +4424,13 @@
    ],
    "preview": "https://raw.githubusercontent.com/lemomo-ai/lemo-opuscar/main/styles/desktop-flythrough/poster.jpg",
    "preview_type": "image",
-   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/desktop-flythrough"
+   "source_url": "https://github.com/lemomo-ai/lemo-opuscar/tree/main/styles/desktop-flythrough",
+   "demo": {
+    "title": "Before the Ding",
+    "duration": 60.0,
+    "video": "https://github.com/lemomo-ai/lemo-opuscar/releases/download/films/desktop-flythrough.mp4",
+    "size_mb": 29
+   }
   }
  ]
 }

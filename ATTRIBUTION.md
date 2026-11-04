@@ -6,7 +6,7 @@
 - 저장소: https://github.com/lemomo-ai/lemo-opuscar
 - 참고: `DIRECTOR.md`, `TECHNIQUE.md`, `styles/*/STYLE.md` (연출 순서, 트리트먼트 양식, 사운드 3레이어, 리듬·카메라 원칙, 결정적 렌더링)
 - 라이선스: 코드와 문서 MIT, Copyright (c) 2026 LemoLab
-- 레퍼런스 색인(`gallery/data/references.json`, 2026-11-04, 스냅샷 f171360): `styleboard/catalog.json`과 `styles/*/STYLE.md` 첫 문단을 보고 스타일 66종의 한국어 이름·요약·admaker 구현 힌트를 새로 썼습니다. 데모 영상·스틸(CC BY 4.0, LemoLab)은 넣지 않고 원 저장소 poster.jpg 링크만 둡니다.
+- 레퍼런스 색인(`gallery/data/references.json`, 2026-11-04, 스냅샷 f171360): `styleboard/catalog.json`과 `styles/*/STYLE.md` 첫 문단을 보고 스타일 66종의 한국어 이름·요약·admaker 구현 힌트를 새로 썼습니다. 데모 영상·스틸(CC BY 4.0, LemoLab)은 넣지 않고 원 저장소 poster.jpg와 데모 영상(Releases `films`, 스냅샷 bebbbe1) 링크만 둡니다.
 
 ## video-shotcraft
 - 저장소: https://github.com/Vincentwei1021/video-shotcraft

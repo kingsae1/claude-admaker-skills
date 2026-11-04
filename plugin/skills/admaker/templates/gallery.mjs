@@ -172,13 +172,14 @@ ${refs.length ? `<h1 class="refs-h">더 넓게 보기: 외부 레퍼런스 ${ref
 <p class="req">빌드 키트는 없고, 샷 카드로 새로 짤 때 섞어 쓸 연출 후보입니다. 미리보기는 원 저장소에서 불러옵니다(인터넷 필요).</p>
 <div class="grid">
 ${refs.map(({ ref, why }, i) => `<article>
-  <div class="media">${ref.preview ? (ref.preview_type === "video" ? `<video src="${esc(ref.preview)}" muted loop autoplay playsinline preload="metadata"></video>` : `<img src="${esc(ref.preview)}" alt="${esc(ref.title)}" loading="lazy">`) : `<div class="noimg">미리보기 없음</div>`}</div>
+  <div class="media">${ref.preview ? (ref.preview_type === "video" ? `<video src="${esc(ref.preview)}" muted loop autoplay playsinline preload="metadata"></video>` : (ref.demo ? `<a href="${esc(ref.demo.video)}" title="데모 영상 재생"><img src="${esc(ref.preview)}" alt="${esc(ref.title)}" loading="lazy"></a>` : `<img src="${esc(ref.preview)}" alt="${esc(ref.title)}" loading="lazy">`)) : `<div class="noimg">미리보기 없음</div>`}</div>
   <div class="body">
     <p class="rank">레퍼런스 ${String.fromCharCode(65 + i)} · ${esc(REFS.sources?.[ref.source] ? ref.source : ref.source)} · ${esc(ref.category_ko)}${why.length ? ` · ${esc(why.slice(0, 4).join(", "))}` : ""}</p>
     <h2>${esc(ref.title)}</h2>
     <p>${esc(ref.summary_ko)}</p>
     <h3>admaker로 만들면</h3>
     <p class="meta">${esc(ref.admaker)}</p>
+    ${ref.demo ? `<p class="meta"><a href="${esc(ref.demo.video)}">▶ 데모 영상: ${esc(ref.demo.title)} (${Math.round(ref.demo.duration)}초, 약 ${ref.demo.size_mb}MB)</a></p>` : ""}
     <p class="pick"><a href="${esc(ref.source_url)}">원문 (${esc(REFS.sources?.[ref.source]?.license ?? "")})</a> · 고르려면 <code>${esc(String.fromCharCode(65 + i))}</code> 또는 <code>${esc(ref.id)}</code></p>
   </div>
 </article>`).join("\n")}
@@ -240,13 +241,13 @@ if (cmd === "list" || !cmd) {
   const refs = pickRefs(request, refTop);
   fs.writeFileSync(outArg, page(request, recs, refs));
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));
-  refs.forEach(({ ref, score: s }, i) => console.log(`${String.fromCharCode(65 + i)}. ${ref.id} (${s.toFixed(1)}) ${ref.summary_ko}\n     admaker: ${ref.admaker}`));
+  refs.forEach(({ ref, score: s }, i) => console.log(`${String.fromCharCode(65 + i)}. ${ref.id} (${s.toFixed(1)}) ${ref.summary_ko}\n     admaker: ${ref.admaker}${ref.demo ? `\n     데모: ${ref.demo.video}` : ""}`));
   console.log(`→ ${path.resolve(outArg)}`);
 } else if (cmd === "refs") {
   // 외부 레퍼런스 검색: node gallery.mjs refs "카드 스택 3d" [--refs 12]
   const q = rest.join(" ").trim();
   const list = q ? pickRefs(q, refTop) : REFS.items.map((ref) => ({ ref, score: 0 }));
-  for (const { ref, score: s } of list) console.log(`${ref.id.padEnd(44)} ${q ? `(${s.toFixed(1)}) ` : ""}${ref.summary_ko}\n${" ".repeat(46)}admaker: ${ref.admaker}`);
+  for (const { ref, score: s } of list) console.log(`${ref.id.padEnd(44)} ${q ? `(${s.toFixed(1)}) ` : ""}${ref.summary_ko}\n${" ".repeat(46)}admaker: ${ref.admaker}${ref.demo ? `\n${" ".repeat(46)}데모: ${ref.demo.title} (${Math.round(ref.demo.duration)}초) ${ref.demo.video}` : ""}`);
   console.log(`${list.length}개 / 전체 ${REFS.items.length}개 (shotcraft 샷 ${REFS.items.filter((r) => r.source === "shotcraft").length}, opuscar 스타일 ${REFS.items.filter((r) => r.source === "opuscar").length})`);
 } else if (cmd === "use") {
   const [slug, dir = "."] = rest;
