@@ -17,7 +17,7 @@ const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "stroke
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)
-const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft" };
+const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft", "am-push": "slideleft" };
 // 트랙 행 순서를 바꿔도 클립 겹침 순서가 유지되도록 앱의 "명시 zIndex" 구간(≥ 1,000,000)으로 옮긴다
 const Z_BASE = 1_000_000;
 
