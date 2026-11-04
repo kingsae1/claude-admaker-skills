@@ -34,6 +34,7 @@
 - 클립 타입: `Video`, `Audio`, `Image`, `Text`, `Caption`, `Shape`, `Backdrop`, `Effect`, `Transition`, `Placeholder`, `Adapter`.
 - 겹침 순서는 `transform.zIndex`와 트랙 순서로 정합니다.
 - 오디오 클립은 `volume`, `fadeIn`/`fadeOut`(`{duration, curve}`)만 가집니다.
+- **재생 속도**는 `Video`·`Audio` 클립의 `timing.playbackRate`(0.25–4, 기본 1)입니다. 원본에서 쓰는 구간은 `trim`, 타임라인 길이는 `display`이고 항상 `trim.to − trim.from = (display.to − display.from) × playbackRate`가 되게 씁니다(2배속 6초 원본 = 3초 클립). 소리는 미리보기·내보내기 모두 음높이를 유지합니다. 앱에서는 `update_clip { playbackRate }`가 이 계산과 뒤 클립 밀기를 대신합니다.
 
 ## 2. 움직임 (`clip.animations[]`)
 
