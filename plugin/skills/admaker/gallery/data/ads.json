@@ -31,7 +31,21 @@
     "app_import": "unverified",
     "added": "2026-11-04",
     "verified": true,
-    "prompt_file": "prompts/transitions-four-ways.md"
+    "prompt_file": "prompts/transitions-four-ways.md",
+    "kit": {
+      "dir": "gallery/kits/transitions-four-ways",
+      "kind": "timeline-section",
+      "entry": "timeline.sample.mjs",
+      "run": [
+        "node make-placeholder-footage.cjs  # 자리표시 소재가 필요할 때만",
+        "node build-project.mjs --out project.json"
+      ]
+    },
+    "slots": [
+      "FOOTAGE: 소재 6컷의 src와 길이",
+      "전환 색: cover-flood·flash-streak의 color, zoom-through의 ring",
+      "위치: cover의 origin/to, zoom의 portal, match-cut의 carry(두 소재에서 같은 물체의 px)"
+    ]
   },
   {
     "slug": "map-route-delivery",
@@ -58,7 +72,21 @@
     "app_import": "full",
     "added": "2026-10-30",
     "verified": true,
-    "prompt_file": "prompts/map-route-delivery.md"
+    "prompt_file": "prompts/map-route-delivery.md",
+    "kit": {
+      "dir": "gallery/kits/map-route-delivery",
+      "kind": "script",
+      "entry": "sample-map.mjs",
+      "run": [
+        "node sample-map.mjs project.json"
+      ]
+    },
+    "slots": [
+      "출발·도착 지역(regionShape 이름)과 경로",
+      "문구 두 줄(sub, headline)",
+      "강조색과 폰트(brand.json)",
+      "바닥 소재 src"
+    ]
   },
   {
     "slug": "gsap-three-earbuds-teaser",
@@ -82,7 +110,22 @@
     "app_import": "partial",
     "added": "2026-11-02",
     "verified": true,
-    "prompt_file": "prompts/gsap-three-earbuds-teaser.md"
+    "prompt_file": "prompts/gsap-three-earbuds-teaser.md",
+    "kit": {
+      "dir": "gallery/kits/gsap-three-earbuds-teaser",
+      "kind": "script",
+      "entry": "sample-gsap-three.mjs",
+      "run": [
+        "node sample-gsap-three.mjs project.json"
+      ]
+    },
+    "slots": [
+      "브랜드명·워드마크·CTA",
+      "훅 한 줄과 헤드라인 두 줄",
+      "스펙 칩 3개",
+      "3D 오브젝트 색(scenes/orbit-hero.js)",
+      "바닥 소재 src"
+    ]
   },
   {
     "slug": "handwriting-thank-you",
@@ -107,7 +150,21 @@
     "app_import": "full",
     "added": "2026-11-02",
     "verified": true,
-    "prompt_file": "prompts/handwriting-thank-you.md"
+    "prompt_file": "prompts/handwriting-thank-you.md",
+    "kit": {
+      "dir": "gallery/kits/handwriting-thank-you",
+      "kind": "script",
+      "entry": "build.mjs",
+      "run": [
+        "node build.mjs project.json"
+      ]
+    },
+    "slots": [
+      "한글 문구(손글씨로 써지는 줄)",
+      "영문 필기체 문구와 색",
+      "손글씨 폰트(fonts.json의 손글씨 계열)",
+      "바닥 사진 src"
+    ]
   },
   {
     "slug": "motion-styles-five",
@@ -142,6 +199,25 @@
     "app_import": "partial",
     "added": "2026-11-04",
     "verified": true,
-    "prompt_file": "prompts/motion-styles-five.md"
+    "prompt_file": "prompts/motion-styles-five.md",
+    "kit": {
+      "dir": "gallery/kits/motion-styles-five",
+      "kind": "timeline-full",
+      "entry": "timeline.sample.mjs",
+      "extra": [
+        "brand.json",
+        "shots/sample-label.mjs"
+      ],
+      "run": [
+        "node build-project.mjs --look off --out project.json"
+      ]
+    },
+    "slots": [
+      "키네틱 타이포 단어 3개와 BPM",
+      "브랜드 색(brand.json)",
+      "로딩·리퀴드 문구",
+      "파티클 로고 단어",
+      "소재 6컷 src"
+    ]
   }
 ]
