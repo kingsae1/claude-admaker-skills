@@ -11,7 +11,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 **admaker 앱 MCP가 연결되어 있으면(`get_production_workflow` 도구가 보이면) 광고 한 편은 그 순서대로 끝까지 만들고, 모션그래픽에서 멈추지 않습니다.**
 순서: BGM을 앱 AI로 먼저 만들기 → `audio.analyzeBeats`로 BGM의 템포·마디·피크를 받아 씬 나누기 → 모션그래픽(이 스킬, 씬 경계·비트에 맞춰) → 내레이션(씬 시작에 맞춰) → 바닥 이미지 img2img(`ai.image.edit`) → **사용자 확인** → 씬별 영상 생성 → 배치·검토.
 씬별 영상 도구는 씬표를 만들 때 정합니다(`footage-gen.md` §7.2). 기본은 이미지→영상(`ai.video.imageToVideo`)이고, 씬에 맞을 때만 첫·끝 프레임 영상(`ai.video.framesToVideo`: 앞 컷에서 컷 없이 이어지거나 시작·끝 상태가 분명한 씬)이나 레퍼런스 영상(`ai.video.referenceToVideo`: 정해 둔 인물·제품을 여러 씬에서 사진에 없는 장면으로)을 씁니다. 고른 도구와 이유는 씬표에 적어 제안합니다.
-바닥 소재를 생성할 때는 `references/footage-gen.md`(MCP에서는 `get_ad_guide({ name: 'footage-gen.md' })`)를 읽습니다. 생성 프롬프트·카메라 어휘·금지 줄은 영문으로 쓰고 사용자에게는 한 줄 한글 요약을 붙여 보여 줍니다. 제품이 나오는 씬은 사용자 제품 사진에서 시작하고, 영상으로 만들기 전에 사진을 진단해 고칠 곳만 사용자 확인 후 고칩니다(`footage-gen.md` §4.1, img2img → 이미지→영상). 글로만 만드는 영상(`ai.video.generate`)은 분위기 컷에만 씁니다. 글자·로고·가격은 생성 모델에 그리게 하지 않고 모션그래픽으로 얹습니다.
+바닥 소재를 생성할 때는 `references/footage-gen.md`(MCP에서는 `get_ad_guide({ name: 'footage-gen.md' })`)를 읽습니다. 생성 프롬프트·카메라 어휘·금지 줄은 영문으로 쓰고 사용자에게는 한 줄 한글 요약을 붙여 보여 줍니다. 제품이 나오는 씬은 사용자 제품 사진에서 시작하고, 영상으로 만들기 전에 사진을 진단해 고칠 곳만 사용자 확인 후 고칩니다(`footage-gen.md` §4.1, img2img → 이미지→영상). 글로만 만드는 영상(`ai.video.generate`)은 분위기 컷에만 씁니다. 글자·로고·가격은 생성 모델에 그리게 하지 않고 모션그래픽으로 얹습니다. 영상 프롬프트를 쓰기 전에 `run_studio_tool { toolId: 'video.models' }`로 도구마다 받을 모델(Veo, Kling, Gemini Omni, MiniMax, Seedance)을 확인하고 `references/video-models.md`(MCP에서는 `get_ad_guide({ name: 'video-models.md' })`)의 그 계열 공식에 맞춥니다. 레퍼런스는 `{ref1}`, `{ref2}`로 가리킵니다.
 이때 `timeline.mjs`의 BPM·비트·섹션은 분석값을 그대로 쓰고, 소리는 ProjectJSON에 넣지 않고 `import_to_admaker { keepAudio: true }`로 앱에서 먼저 만든 BGM을 그대로 옮깁니다. AI 생성 전에는 예상 크레딧과 프롬프트를 보여 주고 확인받습니다.
 앱에 넣고 배치까지 끝나면 `arrange_tracks { scenes: 씬표 }`로 타임라인을 정리합니다. 앞 씬 행이 위에서부터 계단처럼 놓이고, 화면 전체 층(룩·파티클·어둡게 깔기·배경 영상)과 오디오는 아래로 가며, 행 이름이 '1씬 · 텍스트 · 첫 문구'처럼 붙습니다. 시간이 겹치는 행의 앞/뒤는 그대로라 화면은 바뀌지 않으니 `move_track`을 하나씩 부르지 않습니다.
 이미 앱에 있는 광고를 고칠 때는 `get_editor_state`로 행 목록을 보고, `get_timeline_items { trackIndexes | trackIds | clipIds, fromSec?, toSec?, types? }`로 고칠 행(Row)이나 클립만 불러와 `raw` 필드 이름 그대로 `update_clip` 합니다. 행·클립이 많아 결과가 크면 `outputPath`(작업 폴더의 .json)로 파일에 받습니다.
@@ -38,6 +38,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 내레이션(연출표: 화면 문구와 읽을 문장 분리·숫자/기호 읽기·강조·큐 단어, 스타일, 분량, 줄 단위 생성과 비트 싱크, TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
+   - 영상 모델별 프롬프트(Veo·Kling·Gemini Omni·MiniMax·Seedance 공식, 폴백에 안전하게 쓰기, 레퍼런스 태그, 증상별 고치기) → `references/video-models.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
