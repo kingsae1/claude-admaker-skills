@@ -14,6 +14,7 @@ description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5)
 바닥 소재를 생성할 때는 `references/footage-gen.md`(MCP에서는 `get_ad_guide({ name: 'footage-gen.md' })`)를 읽습니다. 생성 프롬프트·카메라 어휘·금지 줄은 영문으로 쓰고 사용자에게는 한 줄 한글 요약을 붙여 보여 줍니다. 제품이 나오는 씬은 사용자 제품 사진에서 시작하고, 영상으로 만들기 전에 사진을 진단해 고칠 곳만 사용자 확인 후 고칩니다(`footage-gen.md` §4.1, img2img → 이미지→영상). 글로만 만드는 영상(`ai.video.generate`)은 분위기 컷에만 씁니다. 글자·로고·가격은 생성 모델에 그리게 하지 않고 모션그래픽으로 얹습니다.
 이때 `timeline.mjs`의 BPM·비트·섹션은 분석값을 그대로 쓰고, 소리는 ProjectJSON에 넣지 않고 `import_to_admaker { keepAudio: true }`로 앱에서 먼저 만든 BGM을 그대로 옮깁니다. AI 생성 전에는 예상 크레딧과 프롬프트를 보여 주고 확인받습니다.
 앱에 넣고 배치까지 끝나면 `arrange_tracks { scenes: 씬표 }`로 타임라인을 정리합니다. 앞 씬 행이 위에서부터 계단처럼 놓이고, 화면 전체 층(룩·파티클·어둡게 깔기·배경 영상)과 오디오는 아래로 가며, 행 이름이 '1씬 · 텍스트 · 첫 문구'처럼 붙습니다. 시간이 겹치는 행의 앞/뒤는 그대로라 화면은 바뀌지 않으니 `move_track`을 하나씩 부르지 않습니다.
+이미 앱에 있는 광고를 고칠 때는 `get_editor_state`로 행 목록을 보고, `get_timeline_items { trackIndexes | trackIds | clipIds, fromSec?, toSec?, types? }`로 고칠 행(Row)이나 클립만 불러와 `raw` 필드 이름 그대로 `update_clip` 합니다. 행·클립이 많아 결과가 크면 `outputPath`(작업 폴더의 .json)로 파일에 받습니다.
 MCP가 있으면 모션그래픽만으로 끝내지 않습니다. `references/techniques.md`(MCP에서는 `get_ad_guide({ name: 'techniques.md' })`)의 기법 메뉴에서 씬마다 이미지 생성·img2img·누끼/레이어 분리·이미지→영상·영상 생성·효과음·Lottie·손그림·레터링을 골라 섞고, 씬표에 기법과 예상 크레딧을 적어 제안합니다.
 MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다). 외부 생성 API·스킬·MCP 서버를 따로 설치하거나 API 키를 받아 직접 부르지 않습니다(과금, 키 노출, 고객 자산 유출).
 
