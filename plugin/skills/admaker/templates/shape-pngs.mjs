@@ -2,8 +2,8 @@
 // 사용: node shape-pngs.mjs shapes.json out/shapes [--scale 2] [--gap 4] [--sheet]
 //   shapes.json: [{ "name": "star-gold", "shape": "star", "width": 256, "height": 256, "fill": "#FFC83D" }, …]
 //                또는 { "items": [...], "scale": 2 }. 항목 규칙은 shape-sheet.mjs 머리말.
-//   --sheet: 잘라 내기 전 시트 그림(_sheet-1.png …)도 남긴다(검수용)
-// 결과: out/shapes/<name>.png 와 out/shapes/shapes.json(이름·크기·경로 목록)
+//   --sheet: 잘라 내기 전 시트 그림(_sheet-1.png …)도 남긴다(검수·시트 한 장 재사용)
+// 결과: out/shapes/<name>.png 와 out/shapes/shapes.json(이름·크기·경로, 시트 안 칸 좌표 crop)
 // 필요: playwright (install-engine.mjs --render 로 프로젝트 폴더에 설치). Chromium 한 번만 띄운다.
 // admaker 앱 MCP가 연결되어 있으면 이 스크립트 대신 make_shape_pngs 도구를 써도 된다(설치 없이 앱이 그린다).
 import fs from "node:fs";
@@ -60,7 +60,9 @@ try {
     const c = cells[index];
     const file = path.join(outDir, `${c.name}.png`);
     fs.writeFileSync(file, Buffer.from(dataUrl.split(",")[1], "base64"));
-    return { name: c.name, width: c.width, height: c.height, path: file };
+    const cell = sheets[c.sheet].cells.find((x) => x.index === index);
+    // sheet·crop: 시트 한 장을 같이 쓰고 위치만 달리할 때의 칸 좌표 (시트 픽셀, crop_clip의 crop과 같은 공간)
+    return { name: c.name, width: c.width, height: c.height, path: file, sheet: `_sheet-${c.sheet + 1}.png`, crop: { x: cell.x, y: cell.y, width: cell.w, height: cell.h } };
   });
   result.sheets.forEach((d, i) => d && fs.writeFileSync(path.join(outDir, `_sheet-${i + 1}.png`), Buffer.from(d.split(",")[1], "base64")));
   fs.writeFileSync(path.join(outDir, "shapes.json"), JSON.stringify(files, null, 2) + "\n");

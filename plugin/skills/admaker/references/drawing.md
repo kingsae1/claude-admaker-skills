@@ -81,8 +81,10 @@ const t = textToPath(font, "SALE", { fontSize: 220, align: "center" });
 
 스티커·배지·아이콘·구분선처럼 **이미지 파일(PNG)** 이 필요한 간단한 도형이 2장 이상이면, 하나씩 스크립트·브라우저를 돌리지 않고 한 번에 만듭니다. 모든 도형을 시트 SVG 한 장에 칸으로 배치해 **한 번만 래스터화**한 뒤 칸마다 잘라 저장합니다. 60장 기준 하나씩 만들면 약 30초, 시트로는 약 0.6초입니다.
 
-- MCP가 있으면(설치 없음, 앱이 그림): `make_shape_pngs { items, scale?, outDir?, upload? }` → `files[].path`. `upload: true`면 업로드 라이브러리에도 올라가고, 경로는 `upload_media { paths }`에 그대로 넣어도 됩니다.
-- 스킬만 있으면(Playwright 필요, `install-engine.mjs --render`): `node shape-pngs.mjs shapes.json out/shapes [--scale 2] [--sheet]` → `out/shapes/<name>.png` + `shapes.json`(이름·크기·경로). `--sheet`는 자르기 전 시트(`_sheet-1.png`)를 남겨 한 번에 검수합니다.
+- MCP가 있으면(설치 없음, 앱이 그림): `make_shape_pngs { items, scale?, outDir?, upload?, addToTimeline? }`.
+  - **앱에 올리거나 타임라인에 놓을 때는 시트 모드(기본)**: 잘라 낸 N장을 올리지 않고 시트 PNG 한 장만 올립니다(업로드 1번, 업로드 라이브러리도 1개). `addToTimeline: true`면 도형마다 같은 시트 미디어를 클립으로 놓고 `crop_clip`으로 칸 위치만 다르게 줍니다. 클립 크기는 `width`·`height`, 위치는 `x`·`y`(왼쪽 위 캔버스 px). 결과 `cells[].crop`을 기억해 두면 같은 도형을 나중에 `add_media_to_timeline { mediaId: media[0].id }` + `crop_clip { crop }`으로 더 놓을 수 있습니다.
+  - 파일 자체가 필요하면(다른 도구 입력, 사용자에게 줄 PNG) `mode: "files"`(올리지 않을 때 기본) → 칸마다 잘린 `files[].path`.
+- 스킬만 있으면(Playwright 필요, `install-engine.mjs --render`): `node shape-pngs.mjs shapes.json out/shapes [--scale 2] [--sheet]` → `out/shapes/<name>.png` + `shapes.json`(이름·크기·경로, 시트 안 칸 좌표 `crop`). `--sheet`는 자르기 전 시트(`_sheet-1.png`)를 남겨 한 번에 검수합니다.
 - 모듈로 쓰려면 `templates/shape-sheet.mjs`의 `buildShapeSheets(items, opts)` → 시트 SVG·칸 좌표, `rasterizeSheets(sheets)`(브라우저 안에서 실행) → 칸별 PNG data URL.
 
 ```json
