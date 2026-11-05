@@ -53,7 +53,8 @@
 ```
 
 - `x`, `y`, `angle`, `width`, `height`는 **기본값에 더하는 오프셋**, `scale`, `opacity` 등은 **곱하는 값**입니다.
-- 쓸 수 있는 키: `x y width height scale scaleX scaleY opacity angle blur brightness mirror motionBlur rotateX rotateY perspective`.
+- 쓸 수 있는 키: `x y z width height scale scaleX scaleY opacity angle blur brightness mirror motionBlur rotateX rotateY perspective`.
+- `z`(px)는 깊이 오프셋입니다. +는 카메라 쪽으로 다가와 커지고 캔버스 중앙에서 멀어지며, -는 멀어져 작아지고 중앙으로 모입니다(원근 거리의 90%까지). `x`·`y`·`z`·`rotateX`·`rotateY`·`angle`(= Z 회전)을 한 stop에 같이 주면 3D로 날아오는 입장이 됩니다.
 - stop의 `easing`은 그 stop에서 다음 stop까지의 구간에 적용됩니다. 구간 이징을 쓸 때는 `options.easing`을 `"linear"`로 둡니다.
 - 입장 3종 세트(위치/scale + opacity + blur→0)는 이것 하나로 만듭니다.
 
@@ -75,7 +76,7 @@
 
 한 클립의 연속 동작(올라오며 커지다가 살짝 기울어짐 등)은 `gsapTimeline` 하나로 씁니다.
 `params.tweens = [{ to: {…}, from?: {…}, duration: 초, ease: "power3.out", position: "<" | "+=0.1" | 초, repeat?, yoyo? }]`
-속성: `x y scale scaleX scaleY angle opacity blur brightness rotateX rotateY`(시간은 초, 값은 클립 위에 더하기·곱하기).
+속성: `x y z scale scaleX scaleY angle opacity blur brightness rotateX rotateY`(시간은 초, 값은 클립 위에 더하기·곱하기).
 엔진은 멈춘 GSAP 타임라인을 프레임 시간으로 맞추므로 결정적입니다. 다만 라벨·`defaults`·`stagger`·중첩·상대값(`"+=100"`)은 조용히 무시되고 **`repeat: -1`은 0으로 잘립니다**(최대 100). `delay` 전에는 적용되지 않으니 늦은 입장은 첫 tween의 `position`에 대기를 넣습니다. 전체 규칙과 패턴은 `references/gsap.md`.
 
 ### 2.4 마스크 등장
@@ -222,6 +223,7 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 3. 각 클립의 keyframes에 `x`, `y` 오프셋과 `scale`(= zoom)을 같은 stop 시간으로 넣습니다. 클립 중심이 아닌 화면 중심 기준 줌이므로 위치 보정이 필수입니다.
 4. 패럴랙스: 층마다 `depth` 계수를 두고 이동량에 곱합니다(배경 0.3, 중경 0.6, 전경 1.0).
 5. 2.5D 기울임: `rotateX`/`rotateY` + `perspective`. 텍스트가 있으면 15° 이하.
+   고정 자세는 클립 `transform3d: { rotateX, rotateY, z, perspective }`(Z 회전은 `angle`)로 두고, 애니메이션 값은 그 위에 더해집니다. 깊이는 `z`를 쓰면 화면 중심(소실점) 기준 크기·위치가 함께 바뀌므로 `scale` + 위치 보정을 손으로 맞출 필요가 없습니다. 레이어 순서는 `z`가 아니라 트랙 순서입니다.
 6. 장면이 복잡하면 대안으로, 그 장면을 Adapter `script` 하나로 그리고 카메라를 그 안에서 처리합니다(§7).
 
 ### 4.1 지도 (`templates/map.mjs`)
