@@ -2,6 +2,21 @@
 
 광고에서 효과음은 컷 전환, 제품 공개, 가격·CTA 같은 강조 순간을 귀로 짚어 줍니다. 효과음이 많으면 오히려 지저분해지니, 씬마다 0~1개를 기본으로 하고 피크 순간에만 겹칩니다.
 
+## 0. 소리를 어디서 가져오나 (고르는 순서)
+
+위에서부터 처음 되는 것을 씁니다. 아래로 내려갈수록 품질이 떨어지거나 비용이 듭니다.
+
+| 순서 | 소스 | 언제 | 비용 |
+| --- | --- | --- | --- |
+| 1 | 사용자가 준 효과음·라이선스 소재 | 받은 게 있으면 항상 먼저 | 없음 |
+| 2 | 앱 Studio **오디오 → 효과음** 기본 라이브러리(휙, 팝, 딩, 라이저 등) | 앱이 있고 맞는 소리가 있을 때 | 없음 |
+| 3 | 앱 AI 효과음 `ai.sfx.generate` (§1) | 앱 MCP가 연결되어 있고 1·2에 맞는 소리가 없을 때. 동작 재질의 소리(셔터, 종이, 유리잔)도 여기서 만듭니다 | 크레딧 |
+| 4 | `templates/gen-audio-kit.mjs` 합성 키트 | **앱 MCP가 없을 때만**. 납품 시 "합성 임시음"이라고 알리고 교체를 권합니다(aesthetic-rules S7) | 없음 |
+
+- 앱이 연결되어 있는데 gen-audio-kit으로 바로 가지 않습니다. 합성 키트는 whoosh·impact·riser·tick·click 다섯 가지 단순한 음색뿐이라 광고 품질의 기본값이 아닙니다.
+- 외부 효과음 API·MCP 서버(ElevenLabs MCP 등)를 따로 설치하거나 API 키를 받아 부르지 않습니다(SKILL.md: 과금, 키 노출). 앱의 `ai.sfx.generate`가 같은 생성 서버를 씁니다.
+- 앱 없이 만든 광고를 나중에 앱에서 열 때는 §6 표의 프롬프트로 합성음을 같은 이름의 AI 효과음으로 바꿀 수 있습니다.
+
 ## 1. 만드는 방법
 
 MCP에서는 `run_studio_tool`로 만듭니다 (MCP 없이 스킬만 쓰면 Studio 왼쪽 **오디오 → 효과음** 탭에서 같은 값으로 만듭니다).
@@ -27,7 +42,7 @@ MCP에서는 `run_studio_tool`로 만듭니다 (MCP 없이 스킬만 쓰면 Stud
 
 공식은 **소리 이름 + 질감·크기 + 길이감 + 빼야 할 것** 입니다.
 
-- 좋은 예: `Short bright cartoon bubble pop, single hit, no music`
+- 좋은 예: `Crisp soft UI pop, single short hit, starts immediately, no music`
 - 좋은 예: `Cinematic tension riser, rising synth sweep building to a hit, no drums`
 - 나쁜 예: `광고에 어울리는 효과음`. 무슨 소리인지 정해지지 않아서 결과가 매번 달라집니다.
 
@@ -36,6 +51,9 @@ MCP에서는 `run_studio_tool`로 만듭니다 (MCP 없이 스킬만 쓰면 Stud
 2. 음악이 섞이면 안 되는 효과음은 `no music`을 붙입니다.
 3. 상표·실존 제품의 소리(특정 기기 알림음 등)는 흉내 내게 하지 않습니다.
 4. 사람 목소리는 내레이션(`ai.voice.generate`)으로 만듭니다. 박수나 군중 함성은 효과음으로 만들어도 됩니다.
+5. 음색은 광고 어휘를 따릅니다(aesthetic-rules S1). `cartoon`, `8-bit`, `arcade`, `game`, `boing` 같은 게임·카툰 음색 낱말은 쓰지 않습니다. 실제 사물의 소리(셔터, 스위치, 종이, 유리잔)는 좋습니다.
+6. 타격음(impact, pop, click, ding)은 `single hit, starts immediately`를 붙여 앞 무음을 없앱니다. 그래야 시작 시각 = 피크 시각으로 놓을 수 있습니다(§5).
+7. riser처럼 끝이 정점인 소리는 `builds up and peaks at the very end`, whoosh는 `passes by quickly`처럼 정점이 어디인지 적습니다.
 
 ## 3. 광고 순간별 추천
 
@@ -51,7 +69,38 @@ MCP에서는 `run_studio_tool`로 만듭니다 (MCP 없이 스킬만 쓰면 Stud
 
 ## 4. 비트에 맞추기
 
-BGM이 있으면 `run_studio_tool { toolId: 'audio.analyzeBeats' }`로 `suggestedCuts`와 `peaks`를 받습니다. 그다음 효과음의 `startSec`를 아래처럼 정합니다.
-- 전환 whoosh는 컷 시각에서 0.15초를 뺀 시각에 둡니다.
-- impact와 pop은 피크 시각에 정확히 맞춥니다.
-- riser는 피크 시각에서 riser 길이를 뺀 시각에 시작해, 끝나는 순간이 피크에 오게 합니다.
+BGM이 있으면 `run_studio_tool { toolId: 'audio.analyzeBeats' }`로 `suggestedCuts`와 `peaks`를 받습니다. 맞출 목표 시각(컷, 피크, 착지 프레임)을 정한 뒤 시작 시각은 늘 같은 식으로 구합니다.
+
+**`startSec` = 목표 시각 − 피크 지연** (피크 지연 = 파일 시작부터 소리가 가장 큰 순간까지, §5)
+
+피크 지연을 아직 못 쟀을 때의 임시값입니다.
+- 전환 whoosh: 0.15초 (짧은 whoosh는 가운데쯤이 정점입니다).
+- impact, pop, click: 0초 (`starts immediately`로 만들었을 때). 그래도 시각 착지보다 2–3프레임 먼저 들리는 쪽이 맞아 보입니다(aesthetic-rules S5).
+- riser: riser 길이 전체. 끝나는 순간이 피크에 옵니다.
+
+## 5. 피크 지연 재기 (`templates/sfx-peak.mjs`)
+
+생성 효과음은 같은 프롬프트라도 정점 위치가 매번 다릅니다. 파일이 손에 있으면(사용자 소재, 합성 키트, 내려받은 AI 효과음) 재서 씁니다. ffmpeg가 필요합니다.
+
+```bash
+node <이 스킬 폴더>/templates/sfx-peak.mjs sfx/*.wav --out sfx/PEAK.json --sfx sfx.json
+```
+
+- 파일마다 피크 시각·시작 무음(onset)·길이·피크 dBFS를 출력합니다. `--out`은 `{ 파일 이름: 피크 지연(초) }`를 gen-audio-kit의 `PEAK.json`과 같은 모양으로 합쳐 쓰고, `--sfx`는 `sfx.json`에서 파일이 같은 줄의 `peakLagMs`를 채웁니다.
+- 타격음 앞에 0.15초가 넘는 무음이 있으면 경고합니다. 프롬프트에 `starts immediately`를 넣어 다시 만들거나, `trim`으로 앞을 잘라 씁니다.
+- 앱에서 바로 타임라인에 넣은 AI 효과음은 파일을 따로 재지 않아도 됩니다. §2 규칙 6·7대로 만들고 §4 임시값으로 놓은 뒤 미리보기로 듣고 `update_clip`으로 2–3프레임씩 당기거나 밉니다.
+- 타임라인이 바뀌면(aesthetic-rules S3) 목표 시각만 다시 구하고 피크 지연은 그대로 씁니다.
+
+## 6. 합성 키트를 AI 효과음으로 바꾸기
+
+gen-audio-kit 파일 이름과 1:1로 맞춘 프롬프트입니다. 앱이 생기면 이 프롬프트로 만들고 `sfx.json`의 같은 줄 파일만 바꿉니다. 길이는 합성 키트와 같게 두면 피크 지연 임시값도 비슷하게 유지됩니다.
+
+| 키트 파일 | 프롬프트 | `durationSec` |
+| --- | --- | --- |
+| `whoosh_a.wav` | `Fast clean airy whoosh passing by quickly, cinematic transition, no music` | 0.5 |
+| `whoosh_b.wav` | `Short bright swish, quick camera swipe, no music` | 0.5 |
+| `impact.wav` | `Deep cinematic impact hit with sub bass thump, single hit, starts immediately, no music` | 1 |
+| `riser.wav` | `Cinematic tension riser, rising synth sweep that builds up and peaks at the very end, no drums, no music` | 2 |
+| `tick.wav` | `Tiny crisp mechanical tick, single hit, starts immediately` | 0.5 |
+| `click.wav` | `Soft clean UI button click, single hit, starts immediately` | 0.5 |
+| `bed.wav` | 효과음이 아니라 BGM입니다. 앱에서는 `ai.bgm.generate`로 만듭니다 | — |
