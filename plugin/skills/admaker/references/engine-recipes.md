@@ -35,6 +35,7 @@
 - 겹침 순서는 `transform.zIndex`와 트랙 순서로 정합니다.
 - 오디오 클립은 `volume`, `fadeIn`/`fadeOut`(`{duration, curve}`)만 가집니다.
 - **재생 속도**는 `Video`·`Audio` 클립의 `timing.playbackRate`(0.25–4, 기본 1)입니다. 원본에서 쓰는 구간은 `trim`, 타임라인 길이는 `display`이고 항상 `trim.to − trim.from = (display.to − display.from) × playbackRate`가 되게 씁니다(2배속 6초 원본 = 3초 클립). 소리는 미리보기·내보내기 모두 음높이를 유지합니다. 앱에서는 `update_clip { playbackRate }`가 이 계산과 뒤 클립 밀기를 대신합니다.
+- **글자 강조**(Text·Caption `style`): 굵게 `fontWeight: "700"`, 기울임 `fontStyle: "italic"`, 밑줄 `textDecoration: "underline"`. 미리보기·내보내기 모두 그립니다(밑줄은 engine 3.0.10부터). 글자 일부만 강조하려면 `metadata._encoding.textSegment.characterStyles`에 `{ index, isBold | isItalic | isUnderline }`를 씁니다. 앱에서는 `update_clip { bold, italic, underline }`(true/false)가 클립 전체에 켜고 끄며 글자별로 따로 준 같은 값을 지웁니다. 굵게는 폰트에 굵은 파일이 있으면 그 파일을 고르는 쪽이 낫습니다(§주의 B5) — `fontWeight`는 가짜 볼드라 강조 한두 단어에만 씁니다.
 
 ## 2. 움직임 (`clip.animations[]`)
 
