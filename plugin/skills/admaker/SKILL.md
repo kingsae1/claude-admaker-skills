@@ -1,6 +1,24 @@
 ---
 name: admaker
 description: Make short ad and promo videos (6/15/30/60 s, 16:9, 9:16, 1:1, 4:5) as motion graphics built as admaker engine ProjectJSON and rendered with the browser Exporter. Use when the user asks for an ad, commercial, promo, product video, launch teaser, social ad, bumper or end card (광고, 광고영상, 홍보영상, 프로모션, 제품 영상, 런칭 티저, 숏폼 광고, 엔드카드), or wants a single motion shot for one. Requires the admaker engine (@admaker/engine). Not for trimming or converting existing video files.
+allowed-tools:
+  - Bash(sh build.sh:*)
+  - Bash(bash build.sh:*)
+  - Bash(./build.sh:*)
+  - Bash(node build-project.mjs:*)
+  - Bash(node validate.mjs:*)
+  - Bash(node to-admaker-import.mjs:*)
+  - Bash(node to-admaker-template.mjs:*)
+  - Bash(node gen-audio-kit.mjs:*)
+  - Bash(node install-engine.mjs:*)
+  - Bash(node render/render.mjs:*)
+  - Bash(node render/sheet.mjs:*)
+  - Bash(node sfx-peak.mjs:*)
+  - Bash(node gallery.mjs:*)
+  - Bash(node beats.mjs:*)
+  - Bash(node footage-plan.mjs:*)
+  - Bash(node templates/sfx-peak.mjs:*)
+  - Bash(python3 mix.py)
 ---
 
 # admaker: admaker 엔진으로 만드는 광고 모션그래픽
@@ -59,6 +77,10 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 사용자가 고르면 `node <이 스킬 폴더>/templates/gallery.mjs use <slug> .`로 그 예시의 빌드 키트를 프로젝트에 복사하고, 출력된 "바꿔 쓸 자리"부터 사용자 소재·문구·색으로 바꿉니다. 원래 예시 파일은 고치지 않습니다.
    - 사용자가 처음부터 연출을 자세히 정해 왔거나 "알아서 해"라고 하면 이 단계는 1번 후보로 정하고 한 줄로 알린 뒤 넘어갑니다.
 5. **모드**: 기본은 자율 진행. 사용자가 "같이 정하자"고 하면 브리프 → 비주얼 방향 → 스토리보드 세 지점에서만 확인을 받습니다.
+
+## 스크립트 실행 방식
+
+빌드·검사·변환·렌더 스크립트는 사용자에게 매번 허용을 묻지 않고 바로 실행되도록 등록되어 있습니다(크레딧이 드는 AI 생성은 계속 확인을 받습니다). 그 허용은 명령 모양으로 맞추니, 프로젝트 폴더에서 `sh build.sh`, `node build-project.mjs --out project.json`, `node validate.mjs project.json`, `node render/render.mjs project.json out/ad.mp4`처럼 **스크립트 하나를 그대로** 실행합니다. 폴더 이동은 `cd <폴더> && ...` 하나, 출력 줄이기는 끝에 `2>&1 | tail -40`까지만 붙이고, `;`·`$(...)`·리다이렉트(`>`)나 다른 명령(`rm`, `mkdir` 등)을 같은 줄에 섞지 않습니다. 섞으면 사용자에게 다시 허용을 묻게 됩니다.
 
 ## 워크플로
 
