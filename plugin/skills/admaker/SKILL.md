@@ -37,6 +37,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 내레이션(연출표: 화면 문구와 읽을 문장 분리·숫자/기호 읽기·강조·큐 단어, 스타일, 분량, 줄 단위 생성과 비트 싱크, TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
+   - 효과음(프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 비트에 맞춰 놓기) → `references/sfx.md`.
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
