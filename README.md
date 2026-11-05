@@ -42,6 +42,7 @@ plugin/skills/admaker/
     ├── fonts.mjs                폰트 토큰 → style(fontFamily·fontUrl)
     ├── motion.mjs               입장·퇴장·Ken Burns·숨쉬기·모션 블러·룩 스택·자막 페이지
     ├── map.mjs                  GeoJSON → 바탕 지도·지역·경로·핀·지도 줌 카메라 (d3-geo)
+    ├── shape-pngs.mjs           간단한 도형 PNG 여러 장을 시트 한 장에 그려 잘라 저장 (shape-sheet.mjs, Playwright)
     ├── gen-audio-kit.mjs        소재·앱이 없을 때 임시 SFX·베드 합성
     ├── sfx-peak.mjs             효과음 피크 지연 측정 → PEAK.json·sfx.json
     ├── validate.mjs             엔진에 없는 이름·src 누락 검사 + 모션 규칙 경고
