@@ -1,4 +1,4 @@
-// 임시 사운드 키트 합성 (aesthetic-rules S7): 소재가 없을 때만 쓴다. 외부 파일 없이 16-bit mono WAV를 만든다.
+// 임시 사운드 키트 합성 (aesthetic-rules S7): 소재도 없고 앱 MCP도 없을 때만 쓴다. 앱이 있으면 sfx.md §0 순서(라이브러리 → ai.sfx.generate)가 먼저다. 외부 파일 없이 16-bit mono WAV를 만든다.
 // 사용: node gen-audio-kit.mjs [outDir=sfx]   (프로젝트 폴더에서 실행, timeline.mjs의 BPM·DURATION을 읽음)
 // 시드 고정 PRNG라 매번 같은 파일이 나온다. 피크 지연(S5)은 파일마다 아래 PEAK에 적어 둔다.
 import fs from "node:fs";

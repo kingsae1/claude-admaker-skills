@@ -285,8 +285,8 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 
 - **음악 + 내레이션 + 덕킹**은 스킬이 오프라인으로 믹스해(ffmpeg/python: 덕킹, 보이스 컴프, −14 LUFS 2-pass loudnorm, true peak −1 dBTP) `mix.wav` 하나를 Audio 클립으로 넣습니다.
 - 편집 가능성을 남기고 싶으면 `music.wav`(덕킹 반영본), `voice.wav`, `sfx_*.wav`를 따로 넣되, 볼륨 자동화는 없다는 전제로 음악을 미리 덕킹해 둡니다.
-- 사용자가 준 소재가 없으면 `templates/gen-audio-kit.mjs`로 SFX 키트와 패드 베드를 합성합니다(aesthetic-rules S7). `node gen-audio-kit.mjs [outDir]` → `whoosh_a/b.wav`, `impact.wav`, `riser.wav`, `tick.wav`, `click.wav`, `bed.wav`(timeline.mjs의 BPM·길이 기준).
-- SFX는 프레임 표(`sfx.json`: `{frame, file, gain, note}`)에서 Audio 클립을 생성합니다. 시작 시간 = `frame/fps − 피크 지연`.
+- 사용자가 준 소재가 없으면 앱이 있을 때는 앱 효과음 라이브러리나 `ai.sfx.generate`를 쓰고(`sfx.md` §0), 앱 MCP가 없을 때만 `templates/gen-audio-kit.mjs`로 SFX 키트와 패드 베드를 합성합니다(aesthetic-rules S7). `node gen-audio-kit.mjs [outDir]` → `whoosh_a/b.wav`, `impact.wav`, `riser.wav`, `tick.wav`, `click.wav`, `bed.wav`(timeline.mjs의 BPM·길이 기준).
+- SFX는 프레임 표(`sfx.json`: `{frame, file, gain, peakLagMs, note}`)에서 Audio 클립을 생성합니다. 시작 시간 = `frame/fps − 피크 지연`. 피크 지연은 `node templates/sfx-peak.mjs sfx/*.wav --sfx sfx.json`으로 재서 채웁니다(`sfx.md` §5).
 - 렌더 후 최종 mp4의 오디오를 다시 측정합니다(`ffmpeg -af ebur128`). 엔진 인코더 경로에서 오프셋이 생기면 그 값을 기록하고 SFX 시작 시간에서 일괄 보정합니다.
 
 ## 7. Adapter: 코드로 그리는 샷 (브라우저 전용)

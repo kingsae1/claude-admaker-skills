@@ -37,7 +37,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 내레이션(연출표: 화면 문구와 읽을 문장 분리·숫자/기호 읽기·강조·큐 단어, 스타일, 분량, 줄 단위 생성과 비트 싱크, TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
-   - 효과음(프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 비트에 맞춰 놓기) → `references/sfx.md`.
+   - 효과음(소스 고르는 순서, 프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 피크 지연 재기 `templates/sfx-peak.mjs`, 비트에 맞춰 놓기) → `references/sfx.md`.
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
    - 영상 모델별 프롬프트(Veo·Kling·Gemini Omni·MiniMax·Seedance 공식, 폴백에 안전하게 쓰기, 레퍼런스 태그, 증상별 고치기) → `references/video-models.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
@@ -71,7 +71,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀. `analyzeBeats` 결과는 `ANALYSIS`에. 빠른 몽타주는 `presets/fast-montage.mjs`가 박 단위로 생성 | `templates/timeline.mjs`, `templates/presets/` |
 | 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조. 폰트 후보가 여럿이면 여기서 하나로 정함 | `references/engine-recipes.md` §8 |
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
-| 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표 → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
+| 8. 제작 | 보이스 → 음악(없으면 `gen-audio-kit.mjs`로 임시 합성) → `build-project.mjs`로 ProjectJSON 생성(룩 스택 포함) → SFX 표(소스는 `sfx.md` §0 순서: 앱이 있으면 라이브러리·`ai.sfx.generate`, 없을 때만 `gen-audio-kit.mjs`. 피크 지연은 `sfx-peak.mjs`) → 오프라인 믹스 → `Exporter` 렌더 | `references/engine-recipes.md`, `templates/` |
 | 9. 검수 | 숫자 체크리스트 + 전환 구간 밀집 시트(`render/sheet.mjs`) + 독립 리뷰(가능하면 깨끗한 컨텍스트의 서브에이전트) | `references/aesthetic-rules.md` 전체 |
 | 10. 납품 | `to-admaker-import.mjs`로 앱 불러오기 파일, `to-admaker-template.mjs`로 플래너 템플릿 생성 → 아래 목록 | `references/engine-recipes.md` §9, §9.1 |
 
