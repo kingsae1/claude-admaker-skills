@@ -22,7 +22,7 @@
 ```
 
 - 시간은 **초**입니다(엔진 다른 곳의 μs와 다름).
-- 속성 11개: `x y scale scaleX scaleY angle opacity blur brightness rotateX rotateY`. 클립 원래 값 위에 **x·y·angle·rotateX·rotateY는 더하고, scale·opacity·brightness는 곱하고, blur는 큰 쪽**을 씁니다. 그래서 `to: {x: 0}`은 "원래 자리", `opacity: 1`은 "원래 불투명도"입니다.
+- 속성 12개: `x y z scale scaleX scaleY angle opacity blur brightness rotateX rotateY`. 클립 원래 값 위에 **x·y·z·angle·rotateX·rotateY는 더하고, scale·opacity·brightness는 곱하고, blur는 큰 쪽**을 씁니다. 그래서 `to: {x: 0}`은 "원래 자리", `opacity: 1`은 "원래 불투명도"입니다.
 - tween 필드: `to`(필수), `from`(있으면 fromTo), `duration`(기본 0.5), `ease`(기본 linear), `position`, `repeat`, `yoyo`, `repeatDelay`. 최대 200개.
 
 ## 2. 되는 것과 조용히 무시되는 것

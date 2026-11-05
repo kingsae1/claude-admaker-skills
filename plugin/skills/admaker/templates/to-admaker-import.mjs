@@ -50,6 +50,13 @@ function baseTransform(clip) {
   const t = clip.transform ?? {};
   const out = { x: t.x ?? 0, y: t.y ?? 0, width: t.width ?? 0, height: t.height ?? 0, opacity: t.opacity ?? 1, rotation: { angle: t.angle ?? 0 } };
   if (Number.isFinite(t.zIndex)) out.zIndex = Z_BASE + t.zIndex;
+  // 3D 자세(X·Y 회전, Z 위치, 원근) — 앱은 transform.transform3d로 받는다. Z 회전은 rotation.angle
+  const pose = {};
+  for (const key of ["rotateX", "rotateY", "z", "perspective"]) {
+    const v = Number(clip.transform3d?.[key]);
+    if (Number.isFinite(v) && v !== 0) pose[key] = v;
+  }
+  if (Object.keys(pose).length) out.transform3d = pose;
   return out;
 }
 
