@@ -1,0 +1,93 @@
+[
+  {
+    "name": "badge",
+    "width": 720,
+    "height": 720,
+    "path": "shapes/badge.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 4,
+      "y": 4,
+      "width": 720,
+      "height": 720
+    }
+  },
+  {
+    "name": "star",
+    "width": 440,
+    "height": 440,
+    "path": "shapes/star.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 308,
+      "y": 728,
+      "width": 440,
+      "height": 440
+    }
+  },
+  {
+    "name": "heart",
+    "width": 400,
+    "height": 360,
+    "path": "shapes/heart.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 4,
+      "y": 1192,
+      "width": 400,
+      "height": 360
+    }
+  },
+  {
+    "name": "ring",
+    "width": 480,
+    "height": 480,
+    "path": "shapes/ring.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 728,
+      "y": 4,
+      "width": 480,
+      "height": 480
+    }
+  },
+  {
+    "name": "diamond",
+    "width": 340,
+    "height": 440,
+    "path": "shapes/diamond.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 752,
+      "y": 728,
+      "width": 340,
+      "height": 440
+    }
+  },
+  {
+    "name": "arrow",
+    "width": 300,
+    "height": 460,
+    "path": "shapes/arrow.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 4,
+      "y": 728,
+      "width": 300,
+      "height": 460
+    }
+  },
+  {
+    "name": "pill",
+    "width": 1120,
+    "height": 260,
+    "path": "shapes/pill.png",
+    "sheet": "_sheet-1.png",
+    "crop": {
+      "x": 4,
+      "y": 1556,
+      "width": 1120,
+      "height": 260
+    }
+  }
+]

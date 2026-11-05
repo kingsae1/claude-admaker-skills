@@ -56,6 +56,7 @@ samples/map/                     지도 샘플 샷 (서울 → 부산 배송, �
 samples/gsap-three/              GSAP 타임라인 + three.js 커스텀 씬 샘플 (엔진 3.0.7 렌더)
 samples/transitions/             소재 사이 전환 5종 샘플 (커버·줌 스루·매치 컷·카드·플래시, 엔진 3.0.7 렌더)
 samples/handwriting/             손글씨 샘플 (handwrite_in + strokeDraw, 엔진 3.0.7 렌더)
+samples/shape-sheet-3d/          도형 시트 1장 + 클립마다 crop, X·Y·Z 회전·깊이 애니메이션 (엔진 main 렌더)
 plugin/skills/admaker/gallery/   예시 갤러리: data/ads.json + prompts/<slug>.md (예시 영상·프롬프트·쓴 기법)
 ```
 

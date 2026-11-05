@@ -105,6 +105,7 @@ const t = textToPath(font, "SALE", { fontSize: 220, align: "center" });
 | `fill` | 색, 또는 `{ from, to, angle }` 선형 그라데이션(CSS 각도: 90 = 왼→오, 180 = 위→아래). 선만이면 `"none"` + `stroke` |
 | `stroke` · `opacity` · `padding` · `shadow` | 선 `{ color, width, dash? }`, 불투명도, 칸 안쪽 여백, 그림자 `{ color, blur, x, y, opacity }`(그림자는 잘리지 않게 여백이 자동으로 붙음) |
 
+- 예제: `samples/shape-sheet-3d`(도형 7개가 시트 1장을 crop으로 나눠 쓰고 X·Y·Z 회전·깊이로 움직임). ProjectJSON에서는 시트를 data URL로 클립마다 넣지 말고 파일·URL 하나를 src로 가리킵니다(같은 data URL이 클립 수만큼 커짐).
 - 한 번에 200장, 한 장 4096px까지. 시트가 8192px을 넘으면 시트를 여러 장으로 나눠 그립니다(결과는 같음).
 - 편집기 안에서 움직이거나 나중에 모양·색을 고칠 도형은 PNG가 아니라 `Shape` 클립(기본 도형, `draw_path`)으로 넣습니다. PNG는 파일이 꼭 필요할 때(업로드 라이브러리 스티커, 다른 도구의 입력, 템플릿 썸네일) 씁니다.
 - 글자는 SVG `<text>`에 넣지 않습니다(PC 폰트에 따라 달라짐). 글자가 필요하면 `text_to_path`의 `d`를 `svg`에 넣습니다.

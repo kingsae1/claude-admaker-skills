@@ -1,0 +1,12 @@
+{
+  "scale": 2,
+  "items": [
+    { "name": "badge", "shape": "burst", "width": 360, "height": 360, "points": 18, "innerRatio": 0.84, "fill": { "from": "#FF4D6D", "to": "#FFB347", "angle": 135 } },
+    { "name": "star", "shape": "star", "width": 220, "height": 220, "fill": "#FFC83D", "stroke": { "color": "#8A5A00", "width": 6 } },
+    { "name": "heart", "shape": "heart", "width": 200, "height": 180, "fill": "#FF3B6B" },
+    { "name": "ring", "shape": "ring", "width": 240, "height": 240, "thickness": 0.22, "fill": { "from": "#3DDC97", "to": "#1FA2FF", "angle": 180 } },
+    { "name": "diamond", "shape": "diamond", "width": 170, "height": 220, "fill": "#22D3EE" },
+    { "name": "arrow", "shape": "arrow", "width": 150, "height": 230, "fill": "#7C5CFF", "rotate": 90 },
+    { "name": "pill", "shape": "roundRect", "width": 560, "height": 130, "radius": 65, "fill": "#FFFFFF" }
+  ]
+}
