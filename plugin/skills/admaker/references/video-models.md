@@ -1,7 +1,7 @@
 # 영상 모델별 프롬프트
 
 앱 AI로 영상을 만들 때 **어떤 모델이 받는지에 맞춰** 프롬프트를 다듬는 문서입니다. 공통 양식(Shot → Subject → Environment → Camera → Style → Keep → Avoid), 카메라 어휘, 일관성, 검수는 `footage-gen.md`가 기준이고, 여기는 그 위에 모델마다 다른 점만 적습니다.
-모델은 Claude가 고르지 않습니다. 앱 기본 설정이나 관리자 설정이 정하고, Claude는 그 모델을 확인해 프롬프트를 맞춥니다.
+모델은 기본적으로 Claude가 고르지 않습니다. 앱 기본 설정이나 관리자 설정이 정하고, Claude는 그 모델을 확인해 프롬프트를 맞춥니다. 사용자가 모델을 지정했을 때만 `model` 인자로 넘깁니다(§1.1).
 
 ## 1. 먼저 모델 확인
 
@@ -9,6 +9,13 @@
 2. 순서에 모델이 둘이면 **첫 모델이 실패할 때 같은 프롬프트가 두 번째 모델로 갑니다.** 그래서 프롬프트는 두 모델이 모두 따를 수 있게 씁니다(§2).
 3. 생성 결과의 `data.model`, `data.modelFamily`가 실제로 만든 모델입니다. 검수(§4)와 재생성은 이 계열 기준으로 하고, `FOOTAGE[].gen.model`과 `CREDITS`에 그대로 적습니다.
 4. `video.models` 도구가 없는 앱 버전이면 아래 기본 순서로 보고, 결과에 모델이 없으면 기본 순서의 첫 모델로 기록합니다.
+
+### 1.1 사용자가 모델을 지정할 때
+
+1. `run_studio_tool { toolId: 'generation.models' }`(크레딧 없음)로 종류별 고정 provider, 자동 모델(`autoModel`), 고를 수 있는 모델(`models[].id`, 기본 옵션 크레딧)을 봅니다.
+2. 생성 도구(`ai.image.generate`, `ai.image.edit`, `ai.video.generate`, `imageToVideo`, `regenerate`, `framesToVideo`, `referenceToVideo`)에 `model`로 그 id를 넘깁니다. 목록 밖 모델은 오류로 돌아옵니다. 비우면 자동(추천)입니다.
+3. provider는 서비스 전체에 고정입니다. SUPER_ADMIN만 `provider` 인자(또는 `fal_veo3.1-lite` 같은 PROVIDER_모델 표기)로 다른 provider 모델을 씁니다. 일반 유저에게 provider를 바꿔 주겠다고 하지 않습니다.
+4. 직접 고른 모델은 실패해도 다른 모델로 폴백하지 않습니다. 실패하면 사용자에게 다른 모델을 고를지 묻습니다. 크레딧은 모델마다 다르니 확인 화면에 고른 모델과 크레딧을 같이 보여 줍니다.
 
 앱 기본 순서(관리자 설정이 없을 때):
 
