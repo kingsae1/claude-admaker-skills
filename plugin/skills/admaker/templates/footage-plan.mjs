@@ -78,8 +78,13 @@ export function checkFootage(footage = [], { duration, grid, fps = 30 } = {}) {
     if (g.tool === "ai.video.referenceToVideo") {
       const n = Array.isArray(g.references) ? g.references.length : 0;
       if (n < 1 || n > 3) w(i, `ai.video.referenceToVideo 레퍼런스 ${n}장: 1–3장 (footage-gen.md §7.1)`);
-      if (!/reference/i.test(p)) w(i, "레퍼런스 영상 프롬프트에 레퍼런스를 가리키는 말이 없음 (\"the product from the reference image\" 식으로, §7.1)");
+      if (!/\{ref\d+\}|reference/i.test(p)) w(i, "레퍼런스 영상 프롬프트에 레퍼런스를 가리키는 말이 없음 ({ref1}, {ref2} 태그로, video-models.md §2)");
+      const tags = [...p.matchAll(/\{ref(\d+)\}/gi)].map((m) => Number(m[1]));
+      if (tags.some((t) => t < 1 || t > n)) w(i, `프롬프트의 {ref} 번호가 레퍼런스 ${n}장 범위를 벗어남: {ref1}부터 clipRefs 순서대로`);
     }
+    // 4.1 모델 문법 태그를 직접 쓰면 폴백 모델이 받을 때 깨진다 (앱이 {ref1}을 모델 문법으로 바꿈)
+    if (/<IMAGE_REF_\d+>|@Image\d+|@Video\d+/.test(p)) w(i, "프롬프트에 모델 전용 레퍼런스 태그(<IMAGE_REF_0>, @Image1)가 있음: {ref1}, {ref2}로 쓰면 앱이 받는 모델 문법으로 바꿉니다 (video-models.md §2)");
+    if (/\b(cinematic|epic|8k|4k|masterpiece|ultra[- ]realistic|award[- ]winning)\b/i.test(p)) w(i, "프롬프트에 화면을 정하지 못하는 빈 형용사(cinematic, 8k 등)가 있음: 빛 방향·렌즈·재질로 바꾸세요 (video-models.md §2)");
 
     // 6. 씬별 영상 도구 (footage-gen.md §7.2): 기본은 imageToVideo, 맞는 씬에만 framesToVideo·referenceToVideo
     if (f.type === "Video" && g.continues) {

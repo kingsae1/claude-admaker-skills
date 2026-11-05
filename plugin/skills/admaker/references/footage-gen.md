@@ -1,7 +1,7 @@
 # 바닥 소재 만들기: 앱 AI로 이미지·영상 생성하기
 
 광고의 바닥(z 0–9)에 깔 소재를 admaker 앱 AI로 만들 때 읽는 문서입니다. 모션그래픽은 지금처럼 그 위에 얹습니다.
-도구 목록과 조합 레시피는 `techniques.md`, 제작 순서는 `get_production_workflow`, 비트는 `director.md` §7을 따릅니다. 이 문서는 **프롬프트를 어떻게 쓰고, 생성한 클립을 어떻게 검수해 `FOOTAGE`에 넣는지**를 다룹니다.
+도구 목록과 조합 레시피는 `techniques.md`, 제작 순서는 `get_production_workflow`, 비트는 `director.md` §7을 따릅니다. 이 문서는 **프롬프트를 어떻게 쓰고, 생성한 클립을 어떻게 검수해 `FOOTAGE`에 넣는지**를 다룹니다. 영상 프롬프트를 받을 모델(Veo, Kling, Gemini Omni, MiniMax, Seedance)마다 다른 점과 증상별 고치기는 `video-models.md`(MCP에서는 `get_ad_guide({ name: 'video-models.md' })`)에 있습니다. 영상 프롬프트를 쓰기 전에 `run_studio_tool { toolId: 'video.models' }`로 모델을 먼저 확인합니다.
 
 앱 MCP가 연결되어 있을 때만 씁니다. MCP가 없으면 외부 생성 API·스킬·MCP 서버를 직접 부르지 않습니다(API 키, 과금, 고객 자산 유출). 소재는 사용자가 줍니다.
 
@@ -16,7 +16,7 @@
 시작 이미지가 피사체·구도·색을 이미 정하므로, 프롬프트는 **무엇이 움직이고 카메라가 어떻게 가는지**에 씁니다. 이미지에 이미 보이는 것을 길게 다시 묘사하지 않습니다.
 한 클립에는 **주된 동작 하나, 카메라 아이디어 하나**만 둡니다. 둘 이상이면 모델이 컷을 지어내거나 피사체를 바꿉니다.
 
-순서는 Shot → Subject → Environment → Camera → Style이고, 마지막에 끝 프레임과 금지 줄을 붙입니다.
+순서는 Shot → Subject → Environment → Camera → Style이고, 마지막에 끝 프레임과 금지 줄을 붙입니다. 이 양식은 Veo 기준이고, 폴백 모델(Kling)도 따르도록 동작·카메라·끝 프레임 세 문장을 앞에 둡니다(`video-models.md` §2–3).
 
 ```text
 [Shot] <shot size + editorial job>, single continuous shot, no cuts.
@@ -175,10 +175,11 @@ Preserve these identity anchors exactly. Avoid changing age, face shape, body pr
 | 같은 인물·제품을 새 장소·새 동작으로 | `ai.video.referenceToVideo` | `clipRefs`: 레퍼런스 이미지 1–3장, 중요한 순서(얼굴 > 제품 > 스타일) |
 | 사진 한 장을 그대로 움직이게 | `ai.video.imageToVideo` | 그 이미지 |
 
-레퍼런스 영상 프롬프트는 레퍼런스를 직접 가리킵니다. 끝 장면을 정했으면 첫·끝 프레임 영상 프롬프트는 그 사이의 움직임만 씁니다.
+레퍼런스 영상 프롬프트는 레퍼런스를 `{ref1}`, `{ref2}`(`clipRefs` 순서)로 가리키고 역할을 먼저 선언합니다. 앱이 받는 모델 문법으로 바꿉니다(`video-models.md` §3.3–3.5). 끝 장면을 정했으면 첫·끝 프레임 영상 프롬프트는 그 사이의 움직임만 씁니다.
 
 ```text
-The person from the reference image walks into the sunlit kitchen and picks up the product from the second reference image with the right hand.
+{ref1} is the woman (face, hair, outfit). {ref2} is the product (shape, color, label).
+The woman from {ref1} walks into the sunlit kitchen and picks up the product from {ref2} with the right hand.
 Medium shot, single continuous shot, no cuts. Slow truck right following her, ending on a steady frame with the product label facing the camera.
 Keep the face, hair, outfit and the product's shape, color, logo and label exactly as in the reference images.
 No text, no new logos, no extra people, no cuts.
@@ -238,7 +239,7 @@ f2v·r2v를 고른 씬은 끝 장면 이미지나 레퍼런스 이미지도 이�
 - 화면: 뿌옇거나 어둡지 않나, 깜빡임(초당 3회 초과)이 없나
 - 썸네일 크기와 원래 크기 두 번 봅니다
 
-틀어지면 같은 프롬프트로 반복 생성하지 않고 원인 하나를 고칩니다(앵커 문구 보강, 동작 줄이기, 카메라 단순화). 같은 씬의 재생성은 두 번까지, 그 뒤에는 사용자에게 다른 레시피를 제안합니다.
+틀어지면 같은 프롬프트로 반복 생성하지 않고 원인 하나를 고칩니다(앵커 문구 보강, 동작 줄이기, 카메라 단순화). 증상별로 고칠 한 가지는 `video-models.md` §4 표를 보고, 결과 `data.modelFamily`가 폴백 모델이면 그 계열 공식으로 고칩니다. 같은 씬의 재생성은 두 번까지, 그 뒤에는 사용자에게 다른 레시피를 제안합니다.
 
 ## 10. 권리와 기록
 

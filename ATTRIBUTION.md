@@ -75,3 +75,8 @@
 ## 6가지 화면 전환 기법 분류
 - 출처: JohnKOBA Design, "모션그래픽의 꽃, 6가지 화면 전환 기법(트랜지션)" (YouTube, https://www.youtube.com/watch?v=Zz4O86pN5iU)
 - 참고: 스와이프, 커버, 매치 컷, 차원 이동(2D↔3D), 몰핑, 공간 전환(줌) 분류. 구현과 값은 admaker 엔진으로 새로 만들고 렌더로 확인했습니다(`shots/README.md` 전환 카드).
+
+## 영상 프롬프트 스킬들 (video-models.md)
+- 저장소: https://github.com/cclank/lanshu-awesome-ai-video-kit (MIT, Copyright (c) 2026 lanshu), https://github.com/Creatify-AI/ai-ad-prompt-guide (MIT), https://github.com/krusemediallc/arcads-claude-code (MIT, Kruse Media LLC), https://github.com/Alisa0808/vibe-creating-skill (MIT, the Vibe Creating Prompt Skill contributors)
+- 참고: 모델 선택표와 증상별 진단 분류(lanshu `model-selector`, `seedance-debugger`), 구조화 블록 순서(lanshu Seedance·Kling 공식, arcads Seedance 공식), 빈 형용사를 피하는 규칙(arcads), 광고 생성본의 환각 방지·평가 기준(Creatify), 생성 전에 이미지가 이미 정한 것을 가리는 판단(vibe-creating)
+- 원문·프롬프트 예시는 옮기지 않았습니다. 모델 목록, 폴백 규칙, `{ref1}` 태그, 증상표와 예시는 admaker 앱의 실제 모델 설정에 맞춰 새로 썼습니다(`references/video-models.md`, `templates/footage-plan.mjs` 경고).
