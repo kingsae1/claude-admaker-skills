@@ -1,0 +1,976 @@
+{
+ "settings": {
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "duration": 8000000,
+  "backgroundColor": "#0B0C1F"
+ },
+ "tracks": [
+  {
+   "id": "t_cta",
+   "name": "마지막 문구",
+   "type": "Text",
+   "clipIds": [
+    "cta"
+   ]
+  },
+  {
+   "id": "t_sub",
+   "name": "부제",
+   "type": "Text",
+   "clipIds": [
+    "sub"
+   ]
+  },
+  {
+   "id": "t_title",
+   "name": "제목",
+   "type": "Text",
+   "clipIds": [
+    "title"
+   ]
+  },
+  {
+   "id": "t_g1",
+   "name": "갤러리 X",
+   "type": "Image",
+   "clipIds": [
+    "g1"
+   ]
+  },
+  {
+   "id": "t_g2",
+   "name": "갤러리 Y",
+   "type": "Image",
+   "clipIds": [
+    "g2"
+   ]
+  },
+  {
+   "id": "t_g3",
+   "name": "갤러리 Z",
+   "type": "Image",
+   "clipIds": [
+    "g3"
+   ]
+  },
+  {
+   "id": "t_badge",
+   "name": "NEW 배지",
+   "type": "Image",
+   "clipIds": [
+    "badge"
+   ]
+  },
+  {
+   "id": "t_screen",
+   "name": "휴대폰 화면 영상",
+   "type": "Video",
+   "clipIds": [
+    "screen"
+   ]
+  },
+  {
+   "id": "t_photo",
+   "name": "제품 사진",
+   "type": "Image",
+   "clipIds": [
+    "photo"
+   ]
+  },
+  {
+   "id": "t_bg",
+   "name": "배경 영상",
+   "type": "Video",
+   "clipIds": [
+    "bg"
+   ]
+  }
+ ],
+ "transitions": [],
+ "clips": {
+  "bg": {
+   "name": "배경 영상",
+   "type": "Video",
+   "src": "/bg.mp4",
+   "volume": 0,
+   "timing": {
+    "display": {
+     "from": 0,
+     "to": 8000000
+    },
+    "duration": 8000000,
+    "playbackRate": 1,
+    "trim": {
+     "from": 0,
+     "to": 8000000
+    }
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 0,
+    "y": 0,
+    "width": 1080,
+    "height": 1920,
+    "zIndex": 1
+   },
+   "animations": []
+  },
+  "photo": {
+   "name": "제품 사진",
+   "type": "Image",
+   "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iODAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGREYzRTciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGM0M5QTgiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9ImMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRjZCNEEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDMjM2MkIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI4MDAiIHJ4PSI0OCIgZmlsbD0idXJsKCNiKSIvPjxlbGxpcHNlIGN4PSI0MDAiIGN5PSI2NDAiIHJ4PSIyMTAiIHJ5PSIzOCIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4xOCIvPgo8cmVjdCB4PSIyOTAiIHk9IjE1MCIgd2lkdGg9IjIyMCIgaGVpZ2h0PSI0OTAiIHJ4PSI2MCIgZmlsbD0idXJsKCNjKSIvPjxyZWN0IHg9IjMzNSIgeT0iOTAiIHdpZHRoPSIxMzAiIGhlaWdodD0iOTAiIHJ4PSIyMCIgZmlsbD0iIzJBMkEzQSIvPgo8cmVjdCB4PSIzMjAiIHk9IjMwMCIgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNzAiIHJ4PSIxOCIgZmlsbD0iI0ZGRjRFNiIvPjx0ZXh0IHg9IjQwMCIgeT0iNDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSI1NCIgZm9udC13ZWlnaHQ9IjgwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI0MyMzYyQiI+M0Q8L3RleHQ+CjxyZWN0IHg9IjMwNiIgeT0iMTcwIiB3aWR0aD0iMjYiIGhlaWdodD0iNDQwIiByeD0iMTMiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMjgiLz48L3N2Zz4=",
+   "source": {
+    "width": 800,
+    "height": 800
+   },
+   "timing": {
+    "display": {
+     "from": 0,
+     "to": 4600000
+    },
+    "duration": 4600000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 220,
+    "y": 580,
+    "width": 640,
+    "height": 640,
+    "zIndex": 2
+   },
+   "transform3d": {
+    "rotateY": -18,
+    "rotateX": 8,
+    "perspective": 1200
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 1000000,
+      "delay": 0,
+      "easing": "easeOutCubic",
+      "motionPreset": "move3d"
+     },
+     "params": {
+      "0%": {
+       "x": -120,
+       "y": 80,
+       "z": -1200,
+       "rotateX": 0,
+       "rotateY": 25,
+       "angle": 0,
+       "opacity": 0
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 4600000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      },
+      "23.91%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "73.91%": {
+       "x": 0,
+       "y": 0,
+       "z": 260,
+       "rotateX": 0,
+       "rotateY": 10,
+       "angle": 0,
+       "opacity": 1
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 260,
+       "rotateX": 0,
+       "rotateY": 10,
+       "angle": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 1000000,
+      "delay": 3600000,
+      "easing": "easeInCubic",
+      "motionPreset": "move3dOut"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      },
+      "100%": {
+       "x": 160,
+       "y": -60,
+       "z": -1400,
+       "rotateX": 0,
+       "rotateY": -35,
+       "angle": 0,
+       "opacity": 1
+      }
+     }
+    }
+   ]
+  },
+  "screen": {
+   "name": "휴대폰 화면 영상",
+   "type": "Video",
+   "src": "/screen.mp4",
+   "volume": 0,
+   "timing": {
+    "display": {
+     "from": 400000,
+     "to": 4600000
+    },
+    "duration": 4200000,
+    "playbackRate": 1,
+    "trim": {
+     "from": 0,
+     "to": 4200000
+    }
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 610,
+    "y": 1142,
+    "width": 380,
+    "height": 676,
+    "zIndex": 3
+   },
+   "transform3d": {
+    "rotateY": 24,
+    "z": -250,
+    "perspective": 1000
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 4200000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": -90,
+       "angle": 0,
+       "opacity": 0
+      },
+      "2.38%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": -90,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeOutBack"
+      },
+      "23.81%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "47.62%": {
+       "x": 0,
+       "y": 0,
+       "z": 120,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": -8,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "71.43%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInCubic"
+      },
+      "95.24%": {
+       "x": 0,
+       "y": 0,
+       "z": -900,
+       "rotateX": 0,
+       "rotateY": 90,
+       "angle": 0,
+       "opacity": 0
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 90,
+       "angle": 0,
+       "opacity": 0
+      }
+     }
+    }
+   ]
+  },
+  "badge": {
+   "name": "NEW 배지",
+   "type": "Image",
+   "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48Y2lyY2xlIGN4PSIxNTAiIGN5PSIxNTAiIHI9IjE0MCIgZmlsbD0iI0ZGRDg0RCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE1MCIgcj0iMTE4IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNDE2M0EiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWRhc2hhcnJheT0iMTQgMTAiLz4KPHRleHQgeD0iMTUwIiB5PSIxNzIiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjcwIiBmb250LXdlaWdodD0iOTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMTQxNjNBIj5ORVc8L3RleHQ+PC9zdmc+",
+   "source": {
+    "width": 300,
+    "height": 300
+   },
+   "timing": {
+    "display": {
+     "from": 900000,
+     "to": 4600000
+    },
+    "duration": 3700000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": -12,
+    "opacity": 1,
+    "x": 120,
+    "y": 490,
+    "width": 220,
+    "height": 220,
+    "zIndex": 4
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 3700000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": -1500,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": -180,
+       "opacity": 0,
+       "easing": "easeOutBack"
+      },
+      "21.62%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "linear"
+      },
+      "75.68%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 360,
+       "opacity": 1,
+       "easing": "easeInBack"
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": -1500,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 360,
+       "opacity": 0
+      }
+     }
+    }
+   ]
+  },
+  "g3": {
+   "name": "갤러리 Z",
+   "type": "Image",
+   "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRjdBNTkiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDMjM2MkIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIHJ4PSI0MCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjQzMCIgY3k9IjE3MCIgcj0iOTAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMjUiLz4KPHRleHQgeD0iNjAiIHk9IjU0MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOTYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNmZmYiPlo8L3RleHQ+PC9zdmc+",
+   "source": {
+    "width": 600,
+    "height": 600
+   },
+   "timing": {
+    "display": {
+     "from": 4400000,
+     "to": 8000000
+    },
+    "duration": 3600000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 200,
+    "y": 940,
+    "width": 440,
+    "height": 440,
+    "zIndex": 5
+   },
+   "transform3d": {
+    "rotateX": 12,
+    "rotateY": 15,
+    "z": -1800,
+    "perspective": 1000
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 3600000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": -1600,
+       "rotateX": 0,
+       "rotateY": 60,
+       "angle": 0,
+       "opacity": 0,
+       "easing": "easeOutCubic"
+      },
+      "33.33%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "72.22%": {
+       "x": 0,
+       "y": 0,
+       "z": 1300,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInCubic"
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 1650,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      }
+     }
+    }
+   ]
+  },
+  "g2": {
+   "name": "갤러리 Y",
+   "type": "Image",
+   "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyMEMxQTUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwQTdDNkMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIHJ4PSI0MCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjQzMCIgY3k9IjE3MCIgcj0iOTAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMjUiLz4KPHRleHQgeD0iNjAiIHk9IjU0MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOTYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNmZmYiPlk8L3RleHQ+PC9zdmc+",
+   "source": {
+    "width": 600,
+    "height": 600
+   },
+   "timing": {
+    "display": {
+     "from": 4400000,
+     "to": 8000000
+    },
+    "duration": 3600000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 500,
+    "y": 760,
+    "width": 440,
+    "height": 440,
+    "zIndex": 6
+   },
+   "transform3d": {
+    "rotateX": 0,
+    "rotateY": -20,
+    "z": -900,
+    "perspective": 1000
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 3600000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": -1600,
+       "rotateX": 0,
+       "rotateY": 60,
+       "angle": 0,
+       "opacity": 0,
+       "easing": "easeOutCubic"
+      },
+      "29.17%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "72.22%": {
+       "x": 0,
+       "y": 0,
+       "z": 1300,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInCubic"
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 1500,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      }
+     }
+    }
+   ]
+  },
+  "g1": {
+   "name": "갤러리 X",
+   "type": "Image",
+   "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM1QjdDRkEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMyQzNGQkYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIHJ4PSI0MCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjQzMCIgY3k9IjE3MCIgcj0iOTAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMjUiLz4KPHRleHQgeD0iNjAiIHk9IjU0MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOTYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNmZmYiPlg8L3RleHQ+PC9zdmc+",
+   "source": {
+    "width": 600,
+    "height": 600
+   },
+   "timing": {
+    "display": {
+     "from": 4400000,
+     "to": 8000000
+    },
+    "duration": 3600000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 140,
+    "y": 600,
+    "width": 440,
+    "height": 440,
+    "zIndex": 7
+   },
+   "transform3d": {
+    "rotateX": 0,
+    "rotateY": 20,
+    "z": 0,
+    "perspective": 1000
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 3600000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": -1600,
+       "rotateX": 0,
+       "rotateY": 60,
+       "angle": 0,
+       "opacity": 0,
+       "easing": "easeOutCubic"
+      },
+      "25%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "61.11%": {
+       "x": 0,
+       "y": 0,
+       "z": 850,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 850,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      }
+     }
+    }
+   ]
+  },
+  "title": {
+   "name": "제목",
+   "type": "Text",
+   "text": "깊이를 더하다",
+   "timing": {
+    "display": {
+     "from": 0,
+     "to": 4600000
+    },
+    "duration": 4600000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 60,
+    "y": 175,
+    "width": 960,
+    "height": 170,
+    "zIndex": 8
+   },
+   "style": {
+    "fontFamily": "sans-serif",
+    "fontWeight": 900,
+    "color": "#FFFFFF",
+    "align": "center",
+    "verticalAlign": "middle",
+    "fontSize": 120
+   },
+   "transform3d": {
+    "perspective": 900
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 4600000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": -400,
+       "rotateX": -85,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      },
+      "6.52%": {
+       "x": 0,
+       "y": 0,
+       "z": -400,
+       "rotateX": -85,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0,
+       "easing": "easeOutBack"
+      },
+      "26.09%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "56.52%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 12,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "78.26%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInCubic"
+      },
+      "95.65%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 85,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 85,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      }
+     }
+    }
+   ]
+  },
+  "sub": {
+   "name": "부제",
+   "type": "Text",
+   "text": "X · Y · Z 회전  +  Z 이동",
+   "timing": {
+    "display": {
+     "from": 600000,
+     "to": 4600000
+    },
+    "duration": 4000000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 90,
+    "y": 340,
+    "width": 900,
+    "height": 80,
+    "zIndex": 9
+   },
+   "style": {
+    "fontFamily": "sans-serif",
+    "fontWeight": 700,
+    "color": "#FFE7A8",
+    "align": "center",
+    "verticalAlign": "middle",
+    "fontSize": 48,
+    "letterSpacing": 2
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 1000000,
+      "delay": 0,
+      "easing": "easeOutCubic",
+      "motionPreset": "move3d"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 40,
+       "z": -1200,
+       "rotateX": 60,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      }
+     }
+    },
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 1000000,
+      "delay": 3000000,
+      "easing": "easeInCubic",
+      "motionPreset": "move3dOut"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      },
+      "100%": {
+       "x": 0,
+       "y": -40,
+       "z": -1200,
+       "rotateX": -60,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 0
+      }
+     }
+    }
+   ]
+  },
+  "cta": {
+   "name": "마지막 문구",
+   "type": "Text",
+   "text": "이미지 · 영상 · 글자 모두 3D",
+   "timing": {
+    "display": {
+     "from": 5000000,
+     "to": 8000000
+    },
+    "duration": 3000000,
+    "playbackRate": 1
+   },
+   "transform": {
+    "angle": 0,
+    "opacity": 1,
+    "x": 60,
+    "y": 1565,
+    "width": 960,
+    "height": 110,
+    "zIndex": 10
+   },
+   "style": {
+    "fontFamily": "sans-serif",
+    "fontWeight": 900,
+    "color": "#FFFFFF",
+    "align": "center",
+    "verticalAlign": "middle",
+    "fontSize": 64
+   },
+   "transform3d": {
+    "rotateX": 18,
+    "perspective": 1000
+   },
+   "animations": [
+    {
+     "type": "keyframes",
+     "options": {
+      "duration": 3000000,
+      "easing": "linear"
+     },
+     "params": {
+      "0%": {
+       "x": 0,
+       "y": 0,
+       "z": -1800,
+       "rotateX": 0,
+       "rotateY": -50,
+       "angle": 0,
+       "opacity": 0,
+       "easing": "easeOutBack"
+      },
+      "33.33%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "66.67%": {
+       "x": 0,
+       "y": 0,
+       "z": 120,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": -4,
+       "opacity": 1,
+       "easing": "easeInOutSine"
+      },
+      "100%": {
+       "x": 0,
+       "y": 0,
+       "z": 0,
+       "rotateX": 0,
+       "rotateY": 0,
+       "angle": 0,
+       "opacity": 1
+      }
+     }
+    }
+   ]
+  }
+ }
+}

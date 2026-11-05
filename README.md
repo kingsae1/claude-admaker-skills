@@ -57,6 +57,7 @@ samples/gsap-three/              GSAP 타임라인 + three.js 커스텀 씬 샘�
 samples/transitions/             소재 사이 전환 5종 샘플 (커버·줌 스루·매치 컷·카드·플래시, 엔진 3.0.7 렌더)
 samples/handwriting/             손글씨 샘플 (handwrite_in + strokeDraw, 엔진 3.0.7 렌더)
 samples/shape-sheet-3d/          도형 시트 1장 + 클립마다 crop, X·Y·Z 회전·깊이 애니메이션 (엔진 main 렌더)
+samples/clip-3d-depth/           이미지·영상·글자 transform3d(X·Y 회전, Z 위치) + Z 회전 + 3D 이동 (엔진 main 렌더)
 plugin/skills/admaker/gallery/   예시 갤러리: data/ads.json + prompts/<slug>.md (예시 영상·프롬프트·쓴 기법)
 ```
 
