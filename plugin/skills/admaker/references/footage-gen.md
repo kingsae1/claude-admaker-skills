@@ -172,11 +172,11 @@ Preserve these identity anchors exactly. Avoid changing age, face shape, body pr
 |---|---|---|
 | 앞 컷에서 끊김 없이 이어지는 다음 컷 | `ai.video.framesToVideo` | `firstClipRef`: 앞 컷 **영상** 클립(마지막 프레임을 씀), `lastClipRef`: 이 컷의 끝 장면 이미지 |
 | 정해 둔 시작·끝 장면 사이를 움직임으로 | `ai.video.framesToVideo` | 시작 이미지, 끝 이미지(둘 다 같은 원본에서 `ai.image.edit`로 만든 것) |
-| 같은 인물·제품을 새 장소·새 동작으로 | `ai.video.referenceToVideo` | `clipRefs`: 레퍼런스 이미지 1–3장, 중요한 순서(얼굴 > 제품 > 스타일) |
+| 같은 인물·제품을 새 장소·새 동작으로 | `ai.video.referenceToVideo` | `clipRefs`: 레퍼런스 이미지(기본 1–3장, 첫 모델 `maxImageRefs`까지), 중요한 순서(얼굴 > 제품 > 스타일). 따라 할 카메라·동작 영상이 있으면 `videoClipRefs`(첫 모델 `maxVideoRefs`가 있을 때만) |
 | 사진 한 장을 그대로 움직이게 | `ai.video.imageToVideo` | 그 이미지 |
 | 앞 컷의 움직임을 컷 없이 더 길게(끝 구도는 상관없음) | `ai.video.extend` | `clipRef`: 앞 컷 영상 클립 |
 
-레퍼런스 영상 프롬프트는 레퍼런스를 `{ref1}`, `{ref2}`(`clipRefs` 순서)로 가리키고 역할을 먼저 선언합니다. 앱이 받는 모델 문법으로 바꿉니다(`video-models.md` §3.3–3.5). 끝 장면을 정했으면 첫·끝 프레임 영상 프롬프트는 그 사이의 움직임만 씁니다.
+레퍼런스 영상 프롬프트는 레퍼런스를 `{ref1}`, `{ref2}`(`clipRefs` 순서), 레퍼런스 영상을 `{video1}`(`videoClipRefs` 순서)로 가리키고 역할을 먼저 선언합니다. 앱이 받는 모델 문법으로 바꿉니다(`video-models.md` §3.3–3.5). 끝 장면을 정했으면 첫·끝 프레임 영상 프롬프트는 그 사이의 움직임만 씁니다.
 
 ```text
 {ref1} is the woman (face, hair, outfit). {ref2} is the product (shape, color, label).
@@ -212,10 +212,10 @@ The product's shape, color, logo and label stay exactly as in the source images.
 |---|---|---|---|---|
 | 1 | 사용자가 준 실제 영상을 쓰되 **톤·배경·계절만** 바꿔야 함 | v2v 리스타일 | 원본 영상 + 엔진 색보정·크로마키·오버레이 | 원본 영상 |
 | 2 | **입이 보이는 대사**가 꼭 필요함 | 립싱크 | 내레이션(`ai.voice.generate`) + 입이 안 보이는 컷(뒷모습, 손, 제품, 먼 샷) | 대본 |
-| 3 | **정해진 춤·제스처**를 정확히 따라 해야 함 | 모션 컨트롤 | 동작 하나로 단순화해 r2v·i2v 프롬프트로 | 동작 레퍼런스 영상(권리 확인) |
+| 3 | **정해진 춤·제스처**를 정확히 따라 해야 함 | 모션 컨트롤 | 첫 모델이 `maxVideoRefs`를 받으면(예: `seedance2.5`) r2v에 동작 영상을 `videoClipRefs`로 넣고 "follow the motion of {video1}" (정확한 동작 복제는 아님). 아니면 동작 하나로 단순화해 r2v·i2v 프롬프트로 | 동작 레퍼런스 영상(권리 확인) |
 | 4 | 바로 앞 씬의 생성 영상과 **같은 인물·제품·장소가 컷 없이 이어짐**(동작·카메라가 계속됨) | 끝 구도가 중요하면 f2v `ai.video.framesToVideo`, 아니면 extend `ai.video.extend` | — | 앞 씬 영상(먼저 생성), f2v면 이 씬 끝 장면 이미지 |
 | 5 | **시작과 끝 상태가 분명히 다름**(포장이 열림, 비포→애프터, 라벨 정면에서 멈춤, 끝 프레임에 문구 자리), 또는 **같은 공간 안에서** 카메라가 크게 움직임 | f2v `ai.video.framesToVideo` | — | 같은 원본에서 `ai.image.edit`로 만든 시작·끝 이미지 2장 |
-| 6 | 이미 정한 인물·제품을 **사진에 없는 장소·동작으로** 보여 주고, 그 인물·제품이 2개 이상 씬에 나옴 | r2v `ai.video.referenceToVideo`. 한 씬 안에 같은 인물의 짧은 컷 2–3개면 멀티샷(첫 모델 `multiShot`일 때, `video-models.md` §3.5) | 멀티샷이 안 되면 컷마다 r2v 하나씩 | 레퍼런스 이미지(인물 시트 > 제품 시트 > 그 씬 패널) |
+| 6 | 이미 정한 인물·제품을 **사진에 없는 장소·동작으로** 보여 주고, 그 인물·제품이 2개 이상 씬에 나옴 | r2v `ai.video.referenceToVideo`. 한 씬 안에 같은 인물의 짧은 컷 2–3개면 멀티샷: `shots` 인자(첫 모델 `multiShot`일 때, `video-models.md` §3.5) | 멀티샷이 안 되면 컷마다 r2v 하나씩 | 레퍼런스 이미지(인물 시트 > 제품 시트 > 그 씬 패널) |
 | 7 | 확인한 사진 한 장의 구도 그대로 살짝 움직이면 됨(돌리·줌, 김·물방울·빛) | i2v `ai.video.imageToVideo` (기본) | — | 그 이미지 |
 | 8 | 제품·인물이 안 나오는 분위기 컷 | t2v `ai.video.generate` | — | 없음 |
 
@@ -248,7 +248,7 @@ No text, no labels, no logos.
 2. **제품 시트.** 사용자가 준 제품 사진을 배경 제거(`ai.image.removeBackground`)해 정면·측면으로 정리합니다. 라벨을 모델이 다시 그리게 하지 않습니다.
 3. **씬보드.** 씬마다 패널 한 장을 시트에서 `ai.image.edit`로 만듭니다(구도·장소·동작). 사용자는 이 보드로 스토리를 승인합니다.
 4. **씬마다 도구 고르기**는 §7.2 2단계 그대로입니다. 패널을 그대로 쓰면 되는 씬은 i2v, 패널과 다음 패널이 같은 공간이면 f2v, 패널 구도가 아닌 새 동작이 필요하면 r2v(레퍼런스 = 인물 시트 > 제품 시트 > 그 씬 패널).
-5. **레퍼런스 수 맞추기.** 앱 `referenceToVideo`는 지금 1–3장입니다. 인물이 둘 이상이면 시트를 한 장으로 합치거나, 씬마다 그 씬에 나오는 인물만 넣습니다. 격자형 콜라주를 레퍼런스로 넣으면 영상에 격자 화면이 배어 나오는 수가 있으니 프롬프트에 `single full-frame scene, not a grid`를 적습니다.
+5. **레퍼런스 수 맞추기.** 앱 `referenceToVideo`는 첫 모델 `maxImageRefs`까지 받습니다(기본 모델 3장, `seedance2.5` 30장). 기본 모델로 갈 때 인물이 둘 이상이면 시트를 한 장으로 합치거나, 씬마다 그 씬에 나오는 인물만 넣습니다. 많이 받는 모델이어도 얼굴 > 제품 > 스타일 순서는 같고, 씬과 상관없는 시트는 넣지 않습니다. 격자형 콜라주를 레퍼런스로 넣으면 영상에 격자 화면이 배어 나오는 수가 있으니 프롬프트에 `single full-frame scene, not a grid`를 적습니다.
 
 ### 7.4 긴 호흡(8초 넘는 한 씬) 만들기
 

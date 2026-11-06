@@ -8,7 +8,10 @@
 //     durationSec: 6,                               // 영상 생성 길이 (첫 모델 video.models durations 안, Veo는 4·6·8)
 //     source: "assets/product.jpg",                 // 시작 이미지 (imageToVideo, ai.image.edit), framesToVideo는 첫 프레임
 //     lastFrame: "assets/s3_end.png",               // framesToVideo 끝 프레임
-//     references: ["assets/face.png", "assets/product.jpg"], // referenceToVideo 레퍼런스 1–3장 (얼굴 > 제품 > 스타일)
+//     references: ["assets/face.png", "assets/product.jpg"], // referenceToVideo 레퍼런스 이미지 (얼굴 > 제품 > 스타일), 기본 1–3장
+//     maxImageRefs: 30,                             // 첫 모델 video.models maxImageRefs (3장 넘게 쓸 때)
+//     videoRefs: ["assets/move.mp4"],              // referenceToVideo 레퍼런스 영상 ({video1}), maxVideoRefs 모델만
+//     shots: [{ fromSec: 0, toSec: 2, prompt: "..." }, ...], // 멀티샷 구간 (multiShot 모델만, video-models.md §3.5)
 //     product: true,                                // 실제 제품이 화면에 나오는 씬
 //     continues: true,                              // 바로 앞 씬 영상에서 컷 없이 이어짐 → framesToVideo 또는 extend (footage-gen.md §7.2 4번)
 //     why: "앞 컷 동작이 이어짐",                     // 이 도구를 고른 이유 (씬표에도 적음, 선택)
@@ -79,10 +82,26 @@ export function checkFootage(footage = [], { duration, grid, fps = 30 } = {}) {
     if (g.tool === "ai.video.framesToVideo" && (!g.source || !g.lastFrame)) w(i, "ai.video.framesToVideo인데 gen.source(첫 프레임)나 gen.lastFrame(끝 프레임) 없음");
     if (g.tool === "ai.video.referenceToVideo") {
       const n = Array.isArray(g.references) ? g.references.length : 0;
-      if (n < 1 || n > 3) w(i, `ai.video.referenceToVideo 레퍼런스 ${n}장: 1–3장 (footage-gen.md §7.1)`);
-      if (!/\{ref\d+\}|reference/i.test(p)) w(i, "레퍼런스 영상 프롬프트에 레퍼런스를 가리키는 말이 없음 ({ref1}, {ref2} 태그로, video-models.md §2)");
+      const nv = Array.isArray(g.videoRefs) ? g.videoRefs.length : 0;
+      const maxImages = g.maxImageRefs ?? 3;
+      if (n + nv < 1) w(i, "ai.video.referenceToVideo인데 레퍼런스 이미지(references)도 영상(videoRefs)도 없음");
+      if (n > maxImages) w(i, `ai.video.referenceToVideo 레퍼런스 ${n}장: 첫 모델은 ${maxImages}장까지${g.maxImageRefs ? "" : " (더 쓰려면 video.models maxImageRefs를 gen.maxImageRefs에, 모델을 gen.model에)"} (footage-gen.md §7.1)`);
+      if (!/\{(ref|video)\d+\}|reference/i.test(p)) w(i, "레퍼런스 영상 프롬프트에 레퍼런스를 가리키는 말이 없음 ({ref1}, {video1} 태그로, video-models.md §2)");
       const tags = [...p.matchAll(/\{ref(\d+)\}/gi)].map((m) => Number(m[1]));
       if (tags.some((t) => t < 1 || t > n)) w(i, `프롬프트의 {ref} 번호가 레퍼런스 ${n}장 범위를 벗어남: {ref1}부터 clipRefs 순서대로`);
+      const vtags = [...p.matchAll(/\{video(\d+)\}/gi)].map((m) => Number(m[1]));
+      if (vtags.some((t) => t < 1 || t > nv)) w(i, `프롬프트의 {video} 번호가 레퍼런스 영상 ${nv}개 범위를 벗어남: {video1}부터 videoClipRefs 순서대로`);
+    }
+    // 4.2 멀티샷 구간: 0초부터 빈틈 없이, 한 샷 1.5초 이상, 끝이 생성 길이 안 (앱도 같은 규칙으로 거절)
+    if (Array.isArray(g.shots) && g.shots.length) {
+      if (g.shots.length < 2 || g.shots.length > 6) w(i, `gen.shots ${g.shots.length}개: 2~6개`);
+      g.shots.forEach((s, k) => {
+        const from = k === 0 ? 0 : g.shots[k - 1].toSec;
+        if (Math.abs(s.fromSec - from) > 0.05) w(i, `gen.shots[${k}]는 ${from}초에서 시작해야 함 (빈틈 없이)`);
+        if (s.toSec - s.fromSec < 1.5) w(i, `gen.shots[${k}] 구간 ${(s.toSec - s.fromSec).toFixed(1)}초: 1.5초 이상`);
+      });
+      const end = g.shots[g.shots.length - 1].toSec;
+      if (g.durationSec && end > g.durationSec + 0.05) w(i, `gen.shots 끝 ${end}초가 durationSec ${g.durationSec}초보다 김`);
     }
     // 4.1 모델 문법 태그를 직접 쓰면 폴백 모델이 받을 때 깨진다 (앱이 {ref1}을 모델 문법으로 바꿈)
     if (/<IMAGE_REF_\d+>|@Image\d+|@Video\d+/.test(p)) w(i, "프롬프트에 모델 전용 레퍼런스 태그(<IMAGE_REF_0>, @Image1)가 있음: {ref1}, {ref2}로 쓰면 앱이 받는 모델 문법으로 바꿉니다 (video-models.md §2)");
