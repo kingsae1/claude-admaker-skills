@@ -219,5 +219,58 @@
       "파티클 로고 단어",
       "소재 6컷 src"
     ]
+  },
+  {
+    "slug": "morph-3d-to-2d",
+    "title": "3D 모프 → 2D: 구 · 큐브 · 별 · 도넛이 평면 아이콘으로",
+    "category": "3d",
+    "duration": 13.5,
+    "aspect": "9:16",
+    "fps": 30,
+    "engine": "3.0.10",
+    "footage": "none",
+    "shots": [],
+    "techniques": [
+      "three",
+      "morph",
+      "dimension",
+      "gsapTimeline",
+      "mask-reveal",
+      "kinetic-typography"
+    ],
+    "prompt": "A 13.5-second 9:16 motion-graphics piece at 120 BPM with no footage. One glossy 3D object morphs on the beat: a cobalt candy sphere becomes a matte lime rounded cube, then a puffy coral star, then a pink chrome torus, each morph a fast power4 in-out with a squash pulse and a half-turn whip, while a flat colour background wipes in a new colour (paper, cobalt, lime, black). A giant bold word for each shape (ROUND, BLOCK, BLOOM, LOOP) rises behind the object, with an editorial header, a big stage number, a Korean name and a five-step progress bar in front. Then the torus turns to face the camera and is pressed flat into a 2D ring with flat colour and no shading, and the ring closes into a solid disc. A 2D vector circle takes over at the exact same size, pops, and four flat icons of the earlier shapes (circle, rounded square, star, ring) burst out into a 2x2 grid, swap places clockwise twice, and fly out. End card: the word MORPH rises letter by letter on black, four mini icons pop in a row, then \"FROM 3D TO 2D\" and a Korean line. Bold and modern, no fades, vignette or grain.",
+    "preview": "samples/morph-3d-to-2d/morph_sample.gif",
+    "build": "samples/morph-3d-to-2d/timeline.sample.mjs",
+    "app_import": "partial",
+    "added": "2026-11-06",
+    "verified": true,
+    "prompt_file": "prompts/morph-3d-to-2d.md",
+    "kit": {
+      "dir": "gallery/kits/morph-3d-to-2d",
+      "kind": "timeline-full",
+      "entry": "timeline.sample.mjs",
+      "extra": [
+        "brand.json",
+        "bake.mjs",
+        "scenes/morph-shapes.js",
+        "shots/_m.mjs",
+        "shots/m-bg.mjs",
+        "shots/m-morph.mjs",
+        "shots/m-flat2d.mjs",
+        "shots/m-end.mjs"
+      ],
+      "run": [
+        "node build-project.mjs --look off --out project.json",
+        "node render/render.mjs project.json out/morph_9x16.mp4",
+        "node bake.mjs && node render/render.mjs bake/morph3d.json baked/morph3d.mp4 && node to-admaker-import.mjs project-app.json out/morph_9x16.admaker-import.json"
+      ]
+    },
+    "slots": [
+      "단계별 배경색·단어·이름(timeline STAGES)",
+      "변신 시각(MORPHS)",
+      "3D 모양 함수(scenes/morph-shapes.js SHAPES)",
+      "2D 아이콘 모양·색(shots/m-flat2d.mjs)",
+      "엔드카드 워드마크·문구"
+    ]
   }
 ]

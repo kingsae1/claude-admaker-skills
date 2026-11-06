@@ -46,7 +46,7 @@ node templates/gallery.mjs use <slug> <프로젝트 폴더>              # 고�
 | `category` | `motion` · `typography` · `map` · `3d` · `transition` · `montage` |
 | `duration`, `aspect`, `fps` | 초, `9:16` 등, 프레임 |
 | `engine` | 렌더한 `@admaker/engine` 버전 |
-| `footage` | `user`(사용자 소재 자리) · `generated`(앱 AI 생성) · `placeholder`(자리표시) |
+| `footage` | `user`(사용자 소재 자리) · `generated`(앱 AI 생성) · `placeholder`(자리표시) · `none`(소재 없는 모션그래픽 샘플) |
 | `shots` | 쓴 샷 카드 이름 (`references/shots/`) |
 | `techniques` | 기법 태그: `swipe` `flash` `cover` `match-cut` `dimension` `morph` `zoom-through` `mask-reveal` `keyframes` `gsapTimeline` `three` `handwriting` `strokeDraw` `map` `countUp` `kinetic-typography` `squash-stretch` `isometric` `metaball` `particles` `script` |
 | `prompt` | 요청 프롬프트 전문 (영문) |

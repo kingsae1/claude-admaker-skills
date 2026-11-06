@@ -75,7 +75,7 @@
 - 전환: transition-footage-card, transition-zoom-through, transition-match-cut
 - 글꼴·색: 정갈한 그로테스크, 어두운 바탕 + 스트립 조명·글로우 포인트
 - 어울림: 제품/전자/가전/이어폰/폰/스마트/앱/서비스/테크/it/기기/노트북/자동차/화장품/뷰티/런칭/신제품/티저/프리미엄/기능/스펙
-- 예시: gsap-three-earbuds-teaser, opuscar/glass-product
+- 예시: gsap-three-earbuds-teaser, morph-3d-to-2d, opuscar/glass-product
 - 레퍼런스 낱말: 제품 3d 카드 글로우
 - 앱: 카드·칩은 그대로, three 장면은 영상으로 구워 넣음
 - 기본: 아니요
