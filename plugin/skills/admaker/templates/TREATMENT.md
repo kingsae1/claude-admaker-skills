@@ -7,6 +7,7 @@
 - 매체 · 길이 · 비율:
 - 내레이션 / 음악:
 - 브랜드 자산 (`brand.json`):
+- 모션 방향 (`references/motion-directions.md`, 1.5단계에서 고른 것):
 - 이 광고에서 쓰지 않을 것 (금지 목록, 예: 크로스페이드, 블러 인, 흰 섬광, 3D 플립):
 
 ## 문구 (`references/copy.md` §8)

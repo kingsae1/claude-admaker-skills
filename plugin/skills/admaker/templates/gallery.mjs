@@ -4,6 +4,8 @@
 //   node gallery.mjs recommend "9:16 배송 광고, 지도에 경로가 그려지고 플래시 전환" [--top 3] [--out gallery-preview.html]
 //   node gallery.mjs refs "카드 스택 3d" [--refs 12]     # 외부 레퍼런스(shotcraft 샷 124 · opuscar 스타일 66) 검색
 //   node gallery.mjs use <slug> [프로젝트 폴더]
+//   node gallery.mjs directions                         # 모션 방향 메뉴(references/motion-directions.md) 목록
+// recommend는 언제나 모션 방향 3개(형태·골격·시그니처·전환)를 먼저 고르고, 그 아래 예시와 외부 레퍼런스를 붙인다.
 // 갤러리 위치: --gallery <폴더> > GALLERY_DIR > 이 파일 기준 ../gallery > ./gallery
 import fs from "node:fs";
 import path from "node:path";
@@ -36,6 +38,48 @@ const ADS = JSON.parse(fs.readFileSync(path.join(GALLERY, "data/ads.json"), "utf
 // 외부 레퍼런스 색인(shotcraft 샷 카드 · opuscar 스타일): 빌드 키트는 없고, 연출을 고를 때 참고할 후보
 const REFS_FILE = path.join(GALLERY, "data/references.json");
 const REFS = fs.existsSync(REFS_FILE) ? JSON.parse(fs.readFileSync(REFS_FILE, "utf8")) : { items: [], sources: {} };
+
+// 모션 방향 메뉴: references/motion-directions.md 의 "## <id> · <이름>" 절과 "- 줄: 값" 줄을 읽는다
+const DIR_FILE = [path.join(SKILL, "references/motion-directions.md"), path.join(here, "../references/motion-directions.md")].find((f) => fs.existsSync(f));
+const FIELD = { "한 줄": "line", 형태: "form", 골격: "skeleton", 시그니처: "signature", 전환: "transitions", "글꼴·색": "look", 어울림: "fits", 예시: "examples", "레퍼런스 낱말": "refWords", 앱: "app", 기본: "isDefault" };
+const DIRECTIONS = (() => {
+  if (!DIR_FILE) return [];
+  const out = [];
+  let cur = null;
+  for (const raw of fs.readFileSync(DIR_FILE, "utf8").split("\n")) {
+    const h = raw.match(/^## ([a-z0-9-]+) · (.+)$/);
+    if (h) { cur = { id: h[1], name: h[2].trim() }; out.push(cur); continue; }
+    const f = cur && raw.match(/^- ([^:]+): (.*)$/);
+    if (f && FIELD[f[1].trim()]) cur[FIELD[f[1].trim()]] = f[2].trim();
+  }
+  for (const d of out) {
+    d.fitWords = (d.fits ?? "").split("/").map((w) => w.trim().toLowerCase()).filter(Boolean);
+    d.exampleIds = (d.examples ?? "").split(",").map((w) => w.trim()).filter((w) => w && w !== "-");
+    d.isDefault = /^예/.test(d.isDefault ?? "");
+  }
+  return out;
+})();
+
+/** 방향 점수: 어울림 낱말이 요청에 들어 있으면 +2, 기법 낱말(KEYWORDS)이 방향의 골격·전환에 걸리면 +1 */
+function scoreDirection(d, text) {
+  const t = text.toLowerCase();
+  const hits = d.fitWords.filter((w) => t.includes(w));
+  let s = hits.length * 2;
+  const body = `${d.skeleton} ${d.transitions} ${d.signature}`.toLowerCase();
+  for (const [re, tags] of KEYWORDS) if (re.test(text) && tags.some((x) => !x.startsWith("cat:") && body.includes(x.replace("kinetic-typography", "kinetic").replace("countUp", "countup")))) s += 1;
+  // 손글씨 감성은 사용자가 그 낱말을 썼을 때만 (가는 선·부드러운 연출은 기본이 아님)
+  if (d.id === "handwritten-warm" && !hits.length) s = -1;
+  return { d, score: s, why: hits };
+}
+
+/** 언제나 방향 3개: 맞는 것부터, 모자라면 기본 방향으로 채움 */
+function pickDirections(text, n = 3) {
+  const ranked = DIRECTIONS.map((d) => scoreDirection(d, text)).sort((a, b) => b.score - a.score || Number(b.d.isDefault) - Number(a.d.isDefault));
+  const out = ranked.filter((r) => r.score > 0).slice(0, n);
+  for (const r of ranked) if (out.length < n && !out.includes(r) && r.d.isDefault) out.push(r);
+  for (const r of ranked) if (out.length < n && !out.includes(r) && r.score >= 0) out.push(r);
+  return out;
+}
 
 // 요청 문장의 낱말 → 기법·카테고리 태그
 const KEYWORDS = [
@@ -127,7 +171,43 @@ const previewData = (slug) => {
   return fs.existsSync(f) ? `data:image/webp;base64,${fs.readFileSync(f).toString("base64")}` : "";
 };
 
-function page(request, recs, refs = []) {
+function directionCards(dirs) {
+  // 같은 예시 미리보기를 두 방향에 쓰지 않는다(motion-styles-five처럼 여러 방향에 걸린 예시는 첫 방향만, 나머지는 레퍼런스 미리보기)
+  const used = new Set();
+  return dirs
+    .map(({ d, why, refs }, i) => {
+      const ex = d.exampleIds.map((id) => ADS.find((a) => a.slug === id)).filter(Boolean)[0];
+      const img = ex && !used.has(ex.slug) ? previewData(ex.slug) : "";
+      if (img) used.add(ex.slug);
+      // 우리 예시 미리보기가 없으면 방향에 적힌 레퍼런스, 그다음 고른 레퍼런스의 미리보기
+      const r = [...d.exampleIds.map((id) => REFS.items.find((x) => x.id === id)), ...refs.map((x) => x.ref)].find((x) => x?.preview);
+      const media = img
+        ? `<img src="${img}" alt="${esc(ex.title)} 미리보기">`
+        : r
+          ? r.preview_type === "video"
+            ? `<video src="${esc(r.preview)}" muted loop autoplay playsinline preload="metadata"></video>`
+            : `<img src="${esc(r.preview)}" alt="${esc(r.title)}" loading="lazy">`
+          : `<div class="noimg">미리보기 없음</div>`;
+      return `<article>
+  <div class="media">${media}</div>
+  <div class="body">
+    <p class="rank">방향 ${i + 1}${why.length ? ` · ${esc(why.join(", "))}` : " · 기본 후보"}</p>
+    <h2>${esc(d.name)}</h2>
+    <p>${esc(d.line)}</p>
+    <h3>형태</h3><p class="meta">${esc(d.form)}</p>
+    <h3>골격</h3><p class="meta">${esc(d.skeleton)}</p>
+    <h3>시그니처 · 전환</h3><p class="meta">${esc(d.signature)} · ${esc(d.transitions)}</p>
+    <p class="meta">글꼴·색: ${esc(d.look)} · 앱: ${esc(d.app)}</p>
+    ${ex ? `<p class="meta">가까운 예시: <code>${esc(ex.slug)}</code> (${esc(ex.title)})</p>` : ""}
+    ${refs.length ? `<p class="meta">레퍼런스: ${refs.map(({ ref }) => `<a href="${esc(ref.source_url)}">${esc(ref.title)}</a>`).join(" · ")}</p>` : ""}
+    <p class="pick">고르려면: <code>방향 ${i + 1}</code> 또는 <code>${esc(d.id)}</code></p>
+  </div>
+</article>`;
+    })
+    .join("\n");
+}
+
+function page(request, recs, refs = [], dirs = []) {
   const cards = recs
     .map(({ item, why }, i) => {
       const img = previewData(item.slug);
@@ -165,6 +245,12 @@ summary{cursor:pointer;font-size:13px;margin-top:8px}.pick{font-size:13px;margin
 </style></head><body><main>
 <h1>이렇게 만들어 볼까요?</h1>
 <p class="req">요청: ${esc(request)}</p>
+${dirs.length ? `<p class="req">모션 방향 3개: 바닥 소재 위에 어떤 모션그래픽을 어떤 형태로 얹을지입니다. 하나를 고르면 그 골격으로 샷을 짭니다.</p>
+<div class="grid">
+${directionCards(dirs)}
+</div>
+<h1 class="refs-h">빌드 키트가 있는 예시</h1>
+<p class="req">고른 방향과 가까운 예시가 있으면 키트를 복사해 출발점으로 씁니다(<code>gallery.mjs use &lt;slug&gt;</code>).</p>` : ""}
 <div class="grid">
 ${cards}
 </div>
@@ -235,11 +321,19 @@ if (cmd === "list" || !cmd) {
   if (!request) throw new Error('요청 문장을 주세요: node gallery.mjs recommend "..."');
   const ranked = ADS.map((a) => score(a, request)).sort((x, y) => y.score - x.score);
   // 맞는 기법·카테고리가 없는 예시는 빼고, 하나도 안 맞으면 앞에서 top개
+  const dirs = pickDirections(request).map((r) => ({ ...r, refs: pickRefs(`${request} ${r.d.refWords ?? ""}`, 2) }));
   const fit = ranked.filter((r) => r.why.length);
-  const recs = (fit.length ? fit : ranked).slice(0, top);
-  if (!fit.length) console.log("기법이 맞는 예시가 없어 가까운 순으로 보여 줍니다 (샷 카드에서 새로 고르는 편이 나을 수 있음)");
+  // 기법이 맞는 예시가 없으면 고른 방향의 예시를 먼저, 그다음 가까운 순
+  const fromDirs = [...new Set(dirs.flatMap(({ d }) => d.exampleIds))].map((id) => ranked.find((r) => r.item.slug === id)).filter(Boolean);
+  const recs = (fit.length ? fit : [...new Set([...fromDirs, ...ranked])]).slice(0, top);
+  if (!fit.length) console.log("요청에 기법 낱말이 없어 예시는 모션 방향에 가까운 순으로 보여 줍니다");
   const refs = pickRefs(request, refTop);
-  fs.writeFileSync(outArg, page(request, recs, refs));
+  fs.writeFileSync(outArg, page(request, recs, refs, dirs));
+  if (dirs.length) {
+    console.log("모션 방향 (사용자에게 이 3개를 먼저 보여 줌):");
+    dirs.forEach(({ d, why }, i) => console.log(`방향 ${i + 1}. ${d.id} · ${d.name}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     전환: ${d.transitions}${d.exampleIds.length ? `\n     예시: ${d.exampleIds.join(", ")}` : ""}`));
+    console.log("빌드 키트가 있는 예시:");
+  } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));
   refs.forEach(({ ref, score: s }, i) => console.log(`${String.fromCharCode(65 + i)}. ${ref.id} (${s.toFixed(1)}) ${ref.summary_ko}\n     admaker: ${ref.admaker}${ref.demo ? `\n     데모: ${ref.demo.video}` : ""}`));
   console.log(`→ ${path.resolve(outArg)}`);
@@ -249,6 +343,8 @@ if (cmd === "list" || !cmd) {
   const list = q ? pickRefs(q, refTop) : REFS.items.map((ref) => ({ ref, score: 0 }));
   for (const { ref, score: s } of list) console.log(`${ref.id.padEnd(44)} ${q ? `(${s.toFixed(1)}) ` : ""}${ref.summary_ko}\n${" ".repeat(46)}admaker: ${ref.admaker}${ref.demo ? `\n${" ".repeat(46)}데모: ${ref.demo.title} (${Math.round(ref.demo.duration)}초) ${ref.demo.video}` : ""}`);
   console.log(`${list.length}개 / 전체 ${REFS.items.length}개 (shotcraft 샷 ${REFS.items.filter((r) => r.source === "shotcraft").length}, opuscar 스타일 ${REFS.items.filter((r) => r.source === "opuscar").length})`);
+} else if (cmd === "directions") {
+  for (const d of DIRECTIONS) console.log(`${d.id.padEnd(20)} ${d.name}${d.isDefault ? " (기본)" : ""}\n${" ".repeat(21)}${d.line}`);
 } else if (cmd === "use") {
   const [slug, dir = "."] = rest;
   const item = bySlug(slug);
@@ -260,6 +356,6 @@ if (cmd === "list" || !cmd) {
   if (item.kit.kind === "timeline-full" && item.slug === "motion-styles-five")
     console.log("  (이 예시는 templates/scenes/*.js 와 templates/scripts/*.js 도 프로젝트의 scenes/, scripts/ 에 있어야 합니다)");
 } else {
-  console.error(`모르는 명령: ${cmd} (list | recommend | refs | use)`);
+  console.error(`모르는 명령: ${cmd} (list | recommend | directions | refs | use)`);
   process.exit(1);
 }
