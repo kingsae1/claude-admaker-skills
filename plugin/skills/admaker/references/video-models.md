@@ -25,16 +25,17 @@
 | `ai.video.generate` (글→영상) | Veo 3.1 Lite | 없음 |
 | `ai.video.imageToVideo`, `ai.video.regenerate` | Veo 3.1 Lite | Kling 2.5 Turbo |
 | `ai.video.framesToVideo` (첫·끝 프레임) | Veo 3.1 Lite | Kling 2.5 Turbo |
-| `ai.video.referenceToVideo` (레퍼런스 1–3장) | Gemini Omni Flash 1.1 | MiniMax H3 |
+| `ai.video.referenceToVideo` (레퍼런스, 첫 모델 `maxImageRefs`까지) | Gemini Omni Flash 1.1 | MiniMax H3 |
 
-사용자가 고르거나(§1.1) 관리자 설정으로 Seedance 2.5 같은 다른 모델이 들어올 수 있습니다. 위 표에 없는 계열(`other`)이면 공통 양식만 쓰고 모델별 보강은 넣지 않습니다.
+사용자가 고르거나(§1.1) 관리자 설정으로 Seedance 2.5 같은 다른 모델이 들어올 수 있습니다. `framesToVideo`는 `model`을 비우면 위 frame2video 순서로 가고, `model`에 image2video 목록의 끝 프레임 모델(`capabilities.endFrame`, 예: `seedance2.5`, `veo3.1`)을 주면 그 모델의 이미지→영상 끝 프레임으로 보냅니다. 4·6·8초보다 긴 첫·끝 프레임 영상이 필요할 때 씁니다. 위 표에 없는 계열(`other`)이면 공통 양식만 쓰고 모델별 보강은 넣지 않습니다.
 
 ## 2. 폴백에 안전하게 쓰기
 
 - **핵심 세 문장을 앞에 둡니다.** 동작 하나, 카메라 하나, 끝 프레임. 어느 모델이 받아도 이 세 문장만 지키면 쓸 수 있는 클립이 나옵니다. 모델별 보강(빛, 렌즈, 질감)은 그 뒤에 붙입니다. 길이를 줄여야 할 때 뒤에서부터 잘려도 핵심은 남습니다.
 - **Keep 줄과 Avoid 줄은 짧게.** 금지는 6개 안으로, 그 클립에서 실제로 틀어질 만한 것만 씁니다. 긴 금지 목록은 모델이 오히려 그 단어를 그립니다.
 - **빈 형용사를 쓰지 않습니다.** `cinematic`, `epic`, `8k`, `masterpiece`, `ultra realistic`, `award-winning`은 화면을 정하지 못하고 모델마다 다르게 읽힙니다. 대신 빛 방향, 렌즈, 재질을 적습니다(`footage-gen.md` §6).
-- **레퍼런스는 `{ref1}`, `{ref2}`로 가리킵니다.** `clipRefs` 순서와 같은 번호입니다. 앱이 보낼 때 그 모델 문법으로 바꿉니다(§3.3). 모델 문법(`<IMAGE_REF_0>`, `@Image1`)을 직접 쓰지 않습니다. 폴백하면 다른 모델이 받기 때문입니다.
+- **레퍼런스는 `{ref1}`, `{ref2}`로 가리킵니다.** `clipRefs` 순서와 같은 번호입니다. 레퍼런스 영상(`videoClipRefs`)은 `{video1}`, `{video2}`입니다. 앱이 보낼 때 그 모델 문법으로 바꿉니다(§3.3–3.5). 모델 문법(`<IMAGE_REF_0>`, `@Image1`, `@Video1`)을 직접 쓰지 않습니다. 폴백하면 다른 모델이 받기 때문입니다.
+- **레퍼런스 장수는 첫 모델 능력까지.** 이미지는 `maxImageRefs`(능력이 비면 3장), 영상은 `maxVideoRefs`(0이면 받지 않음), 합계는 `maxTotalRefs`. 넘치면 앱이 생성 전에 거절합니다. 많이 받는 모델(예: `seedance2.5` 이미지 30·영상 10)은 사용자가 그 모델을 골랐을 때만 `model`로 지정합니다.
 - **영문 120단어 안팎.** 앱은 프롬프트가 너무 길다는 오류가 나면 다른 모델로 줄여서 다시 보냅니다. 줄이는 과정에서 Keep·Avoid가 빠질 수 있으니 처음부터 짧게 씁니다.
 
 ## 3. 계열별 공식
@@ -43,7 +44,7 @@
 
 - `footage-gen.md` §2 공통 양식이 그대로 맞습니다. 서술형 문장을 잘 따르고 카메라 용어(`slow dolly-in`, `rack focus`, `arc a quarter turn`)를 정확히 읽습니다.
 - 빛과 렌즈를 구체적으로 쓸수록 좋습니다: `soft key light from camera left, crisp rim light, about 85mm, shallow depth of field`.
-- 소리를 같이 만들 수 있지만 `generateAudio`는 끄고 앱 BGM·효과음으로 맞춥니다(`director.md` §6). 대사·소리 묘사는 프롬프트에 넣지 않습니다.
+- 소리를 같이 만들 수 있지만 `generateAudio`는 끄고(기본 false) 앱 BGM·효과음으로 맞춥니다(`director.md` §6). 사용자가 현장음을 원하고 첫 모델 `audio`가 true일 때만 `generateAudio: true`. 대사·소리 묘사는 프롬프트에 넣지 않습니다.
 - 이미지→영상은 이미지가 이미 정한 것(피사체, 색, 구도)을 다시 길게 쓰지 않습니다. 무엇이 움직이고 카메라가 어떻게 가는지만 씁니다.
 - 첫·끝 프레임은 두 장 사이의 **움직임과 시간 흐름**만 씁니다("the light shifts from cool morning to warm afternoon while the camera arcs a quarter turn").
 
@@ -75,7 +76,7 @@ Keep the face, outfit and the product's shape, color and label exactly as in the
 
 ### 3.5 Seedance (Seedance 2.5) — 사용자가 고르거나 관리자 설정으로 쓸 때
 
-- 앱이 `{ref1}`을 `@Image1`(1부터)로 바꿉니다. 레퍼런스 역할 선언은 Omni와 같은 방식으로 씁니다.
+- 앱이 `{ref1}`을 `@Image1`(1부터), `{video1}`을 `@Video1`로 바꿉니다. 레퍼런스 역할 선언은 Omni와 같은 방식으로 씁니다. 레퍼런스 영상은 "follow the camera move of {video1}"처럼 무엇을 따라 할지(카메라, 동작 리듬)만 한 줄로 적고 인물·제품은 이미지 레퍼런스로 잡습니다.
 - 블록을 나눠 쓰면 잘 따릅니다: 주체 → 동작 → 장면 → 카메라 → 빛·스타일 → 제약.
 - **한 클립 안의 여러 샷을 허용하는 계열입니다**(`capabilities.multiShot`). 씬표에서 한 씬이 짧은 컷 두세 개로 나뉘고 같은 인물·제품이 이어질 때만, 시간 구간을 적어 한 번에 만듭니다. 이때는 공통 양식의 "single continuous shot, no cuts" 줄을 빼고 구간마다 카메라를 씁니다.
 
@@ -86,7 +87,8 @@ Keep the face, outfit and the product's shape, color and label exactly as in the
 Keep the face, outfit and the product's shape, color and label exactly as in the references. No text, no extra people.
 ```
 
-- 컷 지점은 박 위에 와야 하니 구간 경계를 씬표의 박(`beat()`)에 맞춰 적습니다. 한 구간은 1.5초 이상.
+- 앱에서는 프롬프트에 구간을 직접 쓰지 않고 `imageToVideo`·`referenceToVideo`의 `shots` 인자로 넘깁니다: `shots: [{ fromSec: 0, toSec: 2, prompt: 'close-up of {ref2} …' }, { fromSec: 2, toSec: 4, prompt: '…' }]`, `prompt`에는 위 예의 마지막 Keep·No 줄만. 앱이 "0–2s: …" 줄로 합쳐 보내고, 첫 모델이 `multiShot`이 아니면 거절합니다. `durationSec`를 비우면 마지막 구간 끝(올림)입니다.
+- 컷 지점은 박 위에 와야 하니 구간 경계를 씬표의 박(`beat()`)에 맞춰 적습니다. 0초부터 빈틈 없이, 한 구간은 1.5초 이상, 2~6구간.
 - 길이는 `durations`(4–30초) 안에서 씬 길이 그대로 줄 수 있습니다. 8초 넘는 한 호흡 씬을 한 번에 만들 때 씁니다(`footage-gen.md` §7.4). 길게 만들수록 크레딧이 늘어나니 확인 화면에 길이와 크레딧을 같이 보여 줍니다.
 
 ## 4. 증상별 고치기
