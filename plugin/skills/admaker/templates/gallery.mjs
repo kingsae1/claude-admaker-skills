@@ -172,10 +172,13 @@ const previewData = (slug) => {
 };
 
 function directionCards(dirs) {
+  // 같은 예시 미리보기를 두 방향에 쓰지 않는다(motion-styles-five처럼 여러 방향에 걸린 예시는 첫 방향만, 나머지는 레퍼런스 미리보기)
+  const used = new Set();
   return dirs
     .map(({ d, why, refs }, i) => {
       const ex = d.exampleIds.map((id) => ADS.find((a) => a.slug === id)).filter(Boolean)[0];
-      const img = ex ? previewData(ex.slug) : "";
+      const img = ex && !used.has(ex.slug) ? previewData(ex.slug) : "";
+      if (img) used.add(ex.slug);
       // 우리 예시 미리보기가 없으면 방향에 적힌 레퍼런스, 그다음 고른 레퍼런스의 미리보기
       const r = [...d.exampleIds.map((id) => REFS.items.find((x) => x.id === id)), ...refs.map((x) => x.ref)].find((x) => x?.preview);
       const media = img
