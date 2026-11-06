@@ -92,6 +92,7 @@ const KEYWORDS = [
   [/밀|스와이프|swipe|push|와이프|wipe/i, ["swipe"]],
   [/지도|map|경로|route|배송|위치|지역/i, ["cat:map", "map"]],
   [/3d|입체|three|제품.?회전|오브젝트/i, ["cat:3d", "three"]],
+  [/모프|모핑|morph|변신|변형|평면화|2d로/i, ["morph"]],
   [/gsap|펀치|칩/i, ["gsapTimeline"]],
   [/손글씨|필기|handwrit|감성|캘리/i, ["cat:typography", "handwriting", "strokeDraw"]],
   [/타이포|키네틱|kinetic|문구.?강조|비트/i, ["kinetic-typography"]],

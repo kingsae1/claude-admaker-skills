@@ -1,0 +1,19 @@
+{
+  "name": "MORPH STUDY (예시)",
+  "fonts": {
+    "display": { "name": "Unbounded", "weight": 900 },
+    "label": { "name": "Space Grotesk", "weight": 500 },
+    "kr": { "name": "Pretendard", "weight": 800 }
+  },
+  "colors": {
+    "background": "#EFEBE4",
+    "paper": "#EFEBE4",
+    "ink": "#121212",
+    "cobalt": "#2B45FF",
+    "lime": "#D4FF3A",
+    "coral": "#FF5233",
+    "pink": "#FF9BD6",
+    "text": "#121212",
+    "accent": "#2B45FF"
+  }
+}
