@@ -4,6 +4,9 @@
 // 앱에 대응이 없는 것은 경고와 함께 빼거나 바꾼다(references/engine-recipes.md §9). 앱 코드를 복사하지 않고 형식만 맞춘다.
 import fs from "node:fs";
 
+/** 앱 엔진에 내장된 three 장면. 그 밖의 커스텀 씬은 영상으로 구워 넣는다(bake). */
+const APP_THREE_SCENES = new Set(["model", "morph"]);
+
 const [inFile = "project.json", outFile = "admaker-import.json"] = process.argv.slice(2);
 const p = JSON.parse(fs.readFileSync(inFile, "utf8"));
 const S = p.settings ?? {};
@@ -185,13 +188,15 @@ for (const track of ordered) {
       }
       case "Adapter": {
         const params = { ...(c.params ?? {}) };
-        if (c.adapter === "script" || (c.adapter === "three" && (params.scene ?? "model") !== "model")) {
+        // 앱에 등록된 three 장면: 3D 모델(model)과 3D ↔ 2D 모프(morph, 엔진 3.0.11+)
+        if (c.adapter === "script" || (c.adapter === "three" && !APP_THREE_SCENES.has(params.scene ?? "model"))) {
           warn(id, `${c.adapter === "script" ? "script 어댑터" : `three 커스텀 씬 "${params.scene}"`}는 앱에 등록되어 있지 않아 뺐습니다 (영상으로 미리 렌더해 Video 클립으로 넣으세요)`);
           skipped.add(id);
           continue;
         }
-        if (c.adapter === "three" && !params.src) params.src = c.src; // 앱은 Adapter src를 "lottie"로 덮으므로 모델은 params.src에
-        if (c.adapter === "three" && !/^data:/.test(String(params.src ?? ""))) warn(id, "three 모델이 data URL이 아닙니다. 앱 저장본에 모델이 남지 않을 수 있습니다");
+        const isModel = c.adapter === "three" && (params.scene ?? "model") === "model";
+        if (isModel && !params.src) params.src = c.src; // 앱은 Adapter src를 "lottie"로 덮으므로 모델은 params.src에
+        if (isModel && !/^data:/.test(String(params.src ?? ""))) warn(id, "three 모델이 data URL이 아닙니다. 앱 저장본에 모델이 남지 않을 수 있습니다");
         wc = { ...base, clipType: "lottie", source: "", transform: { ...baseTransform(c), adapter: { adapter: c.adapter, params } } };
         break;
       }
