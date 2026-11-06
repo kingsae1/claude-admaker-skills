@@ -39,7 +39,7 @@ admaker MCP의 강점은 **모션그래픽(엔진) 하나로 끝내지 않고, �
 | **Lottie 포인트** | 체크·하트·반짝이 Lottie를 혜택 문구 옆에 짧게(0.6–1초) | 혜택 나열, CTA |
 | **윤곽선 레터링 엔드카드** | `text_to_path` → stroke만 + `strokeDraw`로 브랜드명이 그려짐 → 로고·CTA 홀드 | 엔드카드 |
 | **소리로 리듬** | BGM 피크에 `ai.sfx.generate`(휙·팅·쿵) + 컷·스케일 펀치 동시 | 전환, 공개 순간 |
-| **컷 없이 이어지는 두 씬** | 앞 씬을 `ai.video.imageToVideo`로 만든 뒤, 다음 씬은 `ai.video.framesToVideo`(첫 프레임 = 앞 씬 영상, 끝 = 이 씬 끝 장면 이미지). 고르는 기준은 `footage-gen.md` §7.2 | 사용 장면이 이어지는 롱테이크, 비포→애프터 |
+| **컷 없이 이어지는 두 씬** | 앞 씬을 `ai.video.imageToVideo`로 만든 뒤, 다음 씬은 끝 구도가 중요하면 `ai.video.framesToVideo`(첫 프레임 = 앞 씬 영상, 끝 = 이 씬 끝 장면 이미지), 아니면 `ai.video.extend`. 무관한 두 장소는 f2v로 잇지 않고 엔진 전환으로. 고르는 기준은 `footage-gen.md` §7.2 | 사용 장면이 이어지는 롱테이크, 비포→애프터 |
 | **같은 모델·제품, 새 장소** | 앵커 이미지(얼굴·제품) 1–3장 → `ai.video.referenceToVideo`로 사진에 없는 장소·동작. 제품이 2개 이상 씬에 나올 때만 | 쓰임새 몽타주, 라이프스타일 |
 | **영상 늘리기** | 생성 영상이 씬보다 짧으면 `ai.video.extend`로 이어 붙임 | 롱테이크 씬 |
 

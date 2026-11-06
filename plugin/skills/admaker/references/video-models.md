@@ -5,7 +5,8 @@
 
 ## 1. 먼저 모델 확인
 
-1. 영상 프롬프트를 쓰기 전에 `run_studio_tool { toolId: 'video.models' }`를 부릅니다(크레딧 없음). 도구마다 시도할 모델 순서(`models`)와 계열(`families`: veo·kling·omni·minimax·seedance)이 나옵니다. `source: 'admin'`이면 관리자가 저장한 모델 하나만 쓰고 폴백하지 않습니다.
+1. 영상 프롬프트를 쓰기 전에 `run_studio_tool { toolId: 'video.models' }`를 부릅니다(크레딧 없음). 도구마다 시도할 모델 순서(`models`)와 계열(`families`: veo·kling·omni·minimax·seedance), 모델별 능력(`capabilities`)이 나옵니다. `source: 'admin'`이면 관리자가 저장한 모델 하나만 쓰고 폴백하지 않습니다.
+   - `capabilities`: `durations`(받는 길이, `values` 목록이나 `min`–`max`), `maxImageRefs`·`maxVideoRefs`(레퍼런스 상한), `aspectRatios`, `endFrame`(끝 프레임), `multiShot`(한 클립 여러 샷), `audio`(소리 생성). 길이·멀티샷은 **첫 모델** 능력 안에서 고릅니다. 폴백 모델은 앱 서버가 그 모델 범위로 맞춥니다. 능력이 비어 있는(`null`) 모델은 4·6·8초, 한 샷, 레퍼런스 3장으로 봅니다.
 2. 순서에 모델이 둘이면 **첫 모델이 실패할 때 같은 프롬프트가 두 번째 모델로 갑니다.** 그래서 프롬프트는 두 모델이 모두 따를 수 있게 씁니다(§2).
 3. 생성 결과의 `data.model`, `data.modelFamily`가 실제로 만든 모델입니다. 검수(§4)와 재생성은 이 계열 기준으로 하고, `FOOTAGE[].gen.model`과 `CREDITS`에 그대로 적습니다.
 4. `video.models` 도구가 없는 앱 버전이면 아래 기본 순서로 보고, 결과에 모델이 없으면 기본 순서의 첫 모델로 기록합니다.
@@ -26,7 +27,7 @@
 | `ai.video.framesToVideo` (첫·끝 프레임) | Veo 3.1 Lite | Kling 2.5 Turbo |
 | `ai.video.referenceToVideo` (레퍼런스 1–3장) | Gemini Omni Flash 1.1 | MiniMax H3 |
 
-관리자 설정으로 Seedance 2.5 같은 다른 모델이 들어올 수 있습니다. 위 표에 없는 계열(`other`)이면 공통 양식만 쓰고 모델별 보강은 넣지 않습니다.
+사용자가 고르거나(§1.1) 관리자 설정으로 Seedance 2.5 같은 다른 모델이 들어올 수 있습니다. 위 표에 없는 계열(`other`)이면 공통 양식만 쓰고 모델별 보강은 넣지 않습니다.
 
 ## 2. 폴백에 안전하게 쓰기
 
@@ -64,7 +65,7 @@ Medium shot, single continuous shot, no cuts. Slow truck right, ending on a stea
 Keep the face, outfit and the product's shape, color and label exactly as in the references. No text, no extra people.
 ```
 
-- 자연스러운 문장을 잘 따르니 장면은 서술형으로, 길이는 3–10초 범위에서 앱이 4·6·8초로 맞춥니다.
+- 자연스러운 문장을 잘 따르니 장면은 서술형으로. 길이는 `durations`(3–10초) 안에서 고릅니다.
 - 화면 비율은 16:9와 9:16만 받습니다. 1:1·4:5 캔버스에서는 앱이 `auto`를 보내므로 가로나 세로 영상이 올 수 있습니다. 엔진에서 `fit: cover`·`focusY`로 잘라 쓰는 것을 전제로 중요한 것을 화면 가운데에 두고, 받은 뒤 `view_clip_media`로 잘린 구도를 확인합니다.
 
 ### 3.4 MiniMax (MiniMax H3) — 레퍼런스→영상의 폴백
@@ -72,11 +73,11 @@ Keep the face, outfit and the product's shape, color and label exactly as in the
 - 앱이 `{ref1}`을 "reference image 1"처럼 말로 바꿉니다. 그래서 Omni용으로 쓴 역할 선언 문장이 그대로 뜻이 통하게 씁니다("{ref1} is the woman" → "reference image 1 is the woman").
 - 주체는 1–2개, 동작은 시간 순서로 하나씩("first …, then …"), 장면은 짧게, 물리 디테일(천의 흔들림, 물방울, 반사)을 한 가지 강조합니다.
 
-### 3.5 Seedance (Seedance 2.5) — 관리자 설정으로 쓸 때
+### 3.5 Seedance (Seedance 2.5) — 사용자가 고르거나 관리자 설정으로 쓸 때
 
 - 앱이 `{ref1}`을 `@Image1`(1부터)로 바꿉니다. 레퍼런스 역할 선언은 Omni와 같은 방식으로 씁니다.
 - 블록을 나눠 쓰면 잘 따릅니다: 주체 → 동작 → 장면 → 카메라 → 빛·스타일 → 제약.
-- **한 클립 안의 여러 샷을 허용하는 유일한 계열입니다.** 씬표에서 한 씬이 짧은 컷 두세 개로 나뉘고 같은 인물·제품이 이어질 때만, 시간 구간을 적어 한 번에 만듭니다. 이때는 공통 양식의 "single continuous shot, no cuts" 줄을 빼고 구간마다 카메라를 씁니다.
+- **한 클립 안의 여러 샷을 허용하는 계열입니다**(`capabilities.multiShot`). 씬표에서 한 씬이 짧은 컷 두세 개로 나뉘고 같은 인물·제품이 이어질 때만, 시간 구간을 적어 한 번에 만듭니다. 이때는 공통 양식의 "single continuous shot, no cuts" 줄을 빼고 구간마다 카메라를 씁니다.
 
 ```text
 0–2s: close-up of {ref2} on a wooden table, steam rising, locked-off camera.
@@ -86,7 +87,7 @@ Keep the face, outfit and the product's shape, color and label exactly as in the
 ```
 
 - 컷 지점은 박 위에 와야 하니 구간 경계를 씬표의 박(`beat()`)에 맞춰 적습니다. 한 구간은 1.5초 이상.
-- 길이는 모델이 더 길게 받을 수 있어도 앱이 4·6·8초로 보냅니다.
+- 길이는 `durations`(4–30초) 안에서 씬 길이 그대로 줄 수 있습니다. 8초 넘는 한 호흡 씬을 한 번에 만들 때 씁니다(`footage-gen.md` §7.4). 길게 만들수록 크레딧이 늘어나니 확인 화면에 길이와 크레딧을 같이 보여 줍니다.
 
 ## 4. 증상별 고치기
 
