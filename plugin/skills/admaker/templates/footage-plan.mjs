@@ -3,14 +3,14 @@
 //
 // FOOTAGE 항목에 선택 필드 gen을 붙인다 (생성하지 않은 사용자 소재는 gen 없음):
 //   gen: {
-//     tool: "ai.video.imageToVideo" | "ai.video.framesToVideo" | "ai.video.referenceToVideo" | "ai.video.generate" | "ai.video.regenerate" | "ai.image.edit" | "ai.image.generate",
+//     tool: "ai.video.imageToVideo" | "ai.video.framesToVideo" | "ai.video.referenceToVideo" | "ai.video.extend" | "ai.video.generate" | "ai.video.regenerate" | "ai.image.edit" | "ai.image.generate",
 //     prompt: "Slow dolly-in on the bottle ...",   // 영문 프롬프트 (footage-gen.md §2)
-//     durationSec: 4 | 6 | 8,                       // 영상 생성 길이
+//     durationSec: 6,                               // 영상 생성 길이 (첫 모델 video.models durations 안, Veo는 4·6·8)
 //     source: "assets/product.jpg",                 // 시작 이미지 (imageToVideo, ai.image.edit), framesToVideo는 첫 프레임
 //     lastFrame: "assets/s3_end.png",               // framesToVideo 끝 프레임
 //     references: ["assets/face.png", "assets/product.jpg"], // referenceToVideo 레퍼런스 1–3장 (얼굴 > 제품 > 스타일)
 //     product: true,                                // 실제 제품이 화면에 나오는 씬
-//     continues: true,                              // 바로 앞 씬 영상에서 컷 없이 이어짐 → framesToVideo (footage-gen.md §7.2)
+//     continues: true,                              // 바로 앞 씬 영상에서 컷 없이 이어짐 → framesToVideo 또는 extend (footage-gen.md §7.2 4번)
 //     why: "앞 컷 동작이 이어짐",                     // 이 도구를 고른 이유 (씬표에도 적음, 선택)
 //     model: "veo3.1-lite",                         // 앱이 알려 준 모델 (CREDITS용, 선택)
 //   }
@@ -56,9 +56,11 @@ export function checkFootage(footage = [], { duration, grid, fps = 30 } = {}) {
     }
     if (!g) return;
 
-    // 3. 생성 길이: 영상 생성은 4·6·8초. 씬이 더 길면 끝에서 멈춘 화면이 된다
+    // 3. 생성 길이: 모델마다 다름(video.models durations). Veo는 4·6·8초, 그 밖은 1–30초 정수. 씬이 더 길면 끝에서 멈춘 화면이 된다
     if (f.type === "Video") {
-      if (g.durationSec && ![4, 6, 8].includes(g.durationSec)) w(i, `gen.durationSec ${g.durationSec}: 앱 영상 생성은 4·6·8초`);
+      const veo = !g.model || /veo/i.test(g.model);
+      if (g.durationSec && veo && ![4, 6, 8].includes(g.durationSec)) w(i, `gen.durationSec ${g.durationSec}: ${g.model ?? "기본 모델(Veo)"}은 4·6·8초 (다른 길이는 그 길이를 받는 모델을 gen.model에 적으세요, video.models)`);
+      if (g.durationSec && !veo && !(Number.isInteger(g.durationSec) && g.durationSec >= 1 && g.durationSec <= 30)) w(i, `gen.durationSec ${g.durationSec}: 1–30초 정수, 그 모델 durations 안에서`);
       const len = g.durationSec ?? 8;
       if ((f.trimFrom ?? 0) + span > len + 1e-6) w(i, `${span.toFixed(2)}초 씬에 ${len}초 생성 영상 (trimFrom ${f.trimFrom ?? 0}): 끝이 모자람. 컷을 나누거나 더 긴 길이로 생성`);
     }
@@ -86,11 +88,12 @@ export function checkFootage(footage = [], { duration, grid, fps = 30 } = {}) {
     if (/<IMAGE_REF_\d+>|@Image\d+|@Video\d+/.test(p)) w(i, "프롬프트에 모델 전용 레퍼런스 태그(<IMAGE_REF_0>, @Image1)가 있음: {ref1}, {ref2}로 쓰면 앱이 받는 모델 문법으로 바꿉니다 (video-models.md §2)");
     if (/\b(cinematic|epic|8k|4k|masterpiece|ultra[- ]realistic|award[- ]winning)\b/i.test(p)) w(i, "프롬프트에 화면을 정하지 못하는 빈 형용사(cinematic, 8k 등)가 있음: 빛 방향·렌즈·재질로 바꾸세요 (video-models.md §2)");
 
-    // 6. 씬별 영상 도구 (footage-gen.md §7.2): 기본은 imageToVideo, 맞는 씬에만 framesToVideo·referenceToVideo
+    // 6. 씬별 영상 도구 (footage-gen.md §7.2): 기본은 imageToVideo, 맞는 씬에만 framesToVideo·referenceToVideo·extend
     if (f.type === "Video" && g.continues) {
       const prev = footage.filter((x) => x !== f && x.type === "Video" && Math.abs(x.to - f.from) <= frame + 1e-6)[0];
-      if (!prev) w(i, "gen.continues인데 바로 앞에 붙은 영상 씬이 없음: 앞 컷이 영상이어야 framesToVideo로 이을 수 있음");
-      if (g.tool !== "ai.video.framesToVideo") w(i, `앞 씬에서 컷 없이 이어지는 씬(gen.continues)인데 ${g.tool}: ai.video.framesToVideo(첫 프레임 = 앞 씬 영상)가 맞음 (§7.2 1번)`);
+      if (!prev) w(i, "gen.continues인데 바로 앞에 붙은 영상 씬이 없음: 앞 컷이 영상이어야 framesToVideo·extend로 이을 수 있음");
+      if (g.tool === "ai.video.extend") { /* 끝 구도가 상관없으면 extend (§7.2 4번) */ }
+      else if (g.tool !== "ai.video.framesToVideo") w(i, `앞 씬에서 컷 없이 이어지는 씬(gen.continues)인데 ${g.tool}: 끝 구도가 중요하면 ai.video.framesToVideo(첫 프레임 = 앞 씬 영상), 아니면 ai.video.extend (§7.2 4번)`);
       else if (prev && g.source && g.source !== prev.src) w(i, `framesToVideo 첫 프레임(gen.source ${g.source})이 앞 씬 영상(${prev.src})이 아님`);
     }
   });
