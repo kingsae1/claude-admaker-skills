@@ -36,3 +36,20 @@ node to-admaker-import.mjs project-app.json out/morph_9x16.admaker-import.json
 - 폰트: Unbounded Black(큰 단어·번호), Space Grotesk Medium(라벨), Pretendard ExtraBold(한글). 렌더 환경에서 Pretendard CDN이 막히면 `shots/_m.mjs`처럼 `render/fonts/`의 로컬 파일을 씁니다.
 - 바꿔 쓸 자리: `timeline.sample.mjs`의 `STAGES`(단계 색·단어·이름), `MORPHS`(변신 시각), `scenes/morph-shapes.js`의 `SHAPES`(모양 함수, 같은 격자면 무엇이든 됨).
 - 효과음은 렌더 뒤 ffmpeg로 따로 섞었습니다(`gen-audio-kit.mjs` 임시음). 이 폴더에는 넣지 않았습니다.
+
+## 엔진 내장 모프 장면으로 (엔진 3.0.11+)
+
+엔진에 같은 효과의 내장 three 장면 `"morph"`가 들어갑니다. 커스텀 씬 대신 이 장면을 쓰면 `bake.mjs` 없이 앱에서 모양·색·재질·변신 시점을 편집할 수 있는 클립으로 열립니다(`to-admaker-import.mjs`가 `morph`를 통과시킴).
+
+```js
+{ type: "Adapter", adapter: "three", src: "three", params: { scene: "morph", stages: [
+  { shape: "sphere", color: "#2B45FF" },
+  { shape: "cube", color: "#D4FF3A", material: "matte", at: 2 },
+  { shape: "puff", shapeType: "star", shapeStyle: { sides: 5, innerRadius: 0.5 }, color: "#FF5233", material: "jelly", at: 4 },
+  { shape: "torus", color: "#FF9BD6", material: "chrome", at: 6 },
+  { shape: "flat", shapeType: "circle", hole: 0.5, color: "#121212", at: 8, morph: 0.8 },
+  { shape: "flat", shapeType: "circle", color: "#121212", at: 9, morph: 0.4 },
+] } }
+```
+
+평면 단계는 클립 박스 전체를 채우므로, 이어 받는 2D 원은 `morphHandoff(box, params, "out")`(엔진 `@admaker/engine/adapters/three`)이 돌려주는 자리·스타일·시각에 놓습니다. 첫 단계를 `flat`으로 두면 반대로 2D → 3D가 됩니다. 앱 엔진이 3.0.11보다 낮으면 지금처럼 커스텀 씬 + `bake.mjs`를 씁니다.
