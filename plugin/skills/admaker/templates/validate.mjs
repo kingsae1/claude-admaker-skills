@@ -55,6 +55,20 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   const d = c.timing?.display;
   if (!d) err(id, "timing.display 없음");
   else if (d.to > dur) err(id, `프로젝트 길이를 넘음 (${d.to} > ${dur} μs)`);
+  // 트랙 매트(style.matte, engine 3.0.13+): 다른 클립의 픽셀로 이 클립을 도려낸다
+  const matte = c.style?.matte;
+  if (matte != null) {
+    const src = p.clips?.[matte.clipId];
+    if (!matte.clipId) err(id, "style.matte.clipId 없음");
+    else if (matte.clipId === id) err(id, "style.matte가 자기 자신을 가리킴");
+    else if (!src) err(id, `style.matte.clipId "${matte.clipId}" 클립이 없음 (alpha·luma 대상은 안 보이게 됨)`);
+    else if (["Audio", "Transition", "Effect"].includes(src.type)) err(id, `style.matte가 ${src.type} 클립을 가리킴 (픽셀이 없어 마스크가 안 됨)`);
+    else {
+      const a = src.timing?.display, b = c.timing?.display;
+      if (a && b && (a.from > b.from || a.to < b.to)) warn(id, `매트 클립 "${matte.clipId}"이 대상보다 짧음: 매트가 없는 구간은 ${String(matte.mode ?? "alpha").includes("Inverted") ? "그대로 보임" : "대상이 안 보임"}`);
+    }
+    if (matte.mode != null && !["alpha", "alphaInverted", "luma", "lumaInverted"].includes(matte.mode)) err(id, `style.matte.mode "${matte.mode}"를 엔진이 모름 (alpha·alphaInverted·luma·lumaInverted)`);
+  }
   for (const a of c.animations ?? []) {
     if (!MOTION_TYPES.has(a.type)) err(id, `모르는 모션 type "${a.type}"`);
     if (SHAPE_ONLY.has(a.type) && c.type !== "Shape") err(id, `${a.type}는 Shape 전용`);
