@@ -136,6 +136,14 @@ const { width: PW = 1080, height: PH = 1920 } = p.settings ?? {};
 const clipsAll = Object.entries(p.clips ?? {});
 const footage = clipsAll.filter(([, c]) => (c.type === "Video" || c.type === "Image") && !String(c.src ?? "").startsWith("data:")
   && (c.transform?.width ?? 0) * (c.transform?.height ?? 0) >= PW * PH * 0.6);
+// 클립 그룹 — 멤버의 groupId는 groups 기록이 있어야 하고, 그룹 하나에 멤버가 2개 이상이어야 앱에서 그룹으로 남는다
+const groupCount = {};
+for (const [id, c] of Object.entries(p.clips ?? {})) {
+  if (!c?.groupId) continue;
+  if (!p.groups?.[c.groupId]) warn(id, `groupId "${c.groupId}"가 groups에 없음 (이름 없는 그룹으로 들어감)`);
+  groupCount[c.groupId] = (groupCount[c.groupId] ?? 0) + 1;
+}
+for (const [gid, n] of Object.entries(groupCount)) if (n < 2) warn(gid, "그룹 멤버가 1개뿐이라 앱에서 그룹이 풀림 (2개 이상 묶기)");
 if (!footage.length) warn("footage", "프레임을 채우는 사용자 영상·이미지가 없음 (Q11: 보통 소재를 맨 아래에 깔고 그래픽을 얹음)");
 const footZ = Math.min(...footage.map(([, c]) => c.transform?.zIndex ?? 0));
 const svgOf = (src) => { try { return decodeURIComponent(String(src).replace(/^data:image\/svg\+xml[^,]*,/, "")); } catch { return ""; } };

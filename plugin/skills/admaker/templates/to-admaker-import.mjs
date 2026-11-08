@@ -44,7 +44,8 @@ function animationsToWire(id, clip) {
     if (!EP_MOTION_TYPES.has(a.type)) { warn(id, `모션 "${a.type}"는 앱이 받지 않아 뺐습니다`); continue; }
     const o = a.options ?? {};
     if (o.direction && o.direction !== "normal") warn(id, `모션 options.direction "${o.direction}"은 앱에서 보존되지 않습니다 (keyframes에 왕복 stop을 직접 쓰세요)`);
-    out.push({ type: a.type, start: sec(o.delay), duration: sec(o.duration), easing: o.easing ?? "linear", iterCount: Math.max(1, Math.round(o.iterCount ?? 1)), params: { ...(a.params ?? {}) } });
+    const origin = o.origin === "group" || (Number.isFinite(o.origin?.x) && Number.isFinite(o.origin?.y)) ? o.origin : undefined; // 그룹 중심(또는 캔버스 점) 기준 회전·크기
+    out.push({ type: a.type, start: sec(o.delay), duration: sec(o.duration), easing: o.easing ?? "linear", iterCount: Math.max(1, Math.round(o.iterCount ?? 1)), params: { ...(a.params ?? {}) }, ...(origin ? { origin } : {}) });
   }
   return out;
 }
@@ -212,6 +213,13 @@ for (const track of ordered) {
         continue;
     }
     if (anim.length) wc.transform = { ...(wc.transform ?? {}), animation: anim };
+    // 클립 그룹 — 앱은 멤버마다 transform._clipGroup { id, name, angle }으로 받아 그룹을 다시 만든다
+    const gid = typeof c.groupId === "string" ? c.groupId.trim() : "";
+    if (gid) {
+      const g = p.groups?.[gid] ?? {};
+      const meta = { id: gid, ...(g.name ? { name: g.name } : {}), ...(Number.isFinite(g.angle) && g.angle !== 0 ? { angle: g.angle } : {}), ...(g.locked ? { locked: true } : {}) };
+      wc.transform = { ...(wc.transform ?? {}), _clipGroup: meta };
+    }
     clips.push(wc);
   }
   if (!clips.length) continue;
