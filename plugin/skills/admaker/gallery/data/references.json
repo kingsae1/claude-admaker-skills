@@ -33,7 +33,7 @@
     "kinetic-typography",
     "ui"
    ],
-   "admaker": "Shape 카드 gsapTimeline(x·y) → Text characterAnimation(rotateX) 2단계",
+   "admaker": "Shape 카드 gsapTimeline(x·y) → Text characterAnimation 프리셋 tumble_in·flip_in_x(글자별 rotateX, engine 3.0.13+) 2단계",
    "preview": "https://vincentwei1021.github.io/video-shotcraft/media/assemble-then-type-flyin.mp4",
    "preview_type": "video",
    "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/effects/assemble-then-type-flyin.md",
@@ -1533,7 +1533,7 @@
     "print",
     "transition"
    ],
-   "admaker": "Image(잉크 마스크 SVG) scale + blend, 또는 셰이더 전환",
+   "admaker": "am-ink-bleed 전환(engine 3.0.13+, origin·edge·edgeColor·grain) 또는 Image(잉크 마스크 SVG) style.matte luma + threshold 키프레임",
    "preview": "https://vincentwei1021.github.io/video-shotcraft/media/ink-bleed-reveal.mp4",
    "preview_type": "video",
    "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/print-texture-transitions.md",
@@ -2054,7 +2054,7 @@
     "text-mask",
     "zoom-through"
    ],
-   "admaker": "Text 마스크(regionFilters/blendMode, engine 3.1) + scale 46 (transition-zoom-through)",
+   "admaker": "제품 화면 Image/Video에 style.matte { clipId: 제목 Text, mode: alpha }(engine 3.0.13+) + 제목 scale 46 (transition-zoom-through)",
    "preview": "https://vincentwei1021.github.io/video-shotcraft/media/text-as-mask.mp4",
    "preview_type": "video",
    "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/opening/text-as-mask.md",
@@ -2193,7 +2193,7 @@
     "transition",
     "zoom-through"
    ],
-   "admaker": "transition-zoom-through + 글자 마스크",
+   "admaker": "다음 장면에 style.matte { clipId: 장 제목 Text, mode: alpha } + 제목 scale 키프레임으로 파고들기 (transition-zoom-through)",
    "preview": "https://vincentwei1021.github.io/video-shotcraft/media/letterform-zoom.mp4",
    "preview_type": "video",
    "source_url": "https://github.com/Vincentwei1021/video-shotcraft/blob/main/references/shots/transition/transition-travel.md",

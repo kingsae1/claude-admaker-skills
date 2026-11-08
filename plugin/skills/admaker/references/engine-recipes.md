@@ -91,7 +91,30 @@
 | `starReveal` | `points`, `innerRatio` | 이벤트성(자제) |
 | `blockReveal` | `cols`, `rows`, `seed` | 그리드 스타일 빌드 |
 
-공통: `reverse` 또는 `mode: "out"`으로 퇴장. **마스크는 `delay` 전에는 적용되지 않아 클립이 다 보입니다.** 늦게 열리는 마스크는 delay를 쓰지 말고 클립의 `timing.display.from`을 여는 시점으로 둡니다(§2.6). 트랙 단위 마스크가 필요하면 다른 클립을 알파 마스크로 씁니다.
+공통: `reverse` 또는 `mode: "out"`으로 퇴장. **마스크는 `delay` 전에는 적용되지 않아 클립이 다 보입니다.** 늦게 열리는 마스크는 delay를 쓰지 말고 클립의 `timing.display.from`을 여는 시점으로 둡니다(§2.6). 트랙 단위 마스크가 필요하면 다른 클립을 매트로 씁니다(아래 §2.4.1).
+
+#### 2.4.1 트랙 매트 (`style.matte`, engine 3.0.13+)
+
+다른 클립의 픽셀로 이 클립을 도려냅니다. 글자 안으로 영상이 흐르는 제목(text-as-mask), 글자 획 안으로 파고드는 장 전환(transition-travel), 잉크·붓 질감으로 드러나는 장면에 씁니다. 매트는 **도려낼 클립(대상)**에 겁니다.
+
+```js
+// 영상(대상)을 제목 글자 모양으로
+clips.footage.style = { matte: { clipId: "title", mode: "alpha" } };
+// 매트 클립(title)은 기본으로 숨겨집니다. 글자도 보이게 하려면 hideSource: false
+```
+
+| 필드 | 값 | 뜻 |
+|---|---|---|
+| `clipId` | 클립 id | 매트로 쓸 클립 (Text·Image·Video·Shape·Lottie). 자기 자신·Audio·Transition·Effect는 안 됨 |
+| `mode` | `alpha`(기본) · `alphaInverted` · `luma` · `lumaInverted` | 모양 안 · 모양 밖 · 밝은 곳 · 어두운 곳 |
+| `hideSource` | true(기본) | 매트 클립 자체를 화면에서 숨김 |
+| `feather` | px | 가장자리 흐림 |
+| `threshold`, `softness` | 0–1 또는 `[[초, 값], …]` | luma 전용. threshold를 0→1 키프레임으로 올리면 잉크·질감 이미지 모양대로 서서히 드러남 |
+
+- 같은 매트·모드를 가리키는 대상은 한 묶음으로 그려지고, 묶음은 구성원 중 가장 높은 zIndex에 놓입니다.
+- 매트 클립이 그 시각에 없으면 alpha·luma 대상은 **안 보이고**, Inverted 대상은 그대로 보입니다. 매트 클립 표시 구간을 대상보다 짧게 두지 않습니다(`validate.mjs`가 경고).
+- 앱으로 넘기면 `to-admaker-import.mjs`가 `transform.matte { clip: 매트 클립 이름, … }`로 옮깁니다(앱이 이 형식을 읽는 버전부터 유지됨).
+- 소재 없는 잉크 번짐 장면 전환은 전환 `am-ink-bleed`(origin·edge·edgeColor·grain)가 더 간단합니다.
 
 ### 2.5 기타 모션
 
@@ -166,7 +189,8 @@
 
 - 글자/단어/줄 단위 애니메이션은 텍스트의 `characterAnimation` 프리셋으로 씁니다. 목록은 엔진에서 직접 받습니다: `listTextAnimationPresets()` (`@admaker/engine/text-segment`).
   - 입장(3.0.2 기준): `rise`, `line_rise`, `slam`, `zoom_settle`, `drop`, `wave`, `center_reveal`, `cascade`, `blur_in`, `spin_in`, `swing`, `skew_slide`, `elastic_pop`, `bouncy_in`, `pop`, `typewriter`, `fade_in`, `slide_up`, `slide_down`, `grow`, `panorama`, `fly_in`, `bounce`, `handwrite_in`(손글씨, @admaker/animation 2.0.8 · 엔진 3.0.7+)
-  - 퇴장: `fade_out`, `shrink_out`, `sink_out`, `fly_out`, `blur_out`, `bouncy_out`
+  - 3D 글자(engine 3.0.13+): 입장 `flip_in_x`(가로축으로 뒤집혀 섬), `flip_in_y`(세로축), `tumble_in`(위에서 굴러 들어옴), 퇴장 `flip_out_x`. 회전 중인 글자만 비트맵으로 그려 원근을 주고, 다 서면 벡터로 돌아갑니다. 카메라 거리는 `transform.charPerspective`(기본 800, 작을수록 원근이 셈), 뒷면을 숨기려면 `transform.charBackface: "hidden"`. 긴 문장·큰 글자에 쓰면 입장 구간이 무거우니 헤드라인 한 줄에만 씁니다.
+  - 퇴장: `fade_out`, `shrink_out`, `sink_out`, `fly_out`, `blur_out`, `bouncy_out`, `flip_out_x`
 - 각 항목은 `duration`, `stagger`, `staggerMode`(`char|word|line`), `staggerOrder`, `easing`을 덮어쓸 수 있습니다.
 - **클립 리빌**(베이스라인 아래에서 올라와 박스 밖은 잘림) = `line_rise` 또는 `rise` + 줄 단위.
 - **강조 단어 하나**는 글자별 스타일(색·크기)로 처리합니다. 강조 색은 브랜드 토큰의 accent 하나만 씁니다.

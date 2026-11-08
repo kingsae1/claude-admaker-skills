@@ -20,7 +20,7 @@ const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "stroke
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)
-const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft", "am-push": "slideleft" };
+const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft", "am-push": "slideleft", "am-ink-bleed": "dissolve" };
 // 트랙 행 순서를 바꿔도 클립 겹침 순서가 유지되도록 앱의 "명시 zIndex" 구간(≥ 1,000,000)으로 옮긴다
 const Z_BASE = 1_000_000;
 
@@ -90,6 +90,8 @@ function textTransform(clip) {
 const wireTracks = [];
 const clipName = (id) => id; // 앱은 클립 id를 "ep_<name>"으로 되살린다
 const skipped = new Set();
+// 트랙 매트(style.matte): 가리키는 클립이 뒤 트랙에 있을 수 있어 모든 클립을 옮긴 뒤 이어 준다
+const matteTargets = [];
 
 // ① 배경 트랙: 앱은 track_bg의 단색 SVG를 settings.backgroundColor로 읽는다
 const bgColor = S.backgroundColor ?? "#000000";
@@ -220,6 +222,7 @@ for (const track of ordered) {
       const meta = { id: gid, ...(g.name ? { name: g.name } : {}), ...(Number.isFinite(g.angle) && g.angle !== 0 ? { angle: g.angle } : {}), ...(g.locked ? { locked: true } : {}) };
       wc.transform = { ...(wc.transform ?? {}), _clipGroup: meta };
     }
+    if (c.style?.matte?.clipId) matteTargets.push({ id, wc, matte: c.style.matte });
     clips.push(wc);
   }
   if (!clips.length) continue;
@@ -229,6 +232,17 @@ for (const track of ordered) {
   if (lane > 0) { name = `${trackName}_l${lane + 1}`; while (usedTrackNames.has(name)) name += "_"; usedTrackNames.add(name); }
   wireTracks.push({ name, type, studioRow: row++, clips });
   }
+}
+
+// 트랙 매트 — 앱은 transform.matte { clip: 가리키는 클립 이름, mode, hideSource, feather, threshold, softness }로 받는다(engine 3.0.13+)
+const MATTE_MODES = new Set(["alpha", "alphaInverted", "luma", "lumaInverted"]);
+for (const { id, wc, matte } of matteTargets) {
+  const src = matte.clipId;
+  if (src === id || !p.clips[src] || skipped.has(src)) { warn(id, `style.matte의 매트 클립 "${src}"이 없거나 빠져서 매트를 뺐습니다 (매트 없이 그대로 보임)`); continue; }
+  const out = { clip: clipName(src) };
+  if (MATTE_MODES.has(matte.mode)) out.mode = matte.mode;
+  for (const k of ["hideSource", "feather", "threshold", "softness"]) if (matte[k] != null) out[k] = matte[k];
+  wc.transform = { ...(wc.transform ?? {}), matte: out };
 }
 
 // ③ 전환
