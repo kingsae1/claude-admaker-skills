@@ -252,9 +252,13 @@ for (const [id, c] of Object.entries(p.clips)) {
   if (skipped.has(c.fromClipId) || skipped.has(c.toClipId)) { warn(id, "전환의 앞뒤 클립이 빠져서 전환도 뺐습니다"); continue; }
   const key = c.transitionKey ?? "fade";
   const type = TRANSITION_TO_WIRE[key] ?? AM_TRANSITION_XFADE[key] ?? String(key).toLowerCase();
-  if (AM_TRANSITION_XFADE[key]) warn(id, `전환 "${key}"는 앱 서버 인코딩에서 "${type}"(xfade)로 바뀝니다. 클립별 색·위치(values)와 easing은 엔진(브라우저 Exporter) 렌더에서만 보입니다`);
-  else if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 앱에서 이름 그대로 넘깁니다. 앱에서 지원하는지 확인하세요`);
-  transitions.push({ id, type, duration: sec(c.timing?.duration ?? (c.timing?.display?.to - c.timing?.display?.from)), from: c.fromClipId ?? "", to: c.toClipId ?? "", mode: "crossover" });
+  // 앱은 transitions[].engine { key, values, easing }을 엔진 전환 키로 그대로 쓴다(앱 미리보기·브라우저 내보내기). type은 서버 인코딩(xfade)용 이름
+  const values = c.values && typeof c.values === "object" && Object.keys(c.values).length ? c.values : null;
+  const engine = !TRANSITION_TO_WIRE[key] || values || c.easing ? { key, ...(values ? { values } : {}), ...(c.easing ? { easing: c.easing } : {}) } : null;
+  if (/^hf-/.test(key)) warn(id, `전환 "${key}"(셰이더 팩)는 앱에 등록되어 있지 않아 앱에서는 fade로 보입니다. 앱으로 넘길 광고는 am-* 전환·트랙 매트·마스크 전환을 쓰세요 (transitions.md)`);
+  else if (AM_TRANSITION_XFADE[key]) warn(id, `전환 "${key}"는 앱 미리보기·브라우저 내보내기에서 그대로(values·easing 포함) 보이고, 서버 인코딩에서만 "${type}"(xfade)로 바뀝니다`);
+  else if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 엔진 키 그대로 넘깁니다. 앱 전환 탭에 있는 이름인지 확인하세요`);
+  transitions.push({ id, type, duration: sec(c.timing?.duration ?? (c.timing?.display?.to - c.timing?.display?.from)), from: c.fromClipId ?? "", to: c.toClipId ?? "", mode: "crossover", ...(engine ? { engine } : {}) });
 }
 
 const wire = {

@@ -172,6 +172,22 @@ for (const [id, c] of clipsAll) {
   if (c.type === "Shape" && ((c.style?.fillOpacity ?? 1) < 0.1 || /transparent|none/.test(c.style?.fill ?? ""))) continue;
   warn(id, `화면의 ${Math.round((area / (PW * PH)) * 100)}%를 ${((d.to - d.from) / 1e6).toFixed(1)}초 덮는 층(불투명도 ${t.opacity ?? 1}): 소재가 어둡거나 뿌옇게 보일 수 있음. 의도한 게 아니면 글자 주변 받침이나 선 위주로 (Q11)`);
 }
+// 씬 전환이 밋밋한지 (transitions.md): 소재가 바뀌는 곳이 2곳 이상인데 매트·am-*·마스크 같은 전환 그래픽이 하나도 없거나 fade뿐
+{
+  const PLAIN = new Set(["fade", "fadeIn", "fadeOut", "dissolve"]);
+  const MASKS = new Set(["wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal"]);
+  const trs = clipsAll.filter(([, c]) => c.type === "Transition").sort(([, a], [, b]) => (a.timing?.display?.from ?? 0) - (b.timing?.display?.from ?? 0));
+  const designed = trs.filter(([, c]) => !PLAIN.has(c.transitionKey ?? "fade")).length
+    + clipsAll.filter(([, c]) => c.style?.matte).length
+    + clipsAll.filter(([, c]) => (c.animations ?? []).some((a) => MASKS.has(a.type))).length
+    + clipsAll.filter(([id, c]) => /^(flood|flash|zoom|mont|match|card)\d+_/.test(id) || /transition|wipe/i.test(String(c.name ?? ""))).length; // 전환 샷(shots/transition-*.mjs)이 만든 클립
+  const cuts = new Set(footage.map(([, c]) => c.timing?.display?.from ?? 0)).size - 1;
+  if (cuts >= 2 && designed === 0) warn("transitions", `소재가 바뀌는 곳이 ${cuts}곳인데 전환 그래픽이 없음${trs.length ? "(fade·dissolve뿐)" : ""}. 시그니처 한 곳은 트랙 매트·줌 스루·잉크 번짐, 나머지는 am-* 전환·마스크로 (transitions.md)`);
+  for (let i = 1; i < trs.length; i++) {
+    const k = trs[i][1].transitionKey ?? "fade";
+    if (!PLAIN.has(k) && k === (trs[i - 1][1].transitionKey ?? "fade")) warn(trs[i][0], `전환 "${k}"를 연속 두 번 씀 (transitions.md: 섞어 쓰기)`);
+  }
+}
 for (const [f, ids] of entranceStarts) if (ids.length >= 3) warn(ids.join(", "), `프레임 ${f}에 입장 ${ids.length}개 동시 시작 (R7: 3–6프레임 시차)`);
 console.log(issues.length ? issues.join("\n") : "✓ 검사 통과");
 if (warnings.length) console.log(warnings.join("\n"));

@@ -38,6 +38,8 @@ allowed-tools:
 그린·블루 스크린으로 찍은 인물·제품 소재는 `chroma_key { clipId, color: 'auto' }`로 배경을 뺍니다. 키 색은 가장자리에서 찾고 `similarity`는 추천값이 들어갑니다. 결과 미리보기(체크무늬 = 투명)와 `check.borderLeft`(남은 배경)를 보고 배경이 남으면 `similarity`를 0.05~0.1씩 올리고, 주체가 비면 내립니다. 키를 뺀 클립 아래 행에 배경을 깔아야 합성이 보입니다. 흰 벽처럼 무채색 배경은 크로마키 대신 배경 제거(`ai.image.removeBackground`)를 씁니다.
 함께 움직일 요소(CTA 버튼 배경+글자, 로고+태그라인, 가격표 묶음, 제품+그림자)는 클립 그룹으로 묶습니다. 그룹은 논리 그룹이라 멤버는 각자 클립 그대로이고, 사용자가 캔버스·타임라인에서 누르면 한 덩어리로 선택·이동됩니다. 앱에서는 `group_clips { clipIds, name }`으로 묶고(멤버 행은 맨 위 멤버 행 아래로 모임, 오디오·잠긴 클립 제외), `update_group`으로 `dx`/`dy`·`left`/`top`(이동), `rotate`/`angle`(그룹 중심 회전), `scale`(글자·외곽선·그림자도 같이 커짐)을 주고, 덩어리째 등장·퇴장은 `update_group { animations }`로 줍니다. 이 애니메이션은 멤버마다 같은 값에 `options.origin: 'group'`이 붙어 그룹 중심을 기준으로 돌고 커집니다. 푸는 것은 `ungroup_clips`, 그룹 목록·bounds는 `get_editor_state`의 `groups`입니다. ProjectJSON으로 만들 때는 멤버 클립에 `groupId`를, 프로젝트에 `groups: { g_cta: { id: 'g_cta', name: 'CTA 버튼', angle: 0 } }`을 넣고, 같이 움직일 애니메이션은 멤버마다 같은 값에 `options: { …, origin: 'group' }`을 줍니다. 앱으로 가져오면 그룹과 origin이 그대로 남습니다. 그룹 하나에 멤버는 2개 이상이고, 중첩 그룹은 없습니다.
 MCP가 있으면 모션그래픽만으로 끝내지 않습니다. `references/techniques.md`(MCP에서는 `get_ad_guide({ name: 'techniques.md' })`)의 기법 메뉴에서 씬마다 이미지 생성·img2img·누끼/레이어 분리·이미지→영상·영상 생성·효과음·Lottie·손그림·레터링을 골라 섞고, 씬표에 기법과 예상 크레딧을 적어 제안합니다.
+
+씬이 바뀌는 곳은 컷·fade로 두지 않습니다. `references/transitions.md`(MCP: `get_ad_guide({ name: 'transitions.md' })`)에서 시그니처 한 곳(트랙 매트 "글자 속으로"·줌 스루·잉크 번짐)을 먼저 정하고, 나머지 경계는 `am-*` 전환·전환 샷·마스크로 2–4종을 섞어 씬표 전환 칸에 적습니다. 앱으로 넘길 광고에는 `hf-*` 셰이더 전환을 쓰지 않습니다.
 MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소재는 사용자가 줍니다). 외부 생성 API·스킬·MCP 서버를 따로 설치하거나 API 키를 받아 직접 부르지 않습니다(과금, 키 노출, 고객 자산 유출).
 
 ## 필요 조건
@@ -65,6 +67,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
    - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
+   - 씬 전환 고르기(트랙 매트·`am-*` 전환·전환 샷·마스크, 규칙·values·앱 호환) → `references/transitions.md`.
    - 한 클립의 여러 단계 동작(올라오며 펀치, 비트 펀치, 카드 뒤집기) → `references/gsap.md` (`gsapTimeline`). 3D 제품·오브젝트 샷 → `references/three.md` + `engine-recipes.md` §7.1. 웹용 GSAP·three.js 예제(ScrollTrigger, rAF, Clock, `new WebGLRenderer`)는 그대로 쓰지 않고 이 두 문서의 변환표대로 바꿉니다.
 2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.
@@ -105,7 +108,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 | 1.5 모션 방향 추천 | `gallery.mjs recommend`(MCP: motion-directions.md + `get_gallery`)로 "새로 만들기"(모션 방향 3개, 1번 추천)와 "라이브러리 예제처럼"(가까운 예제 2–3개)을 번호 목록 하나로 보여 주고 고르게 함. 건너뛰지 않음(MCP 순서에서도 씬표 전). 고른 방향의 예시 키트는 `gallery.mjs use`로 복사 | `references/motion-directions.md`, `gallery/README.md` |
 | 2. 트리트먼트 | `TREATMENT.md`: 문구(시청자 단계, 훅 후보 3개, 근거 표), 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵(드롭, 섹션별 음악 사건 수), 사운드 표 | `references/director.md`, `references/copy.md`, `templates/TREATMENT.md` |
 | 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
-| 4. 샷 선택 | 1.5에서 고른 방향의 골격이 출발점. 고른 예시가 있으면 그 키트(`gallery/kits/<slug>/`)와 프롬프트를 출발점으로 삼음. 에너지 골격의 슬롯마다 샷 카드를 고르고, 컷마다 나가는 방식(전환 카드)과 이어받는 요소를 정함. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문, `gallery/README.md` |
+| 4. 샷 선택 | 1.5에서 고른 방향의 골격이 출발점. 고른 예시가 있으면 그 키트(`gallery/kits/<slug>/`)와 프롬프트를 출발점으로 삼음. 에너지 골격의 슬롯마다 샷 카드를 고르고, 씬 경계마다 전환(트랙 매트·`am-*` 전환·전환 카드·마스크 중 하나, fade만 쓰지 않음)과 이어받는 요소를 정해 씬표 전환 칸에 적음. 시그니처 전환 한 곳, 2–4종 섞기. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문, `references/transitions.md`, `gallery/README.md` |
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀. `analyzeBeats` 결과는 `ANALYSIS`에. 빠른 몽타주는 `presets/fast-montage.mjs`가 박 단위로 생성 | `templates/timeline.mjs`, `templates/presets/` |
 | 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조. 폰트 후보가 여럿이면 여기서 하나로 정함 | `references/engine-recipes.md` §8 |
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
