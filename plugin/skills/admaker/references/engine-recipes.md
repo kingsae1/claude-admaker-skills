@@ -115,6 +115,7 @@ clips.footage.style = { matte: { clipId: "title", mode: "alpha" } };
 - 매트 클립이 그 시각에 없으면 alpha·luma 대상은 **안 보이고**, Inverted 대상은 그대로 보입니다. 매트 클립 표시 구간을 대상보다 짧게 두지 않습니다(`validate.mjs`가 경고).
 - 앱으로 넘기면 `to-admaker-import.mjs`가 `transform.matte { clip: 매트 클립 이름, … }`로 옮깁니다(앱이 이 형식을 읽는 버전부터 유지됨).
 - 소재 없는 잉크 번짐 장면 전환은 전환 `am-ink-bleed`(origin·edge·edgeColor·grain)가 더 간단합니다.
+- 예제: `samples/track-matte-glyph-3d`(사진이 제목 글자 안에서만 보이다가 획 속으로 확대, 확대 기준점 계산은 `build.mjs`의 `zoomAt`).
 
 ### 2.5 기타 모션
 

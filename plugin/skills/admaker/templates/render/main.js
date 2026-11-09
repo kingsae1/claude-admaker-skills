@@ -1,6 +1,6 @@
 // 헤드리스 렌더 페이지. render.mjs가 Playwright로 열고 window.renderProject를 호출한다.
 // 엔진은 프로젝트에 설치된 @admaker/engine을 쓴다(소스를 복사하지 않는다).
-import { Exporter, Preview, registerScript } from "@admaker/engine";
+import { Exporter, Preview, registerScript, registerAdmakerTransitions } from "@admaker/engine";
 import "@admaker/engine/adapters/lottie";
 import { registerThreeScene } from "@admaker/engine/adapters/three";
 
@@ -53,5 +53,8 @@ for (const [file, mod] of Object.entries(scenes)) {
   const name = file.split("/").pop().replace(/\.js$/, "");
   registerThreeScene(name, mod.default, mod.options ?? {});
 }
+
+// admaker 전환 팩 am-* (am-push, am-ink-bleed …) 등록
+await registerAdmakerTransitions();
 
 window.RENDER_READY = true;

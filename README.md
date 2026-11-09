@@ -58,6 +58,7 @@ samples/transitions/             소재 사이 전환 5종 샘플 (커버·줌 �
 samples/handwriting/             손글씨 샘플 (handwrite_in + strokeDraw, 엔진 3.0.7 렌더)
 samples/shape-sheet-3d/          도형 시트 1장 + 클립마다 crop, X·Y·Z 회전·깊이 애니메이션 (엔진 main 렌더)
 samples/clip-3d-depth/           이미지·영상·글자 transform3d(X·Y 회전, Z 위치) + Z 회전 + 3D 이동 (엔진 main 렌더)
+samples/track-matte-glyph-3d/    트랙 매트(글자 안 사진 → 획 속으로 확대) + am-ink-bleed 전환 + 글자 3D(tumble_in·flip_in_x/y·flip_out_x) (엔진 main 렌더)
 plugin/skills/admaker/gallery/   예시 갤러리: data/ads.json + prompts/<slug>.md (예시 영상·프롬프트·쓴 기법)
 ```
 
