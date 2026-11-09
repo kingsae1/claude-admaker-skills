@@ -63,7 +63,8 @@
 | 공간 전환(줌) | `transition-zoom-through`, 장면 카메라(engine-recipes §4) | 창·화면·렌즈처럼 "안"이 있는 물체가 소재에 있을 때 |
 
 - 한 광고에 전환 기법은 2–3종, 같은 전환을 연속 세 번 쓰지 않습니다.
-- 셰이더 전환(`Transition` 클립, gl-transitions·`hf-*`)은 브라우저 렌더에서는 나오지만 앱 불러오기에서는 fade·slide·wipe·cover 계열만 이름이 맞춰집니다(`to-admaker-import.mjs`). 앱으로 넘길 광고는 위 카드처럼 마스크·keyframes로 만든 전환을 씁니다.
+- 트랙 매트 전환(글자 속으로, 질감으로 번짐)과 admaker 전환 클립(`am-*`)도 같이 고릅니다. 고르는 순서·규칙·values는 `../transitions.md`.
+- `am-*` 전환 클립은 앱으로 가져와도 키·values·easing이 그대로 들어갑니다(`to-admaker-import.mjs`가 `engine`으로 넘김). `hf-*` 셰이더 팩은 앱에 없어 fade로 바뀌니 앱으로 넘길 광고에는 쓰지 않습니다.
 - 전환을 넣었으면 `render/sheet.mjs`로 전환 구간 밀집 시트를 뽑아 검수합니다(aesthetic-rules Q18).
 
 ## 카드 형식

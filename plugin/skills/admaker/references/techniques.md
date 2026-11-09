@@ -10,7 +10,7 @@ admaker MCP의 강점은 **모션그래픽(엔진) 하나로 끝내지 않고, �
 | 모션그래픽 | 키네틱 타이포, 도형·라인, 카운터·가격 롤, 지도, 전환, 키프레임, 카메라 | 엔진 ProjectJSON(스킬) → `import_to_admaker` | 없음 |
 | 손그림·레터링 | 밑줄·동그라미·화살표 강조, 붓 획, 형광펜, 윤곽선·이중 외곽선 타이포, 자유 도형, 영역 효과(흑백·모자이크·글로우) | `draw_annotation`, `draw_path`, `text_to_path` (`drawing.md`) | 없음 |
 | Lottie·3D | 아이콘 애니메이션, 반짝이·폭죽·체크 같은 장식, 3D 모델(.glb) | `search_lottie` → ProjectJSON의 lottie Adapter 클립(`engine-recipes.md`), 또는 파일을 `upload_media`(.json/.lottie/.glb) | 없음 |
-| 전환·효과·자막 | 장면 전환, 화면 효과, 자막 | `add_clip { type: 'Transition' \| 'Effect' \| 'Caption' }` | 없음 |
+| 전환·효과·자막 | 장면 전환(트랙 매트·`am-*` 전환·마스크, 고르는 법은 `transitions.md`), 화면 효과, 자막 | ProjectJSON(스킬) 또는 `add_clip { type: 'Transition' \| 'Effect' \| 'Caption' }` | 없음 |
 | 템플릿 | 이미 있는 광고 템플릿에서 출발 | `search_templates` → `open_template` | 없음 |
 | 이미지 생성 | 제품 연출 컷, 배경, 라이프스타일 장면, 일러스트 | `ai.image.generate { prompt }` | 있음 |
 | 이미지 고치기(img2img) | 사용자 사진의 배경·조명·계절·색감 바꾸기, 텍스트 여백 만들기, 같은 제품으로 장면 여러 벌 | `ai.image.edit { clipRef, prompt }` | 있음 |
