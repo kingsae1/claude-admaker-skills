@@ -66,6 +66,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
+   - 픽셀 아트·도트 캐릭터·레트로 게임 느낌(스프라이트 시트 플립북, 선명한 픽셀 `style.pixelated`, 계단식 `steps(n)` 이징) → `references/pixel-art.md`, `templates/pixel-sprite.mjs`.
    - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
    - 씬 전환 고르기(트랙 매트·`am-*` 전환·전환 샷·마스크, 규칙·values·앱 호환) → `references/transitions.md`.
    - 한 클립의 여러 단계 동작(올라오며 펀치, 비트 펀치, 카드 뒤집기) → `references/gsap.md` (`gsapTimeline`). 3D 제품·오브젝트 샷 → `references/three.md` + `engine-recipes.md` §7.1. 웹용 GSAP·three.js 예제(ScrollTrigger, rAF, Clock, `new WebGLRenderer`)는 그대로 쓰지 않고 이 두 문서의 변환표대로 바꿉니다.
