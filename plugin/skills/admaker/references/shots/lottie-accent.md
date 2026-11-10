@@ -4,6 +4,7 @@ name: lottie-accent
 슬롯: 상승부 | 엔드카드 (얹는 샷)
 에너지: 중
 길이: 0.6–1.2초
+검증: 엔진 3.0.19 렌더 하니스 (lottie 어댑터, 0.9초 원 팝)
 엔진: Adapter `lottie` (`params.animationData`), 앱 MCP `search_lottie` → `add_clip`, 또는 `.json/.lottie` `upload_media`
 ---
 

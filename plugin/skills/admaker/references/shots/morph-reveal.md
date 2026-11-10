@@ -4,6 +4,7 @@ name: morph-reveal
 슬롯: 주인공 | 엔드카드
 에너지: 중고
 길이: 2.5–4초
+검증: 엔진 3.0.19 렌더 하니스 (three `morph` 장면, 구 → 큐브 → 평면 별 3단계, 클립이 끝나면 별도 사라지니 평면 뒤 이어 쓸 Shape를 같은 자리에 둠)
 엔진: 앱 MCP `add_clip { type: 'Morph3D', stages | preset }` / 스킬은 three 어댑터 `morph-shapes` 장면(`gallery/kits/morph-3d-to-2d`)
 ---
 
@@ -13,6 +14,7 @@ name: morph-reveal
 ## 동작 핵심
 - 단계 2–4개: 예) 구(candy) → 큐브(matte) → 평면 별(flat). 마지막이 `flat`이면 2D 도형 클립으로 넘겨받아(handoff) 이후는 일반 Shape처럼 움직입니다.
 - 단계 전환은 박에 맞춥니다(`at`). 바뀌는 순간 큰 단어·번호가 같이 바뀌면 정보가 생깁니다(갤러리 morph-3d-to-2d).
+- 3D 클립이 끝나면 평면 도형도 같이 사라집니다. 평면이 된 뒤에도 보여야 하면 같은 자리·크기·색의 Shape를 핸드오프 시각부터 이어 둡니다(앱 MCP `Morph3D`는 handoffClipIds로 자동).
 - 평면이 된 뒤 0.3초 안에 로고·문구가 그 옆에 마스크 상승으로 붙고 ≥ 1초 정지.
 
 ## 파라미터 표
@@ -32,7 +34,7 @@ name: morph-reveal
 
 ## 참조 구현
 ```jsonc
-// 앱 MCP
+// 앱 MCP (스킬 ProjectJSON은 { "type": "Adapter", "adapter": "three", "params": { "scene": "morph", "stages": [...] } })
 { "type": "Morph3D", "stages": [
   { "shape": "sphere", "color": "#FF5A36", "material": "candy" },
   { "shape": "cube", "color": "#2E2A80", "material": "matte", "at": 1.0, "morph": 0.4 },

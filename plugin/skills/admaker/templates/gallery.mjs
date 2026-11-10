@@ -360,8 +360,8 @@ if (cmd === "list" || !cmd) {
     }
   })();
   const cards = [];
-  for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards })));
-  const freeCard = drawCard({ direction: "free", history, exclude: cards });
+  for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards, request })));
+  const freeCard = drawCard({ direction: "free", history, exclude: cards, request });
   const cardsFile = path.join(path.dirname(path.resolve(outArg)), "variety-cards.json");
   fs.writeFileSync(cardsFile, JSON.stringify({ plans: cards, free: freeCard }, null, 2));
   const fit = ranked.filter((r) => r.why.length);
@@ -382,7 +382,7 @@ if (cmd === "list" || !cmd) {
       console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     변주: ${dirs[i].variety.summary}`);
     });
     console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     변주: ${freeCard.summary}`);
-    console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 내보낸 뒤 variety.mjs record)`);
+    console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 고른 바로 그때 variety.mjs record)`);
     console.log("빌드 키트가 있는 예시:");
   } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));

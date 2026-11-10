@@ -130,6 +130,20 @@ export const AXES = [
 
 const AXIS_IDS = AXES.map((a) => a.id);
 
+/** 요청 문장의 분위기 낱말 → 그 분위기에 맞지 않아 빼는 칸 (남는 칸이 없으면 빼지 않음) */
+export const MOODS = [
+  { id: 'kids', re: /키즈|어린이|유아|아이|장난감|귀여|친근|발랄|kids?\b/i, avoid: ['dark-glow', 'glitch-settle', 'glitch-cut', 'rgb-split', 'hud', 'scanlines', 'duotone', 'god-rays', 'mono-to-color'] },
+  { id: 'premium', re: /고급|프리미엄|럭셔리|명품|차분|미니멀|우아|세련|premium|luxury|minimal/i, avoid: ['shape-burst', 'stickers', 'every-beat', 'flash-frames', 'glitch-settle', 'glitch-cut', 'rgb-split', 'slam-scale', 'dutch-zoom', 'star-reveal', 'lottie', 'syncopated'] },
+  { id: 'trust', re: /금융|은행|보험|병원|의료|클리닉|법률|신뢰|공공|bank|insurance|clinic/i, avoid: ['glitch-settle', 'glitch-cut', 'rgb-split', 'stickers', 'dutch-zoom', 'star-reveal', 'shape-burst'] },
+  { id: 'warm', re: /감성|따뜻|웨딩|결혼|가족|감사|편지|힐링|warm/i, avoid: ['glitch-settle', 'glitch-cut', 'rgb-split', 'hud', 'scanlines', 'dark-glow', 'flash-frames', 'every-beat'] },
+];
+
+/** 요청에 걸린 분위기들 */
+export function moodsFor(request) {
+  const t = String(request ?? '');
+  return t ? MOODS.filter((m) => m.re.test(t)) : [];
+}
+
 /** 방향에 쓸 수 있는 칸 */
 export function optionsFor(axis, direction) {
   return axis.options.filter((o) => (!o.only || o.only.includes(direction)) && !(o.avoid ?? []).includes(direction));
@@ -162,10 +176,13 @@ export function similarity(a, b) {
  * @param {object[]} [o.history]  예전 광고 기록(최근 것이 뒤), 각 { direction, card: { 축id: 칸id } }
  * @param {object[]} [o.exclude]  같은 목록에서 이미 뽑은 카드(기획안끼리 겹치지 않게)
  * @param {number} [o.recent]  피할 최근 기록 수 (기본 4)
+ * @param {string} [o.request]  요청 문장 — 분위기 낱말(MOODS)에 맞지 않는 칸을 뺌
  */
-export function drawCard({ direction = 'free', seed, history = [], exclude = [], recent = 4 } = {}) {
+export function drawCard({ direction = 'free', seed, history = [], exclude = [], recent = 4, request } = {}) {
   const base = Number.isFinite(seed) ? seed : Math.floor(Math.random() * 2 ** 31);
   const last = history.slice(-recent).map(choiceMap);
+  const moods = moodsFor(request);
+  const moodAvoid = new Set(moods.flatMap((m) => m.avoid));
   const others = exclude.map(choiceMap);
   let best = null;
   for (let attempt = 0; attempt < 24; attempt++) {
@@ -173,6 +190,8 @@ export function drawCard({ direction = 'free', seed, history = [], exclude = [],
     const picks = {};
     for (const axis of AXES) {
       let pool = optionsFor(axis, direction);
+      const fitMood = pool.filter((o) => !moodAvoid.has(o.id));
+      if (fitMood.length) pool = fitMood;
       const fresh = pool.filter((o) => !last.some((h) => h[axis.id] === o.id) && !others.some((h) => h[axis.id] === o.id));
       if (fresh.length) pool = fresh;
       const w = pool.map((o) => 1 + ((o.fits ?? []).includes(direction) ? 2 : 0) + (o.only ? 1 : 0));
@@ -193,6 +212,7 @@ export function drawCard({ direction = 'free', seed, history = [], exclude = [],
     summary,
     key: AXES.map((a) => best.picks[a.id].id).join('/'),
     maxSimilarity: Math.round(best.worst * 100) / 100,
+    ...(moods.length ? { moods: moods.map((m) => m.id) } : {}),
   };
 }
 
