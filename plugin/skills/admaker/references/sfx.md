@@ -104,3 +104,21 @@ gen-audio-kit 파일 이름과 1:1로 맞춘 프롬프트입니다. 앱이 생�
 | `tick.wav` | `Tiny crisp mechanical tick, single hit, starts immediately` | 0.5 |
 | `click.wav` | `Soft clean UI button click, single hit, starts immediately` | 0.5 |
 | `bed.wav` | 효과음이 아니라 BGM입니다. 앱에서는 `ai.bgm.generate`로 만듭니다 | — |
+
+## 7. 영상 뒤 효과음 단계 (앱 MCP 순서 H2)
+
+광고 제작에서 효과음은 **바닥 영상이 모두 나온 뒤** 만듭니다. 생성 영상 속 동작(붓기, 뚜껑, 발걸음)과 실제 타이밍을 보고 붙여야 맞기 때문입니다. 건너뛰지 않습니다.
+
+1. **큐 목록.** 타임라인에서 전환 시각·씬 경계·모션그래픽 히트(마디 첫 박, peaks, 글자·로고 착지, 가격 카운트, CTA 팝)를 모으고, 생성 영상을 보며 화면 속 동작 시각(폴리)을 적습니다. 분위기 환경음(loop)이 필요한 씬도 적습니다.
+2. **고르기.** 15초 6–10개, 30초 10–16개. 씬마다 전환 1(whoosh) + 주인공 순간 1(impact·sparkle·pop) + 필요하면 폴리 1. 같은 순간에 두 개를 겹치지 않고, 같은 소리를 세 번 연달아 쓰지 않으며, 내레이션 문장 위에는 짧고 작은 것만. 시그니처 순간(드롭·제품 공개)이 가장 큽니다.
+3. **알리고 만들기.** 시각·소리·프롬프트·길이를 표로 짧게 보여 주고 진행합니다. 크레딧은 영상 전 확인(G)에서 효과음 개수까지 같이 받아 둡니다. `startSec`는 §4(목표 시각 − 피크 지연).
+4. **다듬기.** 효과음 볼륨 0.6–0.9, 환경음 0.2–0.35, 내레이션 구간 0.4–0.6. 소리 정점이 화면 착지보다 늦으면 2–3프레임 당깁니다.
+
+| 화면에서 | 소리 예 (영문 프롬프트) |
+| --- | --- |
+| 커피를 따름 | `Close-up coffee pouring into a ceramic cup, gentle liquid splash, no music` |
+| 뚜껑·포장 열림 | `Crisp cardboard box lid opening, soft paper rustle, single take` |
+| 운동화 착지 | `Sneaker landing on a gym floor, short rubber squeak and thud` |
+| 탄산 | `Soda can opening with fizz and bubbles, close mic` |
+| 글리치 히트 | `Short digital glitch burst, data crackle, 0.3 seconds` |
+| 픽셀 점프·코인 | `Retro 8-bit jump blip` / `Retro 8-bit coin pickup chime` |
