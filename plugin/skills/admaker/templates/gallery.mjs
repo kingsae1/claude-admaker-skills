@@ -5,11 +5,13 @@
 //   node gallery.mjs refs "카드 스택 3d" [--refs 12]     # 외부 레퍼런스(shotcraft 샷 124 · opuscar 스타일 66) 검색
 //   node gallery.mjs use <slug> [프로젝트 폴더]
 //   node gallery.mjs directions                         # 모션 방향 메뉴(references/motion-directions.md) 목록
-// recommend는 언제나 모션 방향 3개(형태·골격·시그니처·전환)를 먼저 고르고, 그 아래 예시와 외부 레퍼런스를 붙인다.
+// recommend는 언제나 기획안 3개(모션 방향: 형태·골격·시그니처·전환, 기획안마다 "이런 형태로" 예시 하나)와 "자유롭게 생성"을 먼저 보여 주고, 그 아래 예시와 외부 레퍼런스를 붙인다.
 // 갤러리 위치: --gallery <폴더> > GALLERY_DIR > 이 파일 기준 ../gallery > ./gallery
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import os from "node:os";
+import { drawCard } from "./variety-core.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -172,40 +174,66 @@ const previewData = (slug) => {
   return fs.existsSync(f) ? `data:image/webp;base64,${fs.readFileSync(f).toString("base64")}` : "";
 };
 
-function directionCards(dirs) {
-  // 같은 예시 미리보기를 두 방향에 쓰지 않는다(motion-styles-five처럼 여러 방향에 걸린 예시는 첫 방향만, 나머지는 레퍼런스 미리보기)
+/** 기획안마다 "이런 형태로"를 보여 줄 예시 하나: 우리 갤러리 예시(같은 예시는 한 기획안에만) → 방향에 적힌 레퍼런스 → 고른 레퍼런스 */
+function planExamples(dirs) {
   const used = new Set();
+  return dirs.map(({ d, refs = [] }) => {
+    const ad = d.exampleIds.map((id) => ADS.find((a) => a.slug === id)).find((a) => a && !used.has(a.slug));
+    if (ad) {
+      used.add(ad.slug);
+      return { kind: "ad", id: ad.slug, title: ad.title, preview: ad.preview_url ?? "", previewType: "image", appImport: ad.app_import, item: ad };
+    }
+    const r = [...d.exampleIds.map((id) => REFS.items.find((x) => x.id === id)), ...refs.map((x) => x.ref)].find((x) => x && !used.has(x.id));
+    if (r) {
+      used.add(r.id);
+      return { kind: "ref", id: r.id, title: r.title, preview: r.preview ?? "", previewType: r.preview_type === "video" ? "video" : "image", ref: r };
+    }
+    return null;
+  });
+}
+
+const PLAN = (i) => `기획안 ${String.fromCharCode(65 + i)}`;
+
+function directionCards(dirs) {
+  const examples = planExamples(dirs);
   return dirs
-    .map(({ d, why, refs }, i) => {
-      const ex = d.exampleIds.map((id) => ADS.find((a) => a.slug === id)).filter(Boolean)[0];
-      const img = ex && !used.has(ex.slug) ? previewData(ex.slug) : "";
-      if (img) used.add(ex.slug);
-      // 우리 예시 미리보기가 없으면 방향에 적힌 레퍼런스, 그다음 고른 레퍼런스의 미리보기
-      const r = [...d.exampleIds.map((id) => REFS.items.find((x) => x.id === id)), ...refs.map((x) => x.ref)].find((x) => x?.preview);
-      const media = img
-        ? `<img src="${img}" alt="${esc(ex.title)} 미리보기">`
-        : r
-          ? r.preview_type === "video"
-            ? `<video src="${esc(r.preview)}" muted loop autoplay playsinline preload="metadata"></video>`
-            : `<img src="${esc(r.preview)}" alt="${esc(r.title)}" loading="lazy">`
-          : `<div class="noimg">미리보기 없음</div>`;
+    .map(({ d, why, refs, variety }, i) => {
+      const ex = examples[i];
+      const local = ex?.kind === "ad" ? previewData(ex.id) : "";
+      const media = local
+        ? `<img src="${local}" alt="${esc(ex.title)} 미리보기">`
+        : ex?.preview
+          ? ex.previewType === "video"
+            ? `<video src="${esc(ex.preview)}" muted loop autoplay playsinline preload="metadata"></video>`
+            : `<img src="${esc(ex.preview)}" alt="${esc(ex.title)}" loading="lazy">`
+          : `<div class="noimg">예시 없음</div>`;
       return `<article>
   <div class="media">${media}</div>
   <div class="body">
-    <p class="rank">방향 ${i + 1}${why.length ? ` · ${esc(why.join(", "))}` : " · 기본 후보"}</p>
+    <p class="rank">${i + 1}. ${PLAN(i)}${i === 0 ? " · 추천" : ""}${why.length ? ` · ${esc(why.join(", "))}` : " · 기본 후보"}</p>
     <h2>${esc(d.name)}</h2>
     <p>${esc(d.line)}</p>
     <h3>형태</h3><p class="meta">${esc(d.form)}</p>
     <h3>골격</h3><p class="meta">${esc(d.skeleton)}</p>
     <h3>시그니처 · 전환</h3><p class="meta">${esc(d.signature)} · ${esc(d.transitions)}</p>
     <p class="meta">글꼴·색: ${esc(d.look)} · 앱: ${esc(d.app)}</p>
-    ${ex ? `<p class="meta">가까운 예시: <code>${esc(ex.slug)}</code> (${esc(ex.title)})</p>` : ""}
-    ${refs.length ? `<p class="meta">레퍼런스: ${refs.map(({ ref }) => `<a href="${esc(ref.source_url)}">${esc(ref.title)}</a>`).join(" · ")}</p>` : ""}
-    <p class="pick">고르려면: <code>방향 ${i + 1}</code> 또는 <code>${esc(d.id)}</code></p>
+    ${variety ? `<h3>변주 카드</h3><p class="meta">${esc(variety.summary)}</p>` : ""}
+    ${ex ? `<p class="meta">예시(이런 형태로): ${ex.kind === "ad" ? `<code>${esc(ex.id)}</code> ${esc(ex.title)}${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 <a href="${esc(ex.ref.source_url)}">${esc(ex.title)}</a>`}</p>` : ""}
+    ${refs.length ? `<p class="meta">더 볼 레퍼런스: ${refs.map(({ ref }) => `<a href="${esc(ref.source_url)}">${esc(ref.title)}</a>`).join(" · ")}</p>` : ""}
+    <p class="pick">고르려면: <code>${i + 1}번</code> 또는 <code>${esc(d.id)}</code></p>
   </div>
 </article>`;
     })
-    .join("\n");
+    .join("\n") + `
+<article>
+  <div class="media"><div class="noimg">정해 둔 예시 없음</div></div>
+  <div class="body">
+    <p class="rank">${dirs.length + 1}. 자유롭게 생성</p>
+    <h2>자유롭게 생성</h2>
+    <p>정해 둔 방향·예시에 묶지 않고 브리프·소재·음악만 보고 새 구성을 짭니다(방향을 섞거나 메뉴에 없는 형태).</p>
+    <p class="pick">고르려면: <code>${dirs.length + 1}번</code> 또는 <code>자유</code></p>
+  </div>
+</article>`;
 }
 
 function page(request, recs, refs = [], dirs = []) {
@@ -246,12 +274,12 @@ summary{cursor:pointer;font-size:13px;margin-top:8px}.pick{font-size:13px;margin
 </style></head><body><main>
 <h1>이렇게 만들어 볼까요?</h1>
 <p class="req">요청: ${esc(request)}</p>
-${dirs.length ? `<p class="req">모션 방향 3개: 바닥 소재 위에 어떤 모션그래픽을 어떤 형태로 얹을지입니다. 하나를 고르면 그 골격으로 샷을 짭니다.</p>
+${dirs.length ? `<p class="req">기획안 3개와 자유롭게 생성: 바닥 소재 위에 어떤 모션그래픽을 어떤 형태로 얹을지입니다. 기획안마다 붙은 예시가 그 형태입니다. 하나를 고르면 그 골격으로 샷을 짭니다.</p>
 <div class="grid">
 ${directionCards(dirs)}
 </div>
 <h1 class="refs-h">빌드 키트가 있는 예시</h1>
-<p class="req">고른 방향과 가까운 예시가 있으면 키트를 복사해 출발점으로 씁니다(<code>gallery.mjs use &lt;slug&gt;</code>).</p>` : ""}
+<p class="req">예시처럼 만들고 싶으면 키트를 복사해 출발점으로 씁니다(<code>gallery.mjs use &lt;slug&gt;</code>).</p>` : ""}
 <div class="grid">
 ${cards}
 </div>
@@ -323,6 +351,19 @@ if (cmd === "list" || !cmd) {
   const ranked = ADS.map((a) => score(a, request)).sort((x, y) => y.score - x.score);
   // 맞는 기법·카테고리가 없는 예시는 빼고, 하나도 안 맞으면 앞에서 top개
   const dirs = pickDirections(request).map((r) => ({ ...r, refs: pickRefs(`${request} ${r.d.refWords ?? ""}`, 2) }));
+  // 변주 카드: 기획안마다 한 장, 최근 광고 기록(variety.mjs와 같은 파일)과 다른 기획안의 카드를 피해서 뽑는다 (references/variety.md)
+  const history = (() => {
+    try {
+      return JSON.parse(fs.readFileSync(process.env.ADMAKER_VARIETY_HISTORY ?? path.join(os.homedir(), ".admaker", "variety-history.json"), "utf8")).items ?? [];
+    } catch {
+      return [];
+    }
+  })();
+  const cards = [];
+  for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards })));
+  const freeCard = drawCard({ direction: "free", history, exclude: cards });
+  const cardsFile = path.join(path.dirname(path.resolve(outArg)), "variety-cards.json");
+  fs.writeFileSync(cardsFile, JSON.stringify({ plans: cards, free: freeCard }, null, 2));
   const fit = ranked.filter((r) => r.why.length);
   // 기법이 맞는 예시가 없으면 고른 방향의 예시를 먼저, 그다음 가까운 순
   const fromDirs = [...new Set(dirs.flatMap(({ d }) => d.exampleIds))].map((id) => ranked.find((r) => r.item.slug === id)).filter(Boolean);
@@ -331,8 +372,17 @@ if (cmd === "list" || !cmd) {
   const refs = pickRefs(request, refTop);
   fs.writeFileSync(outArg, page(request, recs, refs, dirs));
   if (dirs.length) {
-    console.log("모션 방향 (사용자에게 이 3개를 먼저 보여 줌):");
-    dirs.forEach(({ d, why }, i) => console.log(`방향 ${i + 1}. ${d.id} · ${d.name}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     전환: ${d.transitions}${d.exampleIds.length ? `\n     예시: ${d.exampleIds.join(", ")}` : ""}`));
+    const examples = planExamples(dirs);
+    console.log("기획안 (사용자에게 이 4줄을 번호 목록 하나로 보여 줌, 1번 추천):");
+    dirs.forEach(({ d, why }, i) => {
+      const ex = examples[i];
+      const exLine = ex
+        ? `\n     예시(이런 형태로): ${ex.kind === "ad" ? `${ex.title} [${ex.id}]${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 ${ex.title} [${ex.id}]`}${ex.preview ? `\n     미리보기: ${ex.preview}` : ""}`
+        : "\n     예시: 없음";
+      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     변주: ${dirs[i].variety.summary}`);
+    });
+    console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     변주: ${freeCard.summary}`);
+    console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 내보낸 뒤 variety.mjs record)`);
     console.log("빌드 키트가 있는 예시:");
   } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));

@@ -2,7 +2,7 @@
 
 이 스킬로 만든 예시 광고 모음입니다. 항목마다 **요청 프롬프트(영문), 쓴 샷 카드와 기법, 엔진 버전, 결과 영상**을 한 줄로 묶습니다. 형식은 yihui-dev/awesome-opus5-5-videos의 `prompts/` + `data/videos.json` 구조를 admaker 광고에 맞게 바꾼 것입니다(ATTRIBUTION).
 
-- `../references/motion-directions.md`: 모션 방향 메뉴(형태·골격·시그니처·전환·어울리는 제품/목적). `recommend`는 이 메뉴에서 언제나 방향 3개를 먼저 고르고, 아래 예시·레퍼런스는 그 방향을 보여 주는 자료로 붙입니다.
+- `../references/motion-directions.md`: 모션 방향 메뉴(형태·골격·시그니처·전환·어울리는 제품/목적). `recommend`는 이 메뉴에서 언제나 방향 3개를 기획안 A–C로 먼저 고르고, 기획안마다 "이런 형태로" 예시 하나(우리 예시 먼저, 없으면 레퍼런스)를 붙인 뒤 4번 "자유롭게 생성"을 더합니다. 아래 예시·레퍼런스는 더 볼 자료입니다.
 - `data/ads.json`: 우리가 렌더한 예시 목록(빌드 키트 있음).
 - `data/references.json`: 외부 레퍼런스 색인 190개(video-shotcraft 샷 카드 124장, lemo-opuscar 필름 스타일 66종). 항목마다 한국어 요약, 태그, "admaker로 만들면" 힌트, 원문·미리보기 링크. opuscar 66종은 `demo`(데모 영상 제목·길이·mp4 링크, 원 저장소 Releases `films`)도 있습니다. 영상 한 편이 4–283MB(대부분 수십 MB)라 저장소에는 넣지 않고 링크만 둡니다(CC BY 4.0, LemoLab 표기). 원문·영상·코드는 넣지 않았고 미리보기는 원 저장소에서 불러옵니다. 빌드 키트가 없으니 샷 카드로 새로 짤 때 연출 후보로 씁니다.
 - (아래 `ads.json` 설명) 스킬이 비슷한 요청을 받으면 `techniques`·`shots`·`category`로 가까운 항목을 찾아 트리트먼트 출발점으로 씁니다.
@@ -17,13 +17,13 @@
 
 ```sh
 node templates/gallery.mjs list                                   # 전체 목록
-node templates/gallery.mjs recommend "<요청 요약>" --out gallery-preview.html   # 모션 방향 3개 + 가까운 예시 2–3개 미리보기 페이지
+node templates/gallery.mjs recommend "<요청 요약>" --out gallery-preview.html   # 기획안 3개(예시 미리보기) + 자유롭게 생성 + 가까운 예시·레퍼런스 미리보기 페이지
 node templates/gallery.mjs directions                              # 모션 방향 메뉴 목록
 node templates/gallery.mjs refs "카드 스택 3d" [--refs 12]       # 외부 레퍼런스 검색
 node templates/gallery.mjs use <slug> <프로젝트 폴더>              # 고른 예시의 빌드 키트 복사
 ```
 
-- `recommend`는 먼저 모션 방향 3개를 고릅니다. 방향의 `어울림` 낱말(제품·목적·무드)이 요청에 걸리면 점수를 얻고, 모자라면 `기본: 예` 방향(에디토리얼 키네틱, 비트 몽타주, 혜택 펀치)으로 채웁니다. 손글씨 감성은 그 낱말이 있을 때만 나옵니다. 요청에 기법 낱말이 없으면 예시도 고른 방향의 `예시` 순으로 보여 줍니다.
+- `recommend`는 먼저 모션 방향 3개를 고릅니다. 방향의 `어울림` 낱말(제품·목적·무드)이 요청에 걸리면 점수를 얻고, 모자라면 `기본: 예` 방향(에디토리얼 키네틱, 비트 몽타주, 혜택 펀치)으로 채웁니다. 손글씨 감성은 그 낱말이 있을 때만 나옵니다. 기획안마다 변주 카드(`../references/variety.md`)가 한 장씩 붙고, 전문은 페이지 옆 `variety-cards.json`에 저장됩니다. 요청에 기법 낱말이 없으면 예시도 고른 방향의 `예시` 순으로 보여 줍니다.
 - 방향을 새로 넣을 때는 `motion-directions.md` 형식대로 절 하나를 추가합니다(줄 이름을 바꾸면 `gallery.mjs`가 못 읽음).
 - `recommend`는 우리 예시 2–3개 아래에 외부 레퍼런스 6개(`--refs N`)를 같이 붙입니다. 레퍼런스는 요청 낱말을 태그·한국어 요약에 맞춰 고르고, 같은 출처·카테고리는 2개까지만 넣어 한쪽으로 몰리지 않게 합니다.
 - `recommend`는 요청 문장의 낱말(전환·플래시·지도·손글씨·3D·파티클 …)을 `techniques`·`category`에 맞춰 점수를 매기고, 맞는 예시만 보여 줍니다. 페이지에는 움직이는 미리보기(`previews/<slug>.webp`), 바꿔 쓸 자리(`slots`), 예시 프롬프트가 들어갑니다.
@@ -36,7 +36,7 @@ node templates/gallery.mjs use <slug> <프로젝트 폴더>              # 고�
 
 1. `samples/<slug>/`에 gif(270px 폭, 15fps 권장), `stills.png`, 빌드 스크립트, README를 둡니다. 사용자 소재·브랜드는 넣지 않습니다(자리표시 소재로 다시 렌더).
 2. `prompts/<slug>.md`를 `_template.md` 형식으로 씁니다. 프롬프트는 영문, 설명은 한국어.
-3. 빌드 파일을 `kits/<slug>/`에 복사하고, gif로 `previews/<slug>.webp`를 만듭니다(`ffmpeg -i <gif> -vf "fps=10,scale=180:-2" -loop 0 -quality 55 previews/<slug>.webp`).
+3. 빌드 파일을 `kits/<slug>/`에 복사하고, gif로 `previews/<slug>.webp`를 만듭니다(`ffmpeg -i <gif> -vf "fps=10,scale=180:-2" -loop 0 -quality 55 previews/<slug>.webp`). `ads.json`의 `preview_url`은 이 파일의 raw.githubusercontent 주소입니다.
 4. `data/ads.json`에 항목을 추가합니다(`kit`, `slots` 포함). `verified`는 실제 엔진 렌더로 확인했을 때만 true.
 
 | 필드 | 뜻 |
@@ -52,6 +52,7 @@ node templates/gallery.mjs use <slug> <프로젝트 폴더>              # 고�
 | `prompt` | 요청 프롬프트 전문 (영문) |
 | `prompt_file` | `prompts/<slug>.md` |
 | `preview` | 결과 gif (저장소 경로) |
+| `preview_url` | 작은 미리보기(`previews/<slug>.webp`)의 공개 주소. 기획안 목록·앱 채팅 선택 카드 미리보기로 씀 |
 | `build` | 다시 만드는 스크립트 (저장소 경로) |
 | `kit` | `{ dir, kind: timeline-section·timeline-full·script, entry, run[] }` 빌드 키트 |
 | `slots` | 이 예시를 다른 광고로 바꿀 때 고칠 자리 (한국어) |

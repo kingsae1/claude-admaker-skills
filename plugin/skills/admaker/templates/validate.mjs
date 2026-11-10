@@ -1,12 +1,12 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
-// + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11) (△ 경고, 종료 코드에 영향 없음)
+// + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11), 움직이는 층이 모자란 구간(F2) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
 // 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold"]);
-const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "perspective", "easing"]);
+const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing"]);
 const EASINGS = new Set(["linear", "none", "slow",
   ...["Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "Back", "Elastic", "Bounce"].flatMap((n) => [`easeIn${n}`, `easeOut${n}`, `easeInOut${n}`])]);
 // gsap-core가 아는 이징: 이름(방향 생략 = .out), 설정값 "back.out(1.7)", "steps(6)". CustomEase·EasePack(rough, slow(…), expoScale)은 등록 안 됨
@@ -187,6 +187,20 @@ for (const [id, c] of clipsAll) {
     const k = trs[i][1].transitionKey ?? "fade";
     if (!PLAIN.has(k) && k === (trs[i - 1][1].transitionKey ?? "fade")) warn(trs[i][0], `전환 "${k}"를 연속 두 번 씀 (transitions.md: 섞어 쓰기)`);
   }
+}
+// F2 화려함 기본값: 3초 구간마다 바닥 소재를 빼고 움직이는 층(모션·글자 애니메이션·어댑터·이펙트)이 3개 이상인지. 마지막 1.5초(엔드카드 정지)는 뺌
+{
+  const footIds = new Set(footage.map(([id]) => id));
+  const moving = clipsAll.filter(([id, c]) => !footIds.has(id) && !["Audio", "Transition"].includes(c.type)
+    && ((c.animations ?? []).length || c.style?.characterAnimation || ["Adapter", "Effect", "Lottie"].includes(c.type)))
+    .map(([, c]) => c.timing?.display).filter(Boolean);
+  const end = Math.max(0, ...clipsAll.map(([, c]) => c.timing?.display?.to ?? 0));
+  const thin = [];
+  for (let t = 0; t + 3e6 <= end - 1.5e6; t += 3e6) {
+    const n = moving.filter((d) => d.from < t + 3e6 && d.to > t).length;
+    if (n < 3) thin.push(`${(t / 1e6).toFixed(0)}–${((t + 3e6) / 1e6).toFixed(0)}초(${n}층)`);
+  }
+  if (thin.length) warn("density", `움직이는 층이 3개 미만인 구간: ${thin.join(", ")}. 기본은 화려하게: 장면마다 주인공·그래픽 보조·빛 세 층 (aesthetic-rules F2, 차분한 톤을 요청받았으면 무시)`);
 }
 for (const [f, ids] of entranceStarts) if (ids.length >= 3) warn(ids.join(", "), `프레임 ${f}에 입장 ${ids.length}개 동시 시작 (R7: 3–6프레임 시차)`);
 console.log(issues.length ? issues.join("\n") : "✓ 검사 통과");
