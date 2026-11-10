@@ -31,7 +31,7 @@
 
 | 업종 | 규칙 | 뽑지 않는 아이디어 |
 |---|---|---|
-| medical | 의료: 전후 사진·효과 보장·체험담 과장 금지 | `before-after`, `metaphor-object`, `word-play`, `tease-reveal`, `product-pov`, `ingredient-macro`, `making-of`, `menu-pick` |
+| medical | 의료: 전후 사진·전후 비교·효과 보장·치료 경험담 금지 | `before-after`, `metaphor-object`, `word-play`, `tease-reveal`, `product-pov`, `ingredient-macro`, `making-of`, `menu-pick`, `one-moment`, `split-compare`, `real-voice` |
 | finance | 금융: 수익·원금 보장, 과장 표현 금지 | `before-after`, `product-pov`, `word-play`, `one-moment`, `tease-reveal`, `ingredient-macro`, `making-of`, `metaphor-object` |
 | health-food | 건강기능식품·다이어트: 질병 치료·예방, 감량 보장 표현 금지 | `before-after`, `metaphor-object` |
 | food | 식품: 불결한 비포 장면 금지(위생 연상) | - |
@@ -41,7 +41,7 @@
 
 ## 쓰는 법
 
-1. **메시지 먼저.** 기획안을 보여 주기 전에 `director.md` §3(메시지 설계)으로 제품·장점(사용자 자료에 있는 것만)·시청자를 한 줄씩 정합니다.
+1. **메시지 먼저.** 기획안을 보여 주기 전에 `director.md` §3(메시지 설계)으로 제품·장점(사용자 자료에 있는 것만)·시청자를 한 줄씩 정합니다. 사용자 자료에 후기·평점(출처 포함)이나 같은 대상의 전후 사진이 있는지도 봅니다. 모르면 브리프 질문에 한 줄로 묻고, 있는 것만 `gallery.mjs recommend --evidence reviews,before-after`(MCP `get_gallery({ request, evidence })`)로 넘깁니다. 없으면 그 자료가 필요한 아이디어(`real-voice`, `before-after`)는 기획안에 붙지 않습니다(`HARD_EVIDENCE`).
 2. **기획안마다 아이디어 하나.** 기획안 목록(`gallery.mjs recommend`, MCP `get_gallery({ request })`)이 기획안마다 방향·변주 카드와 함께 아이디어를 붙입니다. 요청 낱말에 맞는 것 위주로, 최근 4편과 같은 목록의 다른 기획안에서 쓴 아이디어는 피합니다.
 3. **고르면 짧은 트리트먼트.** 고른 기획안으로 로그라인 한 문장(누가·무엇을·왜, 제품 이름과 장점 하나가 들어감)과 훅 후보 3개(`copy.md` §8 2번, 세 칸: 화면·내레이션·자막)를 쓰고 하나를 고릅니다. 아이디어의 `이야기` 줄이 씬표 골격의 출발점입니다(방향의 골격 슬롯에 아이디어의 장면을 채움).
 4. **바로 검사.** `node templates/idea.mjs check concept.json`(MCP `check_concept`)에 요청·아이디어·로그라인·제품·장점·근거를 넣습니다. `problems`가 있으면 아이디어나 문구를 바꾸고 다시 검사합니다. `questions` 네 줄은 직접 답해 씬표 아래에 적습니다. 특히 "제품을 다른 제품으로 바꿔도 그대로 말이 되나요?"에 "예"면 이 제품만의 장면이 없는 것이니 바꿉니다.
