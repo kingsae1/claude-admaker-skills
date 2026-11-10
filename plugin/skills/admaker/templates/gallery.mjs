@@ -1,7 +1,7 @@
 // 예시 갤러리: 요청과 가까운 예시를 골라 미리보기 페이지로 보여 주고(recommend), 고른 예시의 빌드 키트를 프로젝트에 복사한다(use).
 // 사용:
 //   node gallery.mjs list
-//   node gallery.mjs recommend "9:16 배송 광고, 지도에 경로가 그려지고 플래시 전환" [--top 3] [--out gallery-preview.html]
+//   node gallery.mjs recommend "9:16 배송 광고, 지도에 경로가 그려지고 플래시 전환" [--top 3] [--evidence reviews,before-after] [--out gallery-preview.html]
 //   node gallery.mjs refs "카드 스택 3d" [--refs 12]     # 외부 레퍼런스(shotcraft 샷 124 · opuscar 스타일 66) 검색
 //   node gallery.mjs use <slug> [프로젝트 폴더]
 //   node gallery.mjs directions                         # 모션 방향 메뉴(references/motion-directions.md) 목록
@@ -26,6 +26,8 @@ const galleryArg = flag("gallery");
 const top = Number(flag("top", 3));
 const outArg = flag("out", "gallery-preview.html");
 const refTop = Number(flag("refs", 6));
+// 사용자에게 있는 실제 자료: reviews(후기·평점), before-after(같은 대상의 전후 사진). 없으면 그 자료가 필요한 아이디어는 뽑지 않음
+const evidenceArg = (flag("evidence", "") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
 const [cmd, ...rest] = args;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -370,7 +372,7 @@ if (cmd === "list" || !cmd) {
   for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards, request })));
   const freeCard = drawCard({ direction: "free", history, exclude: cards, request });
   const ideas = [];
-  for (const r of [...dirs, { variety: freeCard }]) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas })));
+  for (const r of [...dirs, { variety: freeCard }]) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas, evidence: evidenceArg })));
   freeCard.idea = ideas[ideas.length - 1].id;
   const planEx = planExamples(dirs);
   dirs.forEach((r, i) => {
