@@ -59,7 +59,8 @@ if (cmd === "card") {
   items.slice(-10).forEach((h, i, arr) => {
     const prev = arr.slice(0, i);
     const near = Math.max(0, ...prev.map((p) => similarity(h, p)));
-    console.log(`${h.at?.slice(0, 10) ?? "-"} ${h.direction} ${h.title ?? ""} — 앞 광고와 최대 ${Math.round(near * 100)}%`);
+    const sameIdea = h.idea && prev.some((p) => p.idea === h.idea);
+    console.log(`${h.at?.slice(0, 10) ?? "-"} ${h.direction}${h.idea ? ` · ${h.idea}` : ""} ${h.title ?? ""} — 앞 광고와 최대 ${Math.round(near * 100)}%${sameIdea ? " (아이디어가 앞 광고와 같음)" : ""}`);
   });
 } else if (cmd === "axes") {
   for (const a of AXES) {
