@@ -2,7 +2,7 @@
 // 모양(모션 방향·변주 카드)은 화면을, 아이디어는 이야기를 정한다. 둘 다 광고마다 달라야 광고끼리 닮지 않는다 (references/ideas.md).
 // 순수 모듈: 스킬 CLI(idea.mjs, gallery.mjs)와 앱 MCP(get_gallery, check_concept)가 같이 쓴다 (sync-skill-mcp.mjs가 앱으로 복사).
 //
-// drawIdea({ request, history, exclude, seed, direction }) → 아이디어 하나 (요청 낱말에 맞고, 최근 광고·같은 목록에서 쓴 아이디어는 피함)
+// drawIdea({ request, history, exclude, seed, evidence }) → 아이디어 하나 (요청 낱말에 맞고, 최근 광고·같은 목록에서 쓴 아이디어는 피함)
 // checkConcept({ request, idea, logline, product, benefits, copy, evidence }) → { ok, problems, questions }
 // rerankDirections(ranked, history) → 최근에 쓴 방향은 점수를 낮추고, 점수가 같으면 덜 쓴 방향을 앞으로
 
@@ -164,9 +164,12 @@ export const IDEAS = [
 
 const IDEA_IDS = new Set(IDEAS.map((i) => i.id));
 
+/** 사용자 자료가 없으면 지어낼 수밖에 없는 근거: 없으면 drawIdea가 아예 뽑지 않음 */
+export const HARD_EVIDENCE = ['reviews', 'before-after'];
+
 /** 업종 규칙: 요청 낱말이 걸리면 그 아이디어·문구는 안 씀 */
 export const CATEGORY_RULES = [
-  { id: 'medical', re: /병원|의원|클리닉|시술|성형|피부과|치과|한의원|의료/, avoidIdeas: ['before-after', 'metaphor-object', 'word-play', 'tease-reveal', 'product-pov', 'ingredient-macro', 'making-of', 'menu-pick'], banned: /완치|치료 효과|부작용 없|통증 없|100\s*%|확실한 효과|보장/, note: '의료: 전후 사진·효과 보장·체험담 과장 금지' },
+  { id: 'medical', re: /병원|의원|클리닉|시술|성형|피부과|치과|한의원|의료/, avoidIdeas: ['before-after', 'metaphor-object', 'word-play', 'tease-reveal', 'product-pov', 'ingredient-macro', 'making-of', 'menu-pick', 'one-moment', 'split-compare', 'real-voice'], banned: /완치|치료 효과|부작용 없|통증 없|100\s*%|확실한 효과|보장/, note: '의료: 전후 사진·전후 비교·효과 보장·치료 경험담 금지' },
   { id: 'finance', re: /금융|은행|보험|대출|투자|증권|카드사|코인/, avoidIdeas: ['before-after', 'product-pov', 'word-play', 'one-moment', 'tease-reveal', 'ingredient-macro', 'making-of', 'metaphor-object'], banned: /수익 보장|원금 보장|무조건|확정 수익|100\s*%|손실 없|공짜/, note: '금융: 수익·원금 보장, 과장 표현 금지' },
   { id: 'health-food', re: /건강기능|영양제|다이어트|보조제/, avoidIdeas: ['before-after', 'metaphor-object'], banned: /치료|완치|예방|살 빠지|체중 감량 보장|약효|100\s*%/, note: '건강기능식품·다이어트: 질병 치료·예방, 감량 보장 표현 금지' },
   { id: 'food', re: /카페|커피|식당|음식|빵|베이커리|디저트|식품|음료|맛집|배달/, avoidIdeas: [], banned: /벌레|곰팡이|상한|더러운/, note: '식품: 불결한 비포 장면 금지(위생 연상)' },
@@ -210,10 +213,12 @@ export function ideasFor(request) {
  * 아이디어 하나 뽑기. 요청 낱말이 맞는 것 위주로, 최근 광고(recent편)·같은 목록(exclude)에서 쓴 것은 남는 게 있으면 피한다.
  * @returns {{ id, name, line, story, needs, sense, why: string[] }}
  */
-export function drawIdea({ request, history = [], exclude = [], seed, recent = 4 } = {}) {
+export function drawIdea({ request, history = [], exclude = [], seed, recent = 4, evidence = [] } = {}) {
   const r = rng(Number.isFinite(seed) ? seed : Math.floor(Math.random() * 2 ** 31));
   let pool = ideasFor(request);
   if (!pool.length) pool = IDEAS.filter((i) => !i.avoid.length).map((idea) => ({ idea, why: [] }));
+  // 후기·전후 사진이 있어야 하는 아이디어는 사용자가 그 자료가 있다고 했을 때만(evidence에 'reviews'·'before-after')
+  pool = pool.filter((p) => !(p.idea.needsEvidence ?? []).some((n) => HARD_EVIDENCE.includes(n) && !evidence.includes(n)));
   const taken = new Set(exclude.map((x) => (typeof x === 'string' ? x : x?.id)).filter(Boolean));
   const notTaken = pool.filter((p) => !taken.has(p.idea.id));
   if (notTaken.length) pool = notTaken;
@@ -295,14 +300,16 @@ export function rerankDirections(ranked, history = []) {
   const recent2 = new Set(last.slice(-2));
   const recent4 = new Set(last.slice(-4));
   const count = (id) => last.slice(-8).filter((x) => x === id).length;
+  // 어울림 낱말이 맞은 방향(fit)은 최근에 썼어도 맞지 않은 방향보다 앞: 돌려쓰기는 어울리는 방향 안에서만
+  // (최근 2편 = 어울리는 방향 중 맨 뒤, 3–4편 = 점수 절반)
   return ranked
     .map((r) => {
       let score = r.score;
-      if (score > 0 && recent2.has(r.d.id)) score = 0;
+      if (score > 0 && recent2.has(r.d.id)) score = score * 0.01;
       else if (score > 0 && recent4.has(r.d.id)) score = score / 2;
-      return { ...r, score, used: count(r.d.id) };
+      return { ...r, score, fit: score > 0 && (r.why?.length ?? 0) > 0, used: count(r.d.id) };
     })
-    .sort((a, b) => b.score - a.score || a.used - b.used || Number(b.d.isDefault) - Number(a.d.isDefault));
+    .sort((a, b) => Number(b.fit) - Number(a.fit) || b.score - a.score || a.used - b.used || Number(b.d.isDefault) - Number(a.d.isDefault));
 }
 
 /** 예시 고르기: 최근 기록에 쓴 예시(history[].example)는 다른 예시가 있으면 뒤로 */

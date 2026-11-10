@@ -1,6 +1,6 @@
 // 아이디어 카드 CLI: 요청에 맞는 이야기 장치를 뽑고(draw), 고른 아이디어·로그라인·문구가 말이 되는지 검사한다(check). references/ideas.md
 // 사용:
-//   node idea.mjs draw "카페 신메뉴 15초 광고" [--n 3] [--seed N] [--json]   # 최근 기록(variety-history.json)에 쓴 아이디어는 피함
+//   node idea.mjs draw "카페 신메뉴 15초 광고" [--n 3] [--seed N] [--evidence reviews,before-after] [--json]   # 최근 기록(variety-history.json)에 쓴 아이디어는 피함
 //   node idea.mjs check concept.json                                     # { request, idea, logline, product, benefits, copy, evidence }
 //   node idea.mjs list
 import fs from "node:fs";
@@ -25,6 +25,7 @@ const HISTORY = flag("history") ?? process.env.ADMAKER_VARIETY_HISTORY ?? path.j
 const n = Number(flag("n", 3));
 const seed = flag("seed");
 const asJson = has("json");
+const evidence = (flag("evidence", "") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
 const [cmd, ...rest] = args;
 const history = (() => {
   try {
@@ -37,7 +38,7 @@ const history = (() => {
 if (cmd === "draw") {
   const request = rest.join(" ").trim();
   const picked = [];
-  for (let i = 0; i < n; i++) picked.push(drawIdea({ request, history, exclude: picked, seed: seed ? Number(seed) + i * 104729 : undefined }));
+  for (let i = 0; i < n; i++) picked.push(drawIdea({ request, history, exclude: picked, evidence, seed: seed ? Number(seed) + i * 104729 : undefined }));
   if (asJson) console.log(JSON.stringify(picked, null, 2));
   else picked.forEach((idea, i) => console.log(`${i + 1}. ${ideaText(idea)}${idea.why.length ? `\n- 맞는 낱말: ${idea.why.join(", ")}` : "\n- 기본 후보"}\n`));
 } else if (cmd === "check") {
