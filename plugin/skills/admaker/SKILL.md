@@ -96,6 +96,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
      - 기획안 A–C: 그 방향의 골격·시그니처·전환에서 시작하고, 붙인 예시의 구성(`prompt`·`shots`·`techniques`, MCP는 `get_gallery({ slug })`)을 형태 참고로 씁니다. 예시 파일을 그대로 쓰지 않고 사용자 소재·문구·색으로 새로 짭니다. 로컬 스킬에서 예시에 빌드 키트가 있고 사용자가 "예시처럼"을 원하면 `node <이 스킬 폴더>/templates/gallery.mjs use <slug> .`로 복사해 출력된 "바꿔 쓸 자리"부터 바꿉니다. 원래 예시 파일은 고치지 않습니다. MCP에는 빌드 키트를 돌릴 곳이 없으니 예시 구성을 보고 ProjectJSON을 직접 짭니다.
      - 자유롭게 생성: 메뉴의 방향에 묶이지 않고 브리프·소재·음악에 맞춰 형태·골격·시그니처를 직접 정합니다. 그래도 `aesthetic-rules.md`·`transitions.md` 규칙(소재를 덮지 않음, 시그니처 한 번, 전환 2–4종)은 지킵니다. 씬표를 보여 줄 때 정한 형태를 한 줄로 먼저 적습니다.
      - 고른 줄(기획안 방향과 예시, 또는 "자유")은 `TREATMENT.md`의 "모션 방향"에 적습니다.
+     - **변주 카드**: 기획안마다 붙어 나오는 변주 카드(구도·주인공 글자·그래픽 층·빛 층·카메라·전환·색·리듬 한 칸씩)를 고른 기획안과 함께 씬표 맨 위에 적고, 그 칸으로 장면을 짭니다. 같은 방향이라도 광고마다 칸이 달라서 결과가 닮지 않습니다. 내보낸 뒤 카드를 기록합니다(`templates/variety.mjs record`, MCP `get_gallery({ recordVariety })`). 규칙은 `references/variety.md`.
    - 사용자가 갤러리 예시 이름을 직접 말하면(예: "지도 경로 예시처럼") 그 예시를 출발점으로 삼고, 가장 가까운 방향을 한 줄로 알립니다.
    - 기본 방향은 굵고 **화려하게**입니다(큰 글자, 분명한 그리드, 박에 꽂히는 이징, 장면마다 주인공·그래픽·빛 세 층, 박마다 히트, 글자 단위 3D 문구, 쉬지 않는 카메라: `references/aesthetic-rules.md` F1–F6). 사용자가 차분·미니멀·고급 톤을 말하면 한 단계 줄입니다. 가는 선 일러스트·부드러운 페이드·비네트 위주 연출은 사용자가 손글씨·감성을 직접 말했을 때만 후보에 올립니다.
    - 외부 레퍼런스(`gallery/data/references.json`: video-shotcraft 샷 124장 + lemo-opuscar 스타일 66종의 한국어 요약·admaker 구현 힌트, opuscar는 데모 영상 링크 포함)는 연출을 섞을 때도 씁니다. 따로 찾을 때는 `gallery.mjs refs "<낱말>"`(MCP: `get_gallery({ refs })`). 레퍼런스는 손법만 참고하고 원작의 화면·문구·브랜드는 옮기지 않습니다.
@@ -111,7 +112,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 | 단계 | 할 일 | 읽을 파일 |
 |---|---|---|
 | 1. 브리프 | 질문 한 번, 브리프 요약 | `references/ad-formats.md` |
-| 1.5 기획안 고르기 | `gallery.mjs recommend`(MCP: `get_gallery({ request })`)로 기획안 3개(모션 방향, 1번 추천, 기획안마다 갤러리 예시 미리보기)와 "자유롭게 생성"을 번호 목록 하나로 보여 주고 고르게 함. 건너뛰지 않음(MCP 순서에서도 씬표 전). 예시처럼 만들 때는 `gallery.mjs use`로 키트 복사 | `references/motion-directions.md`, `gallery/README.md` |
+| 1.5 기획안 고르기 | `gallery.mjs recommend`(MCP: `get_gallery({ request })`)로 기획안 3개(모션 방향, 1번 추천, 기획안마다 갤러리 예시 미리보기)와 "자유롭게 생성"을 번호 목록 하나로 보여 주고 고르게 함. 건너뛰지 않음(MCP 순서에서도 씬표 전). 예시처럼 만들 때는 `gallery.mjs use`로 키트 복사 | `references/motion-directions.md`, `references/variety.md`, `gallery/README.md` |
 | 2. 트리트먼트 | `TREATMENT.md`: 문구(시청자 단계, 훅 후보 3개, 근거 표), 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵(드롭, 섹션별 음악 사건 수), 사운드 표 | `references/director.md`, `references/copy.md`, `templates/TREATMENT.md` |
 | 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
 | 4. 샷 선택 | 1.5에서 고른 기획안의 골격이 출발점(자유롭게 생성이면 직접 정한 형태). 붙인 예시의 구성·프롬프트를 형태 참고로 쓰고, 예시처럼 만들 때는 그 키트(`gallery/kits/<slug>/`)에서 시작함. 에너지 골격의 슬롯마다 샷 카드를 고르고, 씬 경계마다 전환(트랙 매트·`am-*` 전환·전환 카드·마스크 중 하나, fade만 쓰지 않음)과 이어받는 요소를 정해 씬표 전환 칸에 적음. 시그니처 전환 한 곳, 2–4종 섞기. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문, `references/transitions.md`, `gallery/README.md` |

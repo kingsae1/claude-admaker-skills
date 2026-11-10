@@ -32,6 +32,12 @@
 | [iso-build-up](iso-build-up.md) | 주인공·상승부 | 중 | 2.5–3.5초 | 아이소메트릭 블록이 뒤에서 앞으로 솟음. 평면(SVG, 앱까지 감) / 입체(three, 카메라가 돎) |
 | [liquid-blobs](liquid-blobs.md) | 훅·주인공 배경·엔드카드 | 저–중 | 3–6초 | 광택 액체 방울이 일렁이며 붙었다 떨어짐 (three 커스텀 씬, 브라우저 전용) |
 | [particle-logo](particle-logo.md) | 훅·엔드카드 | 중고 | 2.5–3.5초 | 흩어진 입자가 소용돌이치며 모여 워드마크가 됨 (script, 브라우저 전용) |
+| [pixel-sprite-hop](pixel-sprite-hop.md) | 훅·엔드카드 | 중고 | 2–3초 | 도트 캐릭터가 계단식으로 걸어와 점프하고, 친 블록에서 로고가 튀어나옴 (`pixelated`·`spriteSheet`·`steps`) |
+| [glitch-hit](glitch-hit.md) | 훅·상승부·전환 (얹는 샷) | 최고 | 2–4프레임 | 박 위에서 화면이 가로 조각으로 찢어지고 RGB가 갈라졌다 바로 붙음 (`glitchFilter`·`rgbSplitFilter`) |
+| [z-fly-through](z-fly-through.md) | 훅·주인공·전환 | 중고 | 2–3초 | 깊이별 문구·사진 층 사이를 Z축으로 뚫고 들어가 마지막 층이 다음 장면 (`transform3d`·`z`) |
+| [morph-reveal](morph-reveal.md) | 주인공·엔드카드 | 중고 | 2.5–4초 | 광택 3D 도형이 납작해지며 브랜드 아이콘이 되고 문구가 붙음 (MCP `Morph3D`, three `morph-shapes`) |
+| [group-build](group-build.md) | 상승부·엔드카드 | 중 | 1–1.8초 | 칩·가격표·버튼 묶음이 한 덩어리로 날아와 자리잡고 조각이 하나씩 반응 (`groupId`·`origin: "group"`) |
+| [lottie-accent](lottie-accent.md) | 상승부·엔드카드 (얹는 샷) | 중 | 0.6–1.2초 | 혜택 문구 옆에 체크·하트·반짝이 Lottie가 박에 맞춰 짧게 (`search_lottie`, Adapter lottie) |
 
 ### 모션 스타일 카드 고르는 법
 
@@ -69,7 +75,7 @@
 
 ## 카드 형식
 
-> `map-*` 2장은 엔진 3.0.5로, `transition-*` 5장은 엔진 3.0.7로, 모션 스타일 5장(`kinetic-typo-beat`, `squash-bounce`, `iso-build-up`, `liquid-blobs`, `particle-logo`)은 엔진 3.0.8로 렌더해 확인한 값입니다. 처음 5장(`hook-number-slam` 등)의 값은 shotcraft·opuscar 판례에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
+> `map-*` 2장은 엔진 3.0.5로, `transition-*` 5장은 엔진 3.0.7로, 모션 스타일 5장(`kinetic-typo-beat`, `squash-bounce`, `iso-build-up`, `liquid-blobs`, `particle-logo`)은 엔진 3.0.8로 렌더해 확인한 값입니다. 처음 5장(`hook-number-slam` 등)과 엔진 3.0.19 기능 카드 6장(`pixel-sprite-hop`, `glitch-hit`, `z-fly-through`, `morph-reveal`, `group-build`, `lottie-accent`)의 값은 shotcraft·opuscar 판례·엔진 기본값에서 옮긴 **초기값이고, admaker 엔진으로 렌더해 검증하기 전**입니다. 첫 광고를 만들면서 실제 렌더로 확인한 값으로 고치고, 고친 카드에는 `검증: <엔진 버전>`을 frontmatter에 붙입니다.
 
 새 카드는 아래 형식으로 씁니다. 실제로 렌더해 확인한 값만 파라미터 표에 적습니다.
 

@@ -10,6 +10,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import os from "node:os";
+import { drawCard } from "./variety-core.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -195,7 +197,7 @@ const PLAN = (i) => `기획안 ${String.fromCharCode(65 + i)}`;
 function directionCards(dirs) {
   const examples = planExamples(dirs);
   return dirs
-    .map(({ d, why, refs }, i) => {
+    .map(({ d, why, refs, variety }, i) => {
       const ex = examples[i];
       const local = ex?.kind === "ad" ? previewData(ex.id) : "";
       const media = local
@@ -215,6 +217,7 @@ function directionCards(dirs) {
     <h3>골격</h3><p class="meta">${esc(d.skeleton)}</p>
     <h3>시그니처 · 전환</h3><p class="meta">${esc(d.signature)} · ${esc(d.transitions)}</p>
     <p class="meta">글꼴·색: ${esc(d.look)} · 앱: ${esc(d.app)}</p>
+    ${variety ? `<h3>변주 카드</h3><p class="meta">${esc(variety.summary)}</p>` : ""}
     ${ex ? `<p class="meta">예시(이런 형태로): ${ex.kind === "ad" ? `<code>${esc(ex.id)}</code> ${esc(ex.title)}${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 <a href="${esc(ex.ref.source_url)}">${esc(ex.title)}</a>`}</p>` : ""}
     ${refs.length ? `<p class="meta">더 볼 레퍼런스: ${refs.map(({ ref }) => `<a href="${esc(ref.source_url)}">${esc(ref.title)}</a>`).join(" · ")}</p>` : ""}
     <p class="pick">고르려면: <code>${i + 1}번</code> 또는 <code>${esc(d.id)}</code></p>
@@ -348,6 +351,19 @@ if (cmd === "list" || !cmd) {
   const ranked = ADS.map((a) => score(a, request)).sort((x, y) => y.score - x.score);
   // 맞는 기법·카테고리가 없는 예시는 빼고, 하나도 안 맞으면 앞에서 top개
   const dirs = pickDirections(request).map((r) => ({ ...r, refs: pickRefs(`${request} ${r.d.refWords ?? ""}`, 2) }));
+  // 변주 카드: 기획안마다 한 장, 최근 광고 기록(variety.mjs와 같은 파일)과 다른 기획안의 카드를 피해서 뽑는다 (references/variety.md)
+  const history = (() => {
+    try {
+      return JSON.parse(fs.readFileSync(process.env.ADMAKER_VARIETY_HISTORY ?? path.join(os.homedir(), ".admaker", "variety-history.json"), "utf8")).items ?? [];
+    } catch {
+      return [];
+    }
+  })();
+  const cards = [];
+  for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards })));
+  const freeCard = drawCard({ direction: "free", history, exclude: cards });
+  const cardsFile = path.join(path.dirname(path.resolve(outArg)), "variety-cards.json");
+  fs.writeFileSync(cardsFile, JSON.stringify({ plans: cards, free: freeCard }, null, 2));
   const fit = ranked.filter((r) => r.why.length);
   // 기법이 맞는 예시가 없으면 고른 방향의 예시를 먼저, 그다음 가까운 순
   const fromDirs = [...new Set(dirs.flatMap(({ d }) => d.exampleIds))].map((id) => ranked.find((r) => r.item.slug === id)).filter(Boolean);
@@ -363,9 +379,10 @@ if (cmd === "list" || !cmd) {
       const exLine = ex
         ? `\n     예시(이런 형태로): ${ex.kind === "ad" ? `${ex.title} [${ex.id}]${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 ${ex.title} [${ex.id}]`}${ex.preview ? `\n     미리보기: ${ex.preview}` : ""}`
         : "\n     예시: 없음";
-      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}`);
+      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     변주: ${dirs[i].variety.summary}`);
     });
-    console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬`);
+    console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     변주: ${freeCard.summary}`);
+    console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 내보낸 뒤 variety.mjs record)`);
     console.log("빌드 키트가 있는 예시:");
   } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));

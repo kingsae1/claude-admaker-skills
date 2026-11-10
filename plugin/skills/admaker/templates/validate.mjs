@@ -6,7 +6,7 @@ import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold"]);
-const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "perspective", "easing"]);
+const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing"]);
 const EASINGS = new Set(["linear", "none", "slow",
   ...["Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "Back", "Elastic", "Bounce"].flatMap((n) => [`easeIn${n}`, `easeOut${n}`, `easeInOut${n}`])]);
 // gsap-core가 아는 이징: 이름(방향 생략 = .out), 설정값 "back.out(1.7)", "steps(6)". CustomEase·EasePack(rough, slow(…), expoScale)은 등록 안 됨
