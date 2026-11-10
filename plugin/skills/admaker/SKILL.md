@@ -60,7 +60,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 내레이션(연출표: 화면 문구와 읽을 문장 분리·숫자/기호 읽기·강조·큐 단어, 스타일, 분량, 줄 단위 생성과 비트 싱크, TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
-   - 효과음(소스 고르는 순서, 프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 피크 지연 재기 `templates/sfx-peak.mjs`, 비트에 맞춰 놓기) → `references/sfx.md`.
+   - 효과음은 앱 MCP로 광고를 끝까지 만들 때 바닥 영상이 다 나온 뒤 따로 한 단계로 만듭니다(화면 속 동작·전환·히트에 맞춰, 15초 6–10개, `sfx.md` §7). 효과음(소스 고르는 순서, 프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 피크 지연 재기 `templates/sfx-peak.mjs`, 비트에 맞춰 놓기) → `references/sfx.md`.
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
    - 영상 모델별 프롬프트(Veo·Kling·Gemini Omni·MiniMax·Seedance 공식, 폴백에 안전하게 쓰기, 레퍼런스 태그, 증상별 고치기) → `references/video-models.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
