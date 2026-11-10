@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import os from "node:os";
 import { drawCard } from "./variety-core.mjs";
+import { drawIdea, rerankDirections, rotateExamples } from "./idea-core.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -75,8 +76,9 @@ function scoreDirection(d, text) {
 }
 
 /** 언제나 방향 3개: 맞는 것부터, 모자라면 기본 방향으로 채움 */
-function pickDirections(text, n = 3) {
-  const ranked = DIRECTIONS.map((d) => scoreDirection(d, text)).sort((a, b) => b.score - a.score || Number(b.d.isDefault) - Number(a.d.isDefault));
+function pickDirections(text, n = 3, history = []) {
+  // 최근 기록에 쓴 방향은 뒤로 미루고, 점수가 같으면 덜 쓴 방향이 앞 (idea-core.mjs rerankDirections)
+  const ranked = rerankDirections(DIRECTIONS.map((d) => scoreDirection(d, text)), history);
   const out = ranked.filter((r) => r.score > 0).slice(0, n);
   for (const r of ranked) if (out.length < n && !out.includes(r) && r.d.isDefault) out.push(r);
   for (const r of ranked) if (out.length < n && !out.includes(r) && r.score >= 0) out.push(r);
@@ -175,15 +177,17 @@ const previewData = (slug) => {
 };
 
 /** 기획안마다 "이런 형태로"를 보여 줄 예시 하나: 우리 갤러리 예시(같은 예시는 한 기획안에만) → 방향에 적힌 레퍼런스 → 고른 레퍼런스 */
-function planExamples(dirs) {
+let PLAN_HISTORY = [];
+function planExamples(dirs, history = PLAN_HISTORY) {
   const used = new Set();
   return dirs.map(({ d, refs = [] }) => {
-    const ad = d.exampleIds.map((id) => ADS.find((a) => a.slug === id)).find((a) => a && !used.has(a.slug));
+    // 최근 광고에 쓴 예시는 다른 예시가 있으면 뒤로 (idea-core.mjs rotateExamples)
+    const ad = rotateExamples(d.exampleIds, history).map((id) => ADS.find((a) => a.slug === id)).find((a) => a && !used.has(a.slug));
     if (ad) {
       used.add(ad.slug);
       return { kind: "ad", id: ad.slug, title: ad.title, preview: ad.preview_url ?? "", previewType: "image", appImport: ad.app_import, item: ad };
     }
-    const r = [...d.exampleIds.map((id) => REFS.items.find((x) => x.id === id)), ...refs.map((x) => x.ref)].find((x) => x && !used.has(x.id));
+    const r = [...rotateExamples(d.exampleIds, history).map((id) => REFS.items.find((x) => x.id === id)), ...refs.map((x) => x.ref)].find((x) => x && !used.has(x.id));
     if (r) {
       used.add(r.id);
       return { kind: "ref", id: r.id, title: r.title, preview: r.preview ?? "", previewType: r.preview_type === "video" ? "video" : "image", ref: r };
@@ -197,7 +201,7 @@ const PLAN = (i) => `기획안 ${String.fromCharCode(65 + i)}`;
 function directionCards(dirs) {
   const examples = planExamples(dirs);
   return dirs
-    .map(({ d, why, refs, variety }, i) => {
+    .map(({ d, why, refs, variety, idea }, i) => {
       const ex = examples[i];
       const local = ex?.kind === "ad" ? previewData(ex.id) : "";
       const media = local
@@ -217,6 +221,7 @@ function directionCards(dirs) {
     <h3>골격</h3><p class="meta">${esc(d.skeleton)}</p>
     <h3>시그니처 · 전환</h3><p class="meta">${esc(d.signature)} · ${esc(d.transitions)}</p>
     <p class="meta">글꼴·색: ${esc(d.look)} · 앱: ${esc(d.app)}</p>
+    ${idea ? `<h3>아이디어 · ${esc(idea.name)}</h3><p class="meta">${esc(idea.line)}<br>${esc(idea.story)}</p>` : ""}
     ${variety ? `<h3>변주 카드</h3><p class="meta">${esc(variety.summary)}</p>` : ""}
     ${ex ? `<p class="meta">예시(이런 형태로): ${ex.kind === "ad" ? `<code>${esc(ex.id)}</code> ${esc(ex.title)}${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 <a href="${esc(ex.ref.source_url)}">${esc(ex.title)}</a>`}</p>` : ""}
     ${refs.length ? `<p class="meta">더 볼 레퍼런스: ${refs.map(({ ref }) => `<a href="${esc(ref.source_url)}">${esc(ref.title)}</a>`).join(" · ")}</p>` : ""}
@@ -350,8 +355,7 @@ if (cmd === "list" || !cmd) {
   if (!request) throw new Error('요청 문장을 주세요: node gallery.mjs recommend "..."');
   const ranked = ADS.map((a) => score(a, request)).sort((x, y) => y.score - x.score);
   // 맞는 기법·카테고리가 없는 예시는 빼고, 하나도 안 맞으면 앞에서 top개
-  const dirs = pickDirections(request).map((r) => ({ ...r, refs: pickRefs(`${request} ${r.d.refWords ?? ""}`, 2) }));
-  // 변주 카드: 기획안마다 한 장, 최근 광고 기록(variety.mjs와 같은 파일)과 다른 기획안의 카드를 피해서 뽑는다 (references/variety.md)
+  // 최근 광고 기록(variety.mjs와 같은 파일): 방향·예시·아이디어·변주 카드가 최근 것과 겹치지 않게 (references/variety.md, ideas.md)
   const history = (() => {
     try {
       return JSON.parse(fs.readFileSync(process.env.ADMAKER_VARIETY_HISTORY ?? path.join(os.homedir(), ".admaker", "variety-history.json"), "utf8")).items ?? [];
@@ -359,9 +363,20 @@ if (cmd === "list" || !cmd) {
       return [];
     }
   })();
+  PLAN_HISTORY = history;
+  const dirs = pickDirections(request, 3, history).map((r) => ({ ...r, refs: pickRefs(`${request} ${r.d.refWords ?? ""}`, 2) }));
+  // 변주 카드·아이디어: 기획안마다 한 장, 최근 기록과 다른 기획안의 것을 피해서 뽑는다
   const cards = [];
   for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards, request })));
   const freeCard = drawCard({ direction: "free", history, exclude: cards, request });
+  const ideas = [];
+  for (const r of [...dirs, { variety: freeCard }]) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas })));
+  freeCard.idea = ideas[ideas.length - 1].id;
+  const planEx = planExamples(dirs);
+  dirs.forEach((r, i) => {
+    r.variety.idea = r.idea.id;
+    if (planEx[i]) r.variety.example = planEx[i].id;
+  });
   const cardsFile = path.join(path.dirname(path.resolve(outArg)), "variety-cards.json");
   fs.writeFileSync(cardsFile, JSON.stringify({ plans: cards, free: freeCard }, null, 2));
   const fit = ranked.filter((r) => r.why.length);
@@ -379,10 +394,11 @@ if (cmd === "list" || !cmd) {
       const exLine = ex
         ? `\n     예시(이런 형태로): ${ex.kind === "ad" ? `${ex.title} [${ex.id}]${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 ${ex.title} [${ex.id}]`}${ex.preview ? `\n     미리보기: ${ex.preview}` : ""}`
         : "\n     예시: 없음";
-      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     변주: ${dirs[i].variety.summary}`);
+      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     아이디어: ${dirs[i].idea.name} — ${dirs[i].idea.line}\n       이야기: ${dirs[i].idea.story}\n     변주: ${dirs[i].variety.summary}`);
     });
-    console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     변주: ${freeCard.summary}`);
-    console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 고른 바로 그때 variety.mjs record)`);
+    console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     아이디어: ${ideas[ideas.length - 1].name} — ${ideas[ideas.length - 1].line}\n     변주: ${freeCard.summary}`);
+    console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 고른 바로 그때 variety.mjs record. 카드에 아이디어·예시 id가 들어 있어 같이 기록됨)`);
+    console.log("고른 뒤: 로그라인 한 문장 + 훅 후보 3개를 쓰고 node templates/idea.mjs check concept.json 으로 말이 되는지 검사 (references/ideas.md)");
     console.log("빌드 키트가 있는 예시:");
   } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));
