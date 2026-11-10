@@ -139,7 +139,8 @@ for (const track of ordered) {
     const d = c.timing?.display ?? { from: 0, to: 0 };
     const base = { name: clipName(id), timelineTrackStart: sec(d.from), duration: sec(d.to - d.from) };
     const anim = animationsToWire(id, c);
-    if (c.effects?.length) warn(id, "clip.effects(클립 필터)는 앱이 받지 않아 뺐습니다 (세로 모션 블러 등)");
+    // 클립 필터(dropShadow·glow·rgbSplit 등) — 앱은 transform.clipEffects로 받는다(엔진 형식 그대로)
+    const clipEffects = (c.effects ?? []).filter((e) => e && typeof e.key === "string" && e.key);
     let wc = null;
     switch (c.type) {
       case "Image":
@@ -148,6 +149,18 @@ for (const track of ordered) {
         if (/^blob:/.test(String(c.src ?? "").trim())) warn(id, "src가 blob: 주소라 새 프로젝트에서 안 보일 수 있습니다 (originalSrc의 CDN 주소를 쓰세요)");
         const source = inputFor(c.src, kind, { width: c.source?.width ?? c.transform?.width, height: c.source?.height ?? c.transform?.height, ...(kind === "video" ? { duration: sec(c.timing?.duration) } : {}) });
         wc = { ...base, clipType: kind, source, transform: baseTransform(c) };
+        // 픽셀 아트(엔진 3.0.19+) — 앱은 transform.pixelArt { pixelated, spriteSheet }로 받는다. 시트는 이미지만
+        const st = c.style ?? {};
+        const sheet = kind === "image" && st.spriteSheet && Number(st.spriteSheet.cols) * Number(st.spriteSheet.rows ?? 1) >= 2 ? st.spriteSheet : null;
+        if (st.pixelated === true || sheet) {
+          const cols = Math.floor(Number(sheet?.cols)), rows = Math.floor(Number(sheet?.rows ?? 1));
+          wc.transform.pixelArt = {
+            pixelated: st.pixelated === true,
+            spriteSheet: sheet ? { cols, rows, count: Math.floor(Number(sheet.count ?? cols * rows)), fps: Number(sheet.fps ?? 8), loop: sheet.loop !== false } : null,
+          };
+          if (sheet?.from) warn(id, "spriteSheet.from(시작 칸)은 앱 저장 형식에 남지 않아 첫 칸부터 재생됩니다 (애니메이션마다 시트를 따로 만드세요)");
+        }
+        if (kind === "video" && st.spriteSheet) warn(id, "spriteSheet는 이미지 클립만 됩니다");
         if (kind === "video") {
           wc.sourceStartOffset = sec(c.timing?.trim?.from);
           wc.usesLinkedAudio = c.audio !== false;
@@ -203,7 +216,12 @@ for (const track of ordered) {
         wc = { ...base, clipType: "lottie", source: "", transform: { ...baseTransform(c), adapter: { adapter: c.adapter, params } } };
         break;
       }
-      case "Effect":
+      case "Effect": {
+        // Effect 클립(자기보다 아래 레이어 전체에 필터) — 앱은 clipType effect + transform.effect { effectKey, values }로 받는다
+        if (!c.effectKey) { warn(id, "Effect 클립에 effectKey가 없어 뺐습니다"); skipped.add(id); continue; }
+        wc = { ...base, clipType: "effect", source: "", transform: { ...baseTransform(c), effect: { effectKey: c.effectKey, ...(c.values && Object.keys(c.values).length ? { values: c.values } : {}) } } };
+        break;
+      }
       case "Backdrop":
       case "Placeholder":
         warn(id, `${c.type} 클립은 앱이 받지 않아 뺐습니다 (룩 스택은 motion.mjs lookStack의 Image 클립을 쓰세요)`);
@@ -215,6 +233,7 @@ for (const track of ordered) {
         continue;
     }
     if (anim.length) wc.transform = { ...(wc.transform ?? {}), animation: anim };
+    if (clipEffects.length && wc.clipType !== "effect") wc.transform = { ...(wc.transform ?? {}), clipEffects: JSON.parse(JSON.stringify(clipEffects)) };
     // 클립 그룹 — 앱은 멤버마다 transform._clipGroup { id, name, angle }으로 받아 그룹을 다시 만든다
     const gid = typeof c.groupId === "string" ? c.groupId.trim() : "";
     if (gid) {
