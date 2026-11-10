@@ -256,6 +256,46 @@ No text, no labels, no logos.
 2. **안 되면 잇습니다.** 첫 클립(그 모델의 최대 길이) 뒤를 끝 구도가 중요하면 f2v(첫 프레임 = 앞 클립, 끝 = 다음 패널), 아니면 extend로 잇습니다. 10–16초 호흡까지가 적당합니다.
 3. 한 번에 길게 만들면 호출은 줄지만 마음에 안 드는 부분만 다시 만들 수 없습니다. 확인 화면에 그 차이를 같이 적습니다.
 
+### 7.5 사용자에게 영상 만드는 방식 고르게 하기
+
+이미지 확인(앱 순서 G)이 끝나면 **밑에 깔릴 영상을 어떻게 만들지** 사용자에게 4줄 중 하나를 고르게 합니다(MCP `ask_user_choice`, 건너뛰지 않음). 사용자에게는 Img2Vid·Frame2Vid·Ref2Vid 같은 용어를 보이지 않고 아래 이름을 씁니다. 줄마다 "이런 광고에 좋아요" 한 줄과 이번 광고 기준 예상 크레딧(`get_credits`)을 붙이고, 아래 §7.2로 판단한 하나를 추천합니다.
+
+| 번호 | 사용자에게 보이는 이름 | 설명 | 안에서 쓰는 도구 | 추천할 때 |
+|---|---|---|---|---|
+| 1 | 사진 그대로 움직이기 | 씬마다 준비한 이미지가 첫 장면이 되어 살아 움직임. 구도·제품 모습이 가장 정확하고 빠름 | i2v `ai.video.imageToVideo` | 컷 중심, 제품 컷·짧은 씬이 많음 (대부분 기본) |
+| 2 | 시작과 끝 장면 정해서 잇기 | 시작·끝 장면을 정하면 그 사이를 잇고, 앞 씬 마지막 장면에서 다음 씬이 이어짐 | f2v `ai.video.framesToVideo` | 컷 없이 흘러가는 연출, 비포→애프터 |
+| 3 | 내 사진으로 새 장면 만들기 | 올린 제품·인물 사진을 참고해 사진에 없던 장소·동작의 새 장면. 영상 전에 참고 보드와 스토리보드를 먼저 보여 줌 | r2v `ai.video.referenceToVideo` (§7.6) | 같은 제품·인물이 여러 장면에 새로 나옴 |
+| 4 | 알아서 섞기 | 씬마다 가장 맞는 방식을 골라 섞음 | §7.2 2단계 표 | 씬 성격이 섞여 있음 |
+
+- "알아서 해"면 추천으로 진행합니다. 고른 방식은 씬표 `영상 도구` 칸에 씬마다 적습니다.
+- 1–3번을 골라도 그 방식이 맞지 않는 씬(§7.2 "맞지 않는 경우")은 1번으로 바꾸고, 바꾼 씬과 이유를 한 줄로 알립니다. 2번에서 장소가 완전히 바뀌는 컷은 잇지 않고 엔진 전환으로 넘깁니다.
+- 2번은 씬마다 끝 장면 이미지를 시작 이미지에서 `ai.image.edit`로 만들어 시작·끝을 같이 보여 주고 확인받은 뒤, 첫 씬은 시작 → 끝 이미지로, 다음 씬부터는 `firstClipRef`에 앞 씬 영상을 넣어 씬 순서대로 하나씩 만듭니다.
+
+### 7.6 내 사진으로 새 장면 만들기: 업로드 사진 → 참고 보드 → 스토리보드 → 영상
+
+사용자가 3번을 골랐고 업로드한 이미지가 있으면, 사진을 레퍼런스로 바로 넣지 않고 먼저 조합합니다. 레퍼런스 장수(첫 모델 `maxImageRefs`, 기본 3)를 아끼고, 모델이 여러 장을 같은 제품·인물로 보게 하려는 것입니다.
+
+1. **참고 보드.** 제품 사진이 여러 장이면 한 장으로 묶습니다: `ai.image.edit { clipRef: 첫 사진, refClipRefs: [나머지 사진], prompt, replaceSource: false }`. 인물 사진도 같은 방식으로 인물 보드 한 장을 만듭니다. 배경이 복잡하면 먼저 `ai.image.removeBackground`. 라벨·로고는 다시 그리지 않고 유지하라고 적습니다.
+
+```text
+Product reference sheet: the same product from image 1, image 2 and image 3, shown front, side and back in a row on a plain light gray background.
+Keep the exact label, logo, colors and proportions from the photos. Even soft studio light.
+No text, no extra props.
+```
+
+2. **스토리보드.** 씬마다 패널 한 장을 만듭니다: `ai.image.edit { clipRef: 그 씬의 바닥 이미지(없으면 제품 보드), refClipRefs: [제품 보드, 인물 보드], prompt: 그 씬의 장소·구도·동작, replaceSource: false }`. 패널은 그 씬 시간에 들어가니, 씬마다 화면을 캡처해 한 번에 보여 주고 스토리를 확인받습니다. 고칠 패널만 다시 만듭니다.
+
+```text
+Storyboard frame for scene 2: the woman from image 2 holds the product from image 3 at a sunny cafe window seat, medium shot, eye level, warm morning light.
+Single full-frame scene, not a grid. Leave the top third calm for headline text. No text.
+```
+
+3. **영상.** 확인되면 씬마다 `ai.video.referenceToVideo { clipRefs: [그 씬 패널, 제품 보드, 인물 보드], prompt, startSec: 씬 시작 }`. 레퍼런스는 그 씬에 나오는 것만, 중요한 순서로 넣습니다. 프롬프트는 `Starting from the scene in {ref1}, the product from {ref2} …`처럼 패널을 장면으로, 보드를 제품·인물로 가리킵니다(`video-models.md`).
+4. 업로드 이미지가 없으면 이미지 단계에서 만든 바닥 이미지·인물 시트·제품 시트(§7.3)를 같은 방식으로 씁니다.
+
+- 조합(`refClipRefs`)은 여러 장을 받는 편집 모델에서만 됩니다(기본 모델은 됨, 한 장만 받는 모델이면 오류로 알려 줌). 한 번에 원본 포함 10장까지입니다.
+- 보드·패널은 영상의 기준이 되니 사용자 확인 전에 영상을 만들지 않습니다.
+
 ## 8. 길이와 비트 맞추기
 
 - 생성 길이(`durationSec`)는 모델마다 다릅니다. `video.models`의 첫 모델 `durations` 안에서 고르고(Veo는 4·6·8초), 모델이 못 받는 길이면 도구가 받는 길이를 알려 주며 거절합니다. 씬 길이보다 한 단계 긴 길이로 만들고 `trimFrom`으로 잘라 씁니다. 생성 영상은 앞 0.3–0.5초가 정지에 가깝고 움직임은 중간에 크니, 씬의 중심 박에 움직임이 오도록 `trimFrom`을 고릅니다.
