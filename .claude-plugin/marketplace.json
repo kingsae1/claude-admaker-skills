@@ -6,7 +6,7 @@
     {
       "name": "admaker",
       "source": "./plugin",
-      "version": "0.43.0",
+      "version": "0.44.0",
       "description": "Plan, direct and render short ad videos (6/15/30/60 s) as code-driven motion graphics on the admaker canvas engine. Requires @admaker/engine."
     }
   ]
