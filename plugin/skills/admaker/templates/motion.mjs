@@ -21,6 +21,7 @@ export const EASE = Object.freeze({
   wobble: { easing: "easeOutElastic", dur: [0.6, 1.2] },
   drop: { easing: "easeOutBounce", dur: [0.6, 1.0] },
   count: { easing: "easeOutQuint", dur: [0.8, 1.5] },
+  pixel: { easing: "steps(8)", dur: [0.5, 1.2] },
 });
 
 const FAMILIES = ["Sine", "Quad", "Cubic", "Quart", "Quint", "Expo", "Circ", "Back", "Elastic", "Bounce"];

@@ -32,7 +32,7 @@ entrance({ easing: ease("enter") });          // "easeOutCubic"
 exit(clipDur, { dur: EASE.exit.dur[0], easing: ease("exit") });
 ```
 
-## 2. 전체 곡선 31종
+## 2. 전체 곡선 31종 + 계단식 3종
 
 계열(세기) × 방향으로 이름을 만듭니다: `ease` + `In`/`Out`/`InOut` + 계열. 그리고 `linear`가 있습니다.
 
@@ -48,6 +48,8 @@ exit(clipDur, { dur: EASE.exit.dur[0], easing: ease("exit") });
 | Back | 살짝 넘침 | `easeInBack` | `easeOutBack` | `easeInOutBack` | 있음(넘침 포함) |
 | Elastic | 탄성 | `easeInElastic` | `easeOutElastic` | `easeInOutElastic` | 없음 |
 | Bounce | 튕김 | `easeInBounce` | `easeOutBounce` | `easeInOutBounce` | 없음 |
+
+계단식(엔진 3.0.19+): `steps(4)`·`steps(8)`·`steps(12)`(아무 `steps(n)`도 됨). 값이 n번 끊어 움직이고(CSS `steps(n, end)`), 끝에서만 1이 됩니다. 픽셀 아트·스톱모션 느낌에만 쓰고 일반 광고 모션에는 섞지 않습니다(모션 토큰 `pixel` = `steps(8)`, `references/pixel-art.md`).
 
 - 세기 순서: Sine < Quad < Cubic < Quart < Quint < Expo. 같은 길이라면 오른쪽일수록 출발(또는 도착)이 급하고 정지 구간이 길게 느껴집니다.
 - Back·Elastic은 0..1 밖으로 나갑니다. 투명도에 걸면 1을 넘거나 0 아래로 내려가니 **opacity에는 쓰지 않고** 위치·scale에만 씁니다. 전환 클립에 걸면 엔진이 0..1로 잘라서 끝부분이 평평해집니다.
