@@ -221,7 +221,9 @@ export function historyEntry(card, extra = {}) {
   // 아이디어·예시도 같이 쌓아 다음 기획안이 최근에 쓴 이야기·예시를 피한다 (idea-core.mjs)
   const idea = typeof card.idea === 'string' ? card.idea : card.idea?.id;
   const example = typeof card.example === 'string' ? card.example : card.example?.id;
-  return { at: new Date().toISOString(), direction: card.direction, card: choiceMap(card), ...(idea ? { idea } : {}), ...(example ? { example } : {}), ...extra };
+  // 참신안이면 칸 id도 쌓아 다음 참신안이 최근 장르·역할·톤을 피한다 (novel-core.mjs)
+  const novel = card.novel && typeof card.novel === 'object' ? card.novel : null;
+  return { at: new Date().toISOString(), direction: card.direction, card: choiceMap(card), ...(idea ? { idea } : {}), ...(example ? { example } : {}), ...(novel ? { novel } : {}), ...extra };
 }
 
 /** 카드를 씬표 맨 위에 붙일 글 */

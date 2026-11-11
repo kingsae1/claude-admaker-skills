@@ -1,7 +1,7 @@
 // 예시 갤러리: 요청과 가까운 예시를 골라 미리보기 페이지로 보여 주고(recommend), 고른 예시의 빌드 키트를 프로젝트에 복사한다(use).
 // 사용:
 //   node gallery.mjs list
-//   node gallery.mjs recommend "9:16 배송 광고, 지도에 경로가 그려지고 플래시 전환" [--top 3] [--evidence reviews,before-after] [--out gallery-preview.html]
+//   node gallery.mjs recommend "9:16 배송 광고, 지도에 경로가 그려지고 플래시 전환" [--top 3] [--evidence reviews,before-after] [--novel 0|1|2] [--out gallery-preview.html]
 //   node gallery.mjs refs "카드 스택 3d" [--refs 12]     # 외부 레퍼런스(shotcraft 샷 124 · opuscar 스타일 66) 검색
 //   node gallery.mjs use <slug> [프로젝트 폴더]
 //   node gallery.mjs directions                         # 모션 방향 메뉴(references/motion-directions.md) 목록
@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import os from "node:os";
 import { drawCard } from "./variety-core.mjs";
 import { drawIdea, rerankDirections, rotateExamples } from "./idea-core.mjs";
+import { drawNovel, novelChoices, novelCount } from "./novel-core.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -28,6 +29,8 @@ const outArg = flag("out", "gallery-preview.html");
 const refTop = Number(flag("refs", 6));
 // 사용자에게 있는 실제 자료: reviews(후기·평점), before-after(같은 대상의 전후 사진). 없으면 그 자료가 필요한 아이디어는 뽑지 않음
 const evidenceArg = (flag("evidence", "") ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+// 참신안 수: 기본 1(기획안 C), 요청에 "참신·병맛·B급" 같은 낱말이 있으면 2(B·C). 0이면 넣지 않음 (references/novel-concepts.md)
+const novelArg = flag("novel");
 const [cmd, ...rest] = args;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -203,7 +206,7 @@ const PLAN = (i) => `기획안 ${String.fromCharCode(65 + i)}`;
 function directionCards(dirs) {
   const examples = planExamples(dirs);
   return dirs
-    .map(({ d, why, refs, variety, idea }, i) => {
+    .map(({ d, why, refs, variety, idea, novel }, i) => {
       const ex = examples[i];
       const local = ex?.kind === "ad" ? previewData(ex.id) : "";
       const media = local
@@ -216,7 +219,7 @@ function directionCards(dirs) {
       return `<article>
   <div class="media">${media}</div>
   <div class="body">
-    <p class="rank">${i + 1}. ${PLAN(i)}${i === 0 ? " · 추천" : ""}${why.length ? ` · ${esc(why.join(", "))}` : " · 기본 후보"}</p>
+    <p class="rank">${i + 1}. ${PLAN(i)}${i === 0 ? " · 추천" : ""}${novel ? " · 참신안" : ""}${why.length ? ` · ${esc(why.join(", "))}` : " · 기본 후보"}</p>
     <h2>${esc(d.name)}</h2>
     <p>${esc(d.line)}</p>
     <h3>형태</h3><p class="meta">${esc(d.form)}</p>
@@ -224,6 +227,7 @@ function directionCards(dirs) {
     <h3>시그니처 · 전환</h3><p class="meta">${esc(d.signature)} · ${esc(d.transitions)}</p>
     <p class="meta">글꼴·색: ${esc(d.look)} · 앱: ${esc(d.app)}</p>
     ${idea ? `<h3>아이디어 · ${esc(idea.name)}</h3><p class="meta">${esc(idea.line)}<br>${esc(idea.story)}</p>` : ""}
+    ${novel ? `<h3>참신안 · ${esc(novel.summary)}</h3><p class="meta">${esc(novel.line)}<br>${esc(novel.story)}<br>장르 그래픽: ${esc(novel.picks.genre.overlay)}</p>` : ""}
     ${variety ? `<h3>변주 카드</h3><p class="meta">${esc(variety.summary)}</p>` : ""}
     ${ex ? `<p class="meta">예시(이런 형태로): ${ex.kind === "ad" ? `<code>${esc(ex.id)}</code> ${esc(ex.title)}${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 <a href="${esc(ex.ref.source_url)}">${esc(ex.title)}</a>`}</p>` : ""}
     ${refs.length ? `<p class="meta">더 볼 레퍼런스: ${refs.map(({ ref }) => `<a href="${esc(ref.source_url)}">${esc(ref.title)}</a>`).join(" · ")}</p>` : ""}
@@ -371,16 +375,23 @@ if (cmd === "list" || !cmd) {
   const cards = [];
   for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards, request })));
   const freeCard = drawCard({ direction: "free", history, exclude: cards, request });
+  // 참신안: 뒤쪽 기획안(C, 2개면 B·C)의 아이디어 카드 자리를 참신안으로 바꾼다
+  const nNovel = Math.min(novelCount(request, novelArg), dirs.length);
+  const novels = [];
+  dirs.forEach((r, i) => {
+    if (i >= dirs.length - nNovel) novels.push((r.novel = drawNovel({ request, history, exclude: novels })));
+  });
   const ideas = [];
-  for (const r of [...dirs, { variety: freeCard }]) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas, evidence: evidenceArg })));
+  for (const r of [...dirs, { variety: freeCard }]) if (!r.novel) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas, evidence: evidenceArg })));
   freeCard.idea = ideas[ideas.length - 1].id;
   const planEx = planExamples(dirs);
   dirs.forEach((r, i) => {
-    r.variety.idea = r.idea.id;
+    if (r.novel) r.variety.novel = novelChoices(r.novel);
+    else r.variety.idea = r.idea.id;
     if (planEx[i]) r.variety.example = planEx[i].id;
   });
   const cardsFile = path.join(path.dirname(path.resolve(outArg)), "variety-cards.json");
-  fs.writeFileSync(cardsFile, JSON.stringify({ plans: cards, free: freeCard }, null, 2));
+  fs.writeFileSync(cardsFile, JSON.stringify({ plans: cards, free: freeCard, novels: dirs.filter((r) => r.novel).map((r) => ({ direction: r.d.id, ...r.novel })) }, null, 2));
   const fit = ranked.filter((r) => r.why.length);
   // 기법이 맞는 예시가 없으면 고른 방향의 예시를 먼저, 그다음 가까운 순
   const fromDirs = [...new Set(dirs.flatMap(({ d }) => d.exampleIds))].map((id) => ranked.find((r) => r.item.slug === id)).filter(Boolean);
@@ -396,11 +407,12 @@ if (cmd === "list" || !cmd) {
       const exLine = ex
         ? `\n     예시(이런 형태로): ${ex.kind === "ad" ? `${ex.title} [${ex.id}]${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 ${ex.title} [${ex.id}]`}${ex.preview ? `\n     미리보기: ${ex.preview}` : ""}`
         : "\n     예시: 없음";
-      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     아이디어: ${dirs[i].idea.name} — ${dirs[i].idea.line}\n       이야기: ${dirs[i].idea.story}\n     변주: ${dirs[i].variety.summary}`);
+      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${dirs[i].novel ? " [참신안]" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     ${dirs[i].novel ? `참신안: ${dirs[i].novel.summary}\n       한 줄: ${dirs[i].novel.line}\n       이야기: ${dirs[i].novel.story}\n       장르 그래픽: ${dirs[i].novel.picks.genre.overlay}` : `아이디어: ${dirs[i].idea.name} — ${dirs[i].idea.line}\n       이야기: ${dirs[i].idea.story}`}\n     변주: ${dirs[i].variety.summary}`);
     });
     console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     아이디어: ${ideas[ideas.length - 1].name} — ${ideas[ideas.length - 1].line}\n     변주: ${freeCard.summary}`);
     console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 고른 바로 그때 variety.mjs record. 카드에 아이디어·예시 id가 들어 있어 같이 기록됨)`);
     console.log("고른 뒤: 로그라인 한 문장 + 훅 후보 3개를 쓰고 node templates/idea.mjs check concept.json 으로 말이 되는지 검사 (references/ideas.md)");
+    if (nNovel) console.log("참신안을 고르면: 로그라인 + keyScene(제품이 없으면 안 풀리는 장면)을 쓰고 concept.json에 novel(카드의 칸)을 넣어 같은 명령으로 검사 (references/novel-concepts.md)");
     console.log("빌드 키트가 있는 예시:");
   } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
   recs.forEach(({ item, score: s, why }, i) => console.log(`${i + 1}. ${item.slug} (${s.toFixed(1)}) ${item.title}${why.length ? ` — ${why.join(", ")}` : ""}`));
