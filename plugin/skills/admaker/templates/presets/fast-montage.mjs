@@ -174,6 +174,10 @@ export function fastMontage({ analysis, durationSec, content = {}, music = {}, f
     musicShiftSec = +((targetBeat - L.number.start) * B).toFixed(3);
     warnings.push(`${drop ? "드롭" : "가장 센 peak"}(${targetSec.toFixed(2)}초)이 숫자 슬램(${sec(L.number.start).toFixed(2)}초)과 ${musicShiftSec}초 어긋남: 음원을 그만큼 앞에서 잘라 쓰면(trimFrom += ${musicShiftSec}) 박을 유지한 채 맞음. 바꾼 뒤 다시 실행`);
   }
+  // 브랜드 씬(엔드카드 로고·매장명)은 다른 씬 중 가장 긴 씬보다 0.5초 이상 길게 (director.md §4)
+  const endLen = durationSec - sec(L.end.start);
+  const longestOther = Math.max(0, ...SHOTS.filter((s) => s.section !== "endcard" && s.card !== "beat-flicker-sting").map((s) => s.to - s.from));
+  if (endLen < longestOther + 0.5) warnings.push(`엔드카드(${endLen.toFixed(2)}초)가 가장 긴 씬(${longestOther.toFixed(2)}초)보다 0.5초 이상 길어야 함: 블록을 하나 줄이거나 더 긴 광고로`);
   const holdSec = durationSec - (sec(L.end.start + 2) + ENTER);
   if (holdSec > 4) warnings.push(`엔드카드 정지가 ${holdSec.toFixed(1)}초로 김: 블록을 늘리거나 주인공 샷(director §4 ②)을 넣으세요`);
   return {
