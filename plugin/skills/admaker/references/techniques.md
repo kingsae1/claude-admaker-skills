@@ -14,6 +14,7 @@ admaker MCP의 강점은 **모션그래픽(엔진) 하나로 끝내지 않고, �
 | 글리치·디지털 | 가로 조각 찢김, RGB 분리, 스캔라인·HUD 라벨, 깜빡 정착 | Effect `glitchFilter`·`rgbSplitFilter` 2–4프레임 (샷 `glitch-hit`) | 없음 |
 | 3D 깊이·모프 | Z축 플라이스루, 깊이별 층 패럴랙스, 카드 기울임, 3D 도형 → 평면 아이콘 모프 | 클립 `transform3d`·keyframes `z`(샷 `z-fly-through`), MCP `add_clip Morph3D`(샷 `morph-reveal`), three 어댑터(`three.md`) | 없음 |
 | 클립 그룹 | CTA·가격표·칩·콜라주 조각을 한 덩어리로 등장·회전·확대 | `groupId` + `groups`, `options.origin: "group"`, MCP `group_clips`·`update_group` (샷 `group-build`) | 없음 |
+| 영상 이펙트 39종 | 인물 뒤 공간(거대 글자·궤도 링·숫자 카운트), 인물 변형(분신·네온 윤곽선·스티커·코드 인간), 얼굴에 붙는 라벨·스캔·이모지, 화면 UI 오버레이(창·댓글·알림·속보·키보드·터미널), 임팩트·조각 전환(만화·칼날·종이·글자 다이브·분할), 카메라(돌리 줌·프리즈 줌·스피드 램프) | `templates/effects.mjs` (`video-effects.md`, 누끼가 필요한 효과는 `ai.image.removeBackground`) | 없음(누끼만 있음) |
 | 인쇄 질감 | 하프톤 점, 리소 2색 겹침, 잉크 번짐 전환, 종이 결 | `dotFilter`, 트랙 매트 "질감으로 번짐", `am-ink-bleed` (`transitions.md`) | 없음 |
 | 전환·효과·자막 | 장면 전환(트랙 매트·`am-*` 전환·마스크, 고르는 법은 `transitions.md`), 화면 효과, 자막 | ProjectJSON(스킬) 또는 `add_clip { type: 'Transition' \| 'Effect' \| 'Caption' }` | 없음 |
 | 템플릿 | 이미 있는 광고 템플릿에서 출발 | `search_templates` → `open_template` | 없음 |
