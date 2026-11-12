@@ -63,6 +63,7 @@
 
 - 내장 `model` 씬의 기본 로더는 **Draco·meshopt·KTX2 압축을 못 읽습니다.** 압축된 glb는 풀어서 쓰거나(`gltf-transform copy` 후 압축 단계 제외), 커스텀 씬에서 `DRACOLoader` 등을 직접 붙입니다(디코더 파일 경로가 렌더 환경에서 열려야 함).
 - 앱으로 넘기는 model 씬은 `params.src`가 data URL이어야 해서 파일이 작아야 합니다. 텍스처를 1024–2048px로 줄이고 WebP로(`gltf-transform resize`, `webp`), 중복 제거(`dedup`, `prune`)까지만 합니다. 목표 5MB 이하.
+- 제품 사진만 있으면 Agent(앱 MCP) `run_studio_tool` `ai.model3d.imageToModel { clipRef, addToTimeline: false }`로 GLB를 만들 수 있습니다(유료, 크레딧 확인 후). `data.glbUrl`을 `assets/`에 내려받아 `model` 씬 `src`로 씁니다. 물체 하나가 온전히 보이는 단순한 배경 사진이 좋고, 결과 GLB는 텍스처가 구워진 일반 glb라 기본 로더로 읽힙니다. 돌며 가로지르는 연출은 샷 카드 `model-orbit-text`.
 - 모델의 단위·원점은 신경 쓰지 않아도 됩니다(model 씬이 가운데 정렬·크기 맞춤). 커스텀 씬에서는 `Box3`로 직접 맞춥니다.
 
 ## 6. 커스텀 씬 뼈대

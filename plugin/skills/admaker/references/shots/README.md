@@ -36,6 +36,7 @@
 | [glitch-hit](glitch-hit.md) | 훅·상승부·전환 (얹는 샷) | 최고 | 2–4프레임 | 박 위에서 화면이 가로 조각으로 찢어지고 RGB가 갈라졌다 바로 붙음 (`glitchFilter`·`rgbSplitFilter`) |
 | [z-fly-through](z-fly-through.md) | 훅·주인공·전환 | 중고 | 2–3초 | 깊이별 문구·사진 층 사이를 Z축으로 뚫고 들어가 마지막 층이 다음 장면 (`transform3d`·`z`) |
 | [morph-reveal](morph-reveal.md) | 주인공·엔드카드 | 중고 | 2.5–4초 | 광택 3D 도형이 납작해지며 브랜드 아이콘이 되고 문구가 붙음 (MCP `Morph3D`, three `morph-shapes`) |
+| [model-orbit-text](model-orbit-text.md) | 훅·주인공 | 중고 | 3–5초 | 제품 3D 모델(사진→3D GLB)이 돌며 가로지르고 뒤로 큰 문구 띠가 반대로 흐름 (three `model`, 앱까지 감) |
 | [group-build](group-build.md) | 상승부·엔드카드 | 중 | 1–1.8초 | 칩·가격표·버튼 묶음이 한 덩어리로 날아와 자리잡고 조각이 하나씩 반응 (`groupId`·`origin: "group"`) |
 | [lottie-accent](lottie-accent.md) | 상승부·엔드카드 (얹는 샷) | 중 | 0.6–1.2초 | 혜택 문구 옆에 체크·하트·반짝이 Lottie가 박에 맞춰 짧게 (`search_lottie`, Adapter lottie) |
 

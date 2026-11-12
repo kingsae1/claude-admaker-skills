@@ -35,6 +35,7 @@ const TECHNIQUES = [
   { label: "3D 카드 기울임", words: ["hero-tilt-push", "transition-footage-card"] },
   { label: "Z축 깊이", words: ["z-fly-through", "transform3d"] },
   { label: "3D↔2D 모프", words: ["morph-reveal", "Morph3D"] },
+  { label: "3D 모델 + 뒤 문구", words: ["model-orbit-text", "imageToModel"] },
   { label: "픽셀 아트", words: ["pixel-sprite-hop", "spriteSheet", "pixelated"] },
   { label: "글리치", words: ["glitch-hit", "glitchFilter"] },
   { label: "RGB 분리", words: ["rgbSplit", "RGB 분리"] },
