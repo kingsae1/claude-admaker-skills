@@ -73,6 +73,8 @@ exit(clipDur, { dur: EASE.exit.dur[0], easing: ease("exit") });
   - `am-card-swap`: `easeInOutQuart`.
   - `am-push`: 셰이더 안에 이미 InOut 곡선이 있으니 비워 둡니다. 더 휙 지나가게 하려면 `easeInOutSine` 정도만.
   - gl-transitions 기본형(fade, wipe 등): `easeInOutCubic`.
+  - `am-cut-curve`·`am-zoom-blur`·`am-rack-focus`: 나가기 easeIn·들어오기 easeOut이 셰이더 안에 이미 있으니 **비워 둡니다.** easing을 주면 컷 순간 속도 맞춤이 깨집니다.
+  - `am-light-leak`·`am-pixelate`: 비워 두거나 `easeInOutSine`. `am-rgb-split`: 비워 둡니다(InOut 내장).
 
 ```json
 { "id": "tr1", "type": "Transition", "transitionKey": "am-zoom-through",
