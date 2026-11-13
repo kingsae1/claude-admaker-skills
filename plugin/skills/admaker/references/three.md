@@ -63,7 +63,18 @@
 
 - 내장 `model` 씬의 기본 로더는 **Draco·meshopt·KTX2 압축을 못 읽습니다.** 압축된 glb는 풀어서 쓰거나(`gltf-transform copy` 후 압축 단계 제외), 커스텀 씬에서 `DRACOLoader` 등을 직접 붙입니다(디코더 파일 경로가 렌더 환경에서 열려야 함).
 - 앱으로 넘기는 model 씬은 `params.src`가 data URL이어야 해서 파일이 작아야 합니다. 텍스처를 1024–2048px로 줄이고 WebP로(`gltf-transform resize`, `webp`), 중복 제거(`dedup`, `prune`)까지만 합니다. 목표 5MB 이하.
-- 제품 사진만 있으면 Agent(앱 MCP) `run_studio_tool` `ai.model3d.imageToModel { clipRef, addToTimeline: false }`로 GLB를 만들 수 있습니다(유료, 크레딧 확인 후). `data.glbUrl`을 `assets/`에 내려받아 `model` 씬 `src`로 씁니다. 물체 하나가 온전히 보이는 단순한 배경 사진이 좋고, 결과 GLB는 텍스처가 구워진 일반 glb라 기본 로더로 읽힙니다. 돌며 가로지르는 연출은 샷 카드 `model-orbit-text`.
+- **AI로 GLB 만들기 (Agent·앱 MCP, 유료):** 두 가지 도구가 있습니다. 둘 다 `run_studio_tool`로 실행하고, 먼저 `get_credits({ plan: [{ toolId, params }] })`로 예상 크레딧을 알린 뒤 확인받습니다.
+
+  | 상황 | 도구 | 필수 인자 | 메모 |
+  |---|---|---|---|
+  | 사용자 제품 사진이 있음 | `ai.model3d.imageToModel` | `clipRef`(이미지 클립) | 물체 하나가 온전히 보이고 배경이 단순한 사진. 복잡하면 먼저 `ai.image.removeBackground`. `texture_size` 512·1024·2048 |
+  | 사진 없이 소품·아이콘·콘셉트 오브젝트가 필요 | `ai.model3d.textToModel` | `prompt`(물체 설명, 영문 권장, 최대 1024자) | `texture_quality`·`geometry_quality`(standard·detailed), `negative_prompt`, `face_limit`. 텍스처 없이는 `texture:false, pbr:false` |
+
+  - 실제 제품은 `imageToModel`이 우선입니다. `textToModel`은 모양이 브랜드 제품과 달라지니 소품, 아이콘, 장식 오브젝트, 아직 사진이 없는 콘셉트 시안에만 씁니다.
+  - `textToModel` 프롬프트는 물체 하나만, 모양 → 색 → 재질 → 디테일 순서로 씁니다(예: `"A glossy red sneaker, white rubber sole, mesh upper, studio product"`). 배경, 사람, 장면 설명, 글자는 넣지 않습니다. 글자가 생기면 `negative_prompt: "text, logo, pedestal"`.
+  - 비용은 `textToModel` 옵션에 따라 달라집니다. 기본(표준 텍스처)을 1로 보면 텍스처 없음은 0.5, HD 텍스처는 1.5이고, `geometry_quality: "detailed"`는 +1입니다. 광고용 턴테이블은 기본값이면 충분합니다.
+  - `addToTimeline: false`면 타임라인에 넣지 않고 `data.glbUrl`만 받습니다. `assets/`에 내려받아 `model` 씬 `src`로 씁니다. 비우면 앱이 3D 모델 클립을 맨 위 행에 바로 넣습니다. imageToModel은 원본 시각에, textToModel은 `startSec`이나 재생 위치에 넣습니다. 움직임은 `update_clip { patch: { model: { spin, angle, tilt, zoom } } }`로 줍니다.
+  - 결과 GLB는 텍스처가 구워진 일반 glb라 기본 로더로 읽힙니다. `textToModel`은 `data.previewUrl`(미리보기 렌더)도 주니 모양을 먼저 확인합니다. 돌며 가로지르는 연출은 샷 카드 `model-orbit-text`.
 - 모델의 단위·원점은 신경 쓰지 않아도 됩니다(model 씬이 가운데 정렬·크기 맞춤). 커스텀 씬에서는 `Box3`로 직접 맞춥니다.
 
 ## 6. 커스텀 씬 뼈대
