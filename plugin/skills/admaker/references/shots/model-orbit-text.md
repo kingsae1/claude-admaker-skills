@@ -13,6 +13,7 @@ name: model-orbit-text
 
 ## 모델 구하기
 - 사용자 제품 사진이 있으면 Agent(앱 MCP) `run_studio_tool` `ai.model3d.imageToModel { clipRef: 사진 클립, addToTimeline: false }`로 GLB를 만듭니다(유료, 먼저 크레딧을 알리고 확인). 결과 `data.glbUrl`을 광고 폴더 `assets/`에 내려받아 씁니다.
+- 사진이 없고 소품·아이콘·콘셉트 오브젝트면 `run_studio_tool` `ai.model3d.textToModel { prompt: "물체 하나 설명(영문)", addToTimeline: false }`로 만듭니다(유료, 옵션별 비용은 `three.md` §5). 실제 브랜드 제품은 모양이 달라지니 사진으로 만듭니다.
 - 앱 안에서 바로 쓸 때는 `addToTimeline`을 비우면 원본 시각 맨 위 행에 모델 클립이 들어가고, 움직임은 `update_clip { patch: { model: { spin, angle, tilt, zoom } } }`와 `animations`(keyframes)로 줍니다.
 - 사진은 물체 하나가 온전히 보이고 배경이 단순해야 모델이 깨끗합니다. 배경이 복잡하면 먼저 `ai.image.removeBackground`.
 - 앱으로 보낼 ProjectJSON은 모델을 data URL(`params.src`)로 담습니다(10MB 이하, `three.md` §5).
