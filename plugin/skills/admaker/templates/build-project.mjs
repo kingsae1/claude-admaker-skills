@@ -23,7 +23,8 @@ const project = {
 const tracks = new Map();
 const addClip = (id, clip, trackName, type) => {
   if (project.clips[id]) throw new Error(`clip id 중복: ${id}`);
-  project.clips[id] = clip;
+  // 엔진은 clips를 값 목록으로 읽으므로 키만으로는 id가 없다. 전환 from/to·트랙 매트 clipId가 찾을 수 있게 id를 적는다
+  project.clips[id] = { id, ...clip };
   if (!tracks.has(trackName)) tracks.set(trackName, { id: `t_${trackName}`, name: trackName, type, clipIds: [] });
   tracks.get(trackName).clipIds.push(id);
 };
@@ -66,20 +67,26 @@ for (const [i, f] of FOOTAGE.entries()) {
     type: f.type, name: `footage-${i}`, src: f.src,
     timing: { display: { from: us(f.from), to: us(f.to) }, duration: us(dur), playbackRate: 1, ...(still ? {} : { trim: { from: us(f.trimFrom ?? 0), to: us((f.trimFrom ?? 0) + dur) } }) },
     transform: { x: box.x, y: box.y, width: box.width, height: box.height, angle: 0, opacity: 1, zIndex: 2 + Math.min(i, 7) },
-    ...(still ? { animations: [kenBurns(dur, { shotIndex: i })] } : { volume: f.volume ?? 0 }),
+    // kenBurns: false = 멈춘 프레임(정지 컷 transition-beat-freeze 등)이라 천천히 움직이면 안 되는 스틸
+    ...(still ? { animations: f.kenBurns === false ? [] : [kenBurns(dur, { shotIndex: i })] } : { volume: f.volume ?? 0 }),
   }, "footage", f.type);
 }
 if (!FOOTAGE.length) console.warn("△ FOOTAGE가 비어 있음: 이 스킬의 광고는 사용자 영상·이미지 위에 그래픽을 얹는 구조입니다 (SKILL.md)");
 for (const m of checkFootage(FOOTAGE, { duration: DURATION, grid: GRID, fps: FPS })) console.warn(m); // 생성 소재 길이·컷·프롬프트 (footage-gen.md)
 
+// 샷 모듈을 먼저 읽는다. needsGround를 export한 샷(소재를 밀거나 투명하게 하는 이음새: transition-cut-the-curve 등)이 있으면
+// 소재 아래에 불투명한 생성 배경을 깐다(transitions.md §0 바닥 규칙). Exporter는 settings.backgroundColor를 칠하지 않는다.
+const shotMods = await Promise.all(SHOTS.map((shot) => import(path.resolve("shots", `${shot.card}.mjs`))));
+const needsGround = shotMods.some((m) => m.needsGround);
+
 // 룩 스택 (aesthetic-rules Q11): 소재가 있으면 가장자리 비네트(z 99)만(소재를 뿌옇게 하는 틴트·그레인 없음). 소재가 프레임을 다 못 채우면 생성 배경(z 1).
 if (args.look !== "off") {
-  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light", footage: FOOTAGE.length > 0, background: !footageFills });
+  const look = lookStack({ W, H, duration: DURATION, brand, dark: args.look !== "light", footage: FOOTAGE.length > 0, background: !footageFills || needsGround });
   for (const [id, clip] of Object.entries(look.clips)) addClip(id, clip, look.trackOf[id], clip.type);
 }
 
 for (const [shotIndex, shot] of SHOTS.entries()) {
-  const mod = await import(path.resolve("shots", `${shot.card}.mjs`));
+  const mod = shotMods[shotIndex];
   const out = mod.default({ shot, shotIndex, brand, W, H, FPS, us, FOOTAGE });
   for (const [i, anims] of Object.entries(out.footage ?? {})) {
     const clip = project.clips[`footage_${i}`];
@@ -93,6 +100,22 @@ for (const [shotIndex, shot] of SHOTS.entries()) {
   }
 }
 
-project.tracks = [...tracks.values()];
+// 트랙 순서 = 겹침 순서. 엔진은 클립에 id가 있으면 트랙 순서로 zIndex를 다시 매긴다(앞 트랙이 위, 한 트랙 안은 같은 높이).
+// 클립 transform.zIndex(소재 2–9, 그래픽 10–49, 전환 샷 70+ …)가 그대로 지켜지도록, zIndex가 섞인 트랙은 zIndex별로 나누고
+// (이름 뒤에 _z<값>) 높은 zIndex 트랙을 앞에 둔다. 바닥 소재 트랙은 나누지 않는다(앱이 같은 트랙의 이웃 클립끼리 전환을 잇는다)
+const zOf = (id) => project.clips[id].transform?.zIndex ?? 0;
+const split = [];
+for (const t of tracks.values()) {
+  if (t.type === "Transition") { split.push({ ...t, z: Infinity }); continue; }
+  if (t.name === "footage") { split.push({ ...t, z: Math.max(...t.clipIds.map(zOf)) }); continue; }
+  const byZ = new Map();
+  for (const id of t.clipIds) byZ.set(zOf(id), [...(byZ.get(zOf(id)) ?? []), id]);
+  const zs = [...byZ.keys()].sort((a, b) => b - a);
+  for (const [i, z] of zs.entries()) {
+    const name = i === 0 ? t.name : `${t.name}_z${z}`;
+    split.push({ ...t, id: `t_${name}`, name, clipIds: byZ.get(z), z });
+  }
+}
+project.tracks = split.sort((a, b) => b.z - a.z).map(({ z: _z, ...t }) => t);
 fs.writeFileSync(args.out ?? "project.json", JSON.stringify(project, null, 2));
 console.log(`project.json: ${Object.keys(project.clips).length} clips, ${W}x${H}, ${DURATION}s`);

@@ -283,10 +283,10 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 - 이어지는 바는 한 Shape로 그립니다(이음새 방지).
 - `Backdrop`: 단색/그라디언트 배경.
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
-- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. admaker 전환 팩 `am-*` 6종(`registerAdmakerTransitions()`로 등록): `am-flash-streak`(사선 빛줄기 + 색 번쩍), `am-cover-flood`(색이 번져 덮기), `am-zoom-through`(링 안으로 줌), `am-card-swap`(카드 넘김), `am-push`(다음 화면이 밀어내기, `direction`·`blur`), `am-ink-bleed`(잉크 번짐, engine 3.0.13+). 요소 하나를 화면 밖에서 밀어 넣거나 밀어 낼 때는 애니메이션 에셋 `push`(`@admaker/animation`)를 씁니다. 전환 클립의 `values`로 색·위치를 클립마다 바꾸고(`{ "color": [1, 0.85, 0.1], "origin": [0.25, 0.8] }`, 색은 0–1 RGB, 위치는 화면 비율·위가 0), `easing`으로 진행 곡선을 줍니다(`easing.md` §4). `to-admaker-import.mjs`는 전환마다 서버 인코딩용 xfade 이름(`type`)과 엔진 키·values·easing(`engine`)을 같이 넘겨서, 앱 미리보기·브라우저 내보내기에서는 `am-*`가 그대로 보입니다. `hf-*`는 앱에 등록되어 있지 않아 fade로 바뀝니다.
+- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. admaker 전환 팩 `am-*` 6종(`registerAdmakerTransitions()`로 등록): `am-flash-streak`(사선 빛줄기 + 색 번쩍), `am-cover-flood`(색이 번져 덮기), `am-zoom-through`(링 안으로 줌), `am-card-swap`(카드 넘김), `am-push`(다음 화면이 밀어내기, `direction`·`blur`), `am-ink-bleed`(잉크 번짐, engine 3.0.13+), 그리고 이음새용 6종(엔진 PR #37 이후): `am-cut-curve`(흐름 잇기), `am-zoom-blur`(줌 잇기, `push` 1 앞으로 / −1 뒤로), `am-rack-focus`(초점 넘기기), `am-light-leak`(빛샘), `am-pixelate`(픽셀 쪼개기), `am-rgb-split`(색 갈라짐). 고르는 법과 values는 `transitions.md` §2 B. 요소 하나를 화면 밖에서 밀어 넣거나 밀어 낼 때는 애니메이션 에셋 `push`(`@admaker/animation`)를 씁니다. 전환 클립의 `values`로 색·위치를 클립마다 바꾸고(`{ "color": [1, 0.85, 0.1], "origin": [0.25, 0.8] }`, 색은 0–1 RGB, 위치는 화면 비율·위가 0), `easing`으로 진행 곡선을 줍니다(`easing.md` §4). `to-admaker-import.mjs`는 전환마다 서버 인코딩용 xfade 이름(`type`)과 엔진 키·values·easing(`engine`)을 같이 넘겨서, 앱 미리보기·브라우저 내보내기에서는 `am-*`가 그대로 보입니다. `hf-*`는 앱에 등록되어 있지 않아 fade로 바뀝니다.
 - 씬 경계마다 어떤 전환을 쓸지(트랙 매트·`am-*`·전환 샷·마스크, 규칙과 values)는 `transitions.md`를 따릅니다.
 - 소재 사이 전환 샷(`shots/transition-*.mjs`)은 그래픽 클립과 함께 **바닥 소재 클립에 붙일 모션**을 `footage: { FOOTAGE 번호: [animations] }`로 돌려주고, `build-project.mjs`가 그 소재 클립의 animations 뒤에 더합니다. 두 소재가 겹쳐야 하는 전환(줌 스루, 카드)은 `FOOTAGE`의 from/to를 카드에 적힌 대로 겹쳐 둡니다.
-- **렌더 하니스(Preview·Exporter)의 겹침 순서는 트랙 순서가 먼저입니다.** 뒤에 만든 트랙이 위에 그려져서, footage 트랙 다음에 만든 Shape는 zIndex를 1로 줘도 소재를 덮습니다(엔진 3.0.7 렌더로 확인). 소재 아래에 깔 것은 `settings.backgroundColor`나 소재보다 먼저 만든 트랙(`lookStack`의 배경)으로 둡니다.
+- **겹침 순서는 트랙 순서가 먼저입니다.** 클립에 `id`가 있으면 엔진이 트랙 순서로 zIndex를 다시 매깁니다(앞 트랙이 위, 엔진 3.0.19 렌더로 확인). `build-project.mjs`는 모든 클립에 키를 `id`로 적고, 트랙을 그 안 클립의 가장 높은 `transform.zIndex` 순으로 놓아 표의 zIndex가 그대로 지켜지게 합니다. 직접 ProjectJSON을 짤 때도 클립마다 `id`를 적고(없으면 전환 from/to·트랙 매트 clipId가 클립을 못 찾음) 위에 그릴 트랙을 앞에 둡니다. 소재 아래 배경은 `settings.backgroundColor`가 아니라(Exporter가 안 칠함) 소재보다 뒤 트랙의 화면 가득한 클립(`lookStack`의 `look_bg`)으로 둡니다.
 
 ### 5.1 소재 + 그래픽 층 (aesthetic-rules Q11)
 
@@ -306,6 +306,29 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 - 끄기: `build-project.mjs --look off`, 밝은 테마: `--look light`. 그레인만 빼려면 `lookStack({ …, grain: false })`.
 - **`Shape`·`Image`·`Adapter`·`Backdrop` 클립은 `src`가 비어 있으면 Core(Studio 로딩)가 버립니다.** 절차적 클립에는 표식 값(`"shape"`, `"script"`, `"three"`)을 넣습니다. 예외는 Text·Caption·Effect·Transition. `validate.mjs`가 검사합니다.
 - **아직 실제 렌더로 값 검증 전입니다.** 첫 프로젝트의 스타일 프레임에서 강도를 맞추고 이 표를 고칩니다.
+
+### 5.2 전환 클립 길이와 자리 (박 맞추기)
+
+admaker의 전환은 **광고 길이를 줄이지 않습니다.** 클립마다 시작·끝 시각이 정해져 있어서, 전환은 두 소재 위에 얹히는 구간일 뿐입니다(Remotion `TransitionSeries`처럼 60+60프레임에 15프레임 전환을 넣으면 105프레임이 되는 방식이 아님). 대신 **전환이 놓이는 자리**가 렌더 경로마다 다릅니다.
+
+| 경로 | 전환 구간 | 다음 소재 |
+|---|---|---|
+| 엔진 `addTransition` (Studio에서 추가) | 두 소재 경계를 가운데로 `[경계 − 길이/2, 경계 + 길이/2]` | 시작 전에는 첫 프레임에 멈춤 |
+| ProjectJSON에 직접 적은 전환 클립 (엔진 렌더) | 적은 `display` 그대로 | 시작 전에는 첫 프레임에 멈춤 |
+| 앱으로 가져온 뒤 (앱이 다시 놓음) | 두 소재가 겹치면 겹침 안에서 `[앞 소재 끝 − 길이, …]`, 안 겹치면 **앞 소재 끝에서 끝나게** `[앞 끝 − 길이, 앞 끝]` (`freeze_overlay`) | 안 겹치면 첫 프레임에 멈춘 채 섞임 |
+| 서버 인코딩 (ffmpeg xfade) | 앱과 같은 자리, 효과만 가까운 xfade(`AM_TRANSITION_XFADE`) | 같음 |
+
+그래서 소재를 겹치지 않고 경계를 가운데로 전환을 두면, 앱으로 가져갔을 때 전환이 **길이의 절반만큼 앞으로** 밀리고 박이 어긋납니다.
+
+**규칙: 전환 길이만큼 두 소재를 겹치고, 전환 구간을 그 겹침과 똑같이 둡니다.** 박(전환 가운데)이 `at`이면
+
+- 앞 소재 `to = at + 길이/2`, 다음 소재 `from = at − 길이/2`
+- 전환 `display = [at − 길이/2, at + 길이/2]`
+
+이러면 엔진 렌더·앱 미리보기·서버 인코딩이 모두 같은 자리에 놓고, 다음 소재도 멈추지 않고 재생된 채 섞입니다. `shots/transition-shader.mjs`가 이 배치를 하고, `validate.mjs`가 앱 규칙으로 다시 계산해 어긋나면 경고합니다(`seams.mjs` `appTransitionWindow`). `to-admaker-import.mjs`는 겹침 여부로 `mode`(`crossover`/`freeze_overlay`)를 정해 보냅니다.
+
+- 덮개형 전환(전환 샷 `transition-cover-flood`·`transition-scribble-cover`, 트랙 매트)은 그래픽 클립이라 이 규칙과 상관없이 적은 시각에 보입니다. 박은 "다 덮인 순간"(컷)에 둡니다.
+- 소재 길이를 바꾸면(씬 길이 조절, 내레이션 다시 맞춤) 전환 자리도 같이 옮깁니다.
 
 ## 6. 사운드
 

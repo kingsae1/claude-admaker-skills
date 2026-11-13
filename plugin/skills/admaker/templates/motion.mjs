@@ -215,3 +215,70 @@ export const zoomAbout = ([px, py], k, [cx, cy]) => ({ scale: k, x: Math.round((
 
 /** 점 [x, y]에서 프레임의 가장 먼 모서리까지 거리 (커버·아이리스 원의 반지름). */
 export const farCorner = ([x, y], W, H) => Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y));
+
+// ── 씬 이음새 (references/transitions.md §0) ─────────────────────────────────
+// 앞 장면이 나가는 방향·속도 그대로 다음 장면이 들어오게 하는 짝 모션. 앞 클립에 *Out, 다음 클립에 *In을 같은 옵션으로 건다.
+// 수치는 HyperFrames cut-the-curve(Apache-2.0)를 따르고, 엔진 애니메이션 에셋 curve·zoom_push·zoom_pull과 같은 값이다.
+const SEAM_DIR = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] };
+const seamVec = (dir) => {
+  const v = SEAM_DIR[dir];
+  if (!v) throw new Error(`이음새 방향은 left·right·up·down: ${dir}`);
+  return v;
+};
+const smearOf = ([vx], px) => (vx !== 0 ? { motionBlur: px * 6 } : { blur: px });
+
+/**
+ * 흐름 잇기(cut-the-curve) 나가기: clipDur(초) 끝 dur초 동안 dir 쪽으로 travel px 빨라지며(easeInQuint 계열),
+ * 투명도는 이동보다 먼저 빠져 컷 직전에 사라진다. travel 기본 = 화면 폭의 12%.
+ */
+export function cutCurveOut(clipDur, { dir = "left", W = 1080, travel = Math.round(W * 0.12), dur = 0.3, blur = 8, fade = true } = {}) {
+  const [vx, vy] = seamVec(dir), at = (k) => ({ x: Math.round(vx * travel * k), y: Math.round(vy * travel * k) });
+  return { type: "keyframes", options: { duration: us(dur), delay: us(Math.max(0, clipDur - dur)), easing: "linear" },
+    params: {
+      "0%": { ...at(0), ...(fade ? { opacity: 1 } : {}), ...smearOf([vx], 0), easing: "easeInCubic" },
+      "60%": { ...at(0.08), ...(fade ? { opacity: 0.25 } : {}), ...smearOf([vx], blur * 0.4), easing: "easeInQuart" },
+      "100%": { ...at(1), ...(fade ? { opacity: 0 } : {}), ...smearOf([vx], blur) },
+    } };
+}
+
+/** 흐름 잇기 들어오기: dir 반대쪽 travel px에서 0.35 투명도로 이미 움직이며 들어와 easeOutQuint로 멈춘다. 클립 시작(delay 0)에 건다 */
+export function cutCurveIn({ dir = "left", W = 1080, travel = Math.round(W * 0.12), dur = 0.32, blur = 8, fade = true } = {}) {
+  const [vx, vy] = seamVec(dir);
+  return { type: "keyframes", options: { duration: us(dur), delay: 0, easing: "linear" },
+    params: {
+      "0%": { x: -vx * travel, y: -vy * travel, ...(fade ? { opacity: 0.35 } : {}), ...smearOf([vx], blur), easing: "easeOutQuint" },
+      "100%": { x: 0, y: 0, ...(fade ? { opacity: 1 } : {}), ...smearOf([vx], 0) },
+    } };
+}
+
+/**
+ * 줌 잇기 나가기: push=true면 앞으로(1 → 1.2, 커짐), false면 뒤로(1 → 0.8, 작아짐). 블러는 글자 10px, 화면 전체 면 18–20px.
+ * 들어오기(zoomSeamIn)도 같은 push로 — 양쪽 크기 변화 부호가 같아야 한다(멀어지며 나간 뒤 작은 데서 커지며 들어오면 금지).
+ */
+export function zoomSeamOut(clipDur, { push = true, dur = 0.22, blur = 10 } = {}) {
+  const end = push ? 1.2 : 0.8;
+  return { type: "keyframes", options: { duration: us(dur), delay: us(Math.max(0, clipDur - dur)), easing: "linear" },
+    params: {
+      "0%": { scale: 1, blur: 0, opacity: 1, easing: "easeInCubic" },
+      "60%": { scale: 1 + (end - 1) * 0.25, blur: Math.round(blur * 0.4), opacity: 0.4, easing: "easeInQuart" },
+      "100%": { scale: end, blur, opacity: 0.15 },
+    } };
+}
+
+/** 줌 잇기 들어오기: push면 0.75 → 1, 아니면 1.25 → 1 (expo.out). 0.15 투명도에서 이어 들어온다 */
+export function zoomSeamIn({ push = true, dur = 0.5, blur = 10 } = {}) {
+  return { type: "keyframes", options: { duration: us(dur), delay: 0, easing: "linear" },
+    params: { "0%": { scale: push ? 0.75 : 1.25, blur, opacity: 0.15, easing: "easeOutExpo" }, "100%": { scale: 1, blur: 0, opacity: 1 } } };
+}
+
+/** 초점 넘기기(rack-focus) 나가기: 불투명한 채로 블러가 치솟고 렌즈 숨쉬기(scale 1.06). 컷은 블러가 가장 클 때 */
+export function rackFocusOut(clipDur, { dur = 0.25, blur = 12, breathe = 1.06 } = {}) {
+  return { type: "keyframes", options: { duration: us(dur), delay: us(Math.max(0, clipDur - dur)), easing: "linear" },
+    params: { "0%": { blur: 0, scale: 1, easing: "easeInCubic" }, "100%": { blur, scale: breathe } } };
+}
+
+/** 초점 넘기기 들어오기: 같은 블러·크기에서 초점이 돌아온다 */
+export function rackFocusIn({ dur = 0.3, blur = 12, breathe = 1.06 } = {}) {
+  return { type: "keyframes", options: { duration: us(dur), delay: 0, easing: "linear" },
+    params: { "0%": { blur, scale: breathe, easing: "easeOutCubic" }, "100%": { blur: 0, scale: 1 } } };
+}

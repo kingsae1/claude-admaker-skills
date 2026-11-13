@@ -27,6 +27,10 @@
 | [transition-match-cut](transition-match-cut.md) | 전환 | 중 | 컷 ±0.2초 | 컷 양쪽 움직임 방향을 맞추고, 링이 다음 물체 자리에 정확히 착지 |
 | [transition-flash-streak](transition-flash-streak.md) | 전환 | 최고 | 0.3–0.4초 | 빠른 사선 몇 가닥이 지나가고 화면이 브랜드 색으로 번쩍이며 컷 (훅·드롭) |
 | [transition-footage-card](transition-footage-card.md) | 전환 | 중 | 0.9–1.1초 | 소재가 카드로 줄며 기울어 빠지고, 다음 소재 카드가 정면으로 펴짐 (2D ↔ 2.5D) |
+| [transition-cut-the-curve](transition-cut-the-curve.md) | 전환 | 중 | 컷 앞 0.3 + 뒤 0.32초 | 앞 소재가 한쪽으로 12%만 빨라지며 빠지고 다음 소재가 같은 쪽으로 이어 들어옴 (기본 경계, `transitions.md` §0) |
+| [transition-whip-pan](transition-whip-pan.md) | 전환 | 중고 | 0.36초 | 두 소재가 붙은 채 한 화면 미끄러지며 가운데서 모션 블러 최대 |
+| [transition-beat-freeze](transition-beat-freeze.md) | 전환 | 최고 | 1–2박 | 박에 정지 프레임 + 번쩍 + 테두리, 다음 박에 하드 컷 (음악 몽타주) |
+| [transition-scribble-cover](transition-scribble-cover.md) | 전환 | 중 | 0.7초 | 마커 지그재그가 화면을 칠하고 같은 획 자국으로 다음 장면이 드러남 (손그림 톤) |
 | [kinetic-typo-beat](kinetic-typo-beat.md) | 훅·상승부·엔드카드 | 중고 | 박 × (줄 수 + 2–3) | 짧은 단어 줄이 박마다 꽂히고 강조 줄 뒤로 색 띠, 다 나오면 전체가 눌렸다 펴짐 |
 | [squash-bounce](squash-bounce.md) | 훅·로딩·엔드카드 장식 | 중 | 2.5–3.5초 | 공이 위상을 달리해 통통 튀며 납작해졌다 늘어나고, 출렁이며 멈춤 |
 | [iso-build-up](iso-build-up.md) | 주인공·상승부 | 중 | 2.5–3.5초 | 아이소메트릭 블록이 뒤에서 앞으로 솟음. 평면(SVG, 앱까지 감) / 입체(three, 카메라가 돎) |
@@ -57,17 +61,20 @@
 
 ### 전환 카드 고르는 법
 
-슬롯 사이(컷)마다 "나가는 방식"을 하나 고릅니다(`TREATMENT.md` 샷 리스트). 6가지 기법과 이 스킬에서 쓰는 방법입니다.
+슬롯 사이(컷)마다 "나가는 방식"을 하나 고릅니다(`TREATMENT.md` 샷 리스트). 어떤 기법이든 컷 양쪽은 같은 축·같은 방향·같은 속도로 잇습니다(`../transitions.md` §0). 기법과 이 스킬에서 쓰는 방법입니다.
 
 | 기법 | 쓰는 것 | 언제 |
 |---|---|---|
+| 흐름 잇기(기본) | `transition-cut-the-curve`, 셰이더 `am-cut-curve`, 그래픽은 `motion.mjs` `cutCurveOut`/`cutCurveIn` | 특별한 이유가 없는 모든 경계 |
+| 휩팬 | `transition-whip-pan`, 셰이더 `am-push` | 장소 이동, 빠른 나열 |
+| 정지 컷 | `transition-beat-freeze` | 음악 몽타주에서 한 컷 강조 |
 | 스와이프(닦아내기) | `beat-montage-wipe`의 사선 띠, 마스크 `wipe`·`angleWipe`, 큰 글자·물체가 화면 앞을 지나가게 | 빠른 나열, 인트로·엔딩 타이틀 |
 | 플래시(스와이프 + 커버) | `transition-flash-streak` | 드롭, 훅 직후. 화면 전체 충격(R4)에 셈 |
-| 커버(덮기) | `transition-cover-flood` | 장면 성격이 바뀔 때, 화면 속 점이 있을 때 |
+| 커버(덮기) | `transition-cover-flood`, 손그림 톤이면 `transition-scribble-cover` | 장면 성격이 바뀔 때, 화면 속 점이 있을 때 |
 | 매치 컷 | `transition-match-cut`, 생성 소재면 첫·끝 프레임을 맞춰 생성(`footage-gen.md`) | 비슷한 모양·움직임이 양쪽에 있을 때 |
 | 차원 이동(2D↔3D) | `transition-footage-card`, `hero-tilt-push`, three 어댑터(`three.md`) | 여러 소재를 넘겨 보여 줄 때 |
 | 몰핑 | 그래픽 도형끼리만. 같은 자리·크기의 두 Shape를 교차(`gsap.md`), 경로 보간은 Adapter `script` | 아이콘·도형이 다음 요소가 될 때. 제품 소재는 모양을 바꾸지 않음 |
-| 공간 전환(줌) | `transition-zoom-through`, 장면 카메라(engine-recipes §4) | 창·화면·렌즈처럼 "안"이 있는 물체가 소재에 있을 때 |
+| 공간 전환(줌) | `transition-zoom-through`, 셰이더 `am-zoom-blur`(앞으로·뒤로), 장면 카메라(engine-recipes §4) | 창·화면·렌즈처럼 "안"이 있는 물체가 소재에 있을 때 |
 
 - 한 광고에 전환 기법은 2–3종, 같은 전환을 연속 세 번 쓰지 않습니다.
 - 트랙 매트 전환(글자 속으로, 질감으로 번짐)과 admaker 전환 클립(`am-*`)도 같이 고릅니다. 고르는 순서·규칙·values는 `../transitions.md`.

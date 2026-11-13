@@ -4,6 +4,7 @@
 // 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
+import { appTransitionWindow, autoZSign, checkSeams, sampleClip } from "./seams.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold"]);
 const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing"]);
@@ -180,12 +181,50 @@ for (const [id, c] of clipsAll) {
   const designed = trs.filter(([, c]) => !PLAIN.has(c.transitionKey ?? "fade")).length
     + clipsAll.filter(([, c]) => c.style?.matte).length
     + clipsAll.filter(([, c]) => (c.animations ?? []).some((a) => MASKS.has(a.type))).length
-    + clipsAll.filter(([id, c]) => /^(flood|flash|zoom|mont|match|card)\d+_/.test(id) || /transition|wipe/i.test(String(c.name ?? ""))).length; // 전환 샷(shots/transition-*.mjs)이 만든 클립
+    + clipsAll.filter(([id, c]) => /^(flood|flash|zoom|mont|match|card|curve|whip|freeze|scribble)\d+_/.test(id) || /transition|wipe/i.test(String(c.name ?? ""))).length; // 전환 샷(shots/transition-*.mjs)이 만든 클립
   const cuts = new Set(footage.map(([, c]) => c.timing?.display?.from ?? 0)).size - 1;
   if (cuts >= 2 && designed === 0) warn("transitions", `소재가 바뀌는 곳이 ${cuts}곳인데 전환 그래픽이 없음${trs.length ? "(fade·dissolve뿐)" : ""}. 시그니처 한 곳은 트랙 매트·줌 스루·잉크 번짐, 나머지는 am-* 전환·마스크로 (transitions.md)`);
   for (let i = 1; i < trs.length; i++) {
     const k = trs[i][1].transitionKey ?? "fade";
     if (!PLAIN.has(k) && k === (trs[i - 1][1].transitionKey ?? "fade")) warn(trs[i][0], `전환 "${k}"를 연속 두 번 씀 (transitions.md: 섞어 쓰기)`);
+  }
+}
+// 씬 이음새 (transitions.md §0·§4, seams.mjs)
+{
+  const fps = FPS(p), fr = 1e6 / fps;
+  const byId = p.clips ?? {};
+  // 1. 전환 클립 자리: 앱으로 가져가면 앱 규칙(appTransitionWindow)대로 다시 놓인다. 엔진 렌더와 앱이 같은 박에 보이게 맞춘다
+  for (const [id, c] of clipsAll) {
+    if (c.type !== "Transition" || !c.fromClipId || !c.toClipId) continue;
+    const A = byId[c.fromClipId], B = byId[c.toClipId], d = c.timing?.display;
+    if (!A || !B || !d) { err(id, `전환의 from/to 클립(${c.fromClipId} → ${c.toClipId})이 없음 (클립에 id를 꼭 적기)`); continue; }
+    const win = appTransitionWindow(A, B, d.to - d.from);
+    const sec = (v) => (v / 1e6).toFixed(2);
+    if (win.mode === "freeze_overlay") warn(id, `두 소재가 겹치지 않아 앱에서는 전환이 앞 소재 끝(${sec(win.from)}–${sec(win.to)}초)으로 옮겨지고 다음 소재는 첫 프레임에 멈춘 채 섞임. 전환 길이만큼 소재를 겹치고(앞 소재 끝 = 컷 + 길이/2, 다음 소재 시작 = 컷 − 길이/2) 전환을 그 겹침에 두세요 (engine-recipes §5)`);
+    else if (Math.abs(win.from - d.from) > fr || Math.abs(win.to - d.to) > fr) warn(id, `앱으로 가져가면 전환이 ${sec(d.from)}–${sec(d.to)}초에서 ${sec(win.from)}–${sec(win.to)}초로 옮겨짐 (박이 밀림). 전환 구간을 두 소재가 겹치는 구간과 같게 (engine-recipes §5)`);
+  }
+  // 2. Z축 뒤집힘 (장부 없이도)
+  for (const m of autoZSign(p)) warn("seam", m);
+  // 3. 컷 순간 바닥: 프레임을 다 덮는 불투명한 층이 없으면 전환 중 배경(흰색·검정)이 비침 (Exporter는 settings.backgroundColor를 안 칠함)
+  // 그 순간 실제 상자(이동·크기 모션 포함)가 화면을 다 덮는지
+  const covers = (s) => s.cx - s.w / 2 <= 1 && s.cy - s.h / 2 <= 1 && s.cx + s.w / 2 >= PW - 1 && s.cy + s.h / 2 >= PH - 1;
+  const solid = (c) => ["Video", "Image", "Backdrop"].includes(c.type) || (c.type === "Shape" && ["rectangle", "rect"].includes(c.shapeType ?? c.style?.shapeType) && (c.style?.fillOpacity ?? 1) >= 0.99 && !/transparent|none|rgba\(/.test(String(c.style?.fill ?? "")));
+  const grounds = clipsAll.filter(([, c]) => solid(c));
+  // 소재가 바뀌는 시각. 셰이더 전환 클립이 덮는 컷은 셰이더가 불투명하게 그리므로 뺀다
+  const trWin = clipsAll.filter(([, c]) => c.type === "Transition").map(([, c]) => c.timing?.display).filter(Boolean);
+  const cutTimes = new Set(footage.map(([, c]) => (c.timing?.display?.from ?? 0) / 1e6)
+    .filter((t) => t > 0 && !trWin.some((d) => d.from <= t * 1e6 + fr && d.to >= t * 1e6 - fr)));
+  for (const t of cutTimes) {
+    const ok = [t - 1 / fps, t, t + 1 / fps].every((tt) => grounds.some(([, c]) => { const s = sampleClip(c, tt); return s.visible && s.opacity >= 0.99 && covers(s); }));
+    if (!ok) warn("seam", `${t.toFixed(2)}초 이음새에서 프레임을 다 덮는 불투명한 층이 없음 — 소재가 밀리거나 줄어 생긴 틈, 두 장면 투명도 합이 1보다 작아지는 순간에 배경이 비쳐 번쩍임. 맨 아래에 화면 가득 불투명 배경 Shape를 깔기 (transitions.md §0)`);
+  }
+  // 4. 장부(timeline.mjs의 SEAMS)가 있으면 숫자로 검사
+  let SEAMS = null;
+  try { ({ SEAMS } = await import(new URL(`file://${process.cwd()}/timeline.mjs`).href)); } catch { /* 장부 없음 */ }
+  if (Array.isArray(SEAMS) && SEAMS.length) {
+    const r = checkSeams(p, SEAMS, fps);
+    for (const m of r.errors) err("seam", m);
+    for (const m of r.warnings) warn("seam", m);
   }
 }
 // F2 화려함 기본값: 3초 구간마다 바닥 소재를 빼고 움직이는 층(모션·글자 애니메이션·어댑터·이펙트)이 3개 이상인지. 마지막 1.5초(엔드카드 정지)는 뺌

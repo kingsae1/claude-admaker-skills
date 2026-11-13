@@ -80,3 +80,14 @@
 - 저장소: https://github.com/cclank/lanshu-awesome-ai-video-kit (MIT, Copyright (c) 2026 lanshu), https://github.com/Creatify-AI/ai-ad-prompt-guide (MIT), https://github.com/krusemediallc/arcads-claude-code (MIT, Kruse Media LLC), https://github.com/Alisa0808/vibe-creating-skill (MIT, the Vibe Creating Prompt Skill contributors)
 - 참고: 모델 선택표와 증상별 진단 분류(lanshu `model-selector`, `seedance-debugger`), 구조화 블록 순서(lanshu Seedance·Kling 공식, arcads Seedance 공식), 빈 형용사를 피하는 규칙(arcads), 광고 생성본의 환각 방지·평가 기준(Creatify), 생성 전에 이미지가 이미 정한 것을 가리는 판단(vibe-creating)
 - 원문·프롬프트 예시는 옮기지 않았습니다. 모델 목록, 폴백 규칙, `{ref1}` 태그, 증상표와 예시는 admaker 앱의 실제 모델 설정에 맞춰 새로 썼습니다(`references/video-models.md`, `templates/footage-plan.mjs` 경고).
+
+## HyperFrames
+- 저장소: https://github.com/heygen-com/hyperframes (스냅샷 2026-11-12)
+- 참고: `.claude/skills/motion-doctrine/SKILL.md`, `.claude/skills/motion-doctrine/references/seam-gate.md`, `.claude/skills/cut-the-curve/SKILL.md`, `.claude/skills/seam-craft/SKILL.md`, `registry/components/*`(whip-pan-cut, grid-pixelate-wipe, chromatic-aberration-wipe, light-leak 등 전환 블록 목록) (방향 법칙, Z축 크기 변화 부호, 흐름·아껴 쓰는 방향, 12% 부분 이동·power4 짝 이징·블러 수치, 투명도 처리, 불투명한 바닥, 이음새 장부 검사)
+- 라이선스: Apache License 2.0, Copyright 2026 HeyGen, Inc. 이 저장소의 해당 문서(`references/transitions.md` §0·§4, `references/shots/transition-cut-the-curve.md`·`transition-whip-pan.md`·`transition-beat-freeze.md`·`transition-scribble-cover.md`)는 원문을 한국어로 다시 쓰고 admaker 엔진·광고용으로 수정한 파생물입니다. `templates/seams.mjs`는 seam-gate.mjs의 검사 항목을 참고해 ProjectJSON용으로 새로 작성했고(브라우저 측정 대신 keyframes 계산), 코드는 복사하지 않았습니다. 장면 안 반복 움직임 금지 규칙은 가져오지 않았습니다(`transitions.md` §0.5). hyperframes-cli·style-sampling·reverse-any-video(HyperFrames 런타임 전용, 사용 기록 전송)는 쓰지 않습니다.
+
+## Remotion skills
+- 저장소: https://github.com/remotion-dev/skills
+- 참고: `transitions.md`(전환이 두 장면을 겹쳐 전체 길이를 줄이는 방식과 길이를 그대로 두고 컷 위에 얹는 방식의 구분), `light-leaks.md`(컷 위 빛샘)
+- 라이선스 파일을 찾지 못해 문장·코드는 옮기지 않고 개념만 참고했습니다(`engine-recipes.md` §5.2는 admaker 앱 동작을 확인해 새로 씀).
+

@@ -20,7 +20,8 @@ const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "stroke
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)
-const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft", "am-push": "slideleft", "am-ink-bleed": "dissolve" };
+const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft", "am-push": "slideleft", "am-ink-bleed": "dissolve",
+  "am-cut-curve": "smoothleft", "am-zoom-blur": "zoomin", "am-rack-focus": "hblur", "am-light-leak": "fadewhite", "am-pixelate": "pixelize", "am-rgb-split": "wipeleft" };
 // 트랙 행 순서를 바꿔도 클립 겹침 순서가 유지되도록 앱의 "명시 zIndex" 구간(≥ 1,000,000)으로 옮긴다
 const Z_BASE = 1_000_000;
 
@@ -277,7 +278,11 @@ for (const [id, c] of Object.entries(p.clips)) {
   if (/^hf-/.test(key)) warn(id, `전환 "${key}"(셰이더 팩)는 앱에 등록되어 있지 않아 앱에서는 fade로 보입니다. 앱으로 넘길 광고는 am-* 전환·트랙 매트·마스크 전환을 쓰세요 (transitions.md)`);
   else if (AM_TRANSITION_XFADE[key]) warn(id, `전환 "${key}"는 앱 미리보기·브라우저 내보내기에서 그대로(values·easing 포함) 보이고, 서버 인코딩에서만 "${type}"(xfade)로 바뀝니다`);
   else if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 엔진 키 그대로 넘깁니다. 앱 전환 탭에 있는 이름인지 확인하세요`);
-  transitions.push({ id, type, duration: sec(c.timing?.duration ?? (c.timing?.display?.to - c.timing?.display?.from)), from: c.fromClipId ?? "", to: c.toClipId ?? "", mode: "crossover", ...(engine ? { engine } : {}) });
+  // 앱과 같은 규칙: 두 클립이 겹치면 crossover, 아니면 freeze_overlay (engine-recipes §5.2)
+  const fa = p.clips?.[c.fromClipId]?.timing?.display, tb = p.clips?.[c.toClipId]?.timing?.display;
+  const mode = fa && tb && Math.min(fa.to, tb.to) > Math.max(fa.from, tb.from) ? "crossover" : "freeze_overlay";
+  if (mode === "freeze_overlay" && fa && tb) warn(id, `전환 양쪽 소재가 겹치지 않아 앱에서는 앞 소재 끝으로 옮겨지고 다음 소재가 첫 프레임에 멈춥니다. 전환 길이만큼 겹치세요 (engine-recipes §5.2)`);
+  transitions.push({ id, type, duration: sec(c.timing?.duration ?? (c.timing?.display?.to - c.timing?.display?.from)), from: c.fromClipId ?? "", to: c.toClipId ?? "", mode, ...(engine ? { engine } : {}) });
 }
 
 const wire = {
