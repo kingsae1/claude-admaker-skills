@@ -32,7 +32,12 @@ function checkGsapTimeline(id, a) {
   });
   if (Number(a.options?.delay) > 0) warn(id, "gsapTimeline에 options.delay: delay 전에는 from 값이 걸리지 않음. 첫 tween의 position에 대기를 넣으세요 (gsap.md §4)");
 }
-const SHAPE_ONLY = new Set(["strokeDraw", "paint"]);
+const SHAPE_ONLY = new Set(["strokeDraw"]);
+// paint 키: Shape(fillColor·strokeColor·strokeWidth·borderRadius·fill, pie는 startAngle·endAngle·innerRadius),
+// Text(color·strokeColor·strokeWidth·letterSpacing + 가변 폰트 축 wght·wdth·… 4글자 태그, 엔진 3.0.25+)
+const PAINT_SHAPE = new Set(["fillColor", "strokeColor", "strokeWidth", "borderRadius", "fill", "startAngle", "endAngle", "innerRadius", "easing"]);
+const PAINT_TEXT = new Set(["color", "strokeColor", "strokeWidth", "letterSpacing", "fontWeight", "fontWidth", "fontSlant", "opticalSize", "easing"]);
+const AXIS_TAG = /^(?:[a-z]{4}|[A-Z]{4})$/;
 const FILTERS = new Set(["adjustment", "advancedBloom", "backdropBlur", "bloom", "colorMap", "colorOverlay", "convolution", "dot", "dropShadow", "glitch", "glow", "godray", "grayscale", "hslAdjustment", "kawaseBlur", "motionBlur", "oldFilm", "pixelate", "radialBlur", "reflection", "rgbSplit", "tiltShift"].map((n) => `${n}Filter`));
 const BACKDROPS = new Set(["solid", "gradient", "meshGradient", "noise", "floatingBlobs"]);
 // Core(Studio 로딩)는 이 타입들만 빈 src를 허용하고 나머지는 클립을 버린다
@@ -74,6 +79,11 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (!MOTION_TYPES.has(a.type)) err(id, `모르는 모션 type "${a.type}"`);
     if (SHAPE_ONLY.has(a.type) && c.type !== "Shape") err(id, `${a.type}는 Shape 전용`);
     if (a.type === "countUp" && c.type !== "Text") err(id, "countUp은 Text 전용");
+    if (a.type === "paint") for (const v of Object.values(a.params ?? {})) for (const k of Object.keys(v ?? {})) {
+      const ok = c.type === "Text" ? PAINT_TEXT.has(k) || AXIS_TAG.test(k) : PAINT_SHAPE.has(k);
+      if (!ok) err(id, `paint 키 "${k}"는 ${c.type}에서 엔진이 모름 (무시됨)`);
+      if (c.type === "Text" && (AXIS_TAG.test(k) || ["fontWeight", "fontWidth", "fontSlant", "opticalSize"].includes(k)) && !c.style?.fontUrl) err(id, `paint "${k}"(가변 폰트 축)는 style.fontUrl에 가변 폰트 파일이 있어야 함`);
+    }
     const e = a.options?.easing;
     if (e && !EASINGS.has(e) && !isGsapEase(e)) err(id, `모르는 easing "${e}" (엔진은 선형으로 처리함)`);
     if (a.type === "gsapTimeline") checkGsapTimeline(id, a);

@@ -198,6 +198,25 @@ clips.footage.style = { matte: { clipId: "title", mode: "alpha" } };
 - 한국어는 `staggerMode: "word"`가 기본입니다. 글자 단위는 짧은 헤드라인(10자 이하)에만.
 - 자막은 `Caption` 클립 + 단어 타이밍(TTS/ASR 결과)으로 만들고, `.srt`는 스킬이 따로 씁니다.
 
+### 3.0 키네틱 타입: 가변 폰트 축 · 돌출 · 원형 글자 · 흩어짐 (엔진 3.0.25+)
+
+쇼릴·타이포 광고처럼 글자 자체가 움직임의 주인공일 때 씁니다. 전부 Text 클립 하나로 되고, 렌더 하니스(Preview·Exporter)에서 확인했습니다(`samples/kinetic-reel`). 샷 카드 `variable-type-breath`, `bauhaus-grid-flip`, `particle-morph`.
+
+| 하고 싶은 것 | 쓰는 법 | 주의 |
+|---|---|---|
+| 가변 폰트 폭·굵기가 박마다 숨쉼 | `style.fontVariation: { wdth: 125, wght: 900 }` + `paint` 키프레임 `{ "0%": { wdth: 125, easing: "easeInOutExpo" }, "50%": { wdth: 62 } }` | `fontUrl`이 **가변 폰트 파일**(`[wdth,wght].ttf`)이어야 함. 별칭 `fontWeight`=`wght`, `fontWidth`=`wdth`, `fontSlant`=`slnt`, `opticalSize`=`opsz`, 그 밖의 4글자 축 태그도 됨. 축 값은 1 단위로 반올림해 face를 만들어 캐시(최대 96개) |
+| 자간이 벌어졌다 모임 | 같은 `paint`에 `letterSpacing`(px) | 폭이 바뀌어도 상자는 그대로라 `align: "center"`로 둠 |
+| paint 구간 이징 | stop에 `easing` (keyframes와 같은 규칙: 그 stop → 다음 stop) | `options.easing`은 `linear`로 |
+| 입체 돌출 글자(긴 그림자) | `style.extrude: { depth: 34, angle: 52, color: "#141414", shade?: 0.4 }` | angle 0 = 오른쪽, 90 = 아래. 1px씩 쌓아 그리므로 depth 60 이하 권장. `shadow`가 있으면 가장 먼 층에서 떨어짐 |
+| 윤곽선만 있는 글자(메아리) | `color: "rgba(0,0,0,0)"` + `stroke: { color, width: 1.5 }` | 위아래로 3–5벌 쌓고 본 글자와 같은 `paint`를 붙이면 같이 숨쉼 |
+| 원 위 글자(회전 배지·다이얼 눈금) | `style.textPath: { type: "circle", radius: 118, spread: true, startAngle: 0, direction: "cw" }` + 클립 `angle` 키프레임으로 회전 | 상자는 정사각(폭 = 지름 + 글자 크기)으로 바뀜. `spread`면 한 바퀴에 고르게. `"|".repeat(60)`로 시계 눈금. 아래쪽 호는 `direction: "ccw"`, `startAngle: 180` |
+| 글자가 흩어진 자리에서 모여듦 | `{ type: "stagger", params: { type: "character", stagger: 0.04, from: { opacity: 0 }, to: { opacity: 1 }, scatter: { x: 260, y: 180, angle: 70, scale: 0.6, seed: 5 } } }` | 글자마다 시드 랜덤 오프셋 → 0. 같은 seed면 같은 모양 |
+| 타임코드·시계가 돈다 | `countUp` `params: { format: "timecode", fps: 30, from: 시작 초, to: 끝 초 }` (`clock`이면 `MM:SS`) | 글자 안 첫 타임코드(`TC 00:00:00:00`)만 바꿈. `to`를 빼면 실제 시간 속도. 숫자 자릿수 맞추기는 `pad` |
+
+- 한 클립에 `countUp`을 둘 넣지 않습니다. countUp은 delay 전에도 시작 값을 쓰므로 뒤의 것이 앞의 것을 덮습니다. 구간마다 클립을 나눕니다.
+- 슬램 입장은 keyframes `x` + `motionBlur`(엔진 가로 모션 블러), 크로스페이드는 이전 글자 `blur` 0→24 · `opacity` 1→0, 새 글자 `scale` 1.35→1 · `blur` 26→0을 같은 0.2–0.35초에.
+- 앱 불러오기: `paint`·`stagger`·`countUp`은 animation으로 넘어가지만 `fontVariation`·`extrude`·`textPath` 스타일은 앱 text_segment 렌더러가 아직 그리지 않습니다(평범한 글자로 보임). 앱에서 고칠 광고면 이 클립은 영상으로 미리 렌더해 넣습니다.
+
 ### 3.1 단어 단위 자막 (aesthetic-rules Q15)
 
 엔진 `Caption` 클립은 단어 타이밍을 받아 지금 말하는 단어(active), 지난 단어(spoken), 아직 안 온 단어(future)를 따로 칠합니다.
@@ -278,7 +297,8 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 
 ## 5. 도형, 배경, 필터, 전환
 
-- `Shape` 종류: rectangle, rounded, pill, circle, ellipse, line, triangle, rightTriangle, diamond, pentagon, hexagon, polygon, star, trapezoid, speech, heart, cloud, arrow, path(SVG path). 채우기는 단색 또는 `linear-gradient(...)`.
+- `Shape` 종류: rectangle, rounded, pill, circle, ellipse, line, triangle, rightTriangle, diamond, pentagon, hexagon, polygon, star, trapezoid, speech, heart, cloud, arrow, path(SVG path), pie(엔진 3.0.25+). 채우기는 단색 또는 `linear-gradient(...)`.
+- `pie`: `style.startAngle`·`endAngle`(도, 0 = 12시, 시계방향)·`innerRadius`(0 = 부채꼴, 0.8 = 얇은 링 호). 반원 `0→180`, 사분원은 **칸 두 배 상자**에 중심을 칸 모서리에 두고 `90→180`(위 왼쪽 모서리 기준). `paint`로 `startAngle`·`endAngle`·`innerRadius`를 키프레임하면 진행 링(시계), 부채가 펴지는 리빌이 됩니다. 사분원은 클립 `angle`로 돌리면 모서리 기준으로 돌아 칸을 벗어나므로, 돌릴 땐 모서리와 각도를 바꾼 새 클립이나 `paint` 색 바꿈을 씁니다.
 - 드로잉(엔진 3.1+): `brush`(가변 굵기 붓 획), path의 `fillRule: "evenodd"`, Shape `regionFilters`(도형 안쪽만 아래 화면에 필터), 모든 클립 `blendMode`(normal·add·multiply·screen·darken·lighten). 손그림 강조·글자 패스·붓 획 레시피는 `drawing.md`.
 - 이어지는 바는 한 Shape로 그립니다(이음새 방지).
 - `Backdrop`: 단색/그라디언트 배경.
@@ -429,6 +449,8 @@ registerThreeScene("glass-hero", async ({ THREE, src, params, loadGLTF }) => {
 - 서버 인코딩(json_to_ffmpeg)에서는 Adapter 클립이 빠집니다. 브라우저 Exporter 기준에서만 씁니다.
 
 ## 8. 렌더와 검수
+
+- **스틸(`Preview.capture`)에서 `transform.opacity` < 1인 클립이 불투명한 클립 위에서 안 보이는 일이 있습니다**(엔진 3.0.24–3.0.25, mp4 `Exporter`에서는 정상). 스틸 검수에서 HUD·워터마크처럼 반투명 클립이 사라졌으면 mp4에서 프레임을 뽑아(`ffmpeg -ss t -i out.mp4 -frames:v 1`) 다시 확인합니다.
 
 - 렌더는 `templates/render/`의 하니스로 합니다: 헤드리스 Chromium에서 페이지가 `Exporter.create({width, height, fps, bitrate})` → `load(project)` → `export()` 결과를 파일로 저장.
 - 스틸 검수는 `Preview.capture(timeUs)`(PNG)로 1–2초마다 뽑아 컨택트 시트로 만듭니다.
