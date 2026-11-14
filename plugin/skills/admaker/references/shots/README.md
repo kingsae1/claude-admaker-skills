@@ -34,6 +34,8 @@
 | [transition-whip-pan](transition-whip-pan.md) | 전환 | 중고 | 0.36초 | 두 소재가 붙은 채 한 화면 미끄러지며 가운데서 모션 블러 최대 |
 | [transition-beat-freeze](transition-beat-freeze.md) | 전환 | 최고 | 1–2박 | 박에 정지 프레임 + 번쩍 + 테두리, 다음 박에 하드 컷 (음악 몽타주) |
 | [transition-scribble-cover](transition-scribble-cover.md) | 전환 | 중 | 0.7초 | 마커 지그재그가 화면을 칠하고 같은 획 자국으로 다음 장면이 드러남 (손그림 톤) |
+| [transition-shape-grid](transition-shape-grid.md) | 전환 | 고 | 0.7초 | 사각 타일이 돌며 화면을 덮고 원·반원·사분원이 찍힌 뒤 반대 순서로 열림 (모션 전용 씬 들어갈 때, `interludes.md`) |
+| [transition-ring-iris](transition-ring-iris.md) | 전환 | 중고 | 0.85초 | 동심원 링 호가 시계처럼 차올라 덮고 주인공 쪽에서 반대로 쓸려 열림 (모션 씬 나올 때, 느린 템포 시그니처) |
 | [kinetic-typo-beat](kinetic-typo-beat.md) | 훅·상승부·엔드카드 | 중고 | 박 × (줄 수 + 2–3) | 짧은 단어 줄이 박마다 꽂히고 강조 줄 뒤로 색 띠, 다 나오면 전체가 눌렸다 펴짐 |
 | [squash-bounce](squash-bounce.md) | 훅·로딩·엔드카드 장식 | 중 | 2.5–3.5초 | 공이 위상을 달리해 통통 튀며 납작해졌다 늘어나고, 출렁이며 멈춤 |
 | [iso-build-up](iso-build-up.md) | 주인공·상승부 | 중 | 2.5–3.5초 | 아이소메트릭 블록이 뒤에서 앞으로 솟음. 평면(SVG, 앱까지 감) / 입체(three, 카메라가 돎) |

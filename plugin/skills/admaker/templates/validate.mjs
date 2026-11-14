@@ -156,6 +156,11 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
 for (const [fam, urls] of fontUrls) if (urls.size > 1) err(fam, `한 폰트 이름에 파일 ${urls.size}개 (엔진은 이름 하나에 파일 하나만 등록함, B5: 한글 폰트는 프로젝트당 한 굵기)`);
 const families = new Set([...fontUrls.keys()].map((f) => findFont(f)?.font.name ?? f));
 if (families.size > 3) warn("fonts", `폰트 패밀리 ${families.size}개 (B4: 디스플레이 1 + 본문 1 + 숫자 1 이하)`);
+// 모션 전용 씬(인터루드, references/interludes.md): timeline.mjs의 INTERLUDES(초). 이 구간은 소재 없이 그래픽만 둔다
+let TIMELINE = {};
+try { TIMELINE = await import(new URL(`file://${process.cwd()}/timeline.mjs`).href); } catch { /* timeline 없음 */ }
+const INTERLUDES = Array.isArray(TIMELINE.INTERLUDES) ? TIMELINE.INTERLUDES.filter((w) => w && w.to > w.from) : [];
+const inInterlude = (d) => INTERLUDES.some((w) => d.from >= w.from * 1e6 - 1e5 && d.to <= w.to * 1e6 + 1e5);
 // Q11: 광고의 바닥은 사용자 영상·이미지. 그 위를 넓게(60%+) 1초 넘게 덮는 층은 소재를 어둡게·뿌옇게 만들 수 있어 참고 경고(의도했다면 무시)
 const { width: PW = 1080, height: PH = 1920 } = p.settings ?? {};
 const clipsAll = Object.entries(p.clips ?? {});
@@ -179,6 +184,7 @@ for (const [id, c] of clipsAll) {
   const t = c.transform ?? {}, d = c.timing?.display;
   const area = Math.max(0, Math.min(PW, t.x + t.width) - Math.max(0, t.x)) * Math.max(0, Math.min(PH, t.y + t.height) - Math.max(0, t.y));
   if (area < PW * PH * 0.6 || (t.opacity ?? 1) < 0.1 || !d || d.to - d.from <= 1e6 || (t.zIndex ?? 0) <= footZ) continue;
+  if (inInterlude(d)) continue; // 모션 전용 씬의 바닥·그래픽 면은 소재를 덮는 층이 아님
   if (c.type === "Image" && String(c.src).startsWith("data:image/svg") && outlineOnly(svgOf(c.src))) continue;
   if (c.type === "Shape" && ((c.style?.fillOpacity ?? 1) < 0.1 || /transparent|none/.test(c.style?.fill ?? ""))) continue;
   warn(id, `화면의 ${Math.round((area / (PW * PH)) * 100)}%를 ${((d.to - d.from) / 1e6).toFixed(1)}초 덮는 층(불투명도 ${t.opacity ?? 1}): 소재가 어둡거나 뿌옇게 보일 수 있음. 의도한 게 아니면 글자 주변 받침이나 선 위주로 (Q11)`);
@@ -236,6 +242,22 @@ for (const [id, c] of clipsAll) {
     for (const m of r.errors) err("seam", m);
     for (const m of r.warnings) warn("seam", m);
   }
+}
+// 모션 전용 씬: 바닥(화면 가득 불투명한 층)이 있는지 ✗, 개수·비율·간격이 템포 상한 안인지 △ (interludes.md §6)
+if (INTERLUDES.length) {
+  const { tempoClass, checkInterludes } = await import(new URL("./interludes.mjs", import.meta.url).href);
+  const full = (c) => { const t = c.transform ?? {}; return (t.x ?? 0) <= 1 && (t.y ?? 0) <= 1 && (t.x ?? 0) + (t.width ?? 0) >= PW - 1 && (t.y ?? 0) + (t.height ?? 0) >= PH - 1 && (t.opacity ?? 1) >= 0.99; };
+  const opaque = (c) => (c.type === "Shape" && (c.style?.fillOpacity ?? 1) >= 0.99 && !/transparent|none|rgba\([^)]*,\s*0(\.\d+)?\)/.test(c.style?.fill ?? "")) || ((c.type === "Image" || c.type === "Video") && !String(c.src ?? "").startsWith("data:image/svg"));
+  for (const w of INTERLUDES) {
+    for (const tt of [w.from + 0.05, (w.from + w.to) / 2, w.to - 0.05]) {
+      const ok = clipsAll.some(([, c]) => { const d = c.timing?.display; return d && d.from <= tt * 1e6 && d.to >= tt * 1e6 && full(c) && opaque(c); });
+      if (!ok) { err("interlude", `${w.from.toFixed(2)}–${w.to.toFixed(2)}초 모션 전용 씬 ${tt.toFixed(2)}초에 화면 가득한 불투명 바닥이 없음 (interludes.md §5: 브랜드 색 Shape를 맨 아래에)`); break; }
+    }
+  }
+  const bpm = TIMELINE.ANALYSIS?.bpm ?? TIMELINE.BPM ?? 120;
+  const tempo = TIMELINE.TEMPO ?? tempoClass({ bpm, direction: TIMELINE.DIRECTION, request: TIMELINE.REQUEST ?? "" });
+  const duration = TIMELINE.DURATION ?? Math.max(0, ...clipsAll.map(([, c]) => c.timing?.display?.to ?? 0)) / 1e6;
+  for (const m of checkInterludes({ tempo, duration, windows: INTERLUDES, beatSec: TIMELINE.BEAT ?? 60 / bpm })) (m.level === "✗" ? err : warn)("interlude", m.msg);
 }
 // F2 화려함 기본값: 3초 구간마다 바닥 소재를 빼고 움직이는 층(모션·글자 애니메이션·어댑터·이펙트)이 3개 이상인지. 마지막 1.5초(엔드카드 정지)는 뺌
 {
