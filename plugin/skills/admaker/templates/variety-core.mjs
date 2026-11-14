@@ -100,6 +100,8 @@ export const AXES = [
       { id: 'glitch-cut', label: '글리치 컷', how: 'glitch-hit를 컷 양쪽 2프레임씩', only: ['glitch-tech', 'beat-montage'] },
       { id: 'star-reveal', label: '별 모양으로 열림', how: 'starReveal 마스크로 다음 소재가 별 모양으로 커지며 열림', fits: ['playful-bounce', 'offer-punch'], avoid: ['glitch-tech', 'spatial-3d'] },
       { id: 'push', label: '밀어내기', how: 'am-push direction + blur, 박에 맞춰', fits: ['beat-montage', 'offer-punch'] },
+      { id: 'shape-grid', label: '도형 타일 덮기', how: 'transition-shape-grid, 대각선 순서로 사각 타일 + 원·반원 조각 (모션 씬 들어갈 때)', fits: ['editorial-kinetic', 'playful-bounce', 'offer-punch'], avoid: ['handwritten-warm', 'pixel-retro'] },
+      { id: 'ring-iris', label: '링 호 아이리스', how: 'transition-ring-iris, 동심원 링이 차올라 덮고 주인공 쪽에서 열림', fits: ['product-hero', 'glossy-signature', 'info-map'], avoid: ['pixel-retro'] },
     ],
   },
   {

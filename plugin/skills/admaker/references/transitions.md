@@ -115,6 +115,8 @@ HyperFrames는 장면 안의 숨쉬기·떠다니기 같은 반복 움직임을 
 | `transition-whip-pan` | 휩팬: 두 소재가 붙은 채 한 화면 미끄러지며 가운데서 모션 블러 최대 | 장소 이동, 빠른 나열 |
 | `transition-beat-freeze` | 박에 정지 프레임 + 번쩍 + 테두리, 다음 박에 하드 컷 | 음악 중심 몽타주 (`fast-montage`) |
 | `transition-scribble-cover` | 굵은 마커 지그재그가 화면을 칠하고, 같은 획 자국으로 다음 장면이 드러남 | 손그림·수제·키즈·SNS 톤 |
+| `transition-shape-grid` | 사각 타일이 돌며 덮고 원·반원·사분원이 찍힌 뒤 반대 순서로 열림 | 모션 전용 씬으로 들어갈 때, 빠른 템포 |
+| `transition-ring-iris` | 동심원 링 호가 차올라 덮고 주인공 쪽에서 반대로 쓸려 열림 | 모션 전용 씬에서 나올 때, 느린 템포 시그니처 |
 | `transition-shader` | `am-*` 전환 클립을 앱 규칙대로 배치 (그래픽 없음) | B의 전환을 쓸 때 |
 
 ### D. 마스크 등장·퇴장 (클립 하나에 거는 모션, engine-recipes §2.4)
@@ -130,6 +132,7 @@ HyperFrames는 장면 안의 숨쉬기·떠다니기 같은 반복 움직임을 
 ## 3. 고르는 순서
 
 0. 광고의 기본 방향을 정합니다(보통 왼쪽). 보통 경계는 흐름 잇기로 그 방향을 탑니다.
+   - **템포가 양을 정합니다**(`interludes.md` §2): 빠른 템포는 경계마다 그래픽 전환(같은 것 연속 금지), 중간 템포는 두 곳 중 한 곳, 느린 템포·제품 극대화는 시그니처 한 곳만 0.9–1.2초로 느리게. `node templates/interludes.mjs plan --bpm <BPM> --duration <초>`가 경계마다 전환을 제안합니다.
 1. 시그니처 한 곳을 먼저 정합니다: 글자로 시작하면 A "글자 속으로", 소재에 둥근 창이 있으면 C 줌 스루, 수제·감성이면 A "질감으로 번짐" 또는 B `am-ink-bleed`.
 2. 나머지 경계는 씬의 리듬으로 고릅니다: 빠른 나열 → B `am-push`·`am-card-swap`, C `beat-montage-wipe`, D `wipe`. 성격이 바뀜 → B `am-cover-flood`. 같은 장소 → 컷 또는 D.
 3. 드롭·피크 한 곳에만 B `am-flash-streak` 또는 C `transition-flash-streak`.

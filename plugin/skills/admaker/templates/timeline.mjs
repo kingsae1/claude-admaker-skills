@@ -62,6 +62,10 @@ export const FOOTAGE = [
 ];
 
 // 샷 배치: 샷 카드 이름과 그 샷에 넘길 내용
+// 모션 전용 씬(소재 없이 그래픽만, references/interludes.md). interludes.mjs plan 결과를 옮김. 이 구간은 FOOTAGE를 비움.
+// 예: [{ from: beat(4), to: beat(8), kind: "particle-morph" }]
+export const INTERLUDES = [];
+
 export const SHOTS = [
   { card: "hook-number-slam",    section: "hook",    from: beat(0),  to: beat(3),  props: { number: "3초", caption: "설명 한 줄" } },
   { card: "hero-tilt-push",      section: "hero",    from: beat(3),  to: beat(9),  props: { image: "assets/hero@2x.png" } },

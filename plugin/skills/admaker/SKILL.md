@@ -65,6 +65,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 영상 모델별 프롬프트(Veo·Kling·Gemini Omni·MiniMax·Seedance 공식, 폴백에 안전하게 쓰기, 레퍼런스 태그, 증상별 고치기) → `references/video-models.md`.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 글자 자체가 주인공인 키네틱 타이포·모션 쇼릴(가변 폰트가 숨쉬는 글자, 입체 돌출 글자, 원형 배지, 도형 격자, 입자 글자, 타임코드 HUD) → `references/engine-recipes.md` §3.0(엔진 3.0.25+), 샷 카드 `variable-type-breath`·`bauhaus-grid-flip`·`particle-morph`, 예제 `samples/kinetic-reel`.
+   - 광고끼리 닮아 보이지 않게 소재 씬 사이에 모션만으로 된 씬을 넣거나 전환을 화려하게 → `references/interludes.md`. 템포가 양을 정합니다: 빠른 템포는 모션 전용 씬 여러 개와 경계마다 그래픽 전환, 느린 템포·제품 극대화는 소재 위 액센트와 시그니처 전환 한 곳만. `node templates/interludes.mjs plan --bpm <BPM> --duration <초>`로 개수·자리·전환을 정합니다.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
    - 픽셀 아트·도트 캐릭터·레트로 게임 느낌(스프라이트 시트 플립북, 선명한 픽셀 `style.pixelated`, 계단식 `steps(n)` 이징) → `references/pixel-art.md`, `templates/pixel-sprite.mjs`.
