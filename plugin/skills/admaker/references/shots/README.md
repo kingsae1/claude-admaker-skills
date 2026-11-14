@@ -22,6 +22,9 @@
 | [hand-drawn-emphasis](hand-drawn-emphasis.md) | 상승부·엔드카드 | 중 | 0.5–0.8초 (얹는 샷) | 핵심 단어·가격 둘레에 손그림 동그라미·밑줄이 그려짐 (`draw.mjs`) |
 | [beat-flicker-sting](beat-flicker-sting.md) | 훅 | 최고 | 1마디 + 카피 | 막대가 솟고 컬러 바가 2프레임씩 깜빡이다 워드마크가 박에 슬램 (`presets/fast-montage.mjs`) |
 | [beat-montage-wipe](beat-montage-wipe.md) | 상승부 | 중고 | 블록당 k박 (0.8–1.4초) | 소재 컷마다 라벨·제목, 컷 사이를 투톤 사선 띠가 덮음 (`presets/fast-montage.mjs`) |
+| [variable-type-breath](variable-type-breath.md) | 훅·상승부 | 중고 | 2–2.5초 | 굵은 단어가 박마다 가변 폰트 폭·굵기로 숨쉬고 윤곽선 메아리 → 이탤릭 돌출 글자 (엔진 3.0.25+) |
+| [bauhaus-grid-flip](bauhaus-grid-flip.md) | 상승부·주인공 | 중고 | 2.5 + 2.5초 | 기본 도형 격자가 튀어나와 박마다 뒤집히고, 같은 배치가 3D 블록으로 솟음 (`pie`, `depth-blocks`) |
+| [particle-morph](particle-morph.md) | 주인공 | 고 | 2.5–3초 | 꼬리 끄는 입자가 소용돌이 → 글자 → 동심원 호로 모핑 (`particle-morph`) |
 | [transition-cover-flood](transition-cover-flood.md) | 전환 | 중고 | 0.6–0.7초 | 앞 장면의 점이 원으로 부풀어 화면을 덮고, 다음 장면의 점으로 줄어들며 열림 |
 | [transition-zoom-through](transition-zoom-through.md) | 전환 | 중고 | 0.6–0.8초 | 소재 속 둥근 물체로 다가가면 그 안이 다음 소재로 열림 (시그니처 샷 후보) |
 | [transition-match-cut](transition-match-cut.md) | 전환 | 중 | 컷 ±0.2초 | 컷 양쪽 움직임 방향을 맞추고, 링이 다음 물체 자리에 정확히 착지 |
