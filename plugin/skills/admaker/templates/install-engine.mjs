@@ -13,16 +13,21 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), ".claude");
+const home = os.homedir();
+const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(home, ".claude");
+// 앱이 스킬(+vendor)을 설치하는 에이전트별 위치 — 스크립트를 복사해 다른 폴더에서 돌릴 때도 찾는다
 const candidates = [
   process.env.ADMAKER_ENGINE_VENDOR,
-  path.resolve(here, "..", "vendor"), // 스킬 폴더의 templates/ 에서 바로 돌릴 때
-  path.join(claudeDir, "skills", "admaker", "vendor"),
+  path.resolve(here, "..", "vendor"), // 스킬 폴더의 templates/ 에서 바로 돌릴 때 (어느 에이전트든)
+  path.join(claudeDir, "skills", "admaker", "vendor"), // Claude Code
+  path.join(home, ".agents", "skills", "admaker", "vendor"), // OpenAI Codex 등 ~/.agents/skills 를 읽는 에이전트
+  path.join(home, ".copilot", "skills", "admaker", "vendor"), // GitHub Copilot
+  path.join(home, ".gemini", "config", "skills", "admaker", "vendor"), // Antigravity
 ].filter(Boolean);
 
-const vendor = candidates.find((dir) => fs.existsSync(path.join(dir, "packages.json")));
+const vendor = [...new Set(candidates)].find((dir) => fs.existsSync(path.join(dir, "packages.json")));
 if (!vendor) {
-  console.error("엔진 패키지를 찾지 못했습니다. admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 주세요.");
+  console.error("엔진 패키지를 찾지 못했습니다. admaker 앱의 MCP 메뉴 → 연동 방법에서 쓰는 Agent(Claude Code·OpenAI Codex)를 골라 '스킬 설치'를 눌러 주세요.");
   console.error("찾아본 곳:\n  " + candidates.join("\n  "));
   process.exit(1);
 }

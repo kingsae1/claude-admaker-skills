@@ -48,7 +48,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 
 - **엔진(필수)**: ProjectJSON을 그리고 브라우저 `Exporter`로 mp4를 렌더하는 부분입니다. 같이 쓰는 `@admaker/core`·`@admaker/animation`도 엔진과 함께 설치됩니다. 기준 버전은 3.0.7입니다(`references/engine-recipes.md`).
 - **설치 위치**: 광고마다 작업 폴더에 따로 설치하고 버전을 고정합니다(`node <이 스킬 폴더>/templates/install-engine.mjs`). npm에는 없고, admaker 앱의 '스킬 설치'가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일로 설치합니다.
-- **엔진이 없으면 멈춥니다.** 설치 스크립트가 실패하거나 `vendor/`가 없으면, 엔진 없이 HTML·CSS·Remotion 같은 다른 방식으로 대신 만들지 않습니다. 사용자에게 엔진이 필요하다고 알리고 설치 방법(admaker 앱 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭 → '스킬 설치')을 안내한 뒤 기다립니다.
+- **엔진이 없으면 멈춥니다.** 설치 스크립트가 실패하거나 `vendor/`가 없으면, 엔진 없이 HTML·CSS·Remotion 같은 다른 방식으로 대신 만들지 않습니다. 사용자에게 엔진이 필요하다고 알리고 설치 방법(admaker 앱 MCP 메뉴 → 연동 방법 → 쓰는 Agent(Claude·OpenAI Codex) → '스킬 설치')을 안내한 뒤 기다립니다.
 - **admaker 앱(선택)**: 없어도 스킬은 동작합니다. 앱 MCP가 연결되어 있으면 광고 불러오기(`import_to_admaker`), AI 이미지·영상·BGM·TTS 생성, `get_ad_guide`, 템플릿을 같이 씁니다. 없으면 사용자가 준 소재와 엔진만으로 만들고, 납품은 mp4와 불러오기 파일(`to-admaker-import.mjs`)입니다.
 
 광고의 판단 순서는 **메시지 전달 → 브랜드 기억 → 리듬·사운드 → 카메라 → 장식**입니다.
@@ -73,7 +73,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 씬 전환 고르기(트랙 매트·`am-*` 전환·전환 샷·마스크, 규칙·values·앱 호환) → `references/transitions.md`.
    - 효과 이름으로 요청한 영상 이펙트(인물 뒤 거대 글자·궤도 링, 분신·네온 윤곽선·스티커, 머리 위 라벨·얼굴 스캔, 창 팝업·알림 폭탄·뉴스 속보·터미널 타이핑, 만화 임팩트·칼날 베기·종이 찢기·화면 분할, 돌리 줌·프리즈 줌·스피드 램프 등 39종) → `references/video-effects.md`(카탈로그, 지원 수준·소재)와 카테고리 카드 `references/video-effects-*.md`, 빌더 `templates/effects.mjs`, 예제 `samples/video-effects`.
    - 한 클립의 여러 단계 동작(올라오며 펀치, 비트 펀치, 카드 뒤집기) → `references/gsap.md` (`gsapTimeline`). 3D 제품·오브젝트 샷 → `references/three.md` + `engine-recipes.md` §7.1. 웹용 GSAP·three.js 예제(ScrollTrigger, rAF, Clock, `new WebGLRenderer`)는 그대로 쓰지 않고 이 두 문서의 변환표대로 바꿉니다.
-2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → Claude와 연결하기 → Claude Code 탭에서 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
+2. **엔진을 확인합니다.** `references/engine-recipes.md` §0. 프로젝트 폴더에 엔진이 없으면 `node <이 스킬 폴더>/templates/install-engine.mjs`(렌더까지 하면 `--render`)로 설치합니다. 엔진은 비공개 패키지라 npm에서 받을 수 없고, admaker 앱의 "스킬 설치"가 이 스킬 폴더의 `vendor/`에 넣어 둔 파일을 씁니다. `vendor/`가 없으면 사용자에게 admaker 앱의 MCP 메뉴 → 연동 방법에서 쓰는 Agent(Claude·OpenAI Codex)를 골라 '스킬 설치'를 눌러 달라고 합니다. 버전이 기준과 다르면 이름·파라미터를 다시 대조합니다.
 3. **질문은 한 번, 한 메시지로** 합니다. 요청에 답이 있는 항목은 건너뜁니다.
    - 제품/서비스, 이 광고의 **단 하나의 메시지**, CTA 문구와 URL
    - 매체와 규격 → `references/ad-formats.md`
