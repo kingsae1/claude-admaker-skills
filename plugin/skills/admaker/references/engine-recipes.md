@@ -511,6 +511,17 @@ node to-admaker-template.mjs project.json admaker-import.json template.json \
 
 표준 필드(앱 VIDEO_TEMPLATE_SPEC §5): 글자 `store_name`, `location`, `phone`, `business_hours`, `business_category`, `tagline`, `promo_title`, `promo_price`, `promo_period`, `badge`, `cta`, `menu_name_N`, `menu_price_N`, `website`, `sns_handle`. 이미지 `logo`, `qr`, `store_image`, `menu_image_N`, 장식 `*_bg`, `bg_image`, `overlay`, `frame`, `deco_N`(장식은 비워 두면 템플릿 기본 이미지 유지).
 
+빠른 템포·그룹 단위로 낼 때 쓰는 옵션(앱 `5e52dec` 이후 `planSceneTransitions.ts`·`templateColors.ts`·`planSceneBeatSnap.ts` 기준):
+
+| 옵션 | 템플릿에 들어가는 것 | 앱이 하는 일 |
+|---|---|---|
+| `--scene-transition am-push:0.35` (`none`) | 루트 `sceneTransition {key, durationSec}` | 같은 그룹 안에서 역할이 바뀔 때·오프닝을 떠날 때 이 전환. 0–1초, 씬 길이의 40% 이하. 전환 구간은 `[씬 끝 − 길이, 씬 끝]`이라 그 뒤에 나오는 클립은 경고 |
+| `--beats 8 --bpm 128` | 루트 `beats`, `bpm` | BGM을 만든 뒤 씬 경계를 박 위로 옮김(그 박 수의 배수·절반만). `--bpm`을 주면 구간 길이가 박에 맞는지 검사 |
+| `--colors "#E63B2E,#1F4FD8"` | 루트 `colorRoles {primary, secondary}` | 유저가 주 컬러를 고르면 템플릿의 모든 hex 색을 이 색과의 관계를 지켜 옮김 |
+| `--font NotoSansKR-Black.ttf` | 모든 글자 `fontName`(+ 굵은 파일이면 `isBold`) | 앱 `/fonts` 파일명. 한글 파생 굵기 파일(예: `Paperlogy-7Bold`)은 앱 레지스트리에 없어 기본 파일 + 가짜 볼드가 되므로 경고 |
+
+- 글자 클립에 `field`를 적으면 `multi_<field>` + `{{field}}`로 냅니다. 앱은 `{{marker}}`로만 "이 템플릿이 그 정보를 요구한다"를 알고, 값이 비었을 때 예시 문구가 나가지 않습니다. 이미지 필드(`logo` 등)는 클립 이름으로 갑니다(값이 없으면 앱이 숨김).
+- 그룹으로 넣을 때는 앱 `ai-plan-template-groups.json`에 그룹 메타(설명·분위기·색·어울림·피할 때·마커)를, `ai-plan-scene-transitions.json`에 그룹 대표 전환을 함께 넣습니다. 마커 목록은 소속 템플릿의 `{{marker}}`·이미지 필드에서 계산한 값과 같아야 합니다(앱 테스트). 예: 샷 카드 [bauhaus-beat](shots/bauhaus-beat.md), [pixel-arcade](shots/pixel-arcade.md).
 - 클립 id가 우연히 표준 필드 이름(예: `logo`)이면 앱이 값을 바꿔 넣습니다. 의도가 아니면 id를 바꿉니다(스크립트가 경고).
 - 앱에 실제로 넣는 곳: 카탈로그는 앱 저장소 `src/assets/ai-plan-templates/`에 파일을 추가(파일명 = id, 예: `40-1_그룹_오프닝-1.json`).
 

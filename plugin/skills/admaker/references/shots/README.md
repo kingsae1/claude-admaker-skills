@@ -24,6 +24,7 @@
 | [beat-montage-wipe](beat-montage-wipe.md) | 상승부 | 중고 | 블록당 k박 (0.8–1.4초) | 소재 컷마다 라벨·제목, 컷 사이를 투톤 사선 띠가 덮음 (`presets/fast-montage.mjs`) |
 | [variable-type-breath](variable-type-breath.md) | 훅·상승부 | 중고 | 2–2.5초 | 굵은 단어가 박마다 가변 폰트 폭·굵기로 숨쉬고 윤곽선 메아리 → 이탤릭 돌출 글자 (엔진 3.0.25+) |
 | [bauhaus-grid-flip](bauhaus-grid-flip.md) | 상승부·주인공 | 중고 | 2.5 + 2.5초 | 기본 도형 격자가 튀어나와 박마다 뒤집히고, 같은 배치가 3D 블록으로 솟음 (`pie`, `depth-blocks`) |
+| [bauhaus-beat](bauhaus-beat.md) | 훅·주인공·상승부·엔드카드 | 고 | 씬당 4·8박 | 기본 도형 칸이 박마다 튀고 돌며 L자 격자·발판·셔터를 만드는 2D 6씬 — 플래너 "도형" 그룹 (`templates/shots/bauhaus-beat.mjs`) |
 | [particle-morph](particle-morph.md) | 주인공 | 고 | 2.5–3초 | 꼬리 끄는 입자가 소용돌이 → 글자 → 동심원 호로 모핑 (`particle-morph`) |
 | [transition-cover-flood](transition-cover-flood.md) | 전환 | 중고 | 0.6–0.7초 | 앞 장면의 점이 원으로 부풀어 화면을 덮고, 다음 장면의 점으로 줄어들며 열림 |
 | [transition-zoom-through](transition-zoom-through.md) | 전환 | 중고 | 0.6–0.8초 | 소재 속 둥근 물체로 다가가면 그 안이 다음 소재로 열림 (시그니처 샷 후보) |
@@ -42,6 +43,7 @@
 | [liquid-blobs](liquid-blobs.md) | 훅·주인공 배경·엔드카드 | 저–중 | 3–6초 | 광택 액체 방울이 일렁이며 붙었다 떨어짐 (three 커스텀 씬, 브라우저 전용) |
 | [particle-logo](particle-logo.md) | 훅·엔드카드 | 중고 | 2.5–3.5초 | 흩어진 입자가 소용돌이치며 모여 워드마크가 됨 (script, 브라우저 전용) |
 | [pixel-sprite-hop](pixel-sprite-hop.md) | 훅·엔드카드 | 중고 | 2–3초 | 도트 캐릭터가 계단식으로 걸어와 점프하고, 친 블록에서 로고가 튀어나옴 (`pixelated`·`spriteSheet`·`steps`) |
+| [pixel-arcade](pixel-arcade.md) | 훅·주인공·상승부·엔드카드 | 고 | 씬당 4·8박 | 8비트 게임 화면 6씬(점수판·캐릭터·인벤토리·HP 바), 전부 `steps` — 플래너 "아케이드" 그룹 (`templates/shots/pixel-arcade.mjs`) |
 | [glitch-hit](glitch-hit.md) | 훅·상승부·전환 (얹는 샷) | 최고 | 2–4프레임 | 박 위에서 화면이 가로 조각으로 찢어지고 RGB가 갈라졌다 바로 붙음 (`glitchFilter`·`rgbSplitFilter`) |
 | [z-fly-through](z-fly-through.md) | 훅·주인공·전환 | 중고 | 2–3초 | 깊이별 문구·사진 층 사이를 Z축으로 뚫고 들어가 마지막 층이 다음 장면 (`transform3d`·`z`) |
 | [morph-reveal](morph-reveal.md) | 주인공·엔드카드 | 중고 | 2.5–4초 | 광택 3D 도형이 납작해지며 브랜드 아이콘이 되고 문구가 붙음 (MCP `Morph3D`, three `morph-shapes`) |
