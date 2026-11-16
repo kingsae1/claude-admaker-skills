@@ -10,6 +10,9 @@
 //  - 클립 이름이 표준 필드(store_name, phone, logo …)면 그 값으로 바꾼다. 글자 안의 {{marker}}는 multi_ 클립에서 바뀐다.
 //  - 클립 이름 "subtitle"은 씬 자막 자리로 쓰인다.
 //  - 겹침 순서는 트랙 순서(앞 = 아래)다.
+//  - 클립의 `layout: { stretch, maxWidth, link }`은 템플릿 clip의 같은 이름 키로 옮긴다(앱이 입력 문구 길이에 맞춰
+//    글자 박스를 늘리거나 줄바꿈하고, link로 묶인 배경 도형이 글자를 따라 커짐). link.to는 프로젝트 clip id로 적으면
+//    템플릿 clip 이름으로 바꿔 준다. 값은 프로젝트 px 그대로(템플릿 캔버스 = 프로젝트 캔버스).
 import fs from "node:fs";
 
 const argv = process.argv.slice(2);
@@ -70,6 +73,9 @@ const usedNames = new Set();
 const uniqueName = (n) => { let k = n, i = 2; while (usedNames.has(k)) k = `${n}_${i++}`; usedNames.add(k); return k; };
 const fieldsUsed = new Set();
 let subtitleTaken = false;
+const nameOfId = new Map();
+const layoutClips = [];
+const STRETCH = new Set(["horizontal", "vertical", "fit", "strict"]);
 
 const tracks = [];
 // import 파일은 위 트랙이 먼저(studioRow 0). 템플릿은 그리는 순서(아래 → 위)라 뒤집는다
@@ -110,6 +116,8 @@ for (const track of [...wire.tracks].reverse()) {
       warn(id, `클립 id가 표준 필드 이름과 같아 앱이 값을 바꿔 넣습니다. 의도가 아니면 id를 바꾸세요`);
     }
     n.name = uniqueName(name);
+    if (!nameOfId.has(id)) nameOfId.set(id, n.name);
+    if (ec.layout) layoutClips.push({ id, clip: n, layout: ec.layout });
 
     if (c.clipType === "text" || c.clipType === "text_segment") {
       // 템플릿 글자는 source에 들어간다(줄바꿈은 \N)
@@ -131,6 +139,27 @@ for (const track of [...wire.tracks].reverse()) {
   if (!clips.length) continue;
   const { studioRow, ...rest } = track;
   tracks.push({ ...rest, clips });
+}
+
+// 글자 박스 맞춤(stretch·maxWidth)과 크기 연결(link) — 앱 overlayTextStretch.ts·overlaySizeLink.ts
+for (const { id, clip, layout } of layoutClips) {
+  const isText = clip.clipType === "text" || clip.clipType === "text_segment";
+  if (layout.stretch) {
+    if (!isText) warn(id, "stretch는 글자 클립에만 쓰임");
+    else if (!STRETCH.has(layout.stretch)) warn(id, `stretch "${layout.stretch}"는 horizontal·vertical·fit·strict가 아님`);
+    else clip.stretch = layout.stretch;
+  }
+  if (layout.maxWidth != null) {
+    if (isText && Number(layout.maxWidth) > 0) clip.maxWidth = Math.round(Number(layout.maxWidth));
+    else warn(id, "maxWidth는 글자 클립의 양수 px");
+  }
+  if (layout.link) {
+    const targets = (Array.isArray(layout.link.to) ? layout.link.to : [layout.link.to]).map((t) => nameOfId.get(t) ?? t);
+    const missing = targets.filter((t) => !tracks.some((tr) => tr.clips.some((c) => c.name === t)));
+    if (missing.length) warn(id, `link.to ${missing.join(", ")}가 이 구간 템플릿에 없음`);
+    else if (!layout.link.width && !layout.link.height && !layout.link.edge) warn(id, "link에 width·height·edge가 없어 앱이 무시함");
+    clip.link = { ...layout.link, to: targets.length > 1 ? targets : targets[0] };
+  }
 }
 
 const usedInputs = new Set(tracks.flatMap((t) => t.clips.map((c) => c.source)).filter(Boolean));

@@ -520,6 +520,7 @@ node to-admaker-template.mjs project.json admaker-import.json template.json \
 | `--colors "#E63B2E,#1F4FD8"` | 루트 `colorRoles {primary, secondary}` | 유저가 주 컬러를 고르면 템플릿의 모든 hex 색을 이 색과의 관계를 지켜 옮김 |
 | `--font NotoSansKR-Black.ttf` | 모든 글자 `fontName`(+ 굵은 파일이면 `isBold`) | 앱 `/fonts` 파일명. 한글 파생 굵기 파일(예: `Paperlogy-7Bold`)은 앱 레지스트리에 없어 기본 파일 + 가짜 볼드가 되므로 경고 |
 
+- 클립에 `layout: { stretch, maxWidth, link }`을 적으면 템플릿 clip의 같은 키로 옮깁니다(앱 `overlayTextStretch.ts`·`overlaySizeLink.ts`). `stretch`: `horizontal`(폭을 글자에 맞춤, 줄바꿈 없음, `maxWidth`를 넘으면 글자 축소)·`vertical`(폭 고정, 줄바꿈하고 높이 늘림)·`fit`(박스 고정, 줄바꿈 후 넘치면 축소)·`strict`(그대로). 적지 않으면 앱은 `horizontal`로 봅니다(고정 문구는 `strict`로 막을 것). `link: { to: 프로젝트 clip id, width: { pad }, height?, grow: true, align: "center" }`면 배경 도형이 글자(또는 다른 도형, `measure: "box"`)를 따라 커지고, `to`는 템플릿 clip 이름으로 바뀝니다. 값은 프로젝트 px입니다. 로컬 렌더는 예시 문구로만 그리므로 긴 문구 배치는 앱에서 확인합니다.
 - 글자 클립에 `field`를 적으면 `multi_<field>` + `{{field}}`로 냅니다. 앱은 `{{marker}}`로만 "이 템플릿이 그 정보를 요구한다"를 알고, 값이 비었을 때 예시 문구가 나가지 않습니다. 이미지 필드(`logo` 등)는 클립 이름으로 갑니다(값이 없으면 앱이 숨김).
 - 그룹으로 넣을 때는 앱 `ai-plan-template-groups.json`에 그룹 메타(설명·분위기·색·어울림·피할 때·마커)를, `ai-plan-scene-transitions.json`에 그룹 대표 전환을 함께 넣습니다. 마커 목록은 소속 템플릿의 `{{marker}}`·이미지 필드에서 계산한 값과 같아야 합니다(앱 테스트). 예: 샷 카드 [bauhaus-beat](shots/bauhaus-beat.md), [pixel-arcade](shots/pixel-arcade.md).
 - 클립 id가 우연히 표준 필드 이름(예: `logo`)이면 앱이 값을 바꿔 넣습니다. 의도가 아니면 id를 바꿉니다(스크립트가 경고).
