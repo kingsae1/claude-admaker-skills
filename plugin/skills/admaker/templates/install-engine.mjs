@@ -22,7 +22,8 @@ const candidates = [
   path.join(claudeDir, "skills", "admaker", "vendor"), // Claude Code
   path.join(home, ".agents", "skills", "admaker", "vendor"), // OpenAI Codex 등 ~/.agents/skills 를 읽는 에이전트
   path.join(home, ".copilot", "skills", "admaker", "vendor"), // GitHub Copilot
-  path.join(home, ".gemini", "config", "skills", "admaker", "vendor"), // Antigravity
+  path.join(home, ".gemini", "skills", "admaker", "vendor"), // Antigravity (앱이 설치하는 곳, Antigravity 앱·IDE·CLI 공용)
+  path.join(home, ".gemini", "config", "skills", "admaker", "vendor"), // Antigravity (예전 안내 경로)
 ].filter(Boolean);
 
 const vendor = [...new Set(candidates)].find((dir) => fs.existsSync(path.join(dir, "packages.json")));
