@@ -4,7 +4,7 @@ name: sheen-sweep
 슬롯: 훅 | 주인공 | 상승부 | 엔드카드 (얹는 샷, F2의 빛층)
 에너지: 저–중
 길이: glint 0.8–1초 · gradient 1.2–1.6초 · chrome 장면 내내
-검증: 엔진 3.0.27 + composer 가시성 수정(admaker-plugin PR) 렌더 하니스, `samples/sheen-sweep`
+검증: 엔진 3.0.28 렌더 하니스(3.0.27 + composer 가시성 수정과 같은 코드), `samples/sheen-sweep`
 엔진: Image(SVG 그라데이션) + `style.matte { clipId: 대상, mode: "alpha", hideSource: false }` — `templates/effects.mjs` `sheenSweep`
 ---
 
@@ -48,7 +48,7 @@ add(fx.sheenSweep({ target: title2, kind: "chrome", at: 0, to: 4 }));
 glint는 "샤랑" 한 번(띠가 대상 가운데를 지날 때, 시작 + 길이 × 0.5). gradient·chrome은 소리 없이.
 
 ## 알려진 함정
-- **엔진 3.0.27까지**는 매트 묶음이 장면 중간에 켜지거나 꺼지는 프레임에 다른 클립이 한 프레임 사라지고 띠가 도려지지 않은 채 보였습니다(composer가 자식 가시성을 인덱스로 되돌리던 버그). 이 수정이 들어간 엔진 버전부터 씁니다. 그 전 엔진이면 띠 클립 display를 대상과 같게 두고 keyframes로 지나가는 구간만 움직입니다.
+- **엔진 3.0.28 이상**에서 씁니다. 3.0.27까지는 매트 묶음이 장면 중간에 켜지거나 꺼지는 프레임에 다른 클립이 한 프레임 사라지고 띠가 도려지지 않은 채 보였습니다(composer가 자식 가시성을 인덱스로 되돌리던 버그, admaker-plugin #54). 옛 엔진이면 띠 클립 display를 대상과 같게 두고 keyframes로 지나가는 구간만 움직입니다.
 - 흰 글자에 흰 glint는 안 보입니다. 밝은 회색 글자나 색 박스에 쓰거나 kind를 바꿉니다.
 - 한 화면에 스윕은 주인공 하나에만(aesthetic-rules Q4). 여러 줄에 동시에 걸지 않습니다.
 - `validate.mjs`가 이름에 sheen·shine·glint·sweep·광택이 들어간 Image·Shape에 `style.matte`가 없으면 경고합니다.
