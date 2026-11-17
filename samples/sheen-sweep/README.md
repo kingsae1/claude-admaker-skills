@@ -15,4 +15,4 @@
 
 - `node build.mjs` → `project.json` (앱 가져오기: `to-admaker-import.mjs`가 `transform.matte`로 옮김)
 - `node build.mjs --fonts /fonts/` → 렌더 하니스용(폰트를 `render/fonts/`에서 읽음)
-- 렌더: `@admaker/engine` 3.0.27 + composer 가시성 수정(admaker-plugin 브랜치 `claude/project-thread-3akct9`). 수정 전 엔진은 매트 묶음이 켜지고 꺼지는 프레임마다 다른 클립이 사라지고 띠가 도려지지 않은 채 보였습니다(135프레임 중 26곳). 수정 후 0곳.
+- 렌더: `@admaker/engine` 3.0.27 + composer 가시성 수정(admaker-plugin #54, 3.0.28에 포함). 수정 전 엔진은 매트 묶음이 켜지고 꺼지는 프레임마다 다른 클립이 사라지고 띠가 도려지지 않은 채 보였습니다(135프레임 중 26곳). 수정 후 0곳.
