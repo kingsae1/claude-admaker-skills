@@ -900,6 +900,67 @@ export function speedRamp({ from, spec, ramp, box }) {
 /** 속도 a→b를 n조각으로 부드럽게(지수 보간). 원본 총 길이 srcLen초 */
 export const rampSegments = (a, b, srcLen, n = 6) => Array.from({ length: n }, (_, i) => [srcLen / n, r2(Math.min(4, Math.max(0.25, a * Math.pow(b / a, (i + 0.5) / n))))]);
 
+// ═════════════════════════════ 액센트: 샤인 스윕 (카탈로그 밖, references/shots/sheen-sweep.md)
+
+const SHEEN_PRESETS = {
+  // 흰 빛띠가 한 번 스쳐 지나감 (반짝 glint)
+  glint: { angle: 20, widthK: 0.22, opacity: 0.7, dur: 0.9, colors: ["#FFFFFF"] },
+  // 색 띠가 글자를 물들이며 지나감 (그라데이션 스윕)
+  gradient: { angle: 10, widthK: 0.6, opacity: 1, dur: 1.4, colors: ["#8C8CFF", "#F5B82E", "#FFF1C4"] },
+  // 금속 결이 글자 안에서 계속 흐름 (크롬 shimmer). dur 없음: at → to 내내 흐름
+  chrome: { angle: 24, widthK: 1, opacity: 1, colors: ["#3E4352", "#F4F7FC", "#7D8496", "#FFFFFF", "#4A5061", "#C9CFDB"] },
+};
+
+/**
+ * 샤인 스윕: 빛띠·색띠·크롬 결이 대상의 **모양 안에서만** 지나감. 대상은 Text(글자 획), Shape(박스·알약), Image(누끼·로고) 무엇이든.
+ * 띠 클립에 style.matte { clipId: 대상, mode: "alpha", hideSource: false }를 걸어 대상의 알파로 도려내므로, 띠가 커도 박스·글자 밖으로 넘치지 않습니다.
+ * 대상이 움직이거나 커져도(팝·흔들림) 매트는 그 프레임의 대상 픽셀을 따라갑니다.
+ * - target: 이미 넣은 대상 클립 객체(transform.x·y·width·height 사용). 박스+글자를 함께 훑으려면 박스 Shape를 대상으로 둡니다.
+ * - kind: "glint" | "gradient" | "chrome" (SHEEN_PRESETS). angle(도, 띠 기울기)·width(px)·opacity·colors로 덮어씀.
+ * - at: 지나가기 시작하는 시각(초). glint·gradient는 dur초 동안 왼→오(dir: -1이면 오→왼), passes번 every초 간격.
+ *   chrome은 at → to 동안 결이 천천히 흐름(speed px/초).
+ * 반환 클립을 대상 **바로 위**에 넣습니다(배열 뒤 = 위). 대상의 display 구간이 띠 구간을 덮어야 합니다(validate.mjs 경고).
+ */
+export function sheenSweep({ target, at, to, kind = "glint", dur, angle, width, opacity, colors, passes = 1, every = 1.6, dir = 1,
+  easing = "easeInOutCubic", speed = 90, blur = 0 }) {
+  const P = SHEEN_PRESETS[kind] ?? SHEEN_PRESETS.glint;
+  const b = target.transform, end = to ?? target.timing.display.to / 1e6;
+  const ang = angle ?? P.angle, op = opacity ?? P.opacity, cols = colors ?? P.colors;
+  const rad = (ang * Math.PI) / 180, slant = Math.abs(Math.tan(rad)) * b.height;
+  const matte = { clipId: target.id, mode: "alpha", hideSource: false };
+  if (kind === "chrome") {
+    // 대상보다 넓은 금속 결 판(가로 줄무늬 + 사선 반사광)을 대상 위에서 옆으로 흘림. 판 = 대상 + 흐를 거리만큼 넓게
+    const travel = Math.round(speed * (end - at)), w = Math.round(b.width + travel + slant * 2 + 40), h = Math.round(b.height + 40);
+    const stops = cols.map((c, i) => `<stop offset="${r2(i / (cols.length - 1))}" stop-color="${c}"/>`).join("");
+    const period = Math.max(60, Math.round(b.width * 0.45)), streaks = [];
+    for (let x = -slant; x < w + slant; x += period) {
+      const k = Math.round(x);
+      streaks.push(`<path d="M${k} ${h} L${r2(k + slant + 20)} 0 L${r2(k + slant + 20 + period * 0.12)} 0 L${r2(k + period * 0.12)} ${h}Z" fill="#FFFFFF" opacity="0.75"/>`,
+        `<path d="M${r2(k + period * 0.3)} ${h} L${r2(k + slant + 20 + period * 0.3)} 0 L${r2(k + slant + 20 + period * 0.34)} 0 L${r2(k + period * 0.34)} ${h}Z" fill="#1E222C" opacity="0.35"/>`);
+    }
+    const defs = `<linearGradient id="m" x1="0" y1="0" x2="0" y2="1">${stops}</linearGradient><filter id="s"><feGaussianBlur stdDeviation="${Math.max(2, Math.round(b.height * 0.03))}"/></filter>`;
+    const src = svgUrl(w, h, `<rect width="${w}" height="${h}" fill="url(#m)"/><g filter="url(#s)">${streaks.join("")}</g>`, defs);
+    const x0 = dir > 0 ? b.x - travel - slant - 20 : b.x - slant - 20;
+    return [image("sheen_chrome", src, at, end, { x: Math.round(x0), y: Math.round(b.y - 20), width: w, height: h, opacity: op }, {
+      style: { matte }, animations: [keys(at, end, [[at, { x: 0 }], [end, { x: dir * travel }]])] })];
+  }
+  // glint · gradient: 기울어진 띠 하나가 대상 왼쪽 밖 → 오른쪽 밖으로. 띠 길이는 대상 높이를 기울기만큼 덮게
+  const d = dur ?? P.dur, bw = Math.round(width ?? Math.max(40, b.width * P.widthK)), bh = Math.round(b.height / Math.cos(rad) + bw * Math.abs(Math.sin(rad)) + 40);
+  const n = cols.length, gstops = n === 1
+    ? `<stop offset="0" stop-color="${cols[0]}" stop-opacity="0"/><stop offset="0.35" stop-color="${cols[0]}" stop-opacity="0.55"/><stop offset="0.5" stop-color="${cols[0]}"/><stop offset="0.65" stop-color="${cols[0]}" stop-opacity="0.55"/><stop offset="1" stop-color="${cols[0]}" stop-opacity="0"/>`
+    : `<stop offset="0" stop-color="${cols[0]}" stop-opacity="0"/>` + cols.map((c, i) => `<stop offset="${r2(0.15 + (0.7 * i) / (n - 1))}" stop-color="${c}"/>`).join("") + `<stop offset="1" stop-color="${cols[n - 1]}" stop-opacity="0"/>`;
+  const src = svgUrl(bw, bh, `<rect width="${bw}" height="${bh}" fill="url(#g)"${blur ? ` filter="url(#b)"` : ""}/>`,
+    `<linearGradient id="g" x1="0" y1="0" x2="1" y2="0">${gstops}</linearGradient>${blur ? `<filter id="b"><feGaussianBlur stdDeviation="${blur}"/></filter>` : ""}`);
+  const reach = b.width / 2 + bw / 2 + slant / 2 + bw * Math.abs(Math.sin(rad)), cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+  const box = boxAt(cx - dir * reach, cy, bw, bh), travel = r2(dir * reach * 2), out = [];
+  for (let i = 0; i < Math.max(1, passes); i++) {
+    const s = at + i * every, e = s + d;
+    out.push(image(`sheen_${kind}`, src, s, e, { ...box, angle: dir * ang, opacity: op }, {
+      style: { matte }, animations: [keys(s, e, [[s, { x: 0 }, easing], [e, { x: travel }]])] }));
+  }
+  return out;
+}
+
 // 카탈로그: id → [한글 이름, 카테고리, 함수 이름, 지원 수준]
 // 지원 수준: ready = 바로 가능 · approx = 근사(고정 위치·계단식 등) · cutout = 누끼 PNG(사진)·그린스크린이면 가능, 일반 영상은 영상 매팅 필요
 export const CATALOG = [

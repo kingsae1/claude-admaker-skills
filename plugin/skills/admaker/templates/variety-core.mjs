@@ -59,7 +59,7 @@ export const AXES = [
     id: 'light',
     label: '빛·질감 층',
     options: [
-      { id: 'sweep', label: '빛 스윕', how: '사선 빛띠가 주인공 위를 한 번 지나감(SVG 그라데이션 이미지)', avoid: ['pixel-retro', 'print-collage'] },
+      { id: 'sweep', label: '빛 스윕', how: '사선 빛띠가 주인공 글자·박스 모양 안에서만 한 번 지나감(effects.mjs sheenSweep, style.matte로 대상 밖은 잘림)', avoid: ['pixel-retro', 'print-collage'] },
       { id: 'glow-pulse', label: '글로우 맥동', how: '주인공 하나에 glowFilter·bloomFilter가 박마다 살짝', fits: ['glossy-signature', 'product-hero'], avoid: ['print-collage'] },
       { id: 'rgb-split', label: 'RGB 분리', how: 'rgbSplitFilter 드롭마다 2–4프레임', fits: ['glitch-tech'], avoid: ['handwritten-warm'] },
       { id: 'scanlines', label: '스캔라인', how: '가로줄 패턴 PNG 낮은 불투명도 + 위아래로 천천히 흐름', only: ['glitch-tech', 'pixel-retro'] },

@@ -50,6 +50,7 @@
 | [model-orbit-text](model-orbit-text.md) | 훅·주인공 | 중고 | 3–5초 | 제품 3D 모델(사진→3D GLB)이 돌며 가로지르고 뒤로 큰 문구 띠가 반대로 흐름 (three `model`, 앱까지 감) |
 | [group-build](group-build.md) | 상승부·엔드카드 | 중 | 1–1.8초 | 칩·가격표·버튼 묶음이 한 덩어리로 날아와 자리잡고 조각이 하나씩 반응 (`groupId`·`origin: "group"`) |
 | [lottie-accent](lottie-accent.md) | 상승부·엔드카드 (얹는 샷) | 중 | 0.6–1.2초 | 혜택 문구 옆에 체크·하트·반짝이 Lottie가 박에 맞춰 짧게 (`search_lottie`, Adapter lottie) |
+| [sheen-sweep](sheen-sweep.md) | 훅·주인공·상승부·엔드카드 (얹는 샷) | 저–중 | 0.8–1.6초, chrome은 장면 내내 | 빛띠·색띠·크롬 결이 글자·박스 모양 안에서만 지나감 (트랙 매트, `effects.mjs` `sheenSweep`) |
 
 ### 모션 스타일 카드 고르는 법
 
