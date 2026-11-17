@@ -75,6 +75,9 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     }
     if (matte.mode != null && !["alpha", "alphaInverted", "luma", "lumaInverted"].includes(matte.mode)) err(id, `style.matte.mode "${matte.mode}"를 엔진이 모름 (alpha·alphaInverted·luma·lumaInverted)`);
   }
+  // 샤인 스윕(빛띠)은 대상 모양 안으로 잘라야 박스·글자 밖으로 안 넘침 (aesthetic-rules Q4, 샷 sheen-sweep)
+  if (matte == null && ["Image", "Shape"].includes(c.type) && /sheen|shine|glint|sweep|gloss|광택|빛\s*띠|스윕/i.test(`${id} ${c.name ?? ""}`))
+    warn(id, "빛띠·스윕 클립에 style.matte가 없음: 대상 박스·글자 밖으로 띠가 넘침 (effects.mjs sheenSweep, matte { clipId: 대상, hideSource: false })");
   for (const a of c.animations ?? []) {
     if (!MOTION_TYPES.has(a.type)) err(id, `모르는 모션 type "${a.type}"`);
     if (SHAPE_ONLY.has(a.type) && c.type !== "Shape") err(id, `${a.type}는 Shape 전용`);
