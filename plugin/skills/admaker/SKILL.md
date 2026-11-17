@@ -57,7 +57,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 
 1. **범위를 판단합니다.**
    - 광고 한 편 → 아래 워크플로.
-   - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
+   - 샷 하나(엔드카드, 로고 스팅, 가격 롤 등) → `references/recipe-guide.md`에서 쓸 때를 확인하고 `references/shots/`에서 카드를 고르고 전문을 읽은 뒤 구현.
    - 이미 있는 광고의 사운드만 → `references/director.md` §6–7, `references/engine-recipes.md` §6.
    - 내레이션(연출표: 화면 문구와 읽을 문장 분리·숫자/기호 읽기·강조·큐 단어, 스타일, 분량, 줄 단위 생성과 비트 싱크, TTS 감정·말투·쉼 태그 `[excited]`, `[short pause]` 등) → `references/narration.md`.
    - 효과음은 앱 MCP로 광고를 끝까지 만들 때 바닥 영상이 다 나온 뒤 따로 한 단계로 만듭니다(화면 속 동작·전환·히트에 맞춰, 15초 6–10개, `sfx.md` §7). 효과음(소스 고르는 순서, 프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 피크 지연 재기 `templates/sfx-peak.mjs`, 비트에 맞춰 놓기) → `references/sfx.md`.
@@ -122,7 +122,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 | 1.5 기획안 고르기 | `gallery.mjs recommend`(MCP: `get_gallery({ request })`)로 기획안 3개(모션 방향 + 아이디어, 1번 추천, 기획안마다 갤러리 예시 미리보기)와 "자유롭게 생성"을 번호 목록 하나로 보여 주고 고르게 함. 건너뛰지 않음(MCP 순서에서도 씬표 전). 기획안 C는 참신안(요청에 "참신·병맛"이면 B·C). 고른 뒤 로그라인·훅 후보 3개를 쓰고 `idea.mjs check`로 말이 되는지 검사. 참신안은 keyScene까지 넣어 검사. 예시처럼 만들 때는 `gallery.mjs use`로 키트 복사 | `references/motion-directions.md`, `references/ideas.md`, `references/novel-concepts.md`, `references/variety.md`, `gallery/README.md` |
 | 2. 트리트먼트 | `TREATMENT.md`: 문구(시청자 단계, 훅 후보 3개, 근거 표), 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵(드롭, 섹션별 음악 사건 수), 사운드 표 | `references/director.md`, `references/copy.md`, `templates/TREATMENT.md` |
 | 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
-| 4. 샷 선택 | 1.5에서 고른 기획안의 골격이 출발점(자유롭게 생성이면 직접 정한 형태). 붙인 예시의 구성·프롬프트를 형태 참고로 쓰고, 예시처럼 만들 때는 그 키트(`gallery/kits/<slug>/`)에서 시작함. 에너지 골격의 슬롯마다 샷 카드를 고르고, 씬 경계마다 전환(트랙 매트·`am-*` 전환·전환 카드·마스크 중 하나, fade만 쓰지 않음)과 이어받는 요소를 정해 씬표 전환 칸에 적음. 시그니처 전환 한 곳, 2–4종 섞기. 한 기법은 전체에서 한 번만 주인공 | `references/shots/README.md` + 고른 카드 전문, `references/transitions.md`, `gallery/README.md` |
+| 4. 샷 선택 | 1.5에서 고른 기획안의 골격이 출발점(자유롭게 생성이면 직접 정한 형태). 붙인 예시의 구성·프롬프트를 형태 참고로 쓰고, 예시처럼 만들 때는 그 키트(`gallery/kits/<slug>/`)에서 시작함. 에너지 골격의 슬롯마다 샷 카드를 고르고, 씬 경계마다 전환(트랙 매트·`am-*` 전환·전환 카드·마스크 중 하나, fade만 쓰지 않음)과 이어받는 요소를 정해 씬표 전환 칸에 적음. 시그니처 전환 한 곳, 2–4종 섞기. 한 기법은 전체에서 한 번만 주인공 | `references/recipe-guide.md`(목적별 묶음·아이템별 쓸 때/피할 때) → `references/shots/README.md` + 고른 카드 전문, `references/transitions.md`, `gallery/README.md` |
 | 5. 타임라인 | `timeline.mjs`에 섹션·BPM·비트·히트·카메라 키를 씀. `analyzeBeats` 결과는 `ANALYSIS`에. 빠른 몽타주는 `presets/fast-montage.mjs`가 박 단위로 생성 | `templates/timeline.mjs`, `templates/presets/` |
 | 6. 룩 검증 | 실제 엔진으로 스타일 프레임 3장(1장은 시그니처 샷) 렌더, 토큰·규칙과 대조. 폰트 후보가 여럿이면 여기서 하나로 정함 | `references/engine-recipes.md` §8 |
 | 7. 스토리보드 | 원했을 때만. 핵심 샷 6–9장 한 장으로 타일링, **승인을 기다림** | |
