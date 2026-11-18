@@ -12,7 +12,7 @@
 | mid | 95–117 BPM | 모션 씬 0–2개, 경계 두 곳 중 한 곳만 그래픽 전환 |
 | slow | 95 BPM 미만, 또는 제품 중심 방향(product-hero·glossy-signature·handwritten-warm)·낱말(프리미엄, 고급, 차분, 제품 극대화, 디테일, 시네마틱 …) | 소재가 주인공. 모션 씬은 30초 이상에서 하나, 나머지는 소재 위 액센트 |
 
-BPM은 `audio.analyzeBeats` 결과(`timeline.mjs`의 `ANALYSIS.bpm`)를 씁니다. 요청 낱말이 BPM과 다른 쪽을 가리키면 낱말이 이깁니다(예: 124 BPM이어도 "고급스럽게 제품 극대화" → slow 쪽).
+BPM은 `audio.analyzeBeats` 결과(`timeline.mjs`의 `ANALYSIS.bpm`)를 씁니다. BGM을 만들기 전에는 템포 고르기(`tempo.md`)에서 고른 BPM을 씁니다. 요청 낱말이 BPM과 다른 쪽을 가리키면 낱말이 이깁니다(예: 124 BPM이어도 "고급스럽게 제품 극대화" → slow 쪽).
 
 ## 2. 양 (`dosage`)
 

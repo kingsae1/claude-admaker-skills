@@ -17,6 +17,7 @@ allowed-tools:
   - Bash(node sfx-peak.mjs:*)
   - Bash(node gallery.mjs:*)
   - Bash(node beats.mjs:*)
+  - Bash(node tempo.mjs:*)
   - Bash(node footage-plan.mjs:*)
   - Bash(node templates/sfx-peak.mjs:*)
   - Bash(python3 mix.py)
@@ -28,7 +29,7 @@ allowed-tools:
 결과물은 `@admaker/engine`의 **ProjectJSON**이고, 브라우저 `Exporter`로 mp4를 만듭니다. 같은 JSON은 admaker Studio에서 열어 고칠 수 있습니다.
 **바닥은 사용자가 준 영상·이미지, 또는 그것을 바탕으로 앱 AI가 만든 영상·이미지입니다.** 광고는 항상 바닥 소재(영상 또는 이미지)를 맨 아래(z 0–9)에 프레임 가득 깔고, 모션 그래픽(글자·도형·지도·자막·룩 레이어)을 그 위에 얹는 구조입니다. 소재가 뿌옇게 묻히지 않는 쪽이 기본이라, 화면 전체를 덮는 어둡게·틴트·반투명 면은 꼭 필요할 때만 약하게 쓰고 가독성은 주로 글자 주변(그림자, 작은 알약, 글자 띠 그라데이션)에서 만듭니다(aesthetic-rules Q11). 소재는 `timeline.mjs`의 `FOOTAGE`에 적습니다.
 **admaker 앱 MCP가 연결되어 있으면(`get_production_workflow` 도구가 보이면) 광고 한 편은 그 순서대로 끝까지 만들고, 모션그래픽에서 멈추지 않습니다.**
-순서: 브리프 → **기획안 고르기(기획안 3개 + 자유롭게 생성, 아래 "시작할 때" 4번, 앱 순서 A 기획 단계에서 씬표보다 먼저)** → BGM을 앱 AI로 먼저 만들기 → `audio.analyzeBeats`로 BGM의 템포·마디·피크를 받아 씬 나누기 → 모션그래픽(이 스킬, 씬 경계·비트에 맞춰) → 내레이션(씬 시작에 맞춰) → 바닥 이미지 img2img(`ai.image.edit`) → **사용자 확인** → 씬별 영상 생성 → 배치·검토.
+순서: 브리프 → **기획안 고르기(기획안 3개 + 자유롭게 생성, 아래 "시작할 때" 4번, 앱 순서 A 기획 단계에서 씬표보다 먼저)** → **템포 고르기(추천 1개 + 다른 템포 3개, 아래 "시작할 때" 5번)** → 고른 템포의 BGM 프롬프트로 BGM을 앱 AI로 먼저 만들기 → `audio.analyzeBeats`로 BGM의 템포·마디·피크를 받아 씬 나누기 → 모션그래픽(이 스킬, 씬 경계·비트에 맞춰) → 내레이션(씬 시작에 맞춰) → 바닥 이미지 img2img(`ai.image.edit`) → **사용자 확인** → 씬별 영상 생성 → 배치·검토.
 씬별 영상 도구는 씬표를 만들 때 두 단계로 정합니다(`footage-gen.md` §7.2). 먼저 광고 전체가 컷 중심(i2v 중심, 씬 사이는 엔진 전환)인지 호흡 중심(인물·제품 시트와 씬보드를 먼저 만들고 r2v·f2v 중심, §7.3)인지 정하고, 씬마다 판단표에서 처음 맞는 줄을 고릅니다. 기본은 이미지→영상(`ai.video.imageToVideo`)이고, 맞는 씬에만 첫·끝 프레임 영상(`ai.video.framesToVideo`), 레퍼런스 영상(`ai.video.referenceToVideo`), 이어 늘리기(`ai.video.extend`)를 씁니다. 길이·레퍼런스 장수·멀티샷은 `video.models`의 모델 능력 안에서 고르고, 8초 넘는 한 호흡은 §7.4대로 만듭니다. 고른 도구·모델·길이와 이유는 씬표에 적어 제안합니다. 이미지 확인 뒤 영상을 만들기 전에는 사용자에게 영상 만드는 방식을 4줄로 고르게 합니다: 사진 그대로 움직이기 / 시작과 끝 장면 정해서 잇기 / 내 사진으로 새 장면 만들기(업로드 사진을 참고 보드·스토리보드로 먼저 조합) / 자동 추천 생성. 사용자에게는 i2v·f2v·r2v 용어를 쓰지 않습니다(`footage-gen.md` §7.5–7.6).
 바닥 소재를 생성할 때는 `references/footage-gen.md`(MCP에서는 `get_ad_guide({ name: 'footage-gen.md' })`)를 읽습니다. 생성 프롬프트·카메라 어휘·금지 줄은 영문으로 쓰고 사용자에게는 한 줄 한글 요약을 붙여 보여 줍니다. 제품이 나오는 씬은 사용자 제품 사진에서 시작하고, 영상으로 만들기 전에 사진을 진단해 고칠 곳만 사용자 확인 후 고칩니다(`footage-gen.md` §4.1, img2img → 이미지→영상). 글로만 만드는 영상(`ai.video.generate`)은 분위기 컷에만 씁니다. 글자·로고·가격은 생성 모델에 그리게 하지 않고 모션그래픽으로 얹습니다. 영상 프롬프트를 쓰기 전에 `run_studio_tool { toolId: 'video.models' }`로 도구마다 받을 모델(Veo, Kling, Gemini Omni, MiniMax, Seedance)을 확인하고 `references/video-models.md`(MCP에서는 `get_ad_guide({ name: 'video-models.md' })`)의 그 계열 공식에 맞춥니다. 레퍼런스는 `{ref1}`, `{ref2}`로 가리킵니다.
 이때 `timeline.mjs`의 BPM·비트·섹션은 분석값을 그대로 쓰고, 소리는 ProjectJSON에 넣지 않고 `import_to_admaker { keepAudio: true }`로 앱에서 먼저 만든 BGM을 그대로 옮깁니다. AI 생성 전에는 예상 크레딧과 프롬프트를 보여 주고 확인받습니다.
@@ -108,7 +109,13 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 기본 방향은 굵고 **화려하게**입니다(큰 글자, 분명한 그리드, 박에 꽂히는 이징, 장면마다 주인공·그래픽·빛 세 층, 박마다 히트, 글자 단위 3D 문구, 쉬지 않는 카메라: `references/aesthetic-rules.md` F1–F6). 사용자가 차분·미니멀·고급 톤을 말하면 한 단계 줄입니다. 가는 선 일러스트·부드러운 페이드·비네트 위주 연출은 사용자가 손글씨·감성을 직접 말했을 때만 후보에 올립니다.
    - 외부 레퍼런스(`gallery/data/references.json`: video-shotcraft 샷 124장 + lemo-opuscar 스타일 66종의 한국어 요약·admaker 구현 힌트, opuscar는 데모 영상 링크 포함)는 연출을 섞을 때도 씁니다. 따로 찾을 때는 `gallery.mjs refs "<낱말>"`(MCP: `get_gallery({ refs })`). 레퍼런스는 손법만 참고하고 원작의 화면·문구·브랜드는 옮기지 않습니다.
    - 사용자가 처음부터 연출을 자세히 정해 왔으면 그 연출에 가장 가까운 방향을 한 줄로 알리고 넘어갑니다. "알아서 해"라고 하면 목록을 보여 주되 답을 기다리지 않고 1번(기획안 A)으로 진행하며, 바꾸고 싶으면 말해 달라고 한 줄 붙입니다.
-5. **모드**: 기본은 자율 진행. 사용자가 "같이 정하자"고 하면 브리프 → 비주얼 방향 → 스토리보드 세 지점에서만 확인을 받습니다.
+5. **기획안 다음에 템포를 고르게 합니다. 이 단계도 건너뛰지 않습니다.** 템포가 컷 길이·박마다 히트·모션 전용 씬·그래픽 전환 양을 한꺼번에 정하므로 BGM·씬표·`timeline.mjs`보다 먼저 정합니다. 규칙은 `references/tempo.md`(MCP: `get_ad_guide({ name: 'tempo.md' })`).
+   - `node <이 스킬 폴더>/templates/tempo.mjs recommend --duration <초> --aspect <비율> --direction <고른 기획안의 방향 id> --request "<요청 요약>"`를 실행합니다. 내레이션이 있으면 `--narration`, 사용자 음악·이미 만든 BGM이 있으면 `--music-bpm <BPM>`을 붙입니다. 실행할 수 없으면 `tempo.md` §2 표에서 같은 점수 규칙으로 직접 고릅니다.
+   - 출력의 번호 목록(추천 1번 + 다른 템포 3개 + "직접 정하기")을 그대로 보여 주고 고르게 합니다. 줄마다 결 이름·BPM·이유 한 줄과 숫자 한 줄(광고 길이가 몇 마디인지, 한 컷 몇 박·몇 초, 모션 전용 씬 수, 그래픽 전환 양)이 붙습니다. 다른 템포에는 추천보다 느린 것과 빠른 것이 하나씩 꼭 들어갑니다.
+   - 음악이 있으면 음악 BPM은 그대로 두고 편집 밀도(원곡 그대로 / 하프타임 느낌 / 더블타임 느낌 / 다른 음악)를 고르게 합니다(`tempo.md` §3).
+   - 사용자가 처음부터 BPM이나 빠르기를 말했으면 그 템포를 1번으로 올립니다. "알아서 해"·자율 진행이면 목록을 보여 주되 답을 기다리지 않고 1번으로 진행하며, 바꾸고 싶으면 말해 달라고 한 줄 붙입니다. 기획안과 템포를 한 메시지에 같이 물어도 됩니다(기획안 1번 기준 템포 목록, 다른 기획안을 고르면 템포 목록을 다시 뽑음).
+   - 고른 줄은 `TREATMENT.md` 큐맵의 템포 줄과 `timeline.mjs`의 `BPM`에 적고, 앱 BGM이면 그 줄의 BGM 프롬프트(영문)로 만듭니다. `analyzeBeats` 값이 고른 BPM과 3% 넘게 다르면 분석값이 이깁니다.
+6. **모드**: 기본은 자율 진행. 사용자가 "같이 정하자"고 하면 브리프 → 비주얼 방향 → 스토리보드 세 지점에서만 확인을 받습니다.
 
 ## 스크립트 실행 방식
 
@@ -120,6 +127,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
 |---|---|---|
 | 1. 브리프 | 질문 한 번, 브리프 요약 | `references/ad-formats.md` |
 | 1.5 기획안 고르기 | `gallery.mjs recommend`(MCP: `get_gallery({ request })`)로 기획안 3개(모션 방향 + 아이디어, 1번 추천, 기획안마다 갤러리 예시 미리보기)와 "자유롭게 생성"을 번호 목록 하나로 보여 주고 고르게 함. 건너뛰지 않음(MCP 순서에서도 씬표 전). 기획안 C는 참신안(요청에 "참신·병맛"이면 B·C). 고른 뒤 로그라인·훅 후보 3개를 쓰고 `idea.mjs check`로 말이 되는지 검사. 참신안은 keyScene까지 넣어 검사. 예시처럼 만들 때는 `gallery.mjs use`로 키트 복사 | `references/motion-directions.md`, `references/ideas.md`, `references/novel-concepts.md`, `references/variety.md`, `gallery/README.md` |
+| 1.6 템포 고르기 | `tempo.mjs recommend`로 추천 템포 1개 + 다른 템포 3개(느린 것·빠른 것 포함)와 "직접 정하기"를 번호 목록 하나로 보여 주고 고르게 함. 음악이 있으면 편집 밀도(원곡/하프타임/더블타임/다른 음악). 고른 BPM이 BGM 프롬프트·`timeline.mjs` `BPM`·인터루드·전환 양의 출발점 | `references/tempo.md` |
 | 2. 트리트먼트 | `TREATMENT.md`: 문구(시청자 단계, 훅 후보 3개, 근거 표), 후보 구조 3개 + 선택 이유, 로그라인, 벤치마크, 샷 리스트, 비트시트, 큐맵(드롭, 섹션별 음악 사건 수), 사운드 표 | `references/director.md`, `references/copy.md`, `templates/TREATMENT.md` |
 | 3. 브랜드 토큰 | 브랜드 자산에서 폰트·색·그리드·라운드를 `brand.json`으로. 브랜드 폰트가 없으면 무드별 페어링 후보 2–3개를 골라 6단계에서 비교. 모든 요소는 이 토큰만 사용 | `references/aesthetic-rules.md` B1–B5, `references/fonts.md` |
 | 4. 샷 선택 | 1.5에서 고른 기획안의 골격이 출발점(자유롭게 생성이면 직접 정한 형태). 붙인 예시의 구성·프롬프트를 형태 참고로 쓰고, 예시처럼 만들 때는 그 키트(`gallery/kits/<slug>/`)에서 시작함. 에너지 골격의 슬롯마다 샷 카드를 고르고, 씬 경계마다 전환(트랙 매트·`am-*` 전환·전환 카드·마스크 중 하나, fade만 쓰지 않음)과 이어받는 요소를 정해 씬표 전환 칸에 적음. 시그니처 전환 한 곳, 2–4종 섞기. 한 기법은 전체에서 한 번만 주인공 | `references/recipe-guide.md`(목적별 묶음·아이템별 쓸 때/피할 때) → `references/shots/README.md` + 고른 카드 전문, `references/transitions.md`, `gallery/README.md` |

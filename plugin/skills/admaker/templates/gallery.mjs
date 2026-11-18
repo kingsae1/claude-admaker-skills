@@ -412,6 +412,7 @@ if (cmd === "list" || !cmd) {
     console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     아이디어: ${ideas[ideas.length - 1].name} — ${ideas[ideas.length - 1].line}\n     변주: ${freeCard.summary}`);
     console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 고른 바로 그때 variety.mjs record. 카드에 아이디어·예시 id가 들어 있어 같이 기록됨)`);
     console.log("고른 뒤: 로그라인 한 문장 + 훅 후보 3개를 쓰고 node templates/idea.mjs check concept.json 으로 말이 되는지 검사 (references/ideas.md)");
+    console.log("기획안을 고른 다음: node templates/tempo.mjs recommend --duration <초> --direction <고른 방향 id> --request \"<요청 요약>\" 로 템포 추천 1개 + 다른 템포 3개를 보여 주고 고르게 함 (references/tempo.md)");
     if (nNovel) console.log("참신안을 고르면: 로그라인 + keyScene(제품이 없으면 안 풀리는 장면)을 쓰고 concept.json에 novel(카드의 칸)을 넣어 같은 명령으로 검사 (references/novel-concepts.md)");
     console.log("빌드 키트가 있는 예시:");
   } else console.log("references/motion-directions.md 를 찾지 못해 모션 방향 없이 예시만 보여 줍니다");
