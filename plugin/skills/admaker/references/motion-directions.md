@@ -201,6 +201,7 @@
 - 시그니처: 잉크가 화면을 번지며 덮고 다음 장면이 종이 결로 열림(`am-ink-bleed`)
 - 전환: `am-ink-bleed`, 트랙 매트 "질감으로 번짐"(transitions.md), 마스크 blockReveal
 - 글꼴·색: 굵은 세리프·스텐실 + 고딕, 리소 2색(형광 핑크·파랑 같은) + 종이색 바탕, 하프톤은 `dotFilter`
+- 종이: 모션 전용 씬·엔드카드 바탕은 `paperSvg`(크림·크라프트·접힘), 사진 조각·글자 받침·테이프는 찢은 종이 `paperCutSvg` + `lineBoil`(`paper.md`). 소재 위에는 종이 결을 얹지 않음
 - 어울림: 인쇄/프린트/리소/하프톤/콜라주/잡지/매거진/포스터/종이/아트/전시/책/출판/문구/굿즈/편집샵/독립/로컬/수제/공방/빈티지/페스티벌/공연/카페/커피/베이커리/빵
 - 예시: shotcraft/riso-print-hits, shotcraft/print-texture-transitions, opuscar/halftone-dossier, opuscar/risograph
 - 레퍼런스 낱말: 하프톤 리소 콜라주 인쇄
