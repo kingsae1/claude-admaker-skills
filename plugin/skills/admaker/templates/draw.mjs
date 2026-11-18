@@ -492,3 +492,231 @@ export function glyphDiveClips(o) {
   ];
   return { clips, point: { ...p, canvasX: Math.round(P.x), canvasY: Math.round(P.y) }, endScale };
 }
+
+// ── 흘러내림 (drip) ──────────────────────────────────────────────────
+// 아이콘·박스 아랫변이나 글자 획 아래끝에서 같은 색 액체가 부풀어 나와 가늘게 늘어지고, 끊겨 떨어지거나 매달려 출렁인다
+// (shots/drip-melt.md). 드립 하나 = 같은 단색 Shape 3–4개(목 path · 줄기 rounded · 눈물 방울 path · 위성 방울 circle) +
+// gsapTimeline. 단색이라 겹친 곳이 안 보여 한 덩어리(메타볼)로 읽히고, 스크립트 어댑터가 없어 앱 불러오기까지 그대로 간다.
+// 끊긴 뒤 움직임은 물리식을 1/30초마다 샘플한 선형 트윈이라 결정적이다.
+
+const r1 = (v) => Math.round(v * 10) / 10;
+const r3 = (v) => Math.round(v * 1000) / 1000;
+const clamp01 = (k) => Math.min(1, Math.max(0, k));
+
+/**
+ * 드립 하나의 클립 묶음(엔진 ProjectJSON). 배열 순서 = 아래 → 위(줄기·방울·목·위성).
+ * @param {object} o
+ * @param {number} o.x  드립 가운데 x(캔버스 px)
+ * @param {number} o.y  붙을 아랫변 y(박스 아랫변, 글자는 획 아래끝)
+ * @param {string} o.color  대상과 같은 색(그래야 이음매가 안 보임)
+ * @param {number} o.startSec  부풀기 시작
+ * @param {number} o.endSec  클립 끝(장면 끝)
+ * @param {number} [o.width]  줄기 폭 px (기본 26; 글자는 획 굵기 × 0.5)
+ * @param {number} [o.neck]  목 윗변 폭 px (기본 width × 4; 글자는 획 굵기 이하 — 넘치면 기준선에 가는 턱이 보임)
+ * @param {number} [o.neckH]  목 높이 px (기본 width × 2.2)
+ * @param {number} [o.length]  줄기 최대 길이 px (기본 520)
+ * @param {number} [o.grow]  부풀어 나오는 시간(초, 기본 0.45)
+ * @param {number} [o.stretch]  늘어나는 시간(초, 기본 0.9)
+ * @param {'fall'|'hold'} [o.end]  fall: 끊겨서 떨어짐 / hold: 매달린 채 천천히 더 늘어나며 출렁임
+ * @param {number} [o.canvasHeight]  기본 1920 (fall이 화면 밖까지 가는 거리)
+ * @param {number} [o.overlap]  목 윗변이 대상 안으로 들어가는 px (기본 4)
+ * @param {string} [o.id]  클립 id 앞머리 (기본 'drip')
+ * @returns {object[]}
+ */
+export function dripClips(o) {
+  const { x, y, color, startSec, endSec, width = 26, length = 520, grow = 0.45, stretch = 0.9, end = 'fall', canvasHeight = 1920, overlap = 4, id = 'drip' } = o;
+  if (!(endSec > startSec)) throw new Error('endSec > startSec 이어야 합니다');
+  const w = width, nw = o.neck ?? w * 4, nh = o.neckH ?? w * 2.2, d = w / 0.64, dh = d * 1.4, L = length;
+  const fallTo = o.fallTo ?? canvasHeight + 200;
+  const top = y - overlap;
+  const sTop = top + nh * 0.7 - w * 0.5 - 2; // 줄기 윗끝: 목 원뿔이 시작하기 전에서 겹침
+  const snap = grow * 0.7 + stretch; // 늘어남이 끝나는(끊기는) 시각, 클립 기준
+  const rest = endSec - startSec - snap;
+  // 목: 오목한 어깨 + 아래끝 뾰족한 원뿔. 어깨가 대상에서 녹아 나오고, 원뿔이 가늘어진 줄기와 모래시계처럼 이어진다.
+  const f = (w / nw) * 50, a = r1(50 - f), b = r1(50 + f);
+  const neckPath = `M0 0 C28 2 ${a} 30 ${a} 70 C${a} 84 47 100 50 100 C53 100 ${b} 84 ${b} 70 C${b} 30 72 2 100 0 Z`;
+  // 방울: 위끝이 좁은 눈물 모양. 폭 64%(=줄기 폭) 지점(y≈45/140)을 줄기 끝에 맞춤 → 핀처럼 안 보이고 줄기에서 부풀어 보임
+  const dropPath = 'M40 0 L60 0 C62 30 100 55 100 90 C100 118 78 140 50 140 C22 140 0 118 0 90 C0 55 38 30 40 0 Z';
+  const neckTw = [{ from: { scaleY: 0.01, y: -nh / 2 }, to: { scaleY: 1, y: 0 }, duration: grow, ease: 'power2.out', position: 0 }];
+  // 엔진 scale은 클립 가운데 기준 → 윗끝을 고정하려면 y = -L/2·(1−scaleY)
+  const streamTw = [
+    { from: { scaleY: 0.001, y: -L / 2 }, to: { scaleY: 0.001, y: -L / 2 }, duration: 0.001, position: 0 },
+    { to: { scaleY: 1, y: 0 }, duration: stretch, ease: 'power1.in', position: grow * 0.7 },
+  ];
+  const dropTw = [
+    { from: { scale: 0.2, y: -dh * 0.4 }, to: { scale: 1, y: 0 }, duration: grow, ease: 'power2.out', position: 0 },
+    { to: { y: L, scaleY: 1.1, scaleX: 0.96 }, duration: stretch, ease: 'power1.in', position: grow * 0.7 },
+  ];
+  const extra = [];
+  if (end === 'fall' && rest > 0.1) {
+    // 끊기기 직전: 줄기가 가늘어지고 목도 조금 좁아짐 — 액체가 끊긴다는 신호(칼로 자른 단면 방지)
+    const thin = Math.min(0.3, stretch * 0.5);
+    streamTw.push({ to: { scaleX: 0.55 }, duration: thin, ease: 'power2.in', position: snap - thin });
+    neckTw.push({ to: { scaleX: 0.86 }, duration: thin, ease: 'power2.in', position: snap - thin });
+    const v0 = Math.min((2 * L) / stretch, 1100), g = 5200;
+    const fallY = (u) => v0 * u + 0.5 * g * u * u;
+    const need = fallTo - (sTop + L) + dh;
+    const uEnd = Math.min(rest, (-v0 + Math.sqrt(v0 * v0 + 2 * g * Math.max(0, need))) / g);
+    const step = 1 / 30;
+    const sample = (arr, fn, u1) => {
+      for (let u = step; u <= u1 + 1e-9; u += step) arr.push({ to: fn(u), duration: step, ease: 'none', position: r3(snap + u - step) });
+    };
+    // 남은 목: 뾰족한 끝이 위로 튕겨 출렁이다 작은 혹으로 남음
+    sample(neckTw, (u) => {
+      const sY = Math.max(0.05, 0.3 + 0.7 * Math.exp(-7 * u) * Math.cos(16 * u) - 0.22 * clamp01((u - 0.6) / 0.9));
+      return { scaleY: r3(sY), y: r1((-nh / 2) * (1 - sY)), scaleX: r3(1 - 0.14 * Math.exp(-6 * u)) };
+    }, Math.min(rest, 1.6));
+    // 떨어지는 줄기: 둥근 윗끝이 방울 쪽으로 빨려 들어감(표면장력), 아래끝은 방울에 붙은 채 함께 낙하
+    const suck = 0.2;
+    sample(streamTw, (u) => {
+      const k = clamp01(u / suck), sY = Math.max(0.02, 1 - k * k * (3 - 2 * k) * 0.98);
+      return { scaleY: r3(sY), scaleX: r3(0.55 + 0.3 * k), y: r1((L / 2) * (1 - sY) + fallY(u)), opacity: u > suck ? 0 : 1 };
+    }, uEnd);
+    // 방울: 줄기를 삼키며 부풀고 가로세로로 출렁, 떨어지며 살짝 길어짐
+    sample(dropTw, (u) => {
+      const wob = 0.16 * Math.sin(20 * u) * Math.exp(-4.5 * u), st = 0.12 * (1 - Math.exp(-3 * u)), gulp = 0.12 * clamp01(u / suck);
+      return { y: r1(L + fallY(u)), scaleX: r3(1 + gulp - 0.04 * Math.exp(-8 * u) + wob - st * 0.5), scaleY: r3(1 + gulp + 0.1 * Math.exp(-8 * u) - wob + st) };
+    }, uEnd);
+    // 위성 방울: 끊긴 자리에서 작은 방울이 생겨 조금 늦게 떨어짐
+    const sd = w * 0.55, sy0 = top + nh + w * 0.4;
+    const satTw = [
+      { from: { scale: 0, y: 0 }, to: { scale: 0, y: 0 }, duration: 0.001, position: 0 },
+      { to: { scale: 1 }, duration: 0.08, ease: 'back.out(3)', position: r3(snap + 0.04) },
+    ];
+    const satNeed = fallTo - sy0 + sd, satEnd = 0.06 + (-v0 + Math.sqrt(v0 * v0 + 2 * g * Math.max(0, satNeed))) / g;
+    sample(satTw, (u) => ({ y: r1(u < 0.06 ? 0 : fallY(u - 0.06)) }), Math.min(rest, satEnd));
+    extra.push(['sat', 'circle', {}, { x: x - sd / 2, y: sy0 - sd / 2, w: sd, h: sd }, satTw]);
+  } else if (rest > 0.1) {
+    // 매달린 채 천천히 더 늘어나고 방울이 출렁임
+    streamTw.push({ to: { scaleY: 1.15, y: L * 0.075 }, duration: rest, ease: 'sine.out', position: snap });
+    dropTw.push({ to: { y: L * 1.15 }, duration: rest, ease: 'sine.out', position: snap });
+    for (let k = 0, c = snap; c < snap + rest - 0.2; k++, c += 0.5)
+      dropTw.push({ to: { scaleX: k % 2 ? 0.96 : 1.06, scaleY: k % 2 ? 1.16 : 1.06 }, duration: 0.5, ease: 'sine.inOut', position: r3(c) });
+    neckTw.push({ to: { scaleX: 1.04 }, duration: rest, ease: 'sine.out', position: snap });
+  }
+  const us = (s) => Math.round(s * 1e6);
+  const timing = { display: { from: us(startSec), to: us(endSec) }, duration: us(endSec - startSec), playbackRate: 1 };
+  const shape = (part, shapeType, style, bx, tweens) => ({
+    id: `${id}_${part}`, name: `${id}_${part}`, type: 'Shape', src: 'shape', shapeType, style: { fill: color, ...style }, timing,
+    transform: { x: r1(bx.x), y: r1(bx.y), width: r1(bx.w), height: r1(bx.h), angle: 0, opacity: 1 },
+    animations: [{ type: 'gsapTimeline', options: { delay: 0 }, params: { tweens } }],
+  });
+  return [
+    shape('stream', 'rounded', { borderRadius: r1(w / 2) }, { x: x - w / 2, y: sTop, w, h: L }, streamTw),
+    shape('drop', 'path', { path: dropPath, viewBox: [0, 0, 100, 140] }, { x: x - d / 2, y: sTop - w * 0.6 - dh * 0.32, w: d, h: dh }, dropTw),
+    shape('neck', 'path', { path: neckPath, viewBox: [0, 0, 100, 100] }, { x: x - nw / 2, y: top, w: nw, h: nh }, neckTw),
+    ...extra.map((e) => shape(...e)),
+  ];
+}
+
+/**
+ * 글자 패스에서 드립이 붙을 자리: 기준선(가장 아래)까지 내려오는 획 구간마다 하나.
+ * @param {string} d  textToPath(...).path
+ * @param {number} width  패스 박스 폭
+ * @returns {{ x: number, y: number, stem: number }[]}  패스 박스 왼쪽 위 기준 px. stem = 그 구간 폭(가로 획이면 보통 획 굵기로 줄임)
+ */
+export function dripAnchors(d, width, { tol } = {}) {
+  const polys = pathPolygons(d);
+  if (!polys.length) throw new Error('글자 패스가 비었습니다');
+  const low = [];
+  for (let x = 0; x < width; x++) {
+    let m = -Infinity;
+    const cx = x + 0.5;
+    for (const p of polys)
+      for (let k = 0; k < p.length; k++) {
+        const [ax, ay] = p[k], [bx, by] = p[(k + 1) % p.length];
+        if ((ax <= cx && bx > cx) || (bx <= cx && ax > cx)) m = Math.max(m, ay + ((cx - ax) / (bx - ax)) * (by - ay));
+      }
+    low.push(m);
+  }
+  const base = Math.max(...low);
+  const t = tol ?? Math.max(2, base * 0.01);
+  const runs = [];
+  let s = -1;
+  for (let x = 0; x <= width; x++) {
+    const ok = x < width && low[x] >= base - t;
+    if (ok && s < 0) s = x;
+    if (!ok && s >= 0) { if (x - s >= 4) runs.push([s, x - 1]); s = -1; }
+  }
+  const widths = runs.map(([p, q]) => q - p + 1).sort((p, q) => p - q);
+  const stemW = widths[Math.floor(widths.length / 2)] ?? 20;
+  return runs.map(([p, q]) => {
+    const rw = q - p + 1;
+    // 가로 획(E·L 밑변)처럼 넓은 구간은 가운데보다 조금 안쪽, 폭은 보통 획 굵기로
+    return { x: r1(rw > stemW * 1.8 ? p + rw * 0.4 : (p + q + 1) / 2), y: r1(base), stem: Math.min(rw, Math.round(stemW * 1.1)) };
+  });
+}
+
+/**
+ * 글자 아래로 녹아내리는 클립 묶음: 글자 패스 Shape + 획마다 드립(길이·시작 시드 고정, fall개는 끊겨 떨어짐).
+ * @param {object} o
+ * @param {{ path: string, width: number, height: number, viewBox: number[] }} o.glyph  textToPath 결과
+ * @param {number} o.centerX  글자 박스 가운데 x
+ * @param {number} o.centerY
+ * @param {string} o.color  글자 색 = 드립 색
+ * @param {number} o.startSec  글자가 보이기 시작
+ * @param {number} o.endSec
+ * @param {number} [o.dripAt]  첫 드립 시작(기본 startSec + 0.25)
+ * @param {number} [o.count]  드립 수(기본 획 자리 수, 최대 8). 자리보다 적으면 고르게 고름
+ * @param {number} [o.fall]  끊겨 떨어지는 드립 수(기본 1, 가장 긴 것부터)
+ * @param {number} [o.maxLength]  가장 긴 줄기 px (기본 글자 높이 × 1.6)
+ * @param {number} [o.seed]
+ * @param {boolean} [o.text]  글자 패스 Shape 포함(기본 true). false면 드립만 — 같은 자리·크기의 글자를 따로 둘 때
+ * @param {string} [o.id]  기본 'melt'
+ * @param {number} [o.canvasHeight]
+ * @returns {{ clips: object[], anchors: object[] }}
+ */
+export function textDripClips(o) {
+  const { glyph, centerX, centerY, color, startSec, endSec, fall = 1, seed = 3, id = 'melt', canvasHeight = 1920 } = o;
+  const box = { x: Math.round(centerX - glyph.width / 2), y: Math.round(centerY - glyph.height / 2), width: glyph.width, height: glyph.height };
+  let anchors = dripAnchors(glyph.path, glyph.width);
+  const n = Math.min(o.count ?? anchors.length, anchors.length, 8);
+  if (n < anchors.length) anchors = Array.from({ length: n }, (_, i) => anchors[Math.round((i * (anchors.length - 1)) / Math.max(1, n - 1))]);
+  const rnd = seededRandom(seed);
+  const maxL = o.maxLength ?? Math.round(glyph.height * 1.6);
+  const plan = anchors.map((a, i) => ({ a, i, len: Math.round(maxL * (0.15 + 0.85 * rnd() ** 2)), delay: 0.7 * rnd() }));
+  [...plan].sort((p, q) => q.len - p.len).slice(0, fall).forEach((p) => { p.end = 'fall'; p.len = Math.round(Math.max(p.len, maxL * 0.8)); });
+  const t0 = o.dripAt ?? startSec + 0.25;
+  const us = (s) => Math.round(s * 1e6);
+  const clips = [];
+  if (o.text !== false)
+    clips.push({ id: `${id}_text`, name: `${id}_text`, type: 'Shape', src: 'shape', shapeType: 'path', timing: { display: { from: us(startSec), to: us(endSec) }, duration: us(endSec - startSec), playbackRate: 1 },
+      transform: { ...box, angle: 0, opacity: 1 }, style: { path: glyph.path, viewBox: glyph.viewBox, fill: color }, animations: [] });
+  for (const p of plan) {
+    const w = Math.max(6, Math.round(p.a.stem * 0.5));
+    clips.push(...dripClips({ x: box.x + p.a.x, y: box.y + p.a.y, color, startSec: t0 + p.delay, endSec, width: w, neck: Math.round(p.a.stem), neckH: Math.round(p.a.stem * 0.9),
+      length: p.len, end: p.end ?? 'hold', stretch: p.end ? 1.0 : 0.9, canvasHeight, id: `${id}_d${p.i}` }));
+  }
+  return { clips, anchors: anchors.map((a) => ({ ...a, canvasX: r1(box.x + a.x), canvasY: r1(box.y + a.y) })) };
+}
+
+/**
+ * 박스·아이콘(rounded 포함) 아랫변 드립. 모서리 둥근 부분을 피해 x를 고른다(모서리 위에 두면 목 윗변이 곡선 밖으로 삐져나옴).
+ * @param {object} o
+ * @param {{ x: number, y: number, width: number, height: number, radius?: number }} o.box  대상 박스(캔버스 px)
+ * @param {string} o.color
+ * @param {number} o.startSec
+ * @param {number} o.endSec
+ * @param {number} [o.count]  기본 2 (하나는 fall)
+ * @param {number} [o.fall]  기본 1
+ * @param {number} [o.width]  줄기 폭(기본 박스 폭 × 0.065)
+ * @param {number} [o.maxLength]  기본 박스 높이 × 1.4
+ * @param {number} [o.seed]
+ * @param {string} [o.id]  기본 'drip'
+ * @returns {{ clips: object[], xs: number[] }}
+ */
+export function boxDripClips(o) {
+  const { box, color, startSec, endSec, count = 2, fall = 1, seed = 5, id = 'drip', canvasHeight = 1920 } = o;
+  const w = o.width ?? Math.max(10, Math.round(box.width * 0.065)), nw = w * 4, maxL = o.maxLength ?? Math.round(box.height * 1.4);
+  const lo = box.x + (box.radius ?? 0) + nw / 2 + 4, hi = box.x + box.width - (box.radius ?? 0) - nw / 2 - 4;
+  if (hi < lo) throw new Error('박스가 너무 좁거나 모서리가 너무 둥글어 드립 자리가 없습니다 (width를 줄이세요)');
+  const rnd = seededRandom(seed);
+  const xs = Array.from({ length: count }, (_, i) => r1(count === 1 ? lo + (hi - lo) * 0.38 : lo + ((hi - lo) * (i + 0.15 + 0.7 * rnd())) / count));
+  const clips = [];
+  xs.forEach((x, i) => {
+    const isFall = i < fall;
+    clips.push(...dripClips({ x, y: box.y + box.height, color, startSec: startSec + (isFall ? 0 : 0.3 + 0.4 * rnd()), endSec, width: isFall ? w : Math.round(w * 0.7),
+      length: isFall ? maxL : Math.round(maxL * (0.15 + 0.2 * rnd())), end: isFall ? 'fall' : 'hold', canvasHeight, id: `${id}_d${i}` }));
+  });
+  return { clips, xs };
+}

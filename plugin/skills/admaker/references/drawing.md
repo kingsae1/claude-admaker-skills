@@ -2,7 +2,7 @@
 
 기본 Shape 19종과 폰트 스타일로 안 되는 모양은 직접 그립니다. 결과는 모두 `Shape` 클립 하나(`shapeType: "path"` 또는 `"brush"`)라서 Studio에서 그대로 열리고, `strokeDraw`로 "그려지는" 모션을 줄 수 있습니다.
 
-- 스킬: `templates/draw.mjs` (`annotationPath`, `annotationBox`, `smoothPoints`, `simplifyPoints`, `roughenPath`, `pathToSvg`, `textToPath`)
+- 스킬: `templates/draw.mjs` (`annotationPath`, `annotationBox`, `smoothPoints`, `simplifyPoints`, `roughenPath`, `pathToSvg`, `textToPath`, 흘러내림 `dripClips`·`boxDripClips`·`textDripClips` — shots/drip-melt.md)
 - MCP: `draw_path`, `draw_annotation`, `text_to_path` (같은 계산)
 - 도형 **PNG 파일**이 여러 장 필요하면: 스킬 `templates/shape-pngs.mjs`, MCP `make_shape_pngs` — 한 장의 시트에 모두 그려 잘라 씁니다(아래 "도형 PNG 여러 장")
 - 엔진: `@admaker/engine` 3.1 이상(브러시·regionFilters·blendMode·fillRule). `path` + stroke + `strokeDraw`만 쓰는 손그림 강조와 글자 패스는 3.0.5에서도 그려집니다.
