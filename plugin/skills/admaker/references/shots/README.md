@@ -52,6 +52,7 @@
 | [group-build](group-build.md) | 상승부·엔드카드 | 중 | 1–1.8초 | 칩·가격표·버튼 묶음이 한 덩어리로 날아와 자리잡고 조각이 하나씩 반응 (`groupId`·`origin: "group"`) |
 | [lottie-accent](lottie-accent.md) | 상승부·엔드카드 (얹는 샷) | 중 | 0.6–1.2초 | 혜택 문구 옆에 체크·하트·반짝이 Lottie가 박에 맞춰 짧게 (`search_lottie`, Adapter lottie) |
 | [sheen-sweep](sheen-sweep.md) | 훅·주인공·상승부·엔드카드 (얹는 샷) | 저–중 | 0.8–1.6초, chrome은 장면 내내 | 빛띠·색띠·크롬 결이 글자·박스 모양 안에서만 지나감 (트랙 매트, `effects.mjs` `sheenSweep`) |
+| [drip-melt](drip-melt.md) | 훅·주인공·엔드카드 (얹는 샷) | 저–중 | 부풀기+늘어남 1.4초, 매달린 드립은 장면 끝까지 | 아이콘·글자 아래에서 같은 색 액체가 늘어지다 끊겨 떨어지거나 매달려 출렁임 (`draw.mjs` `textDripClips`·`boxDripClips`, MCP `drip`) |
 
 ### 모션 스타일 카드 고르는 법
 

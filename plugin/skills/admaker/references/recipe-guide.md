@@ -83,6 +83,7 @@
 | `sheen-sweep` glint | 가격 박스·버튼·로고·밝은 회색 글자에 "반짝" 한 번 | 흰 글자 위(안 보임), 한 화면 여러 요소 | 그대로 |
 | `sheen-sweep` gradient | 흰 글자 슬로건·런칭 문구를 브랜드 색으로 물들일 때 | 글자가 작을 때(띠가 안 읽힘) | 그대로 |
 | `sheen-sweep` chrome | 프리미엄·테크·자동차의 큰 제목 | 귀여운·수제 톤 | 그대로 |
+| `drip-melt` | 단색 글자·아이콘이 녹거나 흘러넘치는 느낌: 여름 세일, 소스·시럽·초콜릿·페인트·제형, 앱 아이콘 등장 | 그라데이션·외곽선 글자, 가는 글꼴, 프리미엄 미니멀 톤, 한 장면 두 대상 | 그대로 |
 | `hand-drawn-emphasis` | 화면의 가장 중요한 한 단어·가격을 짚을 때 | 장면당 3개 이상 | 그대로 |
 | `lottie-accent` | 혜택 문구·버튼 옆 체크·하트·반짝이·폭죽 | 화면 주인공으로 크게, 색을 못 바꾸는데 브랜드와 안 맞을 때 | 그대로 |
 
@@ -177,6 +178,7 @@
 | `transition-cover-flood` / `transition-scribble-cover` | 깔끔한 원 → cover-flood · 손그림 톤 → scribble |
 | `letterDive` / 트랙 매트 "글자 속으로" | 같은 원리. 한 광고에 하나만 |
 | `sheen-sweep` / `lottie-accent` 반짝이 | 대상 표면이 빛남 → sheen · 대상 옆에 장식이 터짐 → lottie |
+| `drip-melt` / `liquid-blobs` | 글자·아이콘 자체가 녹아 흐름 → drip(평면, 앱까지 감) · 광택 액체 덩어리가 떠서 일렁임 → blobs(three, 브라우저 전용) |
 | `hero-tilt-push` / `transition-footage-card` | 한 소재를 세움 → hero · 여러 소재를 넘김 → footage-card |
 | `z-fly-through` / `infiniteTunnel` | 사진·문구 층 사이로 들어감 → z-fly · 인물 뒤 끝없는 공간 → tunnel |
 
