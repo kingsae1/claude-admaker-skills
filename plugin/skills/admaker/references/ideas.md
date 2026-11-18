@@ -18,6 +18,7 @@
 | `count-reasons` | 이유 세 가지 (기본) | 숫자를 세며 고를 이유를 하나씩 쌓는다 | 훅 "○○ 하는 이유 3" → 1·2·3 장점 카드(박마다) → 합쳐진 제품 → 엔드카드 | 사실인 장점 3개 (사용자 자료에 있는 것만) | 장점 셋이 모두 사용자 자료에 있고, 서로 겹치지 않는다 |
 | `one-moment` | 하루의 한 순간 (기본) | 시간 자막과 함께 제품이 필요한 그 순간 하나를 담는다 | 훅 "오전 7:40" 같은 시간 자막 → 그 순간의 장면 → 제품이 들어오는 순간 → 기분이 바뀐 장면 → 엔드카드 | 그 순간을 보여 줄 장면 이미지 | 그 시간·장소가 제품을 실제로 쓰는 때다(아침 커피, 퇴근길 간식처럼) |
 | `ingredient-macro` | 재료·디테일 클로즈업 | 재료와 질감을 아주 가까이서 보여 주며 품질을 말한다 | 훅 재료 매크로(원두·과일·성분) → 만들어지거나 섞이는 순간 → 완성품 → 엔드카드 | 실제 재료·질감 사진 또는 그 재료로 만든 생성 이미지 (실제와 다른 재료 금지) | 보여 주는 재료가 실제로 제품에 들어간 것이다 |
+| `sizzle-closeup` | 지글 클로즈업 | 굽고 붓고 김이 오르는 순간을 소리와 함께 아주 가까이서 보여 주며 맛을 말한다 | 훅 불판·팬에 닿는 순간(소리와 같은 박) → 뒤집기·자르기·붓기 클로즈업 2–3컷(박마다) → 한 점 집어 올리는 슬로 컷 → 메뉴명·가격 → 엔드카드 | 굽기·붓기·김이 나는 실제 조리 소재 (사용자 영상, 또는 실제 메뉴 사진으로 만든 생성 영상) | 보여 주는 음식이 그 매장의 실제 메뉴이고, 시즐 장면 하나로 맛이 바로 전해진다 |
 | `making-of` | 만드는 과정 | 손과 도구가 제품을 만드는 과정을 빠르게 이어 보여 준다 | 훅 손이 첫 작업을 시작 → 과정 3–4컷(박마다) → 완성품 공개 → 엔드카드 | 과정 사진이나 그 과정을 보여 줄 장면 | 보여 주는 과정이 실제로 그 가게·브랜드가 하는 일이다 |
 | `menu-pick` | 골라 보세요 | 메뉴·옵션을 카드처럼 넘기며 하나씩 보여 주고 고르게 한다 | 훅 "오늘은 뭐?" → 메뉴 카드 넘김(박마다 한 장) → 대표 메뉴에서 멈춤 → 엔드카드 | 메뉴·옵션 2개 이상의 사진 | 실제로 고를 수 있는 메뉴·옵션이 2개 이상 있다 |
 | `journey-map` | 이동·경로 | 출발에서 도착까지 경로가 그려지며 제품·서비스가 닿는 과정을 보여 준다 | 훅 출발점 핀 → 경로가 그려짐 → 도착 장면 → 위치·시간 정보 → 엔드카드 | 실제 위치·지역 정보 | 실제 위치·경로 정보가 있고, 이동이 광고의 장점과 이어진다(빠른 배송, 가까운 매장) |
@@ -33,8 +34,8 @@
 
 | 업종 | 규칙 | 뽑지 않는 아이디어 |
 |---|---|---|
-| medical | 의료: 전후 사진·전후 비교·효과 보장·치료 경험담 금지 | `before-after`, `metaphor-object`, `word-play`, `tease-reveal`, `product-pov`, `ingredient-macro`, `making-of`, `menu-pick`, `one-moment`, `split-compare`, `real-voice` |
-| finance | 금융: 수익·원금 보장, 과장 표현 금지 | `before-after`, `product-pov`, `word-play`, `one-moment`, `tease-reveal`, `ingredient-macro`, `making-of`, `metaphor-object` |
+| medical | 의료: 전후 사진·전후 비교·효과 보장·치료 경험담 금지 | `before-after`, `metaphor-object`, `word-play`, `tease-reveal`, `product-pov`, `ingredient-macro`, `making-of`, `sizzle-closeup`, `menu-pick`, `one-moment`, `split-compare`, `real-voice` |
+| finance | 금융: 수익·원금 보장, 과장 표현 금지 | `before-after`, `product-pov`, `word-play`, `one-moment`, `tease-reveal`, `ingredient-macro`, `making-of`, `sizzle-closeup`, `metaphor-object` |
 | health-food | 건강기능식품·다이어트: 질병 치료·예방, 감량 보장 표현 금지 | `before-after`, `metaphor-object` |
 | food | 식품: 불결한 비포 장면 금지(위생 연상) | - |
 | kids | 키즈: 어둡거나 무서운 장면 금지 | `metaphor-object` |

@@ -77,6 +77,16 @@ export const IDEAS = [
     sense: '보여 주는 재료가 실제로 제품에 들어간 것이다',
   },
   {
+    id: 'sizzle-closeup',
+    name: '지글 클로즈업',
+    line: '굽고 붓고 김이 오르는 순간을 소리와 함께 아주 가까이서 보여 주며 맛을 말한다',
+    story: '훅 불판·팬에 닿는 순간(소리와 같은 박) → 뒤집기·자르기·붓기 클로즈업 2–3컷(박마다) → 한 점 집어 올리는 슬로 컷 → 메뉴명·가격 → 엔드카드',
+    fits: ['고기', '고깃집', '삼겹살', '목살', '갈비', '숯불', '직화', '구이', '바베큐', '한우', '곱창', '스테이크', '치킨', '버거', '피자', '라면', '국밥', '찌개', '떡볶이', '분식', '요리', '맛집', '식당', '음식', '한식', '레스토랑', '야식', '배달'],
+    avoid: ['앱', '서비스', '금융', '보험', '플랫폼', '병원', '의원'],
+    needs: '굽기·붓기·김이 나는 실제 조리 소재 (사용자 영상, 또는 실제 메뉴 사진으로 만든 생성 영상)',
+    sense: '보여 주는 음식이 그 매장의 실제 메뉴이고, 시즐 장면 하나로 맛이 바로 전해진다',
+  },
+  {
     id: 'making-of',
     name: '만드는 과정',
     line: '손과 도구가 제품을 만드는 과정을 빠르게 이어 보여 준다',
@@ -169,10 +179,10 @@ export const HARD_EVIDENCE = ['reviews', 'before-after'];
 
 /** 업종 규칙: 요청 낱말이 걸리면 그 아이디어·문구는 안 씀 */
 export const CATEGORY_RULES = [
-  { id: 'medical', re: /병원|의원|클리닉|시술|성형|피부과|치과|한의원|의료/, avoidIdeas: ['before-after', 'metaphor-object', 'word-play', 'tease-reveal', 'product-pov', 'ingredient-macro', 'making-of', 'menu-pick', 'one-moment', 'split-compare', 'real-voice'], banned: /완치|치료 효과|부작용 없|통증 없|100\s*%|확실한 효과|보장/, note: '의료: 전후 사진·전후 비교·효과 보장·치료 경험담 금지' },
-  { id: 'finance', re: /금융|은행|보험|대출|투자|증권|카드사|코인/, avoidIdeas: ['before-after', 'product-pov', 'word-play', 'one-moment', 'tease-reveal', 'ingredient-macro', 'making-of', 'metaphor-object'], banned: /수익 보장|원금 보장|무조건|확정 수익|100\s*%|손실 없|공짜/, note: '금융: 수익·원금 보장, 과장 표현 금지' },
+  { id: 'medical', re: /병원|의원|클리닉|시술|성형|피부과|치과|한의원|의료/, avoidIdeas: ['before-after', 'metaphor-object', 'word-play', 'tease-reveal', 'product-pov', 'ingredient-macro', 'making-of', 'sizzle-closeup', 'menu-pick', 'one-moment', 'split-compare', 'real-voice'], banned: /완치|치료 효과|부작용 없|통증 없|100\s*%|확실한 효과|보장/, note: '의료: 전후 사진·전후 비교·효과 보장·치료 경험담 금지' },
+  { id: 'finance', re: /금융|은행|보험|대출|투자|증권|카드사|코인/, avoidIdeas: ['before-after', 'product-pov', 'word-play', 'one-moment', 'tease-reveal', 'ingredient-macro', 'making-of', 'sizzle-closeup', 'metaphor-object'], banned: /수익 보장|원금 보장|무조건|확정 수익|100\s*%|손실 없|공짜/, note: '금융: 수익·원금 보장, 과장 표현 금지' },
   { id: 'health-food', re: /건강기능|영양제|다이어트|보조제/, avoidIdeas: ['before-after', 'metaphor-object'], banned: /치료|완치|예방|살 빠지|체중 감량 보장|약효|100\s*%/, note: '건강기능식품·다이어트: 질병 치료·예방, 감량 보장 표현 금지' },
-  { id: 'food', re: /카페|커피|식당|음식|빵|베이커리|디저트|식품|음료|맛집|배달/, avoidIdeas: [], banned: /벌레|곰팡이|상한|더러운/, note: '식품: 불결한 비포 장면 금지(위생 연상)' },
+  { id: 'food', re: /카페|커피|식당|음식|빵|베이커리|디저트|식품|음료|맛집|배달|고기|고깃집|삼겹살|갈비|숯불|구이|한우|곱창|치킨|피자|버거|분식|국밥|찌개|요리|레스토랑|한식|중식|일식|양식|회식|외식/, avoidIdeas: [], banned: /벌레|곰팡이|상한|더러운/, note: '식품: 불결한 비포 장면 금지(위생 연상)' },
   { id: 'kids', re: /키즈|어린이|아이|유아|초등|장난감|육아/, avoidIdeas: ['metaphor-object'], banned: /무서|공포|피\b|위험한/, note: '키즈: 어둡거나 무서운 장면 금지' },
 ];
 
@@ -309,7 +319,8 @@ export function rerankDirections(ranked, history = []) {
       else if (score > 0 && recent4.has(r.d.id)) score = score / 2;
       return { ...r, score, fit: score > 0 && (r.why?.length ?? 0) > 0, used: count(r.d.id) };
     })
-    .sort((a, b) => Number(b.fit) - Number(a.fit) || b.score - a.score || a.used - b.used || Number(b.d.isDefault) - Number(a.d.isDefault));
+    // 점수가 같으면: 어울리는 방향끼리는 기본이 아닌(좁은 업종용) 방향이 앞(기본 방향은 어디에나 걸려 기획안이 닮음), 안 맞는 방향끼리는 기본 방향이 앞
+    .sort((a, b) => Number(b.fit) - Number(a.fit) || b.score - a.score || a.used - b.used || (a.fit ? -1 : 1) * (Number(b.d.isDefault) - Number(a.d.isDefault)));
 }
 
 /** 예시 고르기: 최근 기록에 쓴 예시(history[].example)는 다른 예시가 있으면 뒤로 */
