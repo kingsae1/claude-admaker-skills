@@ -7,7 +7,7 @@ export const FPS = 30;
 // 비트 그리드 (director.md §7): 앱 BGM이면 audio.analyzeBeats 결과를 ANALYSIS에 그대로 붙여 넣는다.
 // 없으면 BPM만으로 0초 = 0박. 음악 배치(DROP·trimFrom)를 바꾸면 GRID도 그 값으로 다시 만든다.
 export const ANALYSIS = null; // 예: { bpm: 128, beatSec: 0.469, firstBeatSec: 0.21, bars: [...], peaks: [...], sections: [...] }
-export const BPM = 120;
+export const BPM = 120; // 1.6단계 템포 고르기에서 고른 값 (node tempo.mjs recommend, references/tempo.md)
 export const GRID = gridFromAnalysis(ANALYSIS ?? { beatSec: 60 / BPM, firstBeatSec: 0 }, { fps: FPS });
 export const BEAT = GRID.beatSec;             // 초
 
