@@ -5,6 +5,8 @@
 //          word?: 의성어 (기본 "치익"), label?: 메뉴명 (2–10자), steam?: { x, y, w } 김이 오를 음식 자리(1080×1920 기준, 기본 화면 아래 가운데),
 //          color?: 스티커 색, font?: { family, url }, beat?: 한 박 초 (기본 0.5), index? }
 // 소재를 덮지 않음(aesthetic-rules Q11): 김은 음식 둘레에만 작게, 불투명도 0.55 이하. 화면 전체 면·틴트 없음.
+import { fontStyle } from "../fonts.mjs";
+
 export default ({ shot, brand, W, H, FPS, us, FOOTAGE }) => {
   const P = shot.props, f = 1 / FPS, sx = W / 1080, sy = H / 1920;
   if (!(P.to > P.at)) throw new Error("sizzle-hit: to는 at보다 커야 함");
@@ -14,8 +16,8 @@ export default ({ shot, brand, W, H, FPS, us, FOOTAGE }) => {
   const beat = P.beat ?? 0.5, dur = P.to - P.at;
   const color = P.color ?? brand.colors?.accent ?? "#FF5A1F";
   const ink = brand.colors?.ink ?? "#111111";
-  const family = P.font?.family ?? brand.fonts?.display?.family ?? "Pretendard";
-  const fontUrl = P.font?.url ?? brand.fonts?.display?.url;
+  // 글꼴: props.font { family, url }가 있으면 그것, 없으면 brand.fonts.display { name, weight }를 fonts.json에서 찾음
+  const { _weight, ...face } = P.font?.url ? { fontFamily: P.font.family, fontUrl: P.font.url, fontWeight: "400" } : fontStyle(brand.fonts?.display ?? { name: "Pretendard", weight: 900 });
   const timing = (a, b) => ({ display: { from: us(a), to: us(b) }, duration: us(b - a), playbackRate: 1 });
   const kf = (d, params) => ({ type: "keyframes", options: { duration: us(d), delay: 0, easing: "linear" }, params });
   const id = (s) => `sizzle${P.index ?? 0}_${s}`;
@@ -67,7 +69,7 @@ export default ({ shot, brand, W, H, FPS, us, FOOTAGE }) => {
   wobble["100%"] = { scale: 1, angle: -6, opacity: 1 };
   clips[wordKey] = {
     type: "Text", name: "sizzle-word", text: word,
-    style: { fontFamily: family, ...(fontUrl ? { fontUrl } : {}), fontSize: Math.round(150 * sx), fontWeight: 900, color: "#FFFFFF",
+    style: { ...face, fontSize: Math.round(150 * sx), color: "#FFFFFF",
       align: "center", verticalAlign: "center", background: { color, padding: [8, 30], borderRadius: 18 },
       shadow: { color: ink, alpha: 1, blur: 0, offsetX: Math.round(8 * sx), offsetY: Math.round(8 * sy) } },
     timing: timing(P.at, P.to),
@@ -83,7 +85,7 @@ export default ({ shot, brand, W, H, FPS, us, FOOTAGE }) => {
     const a = P.at + beat;
     clips[k] = {
       type: "Text", name: "sizzle-label", text: P.label,
-      style: { fontFamily: family, ...(fontUrl ? { fontUrl } : {}), fontSize: Math.round(64 * sx), fontWeight: 800, color: ink,
+      style: { ...face, fontSize: Math.round(64 * sx), color: ink,
         align: "center", verticalAlign: "center", background: { color: "#FFFFFF", padding: [10, 28], borderRadius: 60 } },
       timing: timing(a, P.to),
       transform: { x: Math.round(W / 2 - lw / 2), y: Math.round(H - 420 * sy), width: lw, height: lh, angle: 0, opacity: 1, zIndex: 61 },
