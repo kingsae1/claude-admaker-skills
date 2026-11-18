@@ -11,7 +11,7 @@
 | 모션 방향 (10) | `motion-directions.md` | 광고 한 편의 전체 톤·골격을 정할 때. `gallery.mjs recommend`가 3개를 뽑음 | 광고당 1개 |
 | 갤러리 예시 | `gallery/README.md`, `gallery/data/references.json` | 사용자가 "이런 느낌" 예시를 원하거나, 고른 기획안의 형태 참고가 필요할 때 | 기획안마다 미리보기 |
 | 아이디어·참신안 | `ideas.md`, `novel-concepts.md` | 로그라인·훅 문장을 정할 때. "참신·병맛·B급" 요청이면 참신안 | 기획안마다 1개 |
-| 변주 카드 | `variety.md`, `templates/variety-core.mjs` | 기획안을 고른 직후. 구도·주인공 글자·그래픽 층·빛 층·카메라·전환·색·리듬을 한 칸씩 뽑아 광고끼리 닮지 않게 | 광고당 1벌 |
+| 변주 카드 | `variety.md`, `templates/variety-core.mjs` | 기획안을 고른 직후. 구도·주인공 글자·그래픽 층·빛 층·카메라·전환·색·리듬·훅 샷·모션 말투·엔드카드를 한 칸씩 뽑아 광고끼리 닮지 않게 | 광고당 1벌 |
 | 샷 카드 (41) | `shots/README.md` + 카드 | 씬표의 슬롯(훅·주인공·상승부·엔드카드·전환)마다 "무엇이 어떻게 움직이나"를 정할 때 | 슬롯마다 1개 |
 | 영상 이펙트 (39) | `video-effects.md` + 카테고리 카드 | 사용자가 효과 이름으로 요청하거나("인물 뒤 거대 글자", "알림 폭탄"), 사람이 나오는 소재에 재미를 줄 때 | 광고당 주인공 1 + 보조 1 |
 | 전환 | `transitions.md` (+ `shots/transition-*`) | 씬 경계마다. 시그니처 1곳을 먼저 정하고 나머지는 흐름 잇기 | 경계마다 1개 |
@@ -23,14 +23,14 @@
 
 ## 2. 광고 목적별 빠른 묶음
 
-슬롯마다 1순위 → 대안 순서입니다. 소재(사용자 영상·사진)를 바닥에 깔고 그 위에 얹는 것이 기본입니다(Q11).
+슬롯마다 1순위 → 대안 순서입니다. **변주 카드의 훅 샷·엔드카드 방식 칸이 이 표의 훅·엔드카드 칸보다 먼저**입니다(`variety.md` "카드가 골격보다 먼저"). 표는 카드가 없을 때의 기본값과, 카드 칸이 브리프와 맞지 않을 때 바꿀 대안입니다. 소재(사용자 영상·사진)를 바닥에 깔고 그 위에 얹는 것이 기본입니다(Q11).
 
 | 목적·업종 | 훅 | 주인공 | 상승부 | 엔드카드 | 빛·장식 | 전환 시그니처 |
 |---|---|---|---|---|---|---|
 | 할인·가격·쿠폰·오픈 이벤트 | `hook-number-slam` → `beat-flicker-sting` | `kinetic-typo-beat` | `price-countup`, `group-build`(가격표) | `endcard-logo-cta` | `sheen-sweep` glint(가격 박스), `hand-drawn-emphasis` | `transition-flash-streak`(드롭 1곳) |
 | 제품·가전·테크 신제품 | `model-orbit-text` → `z-fly-through` | `hero-tilt-push`, `morph-reveal` | `feature-mask-reveal`, `transition-footage-card` | `endcard-logo-cta` | `sheen-sweep` chrome(제목) | `transition-zoom-through` |
 | 앱·SaaS·서비스 | `hook-number-slam` | `hero-tilt-push` | `feature-mask-reveal` + 이펙트 `liveCursor`·`windowPopup`·`notificationBomb` | `endcard-logo-cta` + `group-build`(CTA) | `lottie-accent`(체크) | `transition-cover-flood` |
-| 뷰티·음료·프리미엄 | `liquid-blobs` → `particle-logo` | `hero-tilt-push` | `feature-mask-reveal` | `particle-logo`(로고 스팅) | `sheen-sweep` gradient·glint | 트랙 매트 "글자 속으로" |
+| 뷰티·음료·프리미엄 | `liquid-blobs` → `particle-logo` | `hero-tilt-push` | `feature-mask-reveal` | `particle-logo`(로고 스팅) | `sheen-sweep` gradient·glint | `transition-glyph-dive`(글자 속으로) |
 | 장소·매장·배송·여행 | `map-region-pin` | `map-route-draw` | `iso-build-up`(구성도·진열) | `endcard-logo-cta` | — | `transition-whip-pan`(장소 이동) |
 | 음악·스포츠·패션 몽타주 | `beat-flicker-sting` | `kinetic-typo-beat` | `beat-montage-wipe`, `transition-beat-freeze` | `endcard-logo-cta` | 이펙트 `glitch`, `glitch-hit` | `transition-flash-streak` |
 | 키즈·푸드·친근한 앱 | `squash-bounce` → `pixel-sprite-hop` | `kinetic-typo-beat` | `group-build`, `lottie-accent` | `endcard-logo-cta` + `squash-bounce` 장식 | `hand-drawn-emphasis` | `transition-scribble-cover` |
@@ -94,6 +94,7 @@
 | `transition-whip-pan` | 장소 이동, 같은 종류 컷 빠르게 넘김 | 한 광고 3번 이상 |
 | `transition-match-cut` | 양쪽에 비슷한 모양·움직임이 있을 때 | 모양이 전혀 다를 때 |
 | `transition-zoom-through` | 소재에 둥근 창·화면·렌즈 같은 "안"이 있을 때(시그니처) | 그런 물체가 없을 때 |
+| `transition-glyph-dive` | 브랜드명·제품명·한 단어 훅에서 제품 장면으로(시그니처). 소재가 어떤 것이든 됨 | 가는 글꼴, 7자 넘는 문구, 한 광고 두 번 |
 | `transition-cover-flood` | 장면 성격이 바뀔 때, 화면 속 점(로고 점·버튼·핀)이 있을 때 | 아무 데서나 원이 생길 때 |
 | `transition-scribble-cover` | 손그림 톤 광고의 커버 | 테크·프리미엄 |
 | `transition-flash-streak` | 음악 드롭·훅 직후 에너지 한 번(R4 충격 1회로 셈) | 느린 톤, 두 번 이상 |
@@ -156,8 +157,11 @@
 | 주인공 글자 처리 | slam-scale → `kinetic-typo-beat`·`hook-number-slam` · typewriter → `terminalTyping`·`predictiveKeyboard` · outline-draw → `text_to_path` + `strokeDraw` · pixel-type → `pixel-arcade` · glitch-settle → `glitch-hit` · depth-pass → `z-fly-through` · mask-rise → `feature-mask-reveal` |
 | 그래픽 지원 층 | shape-burst → `bauhaus-beat` 조각 · stickers → `stickerPop`·`group-build` · halftone → `halftonePrint` · pixel-blocks → `pixel-sprite-hop` · hud → `faceScan` 괄호 · lottie → `lottie-accent` · marker → `hand-drawn-emphasis` · grouped-chips → `group-build` |
 | 빛·질감 층 | sweep → `sheen-sweep` · rgb-split → `colorSplit` · paper → `halftonePrint` 종이 · flash-frames → `beat-flicker-sting` |
-| 전환 계열 | cover-flood·flash-streak·zoom-through·match-cut·shape-grid·ring-iris → 같은 이름 `transition-*` · ink-bleed → `am-ink-bleed` · matte-text → 트랙 매트 "글자 속으로" · pixelize → `am-pixelate` · card-swap → `am-card-swap` · push → `am-push` |
+| 전환 계열 | cover-flood·flash-streak·zoom-through·match-cut·shape-grid·ring-iris → 같은 이름 `transition-*` · ink-bleed → `am-ink-bleed` · matte-text → `transition-glyph-dive`(트랙 매트 "글자 속으로") · pixelize → `am-pixelate` · card-swap → `am-card-swap` · push → `am-push` |
 | 카메라 | z-dolly → `z-fly-through` · beat-punch → 스케일 펀치(BGM 피크) · push-in·pull-out → `kenBurns`·`zoomAbout` |
+| 훅 샷 | 칸 id가 샷 카드 이름(`shots/<id>.md`) · footage-crash → 샷 카드 없이 소재 zoom 1.35→1 + 한 단어 라벨 |
+| 모션 말투 | 칸의 `how` 값(이징·거리·길이)을 고른 샷 카드 파라미터 표의 입장 값 대신 씀. gsapTimeline이면 gsap 문자열(`expo.out`), keyframes면 엔진 이름(`easeOutExpo`, `easing.md` §2) |
+| 엔드카드 방식 | logo-settle → `endcard-logo-cta` 기본값 · kinetic-stack → `kinetic-typo-beat` 엔드카드형 · particle-logo·handwritten-sign·pixel-block-logo → 같은 샷 카드 · grid-assemble → `group-build` · matte-name → 트랙 매트(`transitions.md`) · 나머지는 칸의 `how`대로 `endcard-logo-cta`의 순서·정지 규칙 위에서 |
 
 ## 6. 비슷한 것끼리 고르기
 

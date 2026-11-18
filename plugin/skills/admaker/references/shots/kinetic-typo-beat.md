@@ -13,7 +13,7 @@ name: kinetic-typo-beat
 
 ## 동작 핵심
 - 줄마다 같은 클립 시작, 등장 시각은 tween `position`(박 번호 × 박 길이). `fromTo`라 그 전에는 투명하게 붙잡혀 있습니다(delay를 쓰지 않음, engine-recipes §2.6).
-- 슬램: scale 1.7 · opacity 0 · blur 10 → 1, `power4.out` 0.16초. 이어서 scaleX 1.04 / scaleY 0.9로 0.05초 눌렸다 `back.out(3)`로 복귀.
+- 슬램(기본값, 변주 카드 모션 말투 칸이 있으면 그 이징·거리로 바꿈. 예: 휩 블러면 x ±500 + blur, 3D 펼침이면 rotateX −90→0): scale 1.7 · opacity 0 · blur 10 → 1, `power4.out` 0.16초. 이어서 scaleX 1.04 / scaleY 0.9로 0.05초 눌렸다 `back.out(3)`로 복귀.
 - 다음 줄이 나올 때 이미 나온 줄은 scale 1.06으로 작게 펀치(박을 같이 침).
 - 강조 띠: 강조 줄의 박에 클립을 시작하고 `wipe` right 0.22초. 띠 위 글자는 그림자 없이 흰색.
 - 다 나온 다음 박: 모든 줄이 scaleY 0.86 / scaleX 1.05로 눌렸다 `elastic.out(1,0.45)`로 펴짐. 퇴장은 위로 90px, 줄마다 2프레임 차이.
