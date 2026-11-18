@@ -70,6 +70,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 광고끼리 닮아 보이지 않게 소재 씬 사이에 모션만으로 된 씬을 넣거나 전환을 화려하게 → `references/interludes.md`. 템포가 양을 정합니다: 빠른 템포는 모션 전용 씬 여러 개와 경계마다 그래픽 전환, 느린 템포·제품 극대화는 소재 위 액센트와 시그니처 전환 한 곳만. `node templates/interludes.mjs plan --bpm <BPM> --duration <초>`로 개수·자리·전환을 정합니다.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
+   - 종이 질감(미색·크라프트·구긴 종이 바탕, 찢은 종이 조각·테이프, 그래픽 위 종이 결) → `references/paper.md`, `templates/paper.mjs`, 예제 `samples/paper-texture`. 영상·사진 소재 위에는 얹지 않습니다.
    - 픽셀 아트·도트 캐릭터·레트로 게임 느낌(스프라이트 시트 플립북, 선명한 픽셀 `style.pixelated`, 계단식 `steps(n)` 이징) → `references/pixel-art.md`, `templates/pixel-sprite.mjs`.
    - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
    - 씬 전환 고르기(트랙 매트·`am-*` 전환·전환 샷·마스크, 규칙·values·앱 호환) → `references/transitions.md`.
