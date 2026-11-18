@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import os from "node:os";
 import { applyCardToSkeleton, drawPlanCards } from "./variety-core.mjs";
 import { drawIdea, rerankDirections, rotateExamples } from "./idea-core.mjs";
-import { drawNovel, novelChoices, novelCount } from "./novel-core.mjs";
+import { drawNovel, novelChoices, novelCount, NOVEL_AVOID_DIRECTIONS } from "./novel-core.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -68,6 +68,9 @@ const DIRECTIONS = (() => {
   return out;
 })();
 
+/** 손글씨 감성 방향을 후보에 올리는 낱말 (사용자가 직접 말했을 때만) */
+const HANDWRITING_WORDS = /손글씨|손 글씨|손그림|캘리|필기|감성|편지|손편지|handwrit|calligraph/i;
+
 /** 방향 점수: 어울림 낱말이 요청에 들어 있으면 +2, 기법 낱말(KEYWORDS)이 방향의 골격·전환에 걸리면 +1 */
 function scoreDirection(d, text) {
   const t = text.toLowerCase();
@@ -75,8 +78,9 @@ function scoreDirection(d, text) {
   let s = hits.length * 2;
   const body = `${d.skeleton} ${d.transitions} ${d.signature}`.toLowerCase();
   for (const [re, tags] of KEYWORDS) if (re.test(text) && tags.some((x) => !x.startsWith("cat:") && body.includes(x.replace("kinetic-typography", "kinetic").replace("countUp", "countup")))) s += 1;
-  // 손글씨 감성은 사용자가 그 낱말을 썼을 때만 (가는 선·부드러운 연출은 기본이 아님)
-  if (d.id === "handwritten-warm" && !hits.length) s = -1;
+  // 손글씨 감성은 사용자가 손글씨·감성 낱말을 직접 썼을 때만 (가는 선·부드러운 연출은 기본이 아님).
+  // 어울림 낱말(식당·가족·카페·빵·병원 …)만 맞은 요청은 후보에서 뺀다
+  if (d.id === "handwritten-warm" && !HANDWRITING_WORDS.test(text)) s = -1;
   return { d, score: s, why: hits };
 }
 
@@ -85,6 +89,10 @@ function pickDirections(text, n = 3, history = []) {
   // 최근 기록에 쓴 방향은 뒤로 미루고, 점수가 같으면 덜 쓴 방향이 앞 (idea-core.mjs rerankDirections)
   const ranked = rerankDirections(DIRECTIONS.map((d) => scoreDirection(d, text)), history);
   const out = ranked.filter((r) => r.score > 0).slice(0, n);
+  // 기본 방향(기본: 예)은 어울림 낱말이 넓어 거의 모든 요청에 걸린다. 어울리는 다른 방향이 있으면 기본 방향은 둘까지만
+  // (업종이 달라도 기획안 셋이 같은 기본 방향으로 채워지지 않게)
+  const extra = ranked.find((r) => r.score > 0 && !r.d.isDefault && !out.includes(r));
+  if (extra && out.length === n && out.every((r) => r.d.isDefault)) out[n - 1] = extra;
   for (const r of ranked) if (out.length < n && !out.includes(r) && r.d.isDefault) out.push(r);
   for (const r of ranked) if (out.length < n && !out.includes(r) && r.score >= 0) out.push(r);
   return out;
@@ -377,6 +385,13 @@ if (cmd === "list" || !cmd) {
   dirs.forEach((r, i) => (r.variety = cards[i]));
   // 참신안: 뒤쪽 기획안(C, 2개면 B·C)의 아이디어 카드 자리를 참신안으로 바꾼다
   const nNovel = Math.min(novelCount(request, novelArg), dirs.length);
+  // 참신안 자리(C, 2개면 B·C)에 그래픽이 주인공인 방향(리퀴드·3D 공간)이 오면, 추천(A)이 아닌 다른 자리의 방향과 바꾼다
+  const badNovel = (r) => NOVEL_AVOID_DIRECTIONS.includes(r.d.id);
+  for (let i = dirs.length - nNovel; i < dirs.length; i++) {
+    if (!badNovel(dirs[i])) continue;
+    const j = dirs.findIndex((r, k) => k > 0 && k < dirs.length - nNovel && !badNovel(r));
+    if (j > 0) [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
+  }
   const novels = [];
   dirs.forEach((r, i) => {
     if (i >= dirs.length - nNovel) novels.push((r.novel = drawNovel({ request, history, exclude: novels })));

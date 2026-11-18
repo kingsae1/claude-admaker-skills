@@ -52,6 +52,7 @@
 | [group-build](group-build.md) | 상승부·엔드카드 | 중 | 1–1.8초 | 칩·가격표·버튼 묶음이 한 덩어리로 날아와 자리잡고 조각이 하나씩 반응 (`groupId`·`origin: "group"`) |
 | [lottie-accent](lottie-accent.md) | 상승부·엔드카드 (얹는 샷) | 중 | 0.6–1.2초 | 혜택 문구 옆에 체크·하트·반짝이 Lottie가 박에 맞춰 짧게 (`search_lottie`, Adapter lottie) |
 | [sheen-sweep](sheen-sweep.md) | 훅·주인공·상승부·엔드카드 (얹는 샷) | 저–중 | 0.8–1.6초, chrome은 장면 내내 | 빛띠·색띠·크롬 결이 글자·박스 모양 안에서만 지나감 (트랙 매트, `effects.mjs` `sheenSweep`) |
+| [sizzle-hit](sizzle-hit.md) | 훅·주인공 | 중상 | 1.5–3초 | 고기가 불판에 닿는 박에 소재가 당겨지고 김이 피어오르며 의성어 스티커가 꽂힘 (음식 시즐 방향, `templates/shots/sizzle-hit.mjs`) |
 
 ### 모션 스타일 카드 고르는 법
 

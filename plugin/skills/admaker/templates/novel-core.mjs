@@ -95,6 +95,16 @@ const AXIS_IDS = NOVEL_AXES.map((a) => a.id);
 const KIDS_DARK = ['noir', 'thriller', 'courtroom', 'heist'];
 // 업종별로 안 쓰는 장르: 신뢰가 먼저인 업종은 어둡거나 범죄를 다루는 장르를 피하고, 식품은 위생 불안을 부르는 장르를 피한다
 const GENRE_AVOID = { kids: KIDS_DARK, medical: ['thriller', 'noir', 'heist', 'courtroom', 'safety-video'], finance: ['heist', 'noir', 'thriller'], food: ['thriller'] };
+// 업종에 잘 붙는 장르: 이 업종 요청이면 이 장르를 세 배 자주 뽑는다 (맛·조리·식사 장면이 장르 문법과 바로 이어지게)
+export const GENRE_FITS = {
+  food: ['cooking-show', 'nature-doc', 'period-drama', 'martial-arts', 'sports-cast', 'mockumentary', 'heist'],
+  kids: ['sentai', 'game-quest', 'nature-doc', 'space-sf'],
+  medical: ['mockumentary', 'nature-doc'],
+  finance: ['mockumentary', 'breaking-news', 'courtroom', 'game-quest'],
+  'health-food': ['sports-cast', 'nature-doc', 'mockumentary'],
+};
+// 참신안을 붙이면 안 맞는 모션 방향: 참신안은 인물이 나오는 호흡 중심 이야기라, 3D 리퀴드·공간 플라이스루처럼 그래픽이 화면 주인공인 방향과는 같이 못 감
+export const NOVEL_AVOID_DIRECTIONS = ['glossy-signature', 'spatial-3d'];
 // 참신안을 2개로 늘리는 요청 낱말
 const MORE_WORDS = /참신|기발|병맛|b급|엉뚱|파격|돌고래|브랜드 ?필름|바이럴|세계관|페이크 ?다큐|novel|absurd/i;
 
@@ -138,7 +148,11 @@ export function drawNovel({ request = '', history = [], exclude = [], seed, rece
       if (notTaken.length) pool = notTaken;
       const fresh = pool.filter((o) => !past.some((p) => p[axis.id] === o.id));
       if (fresh.length) pool = fresh;
-      picks[axis.id] = pool[Math.floor(r() * pool.length)];
+      const fitIds = axis.id === 'genre' ? new Set(cats.flatMap((c) => GENRE_FITS[c] ?? [])) : new Set();
+      const w = pool.map((o) => (fitIds.has(o.id) ? 3 : 1));
+      let x = r() * w.reduce((a, b) => a + b, 0), k = 0;
+      while (k < pool.length - 1 && (x -= w[k]) >= 0) k++;
+      picks[axis.id] = pool[k];
     }
     return picks;
   };

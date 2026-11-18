@@ -17,7 +17,7 @@ export const AXES = [
     options: [
       { id: 'left-grid', label: '왼쪽 정렬 그리드', how: '12칸 그리드, 문구 왼쪽 정렬, 번호 라벨·구분선', fits: ['editorial-kinetic', 'info-map'] },
       { id: 'center-stack', label: '중앙 대칭', how: '가운데 축에 주인공 하나, 위아래로 라벨·CTA', fits: ['product-hero', 'glossy-signature'] },
-      { id: 'split', label: '분할 화면', how: '화면을 2–3칸으로 나눠 소재와 문구를 칸마다, 칸 경계가 박에 밀림', fits: ['beat-montage', 'offer-punch'] },
+      { id: 'split', label: '분할 화면', how: '화면을 2–3칸으로 나눠 소재와 문구를 칸마다, 칸 경계가 박에 밀림', fits: ['beat-montage', 'offer-punch', 'food-sizzle'] },
       { id: 'diagonal', label: '대각선 구도', how: '문구 줄·띠를 −8~−12° 기울여 화면을 가로지름', avoid: ['pixel-retro'] },
       { id: 'frame-in-frame', label: '프레임 속 프레임', how: '소재를 화면 안 카드·창·폰 화면에 넣고 카드 밖에 그래픽', fits: ['spatial-3d', 'product-hero'] },
       { id: 'full-bleed-type', label: '화면을 넘는 큰 글자', how: '문구 한 단어가 화면 폭 110–140%, 소재는 글자 뒤·속(트랙 매트)', fits: ['editorial-kinetic', 'glitch-tech'] },
@@ -31,7 +31,7 @@ export const AXES = [
     options: [
       { id: 'glyph-3d-flip', label: '글자 단위 3D 뒤집힘', how: 'characterAnimation flipInX·tumbleIn (aesthetic-rules F3)', avoid: ['pixel-retro'] },
       { id: 'mask-rise', label: '마스크 상승', how: '줄마다 wipe up + y 상승, expo.out', fits: ['editorial-kinetic', 'product-hero'] },
-      { id: 'slam-scale', label: '박에 슬램', how: 'scale 1.6→1 back 이징 + 화면 흔들림(shake) 1회', fits: ['offer-punch', 'beat-montage'] },
+      { id: 'slam-scale', label: '박에 슬램', how: 'scale 1.6→1 back 이징 + 화면 흔들림(shake) 1회', fits: ['offer-punch', 'beat-montage', 'food-sizzle'] },
       { id: 'typewriter', label: '타자·커서', how: '글자 하나씩(stagger), 끝에 커서 깜빡', fits: ['glitch-tech'] },
       { id: 'marquee', label: '흐르는 마키 줄', how: '같은 문구 줄 2–3개가 반대 방향으로 흐름', fits: ['editorial-kinetic'] },
       { id: 'outline-draw', label: '윤곽선이 그려짐', how: 'text_to_path → stroke만 + strokeDraw, 다 그려지면 채움', fits: ['handwritten-warm', 'print-collage'] },
@@ -47,7 +47,7 @@ export const AXES = [
     options: [
       { id: 'shape-burst', label: '도형 버스트', how: '별·원·삼각형 6–10개가 박에 터짐(도형 시트)', fits: ['playful-bounce', 'offer-punch'] },
       { id: 'lines-rings', label: '선·링', how: '가는 링이 퍼지고 직선이 그려짐(strokeDraw)', fits: ['product-hero', 'info-map'] },
-      { id: 'stickers', label: '스티커·배지', how: '기울어진 원형 배지·말풍선, back 이징 착지', fits: ['offer-punch', 'playful-bounce'] },
+      { id: 'stickers', label: '스티커·배지', how: '기울어진 원형 배지·말풍선, back 이징 착지', fits: ['offer-punch', 'playful-bounce', 'food-sizzle'] },
       { id: 'halftone', label: '하프톤 점 면', how: 'dotFilter 면 또는 점 패턴 PNG가 마스크로 열림', fits: ['print-collage'] },
       { id: 'pixel-blocks', label: '픽셀 블록·코인', how: '도트 블록·코인·별 스프라이트(spriteSheet), steps 이동', only: ['pixel-retro'] },
       { id: 'hud', label: 'HUD 브래킷·좌표', how: '모서리 괄호·좌표 숫자·스캔 막대가 대상 둘레에', fits: ['glitch-tech', 'product-hero', 'spatial-3d'] },
@@ -82,7 +82,7 @@ export const AXES = [
       { id: 'pan', label: '옆으로 흐름', how: 'cx를 장면마다 한 방향으로, 층마다 패럴랙스 계수', avoid: ['pixel-retro'] },
       { id: 'dutch-zoom', label: '회전 줌', how: 'zoom + angle 0→3°, 드롭에서 반대로, 드롭 2–3프레임 radialBlurFilter', avoid: ['pixel-retro', 'info-map'] },
       { id: 'z-dolly', label: 'Z축 돌리', how: '모든 층에 같은 z 이동(z-fly-through)', fits: ['spatial-3d'], avoid: ['pixel-retro'] },
-      { id: 'beat-punch', label: '박마다 펀치', how: '정지했다가 박에 zoom 1→1.06→1 (0.15초)', fits: ['beat-montage', 'offer-punch', 'glitch-tech'] },
+      { id: 'beat-punch', label: '박마다 펀치', how: '정지했다가 박에 zoom 1→1.06→1 (0.15초)', fits: ['beat-montage', 'offer-punch', 'glitch-tech', 'food-sizzle'] },
       { id: 'step-scroll', label: '칸 단위 스크롤', how: '화면이 도트 칸 단위로 옆 스크롤(steps)', only: ['pixel-retro'] },
     ],
   },
@@ -100,7 +100,7 @@ export const AXES = [
       { id: 'match-cut', label: '매치 컷', how: 'transition-match-cut, 양쪽 움직임 방향 맞춤' },
       { id: 'glitch-cut', label: '글리치 컷', how: 'glitch-hit를 컷 양쪽 2프레임씩', only: ['glitch-tech', 'beat-montage'] },
       { id: 'star-reveal', label: '별 모양으로 열림', how: 'starReveal 마스크로 다음 소재가 별 모양으로 커지며 열림', fits: ['playful-bounce', 'offer-punch'], avoid: ['glitch-tech', 'spatial-3d'] },
-      { id: 'push', label: '밀어내기', how: 'am-push direction + blur, 박에 맞춰', fits: ['beat-montage', 'offer-punch'] },
+      { id: 'push', label: '밀어내기', how: 'am-push direction + blur, 박에 맞춰', fits: ['beat-montage', 'offer-punch', 'food-sizzle'] },
       { id: 'shape-grid', label: '도형 타일 덮기', how: 'transition-shape-grid, 대각선 순서로 사각 타일 + 원·반원 조각 (모션 씬 들어갈 때)', fits: ['editorial-kinetic', 'playful-bounce', 'offer-punch'], avoid: ['handwritten-warm', 'pixel-retro'] },
       { id: 'ring-iris', label: '링 호 아이리스', how: 'transition-ring-iris, 동심원 링이 차올라 덮고 주인공 쪽에서 열림', fits: ['product-hero', 'glossy-signature', 'info-map'], avoid: ['pixel-retro'] },
     ],
@@ -142,6 +142,7 @@ export const AXES = [
       { id: 'squash-bounce', label: '찌그러지며 튐', how: 'shots/squash-bounce: 제목·오브젝트가 떨어져 눌렸다 튐', fits: ['playful-bounce', 'offer-punch'], avoid: ['glitch-tech', 'spatial-3d', 'glossy-signature'] },
       { id: 'z-fly-through', label: '깊이로 날아듦', how: 'shots/z-fly-through: 문구 판들을 z축으로 통과하며 제목 도착', fits: ['spatial-3d'], avoid: ['pixel-retro', 'print-collage', 'handwritten-warm'] },
       { id: 'model-orbit-text', label: '3D 모델 공전 + 글자', how: 'shots/model-orbit-text: 제품 3D가 돌고 글자가 둘레를 돎', fits: ['product-hero', 'spatial-3d'], avoid: ['pixel-retro', 'print-collage', 'handwritten-warm'] },
+      { id: 'sizzle-hit', label: '시즐 히트', how: 'shots/sizzle-hit: 고기가 불판에 닿는 박에 소재가 1.07배 당겨지고 김이 피어오르며 의성어(치익)가 기울어 꽂힘', only: ['food-sizzle'], fits: ['food-sizzle'], w: 3 },
       { id: 'footage-crash', label: '소재 크래시 줌', how: '샷 카드 없이: 첫 0.5초 소재 풀프레임 zoom 1.35→1 expo.out + 첫 박에 한 단어 라벨만, 제목은 두 번째 박', avoid: ['pixel-retro'] },
       { id: 'liquid-blobs', label: '리퀴드 덩어리', how: 'shots/liquid-blobs: 브랜드 색 덩어리가 합쳐지며 제목이 떠오름(구움)', only: ['glossy-signature', 'playful-bounce'] },
       { id: 'map-region-pin', label: '지도 핀', how: 'shots/map-region-pin: 지역이 차오르고 핀이 박에 꽂힘', only: ['info-map'] },
@@ -155,7 +156,7 @@ export const AXES = [
     options: [
       { id: 'snap', label: '딱 꽂힘', how: 'easeOutExpo(expo.out) 0.2–0.28초, 이동 40–80px, 오버슈트 없이 멈춰 길게 정지' },
       { id: 'whip-blur', label: '휩 블러', how: 'x ±500→0 + blur 24→0, power4.out 0.18초, 줄·요소마다 들어오는 방향 반대', avoid: ['handwritten-warm', 'pixel-retro'] },
-      { id: 'crash-zoom', label: '크래시 줌', how: 'scale 2.6→1 + blur 16→0 + opacity 0→1, expo.out 0.16초, 착지 프레임 brightness 1.4→1', fits: ['beat-montage', 'offer-punch'], avoid: ['handwritten-warm', 'pixel-retro', 'glossy-signature'] },
+      { id: 'crash-zoom', label: '크래시 줌', how: 'scale 2.6→1 + blur 16→0 + opacity 0→1, expo.out 0.16초, 착지 프레임 brightness 1.4→1', fits: ['beat-montage', 'offer-punch', 'food-sizzle'], avoid: ['handwritten-warm', 'pixel-retro', 'glossy-signature'] },
       { id: 'tilt-slide', label: '기울어 미끄러짐', how: 'x 220→0 + angle −10→0, power3.out 0.3초, 줄마다 엇갈린 방향', fits: ['editorial-kinetic', 'print-collage'], avoid: ['pixel-retro'] },
       { id: 'spring', label: '스프링', how: 'scale 0.4→1 back.out(2.4) 0.38초, 작은 요소는 elastic.out(1,0.45) 0.7초 (넘치는 곡선은 이 계열만)', fits: ['playful-bounce', 'offer-punch'], avoid: ['glossy-signature', 'glitch-tech'] },
       { id: 'drop', label: '중력 낙하', how: 'y −700→0 power2.in 0.25초 → 착지 scaleY 0.82·scaleX 1.12 0.06초 → back.out(3) 복귀', fits: ['playful-bounce', 'offer-punch'], avoid: ['glossy-signature', 'spatial-3d', 'handwritten-warm'] },
@@ -188,6 +189,7 @@ const AXIS_IDS = AXES.map((a) => a.id);
 
 /** 요청 문장의 분위기 낱말 → 그 분위기에 맞지 않아 빼는 칸 (남는 칸이 없으면 빼지 않음) */
 export const MOODS = [
+  { id: 'food', re: /고기|고깃집|삼겹살|갈비|구이|음식|식당|맛집|요리|치킨|피자|버거|분식|국밥|찌개|디저트|빵|베이커리|케이크/i, avoid: ['duotone'] },
   { id: 'kids', re: /키즈|어린이|유아|아이|장난감|귀여|친근|발랄|kids?\b/i, avoid: ['dark-glow', 'glitch-settle', 'glitch-cut', 'rgb-split', 'hud', 'scanlines', 'duotone', 'god-rays', 'mono-to-color', 'glitch-hit', 'beat-flicker-sting'] },
   { id: 'premium', re: /고급|프리미엄|럭셔리|명품|차분|미니멀|우아|세련|premium|luxury|minimal/i, avoid: ['shape-burst', 'stickers', 'every-beat', 'flash-frames', 'glitch-settle', 'glitch-cut', 'rgb-split', 'slam-scale', 'dutch-zoom', 'star-reveal', 'lottie', 'syncopated', 'crash-zoom', 'spring', 'drop', 'stutter', 'stamp-slam', 'squash-bounce', 'beat-flicker-sting', 'glitch-hit'] },
   { id: 'trust', re: /금융|은행|보험|병원|의료|클리닉|법률|신뢰|공공|bank|insurance|clinic/i, avoid: ['glitch-settle', 'glitch-cut', 'rgb-split', 'stickers', 'dutch-zoom', 'star-reveal', 'shape-burst', 'glitch-hit', 'stutter', 'crash-zoom', 'spring', 'drop', 'squash-bounce'] },

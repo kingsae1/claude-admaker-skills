@@ -33,6 +33,7 @@
 | 뷰티·음료·프리미엄 | `liquid-blobs` → `particle-logo` | `hero-tilt-push` | `feature-mask-reveal` | `particle-logo`(로고 스팅) | `sheen-sweep` gradient·glint | `transition-glyph-dive`(글자 속으로) |
 | 장소·매장·배송·여행 | `map-region-pin` | `map-route-draw` | `iso-build-up`(구성도·진열) | `endcard-logo-cta` | — | `transition-whip-pan`(장소 이동) |
 | 음악·스포츠·패션 몽타주 | `beat-flicker-sting` | `kinetic-typo-beat` | `beat-montage-wipe`, `transition-beat-freeze` | `endcard-logo-cta` | 이펙트 `glitch`, `glitch-hit` | `transition-flash-streak` |
+| 고깃집·구이·식당 메뉴(조리 장면) | `sizzle-hit` → `beat-flicker-sting` | 한 점 집어 올리는 슬로 소재 + `kinetic-typo-beat`(메뉴명) | `beat-montage-wipe`(메뉴 컷), `transition-beat-freeze`(육즙 한 컷) | `endcard-logo-cta`(위치·영업시간) | `sheen-sweep` glint(가격) | `transition-whip-pan` / `transition-beat-freeze` |
 | 키즈·푸드·친근한 앱 | `squash-bounce` → `pixel-sprite-hop` | `kinetic-typo-beat` | `group-build`, `lottie-accent` | `endcard-logo-cta` + `squash-bounce` 장식 | `hand-drawn-emphasis` | `transition-scribble-cover` |
 | 감성·선물·수제·로컬 | `handwritten-title` | 소재 + `handwritten-title` 한 줄 | `hand-drawn-emphasis`, 이펙트 `halftonePrint` | `handwritten-title` + 로고 | 종이 결(변주) | `am-ink-bleed` / 매트 "질감으로 번짐" |
 | 브랜드 리뉴얼·디자인·폰트 | `variable-type-breath` | `bauhaus-grid-flip` | `bauhaus-beat` | `endcard-logo-cta` | — | `transition-shape-grid` |
@@ -75,6 +76,7 @@
 | `particle-logo` | 로고 스팅·런칭 훅, "흩어진 것이 하나로" | 로고가 복잡하거나 밝은 배경 | 구움 |
 | `particle-morph` | 시간·흐름·에너지를 모양 변화로(어두운 배경) | 밝은 배경, 정보형 | 구움 |
 | `glitch-hit` | 테크·음악 드롭에 2–4프레임 충격 | 길게 쓰기(불량 화면처럼 보임), 의료·키즈 | 그대로 |
+| `sizzle-hit` | 조리 장면(불판에 닿기·뒤집기·붓기)이 있는 음식점의 훅·시그니처, 지글 소리가 박에 떨어질 때 | 완성된 접시만 있을 때(→ `feature-mask-reveal`), 디저트·음료처럼 김이 안 맞는 메뉴 | 그대로 |
 
 ### 얹는 샷 (주인공 위에 하나까지)
 

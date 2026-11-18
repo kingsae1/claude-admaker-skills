@@ -64,6 +64,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 효과음은 앱 MCP로 광고를 끝까지 만들 때 바닥 영상이 다 나온 뒤 따로 한 단계로 만듭니다(화면 속 동작·전환·히트에 맞춰, 15초 6–10개, `sfx.md` §7). 효과음(소스 고르는 순서, 프롬프트 공식, 광고 순간별 추천 소리·길이, `durationSec`·`loop`, 피크 지연 재기 `templates/sfx-peak.mjs`, 비트에 맞춰 놓기) → `references/sfx.md`.
    - 바닥 이미지·영상 생성(이미지→영상 프롬프트, 카메라 무브, 제품 사진, 스타일, 인물·제품 일관성) → `references/footage-gen.md`.
    - 영상 모델별 프롬프트(Veo·Kling·Gemini Omni·MiniMax·Seedance 공식, 폴백에 안전하게 쓰기, 레퍼런스 태그, 증상별 고치기) → `references/video-models.md`.
+   - 고깃집·구이·치킨·분식처럼 조리 장면이 있는 음식점 광고 → 모션 방향 `food-sizzle`(음식 시즐), 샷 카드 `sizzle-hit`(불판에 닿는 박에 소재 펀치인 + 김 + 의성어), 아이디어 `sizzle-closeup`. 지글 소리는 `sfx.md`로 같은 프레임에.
    - 손글씨 폰트를 쓰거나 "손글씨로" 써 달라는 문구 → `references/engine-recipes.md` §3.2(손글씨 쓰기 + 라인 보일), 샷 카드 `handwritten-title`.
    - 글자 자체가 주인공인 키네틱 타이포·모션 쇼릴(가변 폰트가 숨쉬는 글자, 입체 돌출 글자, 원형 배지, 도형 격자, 입자 글자, 타임코드 HUD) → `references/engine-recipes.md` §3.0(엔진 3.0.25+), 샷 카드 `variable-type-breath`·`bauhaus-grid-flip`·`particle-morph`, 예제 `samples/kinetic-reel`.
    - 광고끼리 닮아 보이지 않게 소재 씬 사이에 모션만으로 된 씬을 넣거나 전환을 화려하게 → `references/interludes.md`. 템포가 양을 정합니다: 빠른 템포는 모션 전용 씬 여러 개와 경계마다 그래픽 전환, 느린 템포·제품 극대화는 소재 위 액센트와 시그니처 전환 한 곳만. `node templates/interludes.mjs plan --bpm <BPM> --duration <초>`로 개수·자리·전환을 정합니다.

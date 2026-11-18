@@ -21,7 +21,7 @@ node <이 스킬 폴더>/templates/tempo.mjs recommend --duration 15 --aspect 9:
 |---|---|---|---|---|---|
 | 시네마틱 슬로우 | 64–80 | 2–4박 (≈2.5초) | product-hero, glossy-signature, spatial-3d | 프리미엄, 럭셔리, 향수, 시계, 호텔, 자동차 | slow |
 | 감성 칠 | 82–96 | 2–4박 (≈2초) | handwritten-warm, print-collage | 감성, 카페, 힐링, 뷰티, 여행 | slow |
-| 그루브 미드 | 98–112 | 2박 (≈1.5초) | playful-bounce, info-map | 음식, 맛집, 패션, 반려, 앱, 매장 | mid |
+| 그루브 미드 | 98–112 | 2박 (≈1.5초) | playful-bounce, info-map, food-sizzle | 음식, 맛집, 고기·고깃집, 회식, 패션, 반려, 앱, 매장 | mid |
 | 업비트 드라이브 | 114–124 | 2박 (≈1.2초) | editorial-kinetic, product-hero, info-map | 런칭, 신제품, 테크, 모던 (단서가 없을 때 기본) | mid/fast |
 | 하우스 펀치 | 124–132 | 2박 (≈0.95초) | beat-montage, offer-punch | 세일, 할인, 오픈, 이벤트, 몽타주 | fast |
 | 트랩 러시(하프타임) | 136–150 | 2박, 큰 변화는 하프타임 | glitch-tech, spatial-3d | 게임, 스포츠, 힙, 스트릿, 글리치 | fast |
