@@ -362,3 +362,133 @@ export function textToPath(font, text, { fontSize = 100, lineHeight = 1.2, lette
   const h = Math.ceil(height);
   return { path: pathToSvg(cmds), viewBox: [0, 0, w, h], width: w, height: h };
 }
+
+// ── 글자 속으로 (glyph dive) ─────────────────────────────────────────
+// 소재를 글자 모양 매트(style.matte alpha) 안에 넣고, 글자 획 안의 한 점으로 수십 배 확대해 화면을 채운 뒤
+// 매트 없는 같은 소재로 이어 붙이는 시그니처 전환. 획 안의 점은 사람이 재지 않고 패스에서 계산한다(shots/transition-glyph-dive.md).
+
+/** pathToSvg 형식 d(M·L·C·Q·Z, 절대 좌표) → 닫힌 다각형 목록 [[x,y],...] */
+export function pathPolygons(d, { segments = 8 } = {}) {
+  const toks = String(d).match(/[MLCQZ]|-?\d*\.?\d+(?:e-?\d+)?/gi) ?? [];
+  const polys = [];
+  let cur = null, px = 0, py = 0, i = 0;
+  const num = () => Number(toks[i++]);
+  while (i < toks.length) {
+    const op = toks[i++].toUpperCase();
+    if (op === 'M') { px = num(); py = num(); cur = [[px, py]]; polys.push(cur); }
+    else if (op === 'L') { px = num(); py = num(); cur?.push([px, py]); }
+    else if (op === 'Q') {
+      const x1 = num(), y1 = num(), x = num(), y = num();
+      for (let k = 1; k <= segments; k++) { const t = k / segments, u = 1 - t; cur?.push([u * u * px + 2 * u * t * x1 + t * t * x, u * u * py + 2 * u * t * y1 + t * t * y]); }
+      px = x; py = y;
+    } else if (op === 'C') {
+      const x1 = num(), y1 = num(), x2 = num(), y2 = num(), x = num(), y = num();
+      for (let k = 1; k <= segments; k++) {
+        const t = k / segments, u = 1 - t;
+        cur?.push([u * u * u * px + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x, u * u * u * py + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y]);
+      }
+      px = x; py = y;
+    } else if (op === 'Z') { cur = null; }
+  }
+  return polys.filter((p) => p.length > 2);
+}
+
+function windingAt(polys, x, y) {
+  let w = 0;
+  for (const p of polys)
+    for (let k = 0; k < p.length; k++) {
+      const [ax, ay] = p[k], [bx, by] = p[(k + 1) % p.length];
+      if (ay <= y) { if (by > y && (bx - ax) * (y - ay) - (x - ax) * (by - ay) > 0) w++; }
+      else if (by <= y && (bx - ax) * (y - ay) - (x - ax) * (by - ay) < 0) w--;
+    }
+  return w;
+}
+
+function edgeDist(polys, x, y) {
+  let best = Infinity;
+  for (const p of polys)
+    for (let k = 0; k < p.length; k++) {
+      const [ax, ay] = p[k], [bx, by] = p[(k + 1) % p.length];
+      const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2));
+      best = Math.min(best, Math.hypot(x - ax - t * dx, y - ay - t * dy));
+    }
+  return best;
+}
+
+/**
+ * 글자 패스 안에서 확대해 들어갈 점: 획 가장자리에서 가장 먼 점들 중(최대 반지름의 85% 이상) 원하는 쪽에 가까운 점.
+ * @param {string} d  textToPath(...).path
+ * @param {number} width  패스 박스 폭(viewBox 폭)
+ * @param {number} height
+ * @param {{ prefer?: 'center'|'left'|'right'|number, grid?: number }} [o]  number면 패스 박스 안 x 비율(0–1)
+ * @returns {{ x: number, y: number, r: number }}  패스 박스 왼쪽 위 기준 px, r = 그 점에서 획 가장자리까지 거리
+ */
+export function glyphDivePoint(d, width, height, { prefer = 'center', grid = 4 } = {}) {
+  const polys = pathPolygons(d);
+  if (!polys.length) throw new Error('글자 패스가 비었습니다');
+  const cand = [];
+  for (let y = grid / 2; y < height; y += grid)
+    for (let x = grid / 2; x < width; x += grid)
+      if (windingAt(polys, x, y) !== 0) cand.push({ x, y, r: edgeDist(polys, x, y) });
+  if (!cand.length) throw new Error('글자 획 안의 점을 찾지 못했습니다 (글자가 너무 가늘거나 작음)');
+  const rMax = Math.max(...cand.map((c) => c.r));
+  const fx = prefer === 'left' ? 0 : prefer === 'right' ? 1 : typeof prefer === 'number' ? prefer : 0.5;
+  const tx = width * fx, ty = height / 2;
+  const good = cand.filter((c) => c.r >= rMax * 0.85);
+  good.sort((a, b) => Math.hypot(a.x - tx, a.y - ty) - Math.hypot(b.x - tx, b.y - ty));
+  const p = good[0];
+  return { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10, r: Math.round(p.r * 10) / 10 };
+}
+
+/**
+ * 글자 속으로 클립 묶음(엔진 ProjectJSON). 매트 Shape(글자 패스) + 매트를 건 소재 + 매트 없는 같은 소재.
+ * @param {object} o
+ * @param {{ path: string, width: number, height: number, viewBox: number[] }} o.glyph  textToPath 결과
+ * @param {number} o.centerX  글자 박스 가운데 x(캔버스 px)
+ * @param {number} o.centerY
+ * @param {{ width: number, height: number }} o.canvas
+ * @param {number} o.startSec  글자가 들어오는 시각
+ * @param {number} o.diveSec  확대가 시작되는 시각(박)
+ * @param {number} o.endSec  확대가 끝나 화면을 채우는 시각(다음 박·마디 첫 박). 이때 매트 없는 소재로 컷
+ * @param {number} [o.untilSec]  매트 없는 소재가 끝나는 시각(없으면 endSec + 2)
+ * @param {object} o.footage  소재 클립 공통 필드 { type: 'Video'|'Image', src, ... } (transform·timing은 여기서 채움)
+ * @param {string} [o.id]  클립 id 앞머리(기본 'dive')
+ * @param {string} [o.voice]  들어오는 말투: 'snap'(기본)·'crash'·'spring'
+ * @param {'center'|'left'|'right'|number} [o.prefer]
+ * @param {string} [o.bg]  글자 바깥 바탕 색(없으면 소재가 글자 안에서만 보이고 밖은 아래 트랙)
+ * @returns {{ clips: object[], point: object, endScale: number }}
+ */
+export function glyphDiveClips(o) {
+  const { glyph, centerX, centerY, canvas, startSec, diveSec, endSec, footage, id = 'dive', voice = 'snap', prefer = 'center', bg } = o;
+  const untilSec = o.untilSec ?? endSec + 2;
+  if (!(startSec < diveSec && diveSec < endSec)) throw new Error('startSec < diveSec < endSec 이어야 합니다');
+  const us = (s) => Math.round(s * 1e6);
+  const box = { x: Math.round(centerX - glyph.width / 2), y: Math.round(centerY - glyph.height / 2), width: glyph.width, height: glyph.height };
+  const p = glyphDivePoint(glyph.path, glyph.width, glyph.height, { prefer });
+  const P = { x: box.x + p.x, y: box.y + p.y };
+  const C = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  const far = Math.max(...[[0, 0], [canvas.width, 0], [0, canvas.height], [canvas.width, canvas.height]].map(([x, y]) => Math.hypot(x - P.x, y - P.y)));
+  const endScale = Math.ceil((far / Math.max(1, p.r)) * 1.15);
+  const at = (scale, extra = {}) => ({ scale, x: Math.round(-(P.x - C.x) * (scale - 1)), y: Math.round(-(P.y - C.y) * (scale - 1)), ...extra });
+  const enter = { snap: [at(1.18, { opacity: 0 }), 'easeOutExpo', 0.3], crash: [at(2.4, { opacity: 0 }), 'easeOutExpo', 0.18], spring: [at(0.6, { opacity: 0 }), 'easeOutBack', 0.4] }[voice] ?? [at(1.18, { opacity: 0 }), 'easeOutExpo', 0.3];
+  const d = endSec - startSec, pct = (t) => `${+(((t - startSec) / d) * 100).toFixed(2)}%`;
+  const inEnd = Math.min(startSec + enter[2], diveSec - 0.05);
+  const pre = Math.max(inEnd, diveSec - 0.12);
+  const params = {
+    '0%': { ...enter[0], easing: enter[1] },
+    [pct(inEnd)]: at(1, { opacity: 1 }),
+    ...(pre > inEnd ? { [pct(pre)]: { ...at(1, { opacity: 1 }), easing: 'easeInOutQuad' } } : {}),
+    [pct(diveSec)]: { ...at(0.94, { opacity: 1 }), easing: 'easeInExpo' },
+    '100%': at(endScale, { opacity: 1 }),
+  };
+  const full = { x: 0, y: 0, width: canvas.width, height: canvas.height };
+  const tm = (a, b) => ({ display: { from: us(a), to: us(b) }, duration: us(b - a), playbackRate: 1 });
+  const clips = [
+    ...(bg ? [{ id: `${id}_bg`, name: `${id}_bg`, type: 'Shape', src: 'shape', shapeType: 'rectangle', timing: tm(startSec, endSec), transform: { ...full, angle: 0, opacity: 1 }, style: { fill: bg }, animations: [] }] : []),
+    { id: `${id}_in`, name: `${id}_in`, ...footage, timing: tm(startSec, endSec), transform: { ...full, angle: 0, opacity: 1, ...(footage.transform ?? {}) }, style: { ...(footage.style ?? {}), matte: { clipId: `${id}_glyph`, mode: 'alpha' } }, animations: footage.animations ?? [] },
+    { id: `${id}_glyph`, name: `${id}_glyph`, type: 'Shape', src: 'shape', shapeType: 'path', timing: tm(startSec, endSec), transform: { ...box, angle: 0, opacity: 1 }, style: { path: glyph.path, viewBox: glyph.viewBox, fill: '#000000', fillOpacity: 1 }, animations: [{ type: 'keyframes', options: { duration: us(d), delay: 0, easing: 'linear' }, params }] },
+    { id: `${id}_out`, name: `${id}_out`, ...footage, timing: tm(endSec, untilSec), transform: { ...full, angle: 0, opacity: 1, ...(footage.transform ?? {}) }, style: { ...(footage.style ?? {}) }, animations: [{ type: 'keyframes', options: { duration: us(untilSec - endSec), delay: 0, easing: 'linear' }, params: { '0%': { scale: 1.08, easing: 'easeOutExpo' }, '30%': { scale: 1 }, '100%': { scale: 1.03 } } }] },
+  ];
+  return { clips, point: { ...p, canvasX: Math.round(P.x), canvasY: Math.round(P.y) }, endScale };
+}

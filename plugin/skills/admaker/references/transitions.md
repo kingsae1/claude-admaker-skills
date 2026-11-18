@@ -69,7 +69,7 @@ HyperFrames는 장면 안의 숨쉬기·떠다니기 같은 반복 움직임을 
 
 | 이름 | 만드는 법 | 어울리는 곳 |
 |---|---|---|
-| 글자 속으로 | 다음 장면(사진·영상)에 `style.matte { clipId: 제목, mode: "alpha" }`. 제목 Text를 1 → 40–60배로 키우며 글자 획 안의 점 P를 제자리에 두고(`x = −(P.x − 박스 가운데.x) × (scale − 1)`, y도 같게), 확대가 끝나는 시각에 매트 없는 같은 소재 클립으로 이어 붙임. 예제 `samples/track-matte-glyph-3d` | 브랜드명·제품명 훅 → 제품 장면 |
+| 글자 속으로 | **`transition-glyph-dive` 샷 카드로 만듭니다**(`draw.mjs` `glyphDiveClips`, MCP `glyph_dive`가 획 안의 점·배율·키프레임을 계산). 원리: 다음 장면(사진·영상)에 `style.matte { clipId: 제목, mode: "alpha" }`. 제목 Text를 1 → 40–60배로 키우며 글자 획 안의 점 P를 제자리에 두고(`x = −(P.x − 박스 가운데.x) × (scale − 1)`, y도 같게), 확대가 끝나는 시각에 매트 없는 같은 소재 클립으로 이어 붙임. 예제 `samples/track-matte-glyph-3d` | 브랜드명·제품명 훅 → 제품 장면 |
 | 글자 창 | 위와 같되 확대 없이 `hideSource: false`로 글자도 보이게 두고, 글자 안 영상만 다음 장면으로 바꿈 | 타이틀 카드, 챕터 시작 |
 | 질감으로 번짐 | 다음 장면에 `matte { clipId: 잉크·붓·종이 질감 이미지, mode: "luma", threshold: [[0, 1], [1.2, 0]], softness: 0.08 }`. 밝은 곳부터 드러남 | 수제·프린트·뷰티·식품, 무드 전환 |
 | 도형 구멍 | 앞 장면에 `matte { clipId: 원·알약 Shape, mode: "alphaInverted" }`, 도형을 0 → 화면보다 크게 | 아이리스 열기·닫기, 로고 마크 모양으로 |
@@ -106,6 +106,7 @@ HyperFrames는 장면 안의 숨쉬기·떠다니기 같은 반복 움직임을 
 | 카드 | 모양 | 어울리는 곳 |
 |---|---|---|
 | `transition-zoom-through` | 소재 속 둥근 물체 안으로 들어가면 다음 소재 | 창·화면·렌즈가 있는 소재 (시그니처 후보) |
+| `transition-glyph-dive` | 소재가 글자 안에서만 보이다가 획 속으로 들어가 다음 장면 | 브랜드명·제품명 훅 → 제품 장면 (시그니처 후보, 아래 A "글자 속으로"를 계산까지 묶은 것) |
 | `transition-cover-flood` | 점이 원으로 부풀어 덮고 다음 장면 점으로 줄며 열림 | 장면 성격이 바뀔 때 |
 | `transition-match-cut` | 컷 양쪽 움직임·자리를 맞춤 | 비슷한 모양이 양쪽에 있을 때 |
 | `transition-flash-streak` | 사선 빛 몇 가닥 + 브랜드 색 번쩍 | 훅·드롭 |

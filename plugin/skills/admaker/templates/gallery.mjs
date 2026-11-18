@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import os from "node:os";
-import { drawCard } from "./variety-core.mjs";
+import { applyCardToSkeleton, drawPlanCards } from "./variety-core.mjs";
 import { drawIdea, rerankDirections, rotateExamples } from "./idea-core.mjs";
 import { drawNovel, novelChoices, novelCount } from "./novel-core.mjs";
 
@@ -223,7 +223,7 @@ function directionCards(dirs) {
     <h2>${esc(d.name)}</h2>
     <p>${esc(d.line)}</p>
     <h3>형태</h3><p class="meta">${esc(d.form)}</p>
-    <h3>골격</h3><p class="meta">${esc(d.skeleton)}</p>
+    <h3>골격</h3><p class="meta">${esc(variety ? applyCardToSkeleton(d.skeleton, variety) : d.skeleton)}</p>
     <h3>시그니처 · 전환</h3><p class="meta">${esc(d.signature)} · ${esc(d.transitions)}</p>
     <p class="meta">글꼴·색: ${esc(d.look)} · 앱: ${esc(d.app)}</p>
     ${idea ? `<h3>아이디어 · ${esc(idea.name)}</h3><p class="meta">${esc(idea.line)}<br>${esc(idea.story)}</p>` : ""}
@@ -372,9 +372,9 @@ if (cmd === "list" || !cmd) {
   PLAN_HISTORY = history;
   const dirs = pickDirections(request, 3, history).map((r) => ({ ...r, refs: pickRefs(`${request} ${r.d.refWords ?? ""}`, 2) }));
   // 변주 카드·아이디어: 기획안마다 한 장, 최근 기록과 다른 기획안의 것을 피해서 뽑는다
-  const cards = [];
-  for (const r of dirs) cards.push((r.variety = drawCard({ direction: r.d.id, history, exclude: cards, request })));
-  const freeCard = drawCard({ direction: "free", history, exclude: cards, request });
+  // (글자 속으로 같은 시그니처 칸은 최근 2편에 안 썼으면 기획안 하나에 꼭 들어감: variety-core drawPlanCards)
+  const { cards, freeCard } = drawPlanCards({ directions: dirs.map((r) => r.d.id), history, request });
+  dirs.forEach((r, i) => (r.variety = cards[i]));
   // 참신안: 뒤쪽 기획안(C, 2개면 B·C)의 아이디어 카드 자리를 참신안으로 바꾼다
   const nNovel = Math.min(novelCount(request, novelArg), dirs.length);
   const novels = [];
@@ -407,7 +407,7 @@ if (cmd === "list" || !cmd) {
       const exLine = ex
         ? `\n     예시(이런 형태로): ${ex.kind === "ad" ? `${ex.title} [${ex.id}]${ex.appImport === "partial" ? " · 앱에서 일부 빠짐" : ""}` : `레퍼런스 ${ex.title} [${ex.id}]`}${ex.preview ? `\n     미리보기: ${ex.preview}` : ""}`
         : "\n     예시: 없음";
-      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${dirs[i].novel ? " [참신안]" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${d.skeleton}\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     ${dirs[i].novel ? `참신안: ${dirs[i].novel.summary}\n       한 줄: ${dirs[i].novel.line}\n       이야기: ${dirs[i].novel.story}\n       장르 그래픽: ${dirs[i].novel.picks.genre.overlay}` : `아이디어: ${dirs[i].idea.name} — ${dirs[i].idea.line}\n       이야기: ${dirs[i].idea.story}`}\n     변주: ${dirs[i].variety.summary}`);
+      console.log(`${i + 1}. ${PLAN(i)} · ${d.name} (${d.id})${i === 0 ? " (추천)" : ""}${dirs[i].novel ? " [참신안]" : ""}${why.length ? ` — ${why.join(", ")}` : " — 기본 후보"}\n     ${d.line}\n     형태: ${d.form}\n     골격: ${applyCardToSkeleton(d.skeleton, dirs[i].variety)} (훅·엔드카드는 변주 카드 칸)\n     시그니처: ${d.signature}\n     전환: ${d.transitions}${exLine}\n     ${dirs[i].novel ? `참신안: ${dirs[i].novel.summary}\n       한 줄: ${dirs[i].novel.line}\n       이야기: ${dirs[i].novel.story}\n       장르 그래픽: ${dirs[i].novel.picks.genre.overlay}` : `아이디어: ${dirs[i].idea.name} — ${dirs[i].idea.line}\n       이야기: ${dirs[i].idea.story}`}\n     변주: ${dirs[i].variety.summary}`);
     });
     console.log(`${dirs.length + 1}. 자유롭게 생성 — 정해 둔 방향·예시에 묶지 않고 브리프만 보고 새 구성을 짬\n     아이디어: ${ideas[ideas.length - 1].name} — ${ideas[ideas.length - 1].line}\n     변주: ${freeCard.summary}`);
     console.log(`변주 카드 전문: ${cardsFile} (고른 기획안의 카드를 씬표 맨 위에, 고른 바로 그때 variety.mjs record. 카드에 아이디어·예시 id가 들어 있어 같이 기록됨)`);

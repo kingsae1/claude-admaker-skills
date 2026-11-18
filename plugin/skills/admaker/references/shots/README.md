@@ -6,7 +6,7 @@
 
 1. 광고 한 편이면 `../motion-directions.md`에서 고른 방향의 골격을 먼저 봅니다. 그다음 `director.md` §4 에너지 골격에 슬롯(훅, 주인공, 상승부, 엔드카드)을 나눕니다.
 2. 슬롯마다 아래 표에서 `슬롯`과 `에너지`가 맞는 카드를 고릅니다. 광고 목적별 묶음과 카드마다 쓸 때·피할 때는 `../recipe-guide.md`.
-3. 고른 카드는 전문을 읽고, "알려진 함정"의 값은 낮추지 않습니다.
+3. 고른 카드는 전문을 읽고, "알려진 함정"의 값은 낮추지 않습니다. 파라미터 표의 **입장 이징·거리·길이는 기본값**이라, 변주 카드의 모션 말투 칸이 있으면 그 값으로 바꿉니다(구조·박 위치·함정은 유지). 훅·엔드카드 슬롯은 변주 카드의 훅 샷·엔드카드 방식 칸이 먼저입니다(`../variety.md`).
 4. 같은 카드를 한 광고에서 두 번 주인공으로 쓰지 않습니다(R5).
 
 | 카드 | 슬롯 | 에너지 | 길이 | 한 줄 |
@@ -28,6 +28,7 @@
 | [particle-morph](particle-morph.md) | 주인공 | 고 | 2.5–3초 | 꼬리 끄는 입자가 소용돌이 → 글자 → 동심원 호로 모핑 (`particle-morph`) |
 | [transition-cover-flood](transition-cover-flood.md) | 전환 | 중고 | 0.6–0.7초 | 앞 장면의 점이 원으로 부풀어 화면을 덮고, 다음 장면의 점으로 줄어들며 열림 |
 | [transition-zoom-through](transition-zoom-through.md) | 전환 | 중고 | 0.6–0.8초 | 소재 속 둥근 물체로 다가가면 그 안이 다음 소재로 열림 (시그니처 샷 후보) |
+| [transition-glyph-dive](transition-glyph-dive.md) | 전환 | 중→최고 | 1.5–2.2초 | 소재가 큰 글자 안에서만 보이다가 획 속으로 수십 배 확대해 들어가 다음 장면이 됨 (시그니처, `draw.mjs` `glyphDiveClips`, MCP `glyph_dive`) |
 | [transition-match-cut](transition-match-cut.md) | 전환 | 중 | 컷 ±0.2초 | 컷 양쪽 움직임 방향을 맞추고, 링이 다음 물체 자리에 정확히 착지 |
 | [transition-flash-streak](transition-flash-streak.md) | 전환 | 최고 | 0.3–0.4초 | 빠른 사선 몇 가닥이 지나가고 화면이 브랜드 색으로 번쩍이며 컷 (훅·드롭) |
 | [transition-footage-card](transition-footage-card.md) | 전환 | 중 | 0.9–1.1초 | 소재가 카드로 줄며 기울어 빠지고, 다음 소재 카드가 정면으로 펴짐 (2D ↔ 2.5D) |
