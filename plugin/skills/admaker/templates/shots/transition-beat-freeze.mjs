@@ -3,6 +3,14 @@
 // 정지했다가 다음 박(cut)에 하드 컷. 음악 중심 몽타주·fast-montage에 맞는다. 정지 프레임은 ffmpeg로 뽑아 FOOTAGE에 Image로 넣는다(카드 참고).
 // props: { at: 정지 시작 초(박), cut: 다음 컷 초(박), still: 정지 프레임 FOOTAGE 번호, color?: 번쩍·테두리 색, label?: 짧은 글자(예: "BEST"), font?: { family, url } }
 // FOOTAGE: 앞 소재 to = at, 스틸(kenBurns: false) from = at, to = cut, 다음 소재 from = cut.
+import { fontStyle } from "../fonts.mjs";
+
+// 글꼴: props.font { family, url }가 있으면 그것, 없으면 brand.fonts.display { name, weight }를 fonts.json에서 찾음 (fontUrl이 꼭 있어야 엔진이 불러옴)
+const labelFace = (P, brand) => {
+  const { _weight, ...face } = P.font?.url ? { fontFamily: P.font.family, fontUrl: P.font.url, fontWeight: "400" } : fontStyle(brand.fonts?.display ?? { name: "Pretendard", weight: 800 });
+  return face;
+};
+
 export default ({ shot, brand, W, H, FPS, us, FOOTAGE }) => {
   const P = shot.props, f = 1 / FPS, sx = W / 1080, sy = H / 1920;
   const S = FOOTAGE[P.still];
@@ -24,7 +32,7 @@ export default ({ shot, brand, W, H, FPS, us, FOOTAGE }) => {
   };
   if (P.label) {
     clips[id("label")] = { type: "Text", name: "freeze-label", text: P.label,
-      style: { fontFamily: P.font?.family ?? brand.fonts?.display?.family ?? "Pretendard", ...(P.font?.url ? { fontUrl: P.font.url } : {}), fontSize: Math.round(84 * sx), fontWeight: 800, color: "#111111",
+      style: { ...labelFace(P, brand), fontSize: Math.round(84 * sx), color: "#111111",
         align: "center", background: { color, padding: [10, 26], borderRadius: 8 } },
       timing: timing(P.at + f, P.cut), transform: { x: Math.round(W / 2 - 260 * sx), y: Math.round(H - inset - 230 * sy), width: Math.round(520 * sx), height: Math.round(120 * sy), angle: -4, opacity: 1, zIndex: 41 },
       animations: [{ type: "keyframes", options: { duration: us(0.14), delay: 0, easing: "linear" }, params: { "0%": { scale: 1.35, angle: -10, easing: "easeOutExpo" }, "100%": { scale: 1, angle: 0 } } }] };
