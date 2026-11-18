@@ -33,8 +33,8 @@ export const FEELS = Object.freeze([
   },
   {
     id: "groove", name: "그루브 미드", range: [98, 112], center: 106, cut: 1.5,
-    dirs: ["playful-bounce", "info-map", "print-collage"],
-    words: /음식|맛집|신메뉴|배달|패션|라이프스타일|귀여|키즈|반려|펫|생활|앱|서비스|정보|지도|매장/,
+    dirs: ["playful-bounce", "info-map", "print-collage", "food-sizzle"],
+    words: /음식|맛집|고기|고깃집|삼겹살|숯불|구이|갈비|회식|외식|식당|신메뉴|배달|패션|라이프스타일|귀여|키즈|반려|펫|생활|앱|서비스|정보|지도|매장/,
     genre: "upbeat funk-pop groove, bouncy bass, crisp claps and finger snaps, bright guitar plucks",
     line: "통통 튀는 리듬, 정보와 재미를 같이",
   },
