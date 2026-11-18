@@ -45,6 +45,7 @@ export const IDEAS = [
   },
   {
     id: 'count-reasons',
+    dirs: ['offer-punch', 'editorial-kinetic'],
     generic: true,
     name: '이유 세 가지',
     line: '숫자를 세며 고를 이유를 하나씩 쌓는다',
@@ -68,6 +69,7 @@ export const IDEAS = [
   },
   {
     id: 'ingredient-macro',
+    dirs: ['glossy-signature', 'product-hero', 'food-sizzle'],
     name: '재료·디테일 클로즈업',
     line: '재료와 질감을 아주 가까이서 보여 주며 품질을 말한다',
     story: '훅 재료 매크로(원두·과일·성분) → 만들어지거나 섞이는 순간 → 완성품 → 엔드카드',
@@ -78,6 +80,7 @@ export const IDEAS = [
   },
   {
     id: 'sizzle-closeup',
+    dirs: ['food-sizzle', 'beat-montage'],
     name: '지글 클로즈업',
     line: '굽고 붓고 김이 오르는 순간을 소리와 함께 아주 가까이서 보여 주며 맛을 말한다',
     story: '훅 불판·팬에 닿는 순간(소리와 같은 박) → 뒤집기·자르기·붓기 클로즈업 2–3컷(박마다) → 한 점 집어 올리는 슬로 컷 → 메뉴명·가격 → 엔드카드',
@@ -88,6 +91,7 @@ export const IDEAS = [
   },
   {
     id: 'making-of',
+    dirs: ['food-sizzle', 'print-collage', 'handwritten-warm'],
     name: '만드는 과정',
     line: '손과 도구가 제품을 만드는 과정을 빠르게 이어 보여 준다',
     story: '훅 손이 첫 작업을 시작 → 과정 3–4컷(박마다) → 완성품 공개 → 엔드카드',
@@ -98,6 +102,7 @@ export const IDEAS = [
   },
   {
     id: 'menu-pick',
+    dirs: ['editorial-kinetic', 'beat-montage', 'offer-punch'],
     name: '골라 보세요',
     line: '메뉴·옵션을 카드처럼 넘기며 하나씩 보여 주고 고르게 한다',
     story: '훅 "오늘은 뭐?" → 메뉴 카드 넘김(박마다 한 장) → 대표 메뉴에서 멈춤 → 엔드카드',
@@ -109,10 +114,12 @@ export const IDEAS = [
   },
   {
     id: 'journey-map',
+    dirs: ['info-map'],
+    avoidDirs: ['food-sizzle', 'glossy-signature'],
     name: '이동·경로',
     line: '출발에서 도착까지 경로가 그려지며 제품·서비스가 닿는 과정을 보여 준다',
     story: '훅 출발점 핀 → 경로가 그려짐 → 도착 장면 → 위치·시간 정보 → 엔드카드',
-    fits: ['배송', '배달', '여행', '지도', '위치', '매장', '오픈', '지점', '부동산', '지역', '관광', '교통', '이사'],
+    fits: ['배송', '배달', '여행', '지도', '위치', '오픈', '지점', '부동산', '지역', '관광', '교통', '이사'],
     avoid: [],
     needs: '실제 위치·지역 정보',
     sense: '실제 위치·경로 정보가 있고, 이동이 광고의 장점과 이어진다(빠른 배송, 가까운 매장)',
@@ -223,12 +230,17 @@ export function ideasFor(request) {
  * 아이디어 하나 뽑기. 요청 낱말이 맞는 것 위주로, 최근 광고(recent편)·같은 목록(exclude)에서 쓴 것은 남는 게 있으면 피한다.
  * @returns {{ id, name, line, story, needs, sense, why: string[] }}
  */
-export function drawIdea({ request, history = [], exclude = [], seed, recent = 4, evidence = [] } = {}) {
+export function drawIdea({ request, history = [], exclude = [], seed, recent = 4, evidence = [], direction } = {}) {
   const r = rng(Number.isFinite(seed) ? seed : Math.floor(Math.random() * 2 ** 31));
   let pool = ideasFor(request);
   if (!pool.length) pool = IDEAS.filter((i) => !i.avoid.length).map((idea) => ({ idea, why: [] }));
   // 후기·전후 사진이 있어야 하는 아이디어는 사용자가 그 자료가 있다고 했을 때만(evidence에 'reviews'·'before-after')
   pool = pool.filter((p) => !(p.idea.needsEvidence ?? []).some((n) => HARD_EVIDENCE.includes(n) && !evidence.includes(n)));
+  // 기획안의 모션 방향과 안 맞는 이야기는 빼고(예: 음식 시즐 방향에 이동·경로), 맞는 이야기는 더 자주 (dirs·avoidDirs)
+  if (direction) {
+    const okDir = pool.filter((p) => !(p.idea.avoidDirs ?? []).includes(direction));
+    if (okDir.length) pool = okDir;
+  }
   const taken = new Set(exclude.map((x) => (typeof x === 'string' ? x : x?.id)).filter(Boolean));
   const notTaken = pool.filter((p) => !taken.has(p.idea.id));
   if (notTaken.length) pool = notTaken;
@@ -240,7 +252,7 @@ export function drawIdea({ request, history = [], exclude = [], seed, recent = 4
   const generic = pool.filter((p) => p.idea.generic);
   if (fit.length) pool = fit;
   else if (generic.length) pool = generic;
-  const w = pool.map((p) => 1 + p.why.length * 2);
+  const w = pool.map((p) => 1 + p.why.length * 2 + (direction && (p.idea.dirs ?? []).includes(direction) ? 4 : 0));
   let x = r() * w.reduce((s, v) => s + v, 0);
   const pick = pool.find((_, i) => (x -= w[i]) < 0) ?? pool[pool.length - 1];
   const { id, name, line, story, needs, sense } = pick.idea;

@@ -397,7 +397,7 @@ if (cmd === "list" || !cmd) {
     if (i >= dirs.length - nNovel) novels.push((r.novel = drawNovel({ request, history, exclude: novels })));
   });
   const ideas = [];
-  for (const r of [...dirs, { variety: freeCard }]) if (!r.novel) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas, evidence: evidenceArg })));
+  for (const r of [...dirs, { variety: freeCard }]) if (!r.novel) ideas.push((r.idea = drawIdea({ request, history, exclude: ideas, evidence: evidenceArg, direction: r.d?.id })));
   freeCard.idea = ideas[ideas.length - 1].id;
   const planEx = planExamples(dirs);
   dirs.forEach((r, i) => {
