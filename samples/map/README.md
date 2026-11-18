@@ -30,3 +30,27 @@ node to-admaker-import.mjs project.json admaker-import.json
 - 색·타이밍은 첫 렌더 뒤 고친 값입니다(줌 1.35 → 1.55, 지도 면 → 선만, 전체 어둡게 층 제거, 글자 받침 50% → 30%).
 
 플래너 모드 템플릿: `template.json` (`node to-admaker-template.mjs project.json admaker-import.json template.json --group 배송지도 --name 경로-1`). 바닥 영상을 뺀 그래픽 오버레이만 들어 있고, admaker 앱 코드로 파싱과 씬 합성(6초 → 4초 씬)을 확인했습니다.
+
+## 16:9 (1920×1080) 구성
+
+같은 서울 → 부산 이야기를 가로 화면에 맞게 다시 짠 샘플입니다(`sample-map-16x9.mjs`, 엔진 3.0.28 렌더 확인).
+
+![16:9 전후 비교](stills_16x9.jpg)
+
+세로 구성을 그대로 옮기면(위 BEFORE) 지도가 화면 높이 60% 남짓으로 작고, 흰 선만 떠 있어 어디 지도인지 잘 안 읽히고, 1.55배 줌에서 제주·남해안이 카피에 덮입니다. 16:9에서는 이렇게 바꿨습니다(AFTER).
+
+| 바꾼 것 | 쓰는 것 |
+|---|---|
+| 지도는 오른쪽에 프레임 높이 88%, 카피는 왼쪽 세로 단 + 왼쪽 가장자리 받침 | `mapLayout(W, H)` |
+| 남한보다 조금 넓게 투영해 휴전선 위(북한)와 바다가 보이게 | `makeProjection(features, box, { bounds: [[124.2, 33.0], [131.0, 39.4]] })` |
+| 이웃 땅(북한·중국·일본·러시아) 흐린 윤곽, 남한 땅만 옅은 면(흰색 0.12), 카피 쪽으로 갈수록 사라짐 | `worldFeatures`, `baseMapSrc({ context, landFill, fade })` |
+| 참고 도시 5곳(대전·대구·광주·강릉·제주) 작은 점 + 흐린 이름 | `placeMarks` |
+| 카메라는 고정 1.55배 대신 경로와 참고 도시가 지도 상자에 남는 만큼(1.3배) | `fitCamera` |
+
+```sh
+npm i d3-geo world-atlas topojson-client
+node sample-map-16x9.mjs project.json            # 16:9
+node sample-map-16x9.mjs before.json --before    # 비교용: 고치기 전 방식
+```
+
+- 이웃 땅 데이터: Natural Earth 1:50m(world-atlas 패키지, ISC). 광고에 쓸 때 `CREDITS`에 적습니다.

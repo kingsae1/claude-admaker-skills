@@ -5,7 +5,7 @@ name: map-route-draw
 에너지: 중고
 길이: 2–3초
 엔진: Shape path `strokeDraw`, 지도 클립 전체에 `mapCamera` keyframes — `templates/map.mjs`
-검증: engine 3.0.5 (samples/map)
+검증: engine 3.0.5 (samples/map 9:16), engine 3.0.28 (samples/map 16:9)
 ---
 
 ## 의도
@@ -23,8 +23,9 @@ name: map-route-draw
 | 경로 굵기 | 9–10px (zoom 1.55 후 약 15px) | 최종 zoom에서 보고 정함 |
 | 휨 `bend` | ±0.25–0.3 | 0이면 직선이라 밋밋, 0.4 넘으면 돌아가는 길처럼 보임. 바다 쪽으로 휘지 않게 부호를 고름 |
 | strokeDraw | 1.6초 `easeInOutCubic`, `fill: "hidden"` | 짧으면 거리감이 없어짐 |
-| 카메라 | t 1.4 → 3.4초, `easeInOutCubic`, zoom 1.55, 경로 가운데를 화면 y 740에 | 경로 양끝이 화면 밖으로 나가지 않게 |
-| 글자 받침 | 아래 28%, 투명 → 배경색 0.6 | 진하게 할수록 글자는 읽기 쉽고 영상은 덜 보임(Q11) |
+| 카메라 | t 1.4 → 3.4초, `easeInOutCubic`. 세로는 zoom 1.55, 경로 가운데를 화면 y 740에 | 경로 양끝이 화면 밖으로 나가지 않게 |
+| 카메라(가로 16:9) | `fitCamera(map, [출발, 도착, 참고 도시…], box, { W, H, pad: 110, maxZoom: 1.3 })` | 고정 1.55배는 가로에서 나라가 잘려 어디인지 안 읽힘. 참고 도시까지 상자 안에 남는 만큼만 |
+| 글자 받침 | 세로: 아래 28%, 투명 → 배경색 0.6. 가로: 카피 쪽 45% 너비, 가장자리 0.55 → 투명 | 진하게 할수록 글자는 읽기 쉽고 영상은 덜 보임(Q11) |
 
 ## 사운드
 경로가 그려지는 동안 riser(작게), 도착 프레임에 impact 또는 착지음. 광고 전체 큰 히트(R4) 중 하나로 셉니다.
@@ -47,4 +48,11 @@ const cam = [
   { t: 3.4, cx: (ax + bx) / 2, cy: (ay + by) / 2 + (H / 2 - targetY) / Z, zoom: Z },
 ];
 for (const clip of mapClips) clip.animations.push(mapCamera(clip, cam, { W, H, us, clipFrom: 0 }));
+
+// 16:9: 고정 배율 대신 남길 점들이 지도 상자에 들어오게 (samples/map/sample-map-16x9.mjs)
+const { box } = mapLayout(W, H);
+const cam169 = [
+  { t: 1.4, cx: W / 2, cy: H / 2, zoom: 1, easing: "easeInOutCubic" },
+  { t: 3.4, ...fitCamera(map, [SEOUL, BUSAN, DAEJEON, DAEGU, GWANGJU, GANGNEUNG], box, { W, H, pad: 110, maxZoom: 1.3 }) },
+];
 ```

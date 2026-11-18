@@ -273,7 +273,7 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 
 ### 4.1 지도 (`templates/map.mjs`)
 
-지도 효과는 **빌드할 때 GeoJSON을 화면 좌표로 투영해** 엔진 기본 클립으로 바꿉니다. 렌더 하니스와 admaker 앱 불러오기에서 같은 모습으로 나옵니다(엔진 3.0.5 렌더로 확인, `samples/map`).
+지도 효과는 **빌드할 때 GeoJSON을 화면 좌표로 투영해** 엔진 기본 클립으로 바꿉니다. 렌더 하니스와 admaker 앱 불러오기에서 같은 모습으로 나옵니다(엔진 3.0.5 렌더로 확인, `samples/map`. 16:9 구성은 엔진 3.0.28로 확인).
 
 | 요소 | 클립 | 모션 |
 |---|---|---|
@@ -282,11 +282,19 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 | 경로 | Shape path(2차 곡선) `routeShape`, fill 투명 | `strokeDraw` `{ fill: "hidden" }` |
 | 핀 | Shape circle `pinShape` | scale 0.2→1 `easeOutBack` (`holdFrom`) |
 | 지명 | Text, 좌표는 `map.point([lon, lat])` | `entrance` (x 이동) |
-| 줌·이동 | 위 모든 지도 클립에 같은 `mapCamera` keyframes | 화면의 한 점을 가운데로, zoom 1→1.3–1.6 |
+| 줌·이동 | 위 모든 지도 클립에 같은 `mapCamera` keyframes | 화면의 한 점을 가운데로, zoom 1→1.3–1.6. 목표 키는 `fitCamera`로 계산 |
+| 화면비별 자리 | `mapLayout(W, H)` → `{ box, copy }` | 세로: 지도 위·카피 아래, 가로: 지도 한쪽·카피 반대쪽 |
+| 이웃 땅·참고 지명 | `worldFeatures([...])` → `baseMapSrc({ context, landFill, fade })`, `placeMarks` | 지도와 같이 입장, 같은 카메라 |
 
 순서:
 1. 데이터를 고르고 출처를 `CREDITS.md`에 적습니다. 세계·국가 경계는 Natural Earth(퍼블릭 도메인), 한국 시도 경계는 southkorea/southkorea-maps(KOSTAT 2013 기반) 같은 공개 데이터를 씁니다. 큰 파일은 mapshaper 등으로 단순화해 수백 KB 이하로 줄입니다.
-2. `makeProjection(features, [x, y, w, h])`로 지도가 들어갈 상자를 정합니다. 카피 자리는 상자 밖에 남깁니다.
+2. `mapLayout(W, H)`로 지도 상자와 카피 자리를 받고 `makeProjection(features, box)`로 투영합니다. 카피 자리는 상자 밖에 남깁니다.
+   **가로(16:9)에서는 "어디인지" 읽히게 만드는 것이 먼저입니다.** 세로 구성(지도 위, 카피 아래)을 그대로 옮기면 나라가 화면 높이 60% 남짓으로 작아지고, 고정 1.55배 줌에 잘리고, 바다와 이웃 땅 없이 흰 선만 떠 있어 무슨 지도인지 안 읽힙니다(`samples/map` 16:9 전후 비교). 가로에서는 아래를 같이 씁니다.
+   - 지도는 한쪽에 프레임 높이 88%(`mapLayout`의 `box`), 카피는 반대쪽 세로 단(`copy`)과 그쪽 가장자리 그라데이션 받침
+   - `makeProjection(features, box, { bounds })`로 대상 나라보다 조금 넓게 맞춰 이웃 땅이 보이게 합니다(한국: `[[124.2, 33.0], [131.0, 39.4]]`, 휴전선 위가 조금 보임)
+   - `baseMapSrc`에 `context`(이웃 나라 흐린 윤곽), `landFill`·`landOpacity`(대상 땅만 옅은 면, 바다는 그대로), `fade: box`(카피 쪽으로 갈수록 이웃 땅이 사라짐)
+   - `placeMarks`로 참고 도시 3–5곳(작은 점 + 30px 이름, 흐린 색). 주인공 지명은 44px로 더 크게
+   - 카메라는 고정 배율 대신 `fitCamera(map, 남길 점들, box, { maxZoom: 1.3 })`. 출발·도착과 참고 도시가 상자 안에 남는 만큼만 다가갑니다
 3. 지도 클립은 **모두 첫 카메라 키 이전(보통 0초)에 시작**시키고, 늦게 나타날 요소는 입장 모션으로 숨깁니다. `mapCamera`는 클립이 첫 키보다 늦게 시작하면 오류를 냅니다.
 4. 카피 아래로 지도가 지나가면 아래쪽 그라데이션 가림막(Image)을 카피 바로 아래 z에 둡니다.
 5. **지도는 소재 위에 얹습니다.** `baseMapSrc`의 기본값은 면 없이 흰 경계선 + 그림자라 아래 영상이 그대로 보입니다. 강조할 지역은 `regionShape` + `paint`로 채웁니다. 면 지도가 어울리는 광고면 `fill`·`fillOpacity`를 주거나 작은 인셋 지도로 쓸 수 있고, 이때 영상이 너무 묻히지 않는지 봅니다(Q11).
@@ -295,6 +303,8 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 - 엔진 scale은 클립 중심 기준이라 `mapCamera`가 위치를 보정합니다. 지도 클립에 다른 scale 모션(핀 팝)을 같이 넣어도 곱해져서 문제없습니다.
 - 경로·외곽선 굵기도 zoom만큼 굵어집니다. 최종 zoom에서 보기 좋은 굵기를 기준으로 고릅니다.
 - 3D 지형, 위성 사진, 수천 개 점 같은 지도는 이 방식 대신 미리 렌더한 영상(Video)으로 넣습니다.
+- 이웃 땅 데이터는 `npm i world-atlas topojson-client`(Natural Earth, 퍼블릭 도메인 데이터·ISC 패키지). `worldFeatures`가 이름으로 고릅니다(예: "North Korea", "China", "Japan"). `CREDITS`에 "Natural Earth via world-atlas"를 적습니다.
+- 앱의 템플릿 모드로 씬 비율을 바꿔 쓰면 지도가 찌그러집니다(§9.1). 16:9 광고는 16:9로 다시 빌드합니다.
 
 ## 5. 도형, 배경, 필터, 전환
 
