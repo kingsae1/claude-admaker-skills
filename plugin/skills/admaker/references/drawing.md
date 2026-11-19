@@ -2,8 +2,8 @@
 
 기본 Shape 19종과 폰트 스타일로 안 되는 모양은 직접 그립니다. 결과는 모두 `Shape` 클립 하나(`shapeType: "path"` 또는 `"brush"`)라서 Studio에서 그대로 열리고, `strokeDraw`로 "그려지는" 모션을 줄 수 있습니다.
 
-- 스킬: `templates/draw.mjs` (`annotationPath`, `annotationBox`, `smoothPoints`, `simplifyPoints`, `roughenPath`, `pathToSvg`, `textToPath`, 흘러내림 `dripClips`·`boxDripClips`·`textDripClips` — shots/drip-melt.md)
-- MCP: `draw_path`, `draw_annotation`, `text_to_path` (같은 계산)
+- 스킬: `templates/draw.mjs` (`annotationPath`, `annotationBox`, `annotationForLines`, `smoothPoints`, `simplifyPoints`, `roughenPath`, `pathToSvg`, `textToPath`, 흘러내림 `dripClips`·`boxDripClips`·`textDripClips` — shots/drip-melt.md)
+- MCP: `draw_path`, `draw_annotation`, `text_to_path` (같은 계산), 글자 자리 재기 `measure_text_range`
 - 도형 **PNG 파일**이 여러 장 필요하면: 스킬 `templates/shape-pngs.mjs`, MCP `make_shape_pngs` — 한 장의 시트에 모두 그려 잘라 씁니다(아래 "도형 PNG 여러 장")
 - 엔진: `@admaker/engine` 3.1 이상(브러시·regionFilters·blendMode·fillRule). `path` + stroke + `strokeDraw`만 쓰는 손그림 강조와 글자 패스는 3.0.5에서도 그려집니다.
 
@@ -45,6 +45,14 @@ const clip = {
 | 색 | 브랜드 강조색 1개 | 대상 글자색과 다른 색 |
 
 선 굵기만큼 상자를 넓혀야(위 `sw` 처리) 선이 잘리지 않습니다. MCP `draw_annotation`은 이것까지 해 줍니다.
+
+### 대상 상자는 실제 글자 자리로
+
+글자 일부(단어·가격)를 강조할 때 상자를 글자 수 × 글자 크기로 어림하지 않습니다. 한글은 글자 폭이 1em에 가까워 어림하면 선이 단어 중간에서 끝나 "긋다 만" 것처럼 보이고, 글상자(클립 상자)를 그대로 쓰면 빈 여백까지 길게 그어집니다.
+
+- MCP: `draw_annotation`에 `clipId` + `text`(강조할 구절, 같은 글자가 여러 번이면 `occurrence`)를 줍니다. 앱이 캔버스와 같은 글자 레이아웃(폰트·자간·정렬·줄바꿈)으로 그 글자 자리를 재고(`measure_text_range`), 줄바꿈된 구절은 줄마다 그 줄 글자 폭만큼 긋고 윗줄부터 끝줄 끝까지 이어 그립니다. `text`를 빼도 글상자가 아니라 글자 전체 자리에 맞춥니다. 회전한 글상자도 같은 각도로 붙습니다.
+- 스킬(로컬 렌더): 줄별 글자 상자 `lines[] { x, y, width, height }`(height = 글자 크기, 세로 가운데 = 글자 가운데)를 알면 `annotationForLines(kind, lines)`가 같은 계산을 합니다. 돌려주는 `box`가 클립 상자(선 굵기만큼 더 넓힘)이고 `path`는 viewBox `[0, 0, box.width, box.height]` 좌표입니다. 상자를 모르면 강조할 단어를 width 없는 Text 클립으로 따로 놓아 그 상자를 대상으로 씁니다.
+- 여러 줄이면 그리기 시간을 줄마다 0.3–0.4초 늘립니다(MCP 기본: 0.6초 + 줄마다 0.4초).
 
 ## 브러시 획
 
