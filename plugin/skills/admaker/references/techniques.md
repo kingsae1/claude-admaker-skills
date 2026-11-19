@@ -19,6 +19,7 @@ admaker MCP의 강점은 **모션그래픽(엔진) 하나로 끝내지 않고, �
 | 종이 질감 | 미색·크림·크라프트·신문지·구긴 종이 바탕, 찢은 종이 조각·테이프, 그래픽 위 종이 결(multiply) | `templates/paper.mjs` `paperSvg`·`paperCutSvg` (`paper.md`, 예제 `samples/paper-texture`) | 없음 |
 | 방사선·패턴·흔들림 | 가격 뒤 만화풍 방사선(박마다 회전·소용돌이), 체커·그리드·도트·줄무늬·동심원·지그재그 배경이 천천히 흐름, 카드·제품·글자가 둥둥 떠 있음 | `templates/rays.mjs`·`patterns.mjs`·`noise.mjs` (샷 `starburst-spin`·`pattern-drift`·`wiggle-float`, 예제 `samples/backdrops`) | 없음 |
 | 번개 | 글자 뒤로 번개가 내리치며 화면이 번쩍, 화면 가장자리에서 짧은 전기가 튐(번쩍마다 다른 경로) | `templates/lightning.mjs` (샷 `lightning-strike`, 예제 `samples/lightning`) | 없음 |
+| 오디오 반응 | 음악·목소리에 맞춰 튀는 이퀄라이저 막대, 로고 둘레 원형 스펙트럼, 흔들리는 파형 | `templates/audio-viz.mjs` `analyzeAudio`·`vizClips` (샷 `audio-viz-bars`) | 없음 (ffmpeg 필요) |
 | 전환·효과·자막 | 장면 전환(트랙 매트·`am-*` 전환·마스크, 고르는 법은 `transitions.md`), 화면 효과, 자막 | ProjectJSON(스킬) 또는 `add_clip { type: 'Transition' \| 'Effect' \| 'Caption' }` | 없음 |
 | 템플릿 | 이미 있는 광고 템플릿에서 출발 | `search_templates` → `open_template` | 없음 |
 | 이미지 생성 | 제품 연출 컷, 배경, 라이프스타일 장면, 일러스트 | `ai.image.generate { prompt }` | 있음 |

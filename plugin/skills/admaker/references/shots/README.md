@@ -52,6 +52,7 @@
 | [pattern-drift](pattern-drift.md) | 훅·주인공 배경·엔드카드 (배경·띠) | 저–중 | 장면 내내 | 체커·그리드·도트·줄무늬·동심원·지그재그가 브랜드 색으로 이음매 없이 흐름 (`patterns.mjs`, 앱 호환) |
 | [wiggle-float](wiggle-float.md) | 주인공·상승부·엔드카드 (얹는 모션) | 저–중 | 장면 내내 | 카드·제품·글자가 노이즈로 부드럽게 둥둥 뜨거나 살아 있는 듯 흔들림 (`noise.mjs`, 앱 호환) |
 | [lightning-strike](lightning-strike.md) | 훅·가격·엔드카드 (글자 뒤 강조) | 고 | 0.3–0.8초 번쩍 | 번개가 글자 뒤로 내리치며 깜빡이고 화면도 같이 번쩍, 가장자리 전기 (`lightning.mjs`, 앱 호환) |
+| [audio-viz-bars](audio-viz-bars.md) | 훅·주인공·엔드카드 (소재 위 띠·로고 둘레) | 중–고 | 장면 내내 | 음악·목소리에 맞춰 이퀄라이저 막대·원형 스펙트럼·파형이 움직임 (`audio-viz.mjs`, 앱 호환) |
 | [model-orbit-text](model-orbit-text.md) | 훅·주인공 | 중고 | 3–5초 | 제품 3D 모델(사진→3D GLB)이 돌며 가로지르고 뒤로 큰 문구 띠가 반대로 흐름 (three `model`, 앱까지 감) |
 | [group-build](group-build.md) | 상승부·엔드카드 | 중 | 1–1.8초 | 칩·가격표·버튼 묶음이 한 덩어리로 날아와 자리잡고 조각이 하나씩 반응 (`groupId`·`origin: "group"`) |
 | [lottie-accent](lottie-accent.md) | 상승부·엔드카드 (얹는 샷) | 중 | 0.6–1.2초 | 혜택 문구 옆에 체크·하트·반짝이 Lottie가 박에 맞춰 짧게 (`search_lottie`, Adapter lottie) |

@@ -78,6 +78,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 종이 질감(미색·크라프트·구긴 종이 바탕, 찢은 종이 조각·테이프, 그래픽 위 종이 결) → `references/paper.md`, `templates/paper.mjs`, 예제 `samples/paper-texture`. 영상·사진 소재 위에는 얹지 않습니다.
    - 모션 전용 씬·엔드카드 배경과 생기(가격 뒤 방사선 `rays.mjs`, 흐르는 패턴 `patterns.mjs`, 노이즈로 둥둥 뜨는 흔들림 `noise.mjs` `wiggleKeys`) → 샷 `starburst-spin`·`pattern-drift`·`wiggle-float`, 예제 `samples/backdrops`. 셋 다 SVG 이미지와 keyframes만 써서 앱으로 그대로 넘어갑니다.
    - 번쩍 강조(에너지 드링크·게임·번개 특가): 글자 뒤로 내리치는 번개, 화면 가장자리에서 튀는 전기 → `lightning.mjs` `boltClips`, 샷 `lightning-strike`, 예제 `samples/lightning`. Shape(path) + 깜빡임 keyframes만 써서 앱으로 그대로 넘어갑니다.
+   - 소리가 주인공(음원·스트리밍·팟캐스트·보이스 광고): 음악에 맞춰 튀는 막대·원형 스펙트럼·파형 → `audio-viz.mjs` `analyzeAudio`·`vizClips`, 샷 `audio-viz-bars`. Shape + keyframes만 써서 앱으로 그대로 넘어갑니다.
    - 픽셀 아트·도트 캐릭터·레트로 게임 느낌(스프라이트 시트 플립북, 선명한 픽셀 `style.pixelated`, 계단식 `steps(n)` 이징) → `references/pixel-art.md`, `templates/pixel-sprite.mjs`.
    - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 스프링·cubic-bezier 문자열, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
    - 씬 전환 고르기(트랙 매트·`am-*` 전환·전환 샷·마스크, 규칙·values·앱 호환) → `references/transitions.md`.
