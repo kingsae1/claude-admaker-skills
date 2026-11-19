@@ -17,6 +17,7 @@ admaker MCP의 강점은 **모션그래픽(엔진) 하나로 끝내지 않고, �
 | 영상 이펙트 39종 | 인물 뒤 공간(거대 글자·궤도 링·숫자 카운트), 인물 변형(분신·네온 윤곽선·스티커·코드 인간), 얼굴에 붙는 라벨·스캔·이모지, 화면 UI 오버레이(창·댓글·알림·속보·키보드·터미널), 임팩트·조각 전환(만화·칼날·종이·글자 다이브·분할), 카메라(돌리 줌·프리즈 줌·스피드 램프) | `templates/effects.mjs` (`video-effects.md`, 누끼가 필요한 효과는 `ai.image.removeBackground`) | 없음(누끼만 있음) |
 | 인쇄 질감 | 하프톤 점, 리소 2색 겹침, 잉크 번짐 전환, 종이 결 | `dotFilter`, 트랙 매트 "질감으로 번짐", `am-ink-bleed` (`transitions.md`) | 없음 |
 | 종이 질감 | 미색·크림·크라프트·신문지·구긴 종이 바탕, 찢은 종이 조각·테이프, 그래픽 위 종이 결(multiply) | `templates/paper.mjs` `paperSvg`·`paperCutSvg` (`paper.md`, 예제 `samples/paper-texture`) | 없음 |
+| 방사선·패턴·흔들림 | 가격 뒤 만화풍 방사선(박마다 회전·소용돌이), 체커·그리드·도트·줄무늬·동심원·지그재그 배경이 천천히 흐름, 카드·제품·글자가 둥둥 떠 있음 | `templates/rays.mjs`·`patterns.mjs`·`noise.mjs` (샷 `starburst-spin`·`pattern-drift`·`wiggle-float`, 예제 `samples/backdrops`) | 없음 |
 | 전환·효과·자막 | 장면 전환(트랙 매트·`am-*` 전환·마스크, 고르는 법은 `transitions.md`), 화면 효과, 자막 | ProjectJSON(스킬) 또는 `add_clip { type: 'Transition' \| 'Effect' \| 'Caption' }` | 없음 |
 | 템플릿 | 이미 있는 광고 템플릿에서 출발 | `search_templates` → `open_template` | 없음 |
 | 이미지 생성 | 제품 연출 컷, 배경, 라이프스타일 장면, 일러스트 | `ai.image.generate { prompt }` | 있음 |

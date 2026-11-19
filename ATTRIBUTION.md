@@ -91,3 +91,8 @@
 - 참고: `transitions.md`(전환이 두 장면을 겹쳐 전체 길이를 줄이는 방식과 길이를 그대로 두고 컷 위에 얹는 방식의 구분), `light-leaks.md`(컷 위 빛샘)
 - 라이선스 파일을 찾지 못해 문장·코드는 옮기지 않고 개념만 참고했습니다(`engine-recipes.md` §5.2는 admaker 앱 동작을 확인해 새로 씀).
 
+
+## 방사선·패턴·노이즈 흔들림 (클린룸)
+- 사양: kingsae1/admaker-plugin `cleanroom/remotion/specs/starburst.md`, `patterns.md`, `wiggle-noise.md` (1단계, 스킬)
+- 참고: SVG 2 경로 호 명령(https://www.w3.org/TR/SVG2/paths.html#PathDataEllipticalArcCommands), SVG 2 패턴(https://www.w3.org/TR/SVG2/pservers.html#Patterns), 위키백과 "Perlin noise"(1D 그래디언트 노이즈와 5차 페이드 함수)
+- `templates/rays.mjs`·`patterns.mjs`·`noise.mjs`는 위 사양서와 공개 표준·교과서 수식만 보고 새로 작성했습니다. 사양서가 허용한 simplex-noise(MIT)는 의존성으로도 쓰지 않았고, Remotion 패키지·저장소·문서는 열지 않았습니다.
