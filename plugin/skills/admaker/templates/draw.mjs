@@ -318,6 +318,25 @@ export function annotationBox(kind, target, { pad } = {}) {
       const s = Math.max(80, Math.min(w, h) * 1.2);
       return { x: x - s * 1.05, y: y + h * 0.5 - s * 0.15, width: s, height: s * 0.6 };
     }
+    case 'circle': {
+      // 상자에 내접한 타원은 글자 상자 네 모서리를 자른다(넓은 문구·두 줄에서 양 끝 글자에 닿음).
+      // 모서리가 타원 안에 드는 배율(ax, ay: 1/ax² + 1/ay² = 1) 중 늘어나는 폭 w(ax-1) + h(ay-1)이 가장 작은 것을 고른다
+      // (정사각형은 √2, 가로로 긴 문구는 가로를 덜 늘리고 세로를 더 늘림).
+      // annotationPath circle은 반지름을 가로 0.97·세로 0.94배(± 3% 나선)로 그리므로 그만큼 키우고 여백 p/2를 더한다.
+      // 글자 상자 높이(= 글자 크기)보다 잉크는 낮으니 세로는 85%만 넣는다.
+      const ih = h * 0.85;
+      let ax = Math.SQRT2;
+      let best = Infinity;
+      for (let a = 1.04; a <= 2.5; a += 0.01) {
+        const b = 1 / Math.sqrt(1 - 1 / (a * a));
+        const cost = w * (a - 1) + ih * (b - 1);
+        if (cost < best) [best, ax] = [cost, a];
+      }
+      const ay = 1 / Math.sqrt(1 - 1 / (ax * ax));
+      const rx = (w / 2) * ax / (0.97 * 0.97) + p * 0.5;
+      const ry = Math.max((ih / 2) * ay / (0.94 * 0.97), h / 2 / 0.94) + p * 0.5;
+      return { x: x + w / 2 - rx, y: y + h / 2 - ry, width: rx * 2, height: ry * 2 };
+    }
     case 'check':
     case 'cross': {
       const s = Math.max(40, Math.min(w, h));
