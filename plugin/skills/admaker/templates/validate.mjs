@@ -1,7 +1,7 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
 // + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11), 움직이는 층이 모자란 구간(F2) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
-// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
+// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준, 이징은 3.0.30(spring·cubic-bezier)까지. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 import { appTransitionWindow, autoZSign, checkSeams, sampleClip } from "./seams.mjs";
@@ -11,7 +11,23 @@ const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "
 const EASINGS = new Set(["linear", "none", "slow",
   ...["Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "Back", "Elastic", "Bounce"].flatMap((n) => [`easeIn${n}`, `easeOut${n}`, `easeInOut${n}`])]);
 // gsap-core가 아는 이징: 이름(방향 생략 = .out), 설정값 "back.out(1.7)", "steps(6)". CustomEase·EasePack(rough, slow(…), expoScale)은 등록 안 됨
-const isGsapEase = (e) => /^(power[0-4]|sine|expo|circ|back|elastic|bounce|quad|cubic|quart|quint|strong|linear)(\.(in|out|inOut))?(\([\d.,\s-]*\))?$/.test(e) || /^steps\(\d+\)$/.test(e);
+const isGsapEase = (e) => /^(power[0-4]|sine|expo|circ|back|elastic|bounce|quad|cubic|quart|quint|strong|linear)(\.(in|out|inOut))?(\([\d.,\s-]*\))?$/.test(e) || /^steps\(\d+\)$/.test(e) || isCurveEase(e);
+// 엔진 3.0.30+: 물리 스프링 "spring" / "spring(0.35)" / "spring(0.35, 0.01)" / "spring(m=1,k=170,c=26)",
+// CSS 곡선 "cubic-bezier(0.2,0.8,0.2,1)" / "cubicBezier(…)" (references/easing.md §2-1). 숫자 4개가 아닌 cubic-bezier는 엔진이 선형으로 처리
+const NUM = "\\s*-?\\d*\\.?\\d+(?:e-?\\d+)?\\s*";
+const SPRING_RE = new RegExp(`^spring(?:\\((?:${NUM}(?:,${NUM})?|\\s*(?:m|k|c|settle)\\s*=${NUM}(?:,\\s*(?:m|k|c|settle)\\s*=${NUM})*)\\))?$`);
+const BEZIER_RE = new RegExp(`^cubic-?bezier\\(${NUM},${NUM},${NUM},${NUM}\\)$`, "i");
+const isCurveEase = (e) => typeof e === "string" && (SPRING_RE.test(e) || BEZIER_RE.test(e));
+// 넘치는(0..1 밖으로 나가는) 이징: Back·Elastic, bounce > 0인 spring, y가 0..1 밖인 cubic-bezier
+const overshoots = (e) => {
+  const s = String(e ?? "");
+  if (/Back|Elastic|^back|^elastic/.test(s)) return true;
+  if (/^spring$/.test(s)) return true;
+  const sp = /^spring\(\s*(-?[\d.]+)/.exec(s);
+  if (sp && !s.includes("=")) return Number(sp[1]) > 0;
+  const bz = BEZIER_RE.test(s) && s.slice(s.indexOf("(") + 1, -1).split(",").map(Number);
+  return !!bz && [bz[1], bz[3]].some((y) => y < 0 || y > 1);
+};
 const GSAP_PROPS = new Set(["x", "y", "scale", "scaleX", "scaleY", "angle", "opacity", "blur", "brightness", "rotateX", "rotateY"]);
 // 엔진 gsapTimeline이 받는 position: 숫자, "<", ">", "<0.2", "+=0.5", "-=0.2" (라벨 없음)
 const GSAP_POSITION = /^(?:[<>](?:(?:[+-]=)?-?\d*\.?\d+)?|[+-]=\d*\.?\d+)$/;
@@ -93,7 +109,7 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (a.type === "keyframes") for (const [stop, v] of Object.entries(a.params ?? {})) {
       for (const k of Object.keys(v)) if (!KEYFRAME_KEYS.has(k)) err(id, `keyframes ${stop}: 모르는 키 "${k}"`);
       if (v.easing && !EASINGS.has(v.easing) && !isGsapEase(v.easing)) err(id, `keyframes ${stop}: 모르는 easing "${v.easing}"`);
-      if ("opacity" in v && /Back|Elastic|^back|^elastic/.test(String(v.easing ?? ""))) warn(id, `keyframes ${stop}: opacity 구간에 넘치는 이징 "${v.easing}" (0..1 밖으로 나감, easing.md §2)`);
+      if ("opacity" in v && overshoots(v.easing)) warn(id, `keyframes ${stop}: opacity 구간에 넘치는 이징 "${v.easing}" (0..1 밖으로 나감, easing.md §2)`);
     }
   }
   if (c.type === "Transition" && c.easing && !EASINGS.has(c.easing) && !isGsapEase(c.easing)) err(id, `전환 easing "${c.easing}"을 엔진이 모름 (선형으로 처리됨)`);

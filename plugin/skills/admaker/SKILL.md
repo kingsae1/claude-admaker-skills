@@ -72,7 +72,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
    - 종이 질감(미색·크라프트·구긴 종이 바탕, 찢은 종이 조각·테이프, 그래픽 위 종이 결) → `references/paper.md`, `templates/paper.mjs`, 예제 `samples/paper-texture`. 영상·사진 소재 위에는 얹지 않습니다.
    - 픽셀 아트·도트 캐릭터·레트로 게임 느낌(스프라이트 시트 플립북, 선명한 픽셀 `style.pixelated`, 계단식 `steps(n)` 이징) → `references/pixel-art.md`, `templates/pixel-sprite.mjs`.
-   - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
+   - 이징 고르기(들어오기·나가기·튀기·꽂히기 등 용도별 토큰, 31종 곡선, 스프링·cubic-bezier 문자열, 전환 클립 easing) → `references/easing.md`, `templates/motion.mjs`의 `EASE`·`ease()`.
    - 씬 전환 고르기(트랙 매트·`am-*` 전환·전환 샷·마스크, 규칙·values·앱 호환) → `references/transitions.md`.
    - 효과 이름으로 요청한 영상 이펙트(인물 뒤 거대 글자·궤도 링, 분신·네온 윤곽선·스티커, 머리 위 라벨·얼굴 스캔, 창 팝업·알림 폭탄·뉴스 속보·터미널 타이핑, 만화 임팩트·칼날 베기·종이 찢기·화면 분할, 돌리 줌·프리즈 줌·스피드 램프 등 39종) → `references/video-effects.md`(카탈로그, 지원 수준·소재)와 카테고리 카드 `references/video-effects-*.md`, 빌더 `templates/effects.mjs`, 예제 `samples/video-effects`.
    - 한 클립의 여러 단계 동작(올라오며 펀치, 비트 펀치, 카드 뒤집기) → `references/gsap.md` (`gsapTimeline`). 3D 제품·오브젝트 샷 → `references/three.md` + `engine-recipes.md` §7.1. 웹용 GSAP·three.js 예제(ScrollTrigger, rAF, Clock, `new WebGLRenderer`)는 그대로 쓰지 않고 이 두 문서의 변환표대로 바꿉니다.
