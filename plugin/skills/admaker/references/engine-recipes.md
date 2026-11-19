@@ -487,7 +487,10 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 | Effect / `clip.effects` | `clipType` effect + `transform.effect {effectKey, values}` / `transform.clipEffects` | 필터, 색보정·라이트 릭, 외곽선·입체·긴 그림자 모두 그대로 |
 | Audio·Video `volume` 곡선, `duck` | `volume`(곡선의 최댓값) + `volumeCurve`, `duck`(by는 앱 id `ep_<클립>`·`track_<트랙>`으로 바꿈) | 앱 오디오 속성 "음성 나올 때 낮추기"와 같은 값 |
 | zIndex | `transform.zIndex = 1,000,000 + z` | 앱이 트랙을 재배치해도 겹침 순서를 지키는 "명시 zIndex" 구간 |
-| **빠지는 것** | Backdrop, script 어댑터, three 커스텀 씬 | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
+| cornerPin·repeat·afterimage, Video holdAt·holdRanges, Image `style.animation` | `transform.engineFields` | 앱 #545 이후 저장·다시 열기에 남음. 서버 인코딩에서는 빠짐(§11) |
+| Backdrop(입자·종이 질감 포함), AudioSpectrum | `clipType` effect + `transform.engineClip`(클립 JSON에서 시간·위치·id 뺀 것) | AudioSpectrum `source`는 앱 id `ep_<클립>`으로 바꿈. 서버 인코딩에서는 빠짐 |
+| `settings.shutter` | `output.shutter` | 로컬·브라우저 내보내기 전용 |
+| **빠지는 것** | script 어댑터, three 커스텀 씬(model·morph·extrude 말고) | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
 
 - 변환 후 경고(△)를 읽고, 빠진 것이 화면에 중요하면 대체합니다.
 
@@ -598,3 +601,41 @@ Caption `caption.wordAnimation`(또는 `style.wordAnimation`)에 `{ "type": "hig
 ### 10.8 gl- 전환 143종
 
 `transitionKey: "gl-<이름>"`(예: `gl-cube`, `gl-doorway`, `gl-crosswarp`). 장면 성격이 바뀌는 한두 곳에서만 쓰고 나머지는 매체 안의 전환(transitions.md). 앱 서버 인코딩은 fade로 바뀌므로, 서버 mp4가 최종본이면 am-* 전환을 씁니다.
+
+## 11. 엔진 3.0.31 기능 (앱 #545 이후 저장·다시 열기에 남음)
+
+`validate.mjs`가 이름·값 범위를 확인하고 `to-admaker-import.mjs`가 앱 형식으로 바꿉니다(§9 표). 앱 서버 인코딩은 이 값들을 모르므로 **앱 미리보기·브라우저/로컬 내보내기에서만 보입니다**. 서버 mp4가 최종본이면 같은 그림을 키프레임·영상으로 굽습니다.
+
+### 11.1 색·기울이기·코너 핀 키프레임
+
+- keyframes stop에 색: `fill`(Shape), `color`(Text·Caption), `strokeColor`(Shape·Text), `tint`(Image·Video 곱하기 색, 흰색 = 원본). CSS 색 문자열, OKLab 보간(`params.colorSpace: "srgb"`로 바꿈). 예: `{ "0%": { "color": "#ff3b30" }, "100%": { "color": "#ffd60a" } }`.
+- `skewX`·`skewY`(°, −80–80): 기울어지며 들어오는 글자, 속도감 있는 카드.
+- 코너 핀: 클립에 `cornerPin: { "tl": [x, y], "tr": [x, y], "br": [x, y], "bl": [x, y] }`(클립 상자 비율 0–1, −1–2 허용). 폰·모니터·간판 화면에 이미지·영상을 끼울 때. 꼭짓점을 움직이려면 keyframes `pinTLx`·`pinTLy`…`pinBLy`(비율 차이값).
+
+### 11.2 렌즈 왜곡·책장 넘김·종이 질감·전환을 효과로
+
+- `lensDistort` `values: { mode: "barrel"|"pinch"|"sphere"|"cylinder"|"magnifier", amount −1–1, k2, centerX, centerY, radius, zoom 1–4, edge }`. 제품을 볼록하게 부풀리는 강조, 돋보기로 글자 확대. Effect 클립(장면 전체) 또는 `clip.effects`(그 클립만).
+- `pageCurl` `values: { progress 0–1, angle, radius, shadow, backColor, backOpacity }`. 카드·전단을 넘기는 연출. 장면 전환이면 전환 키 `am-page-curl`.
+- `paperOverlay` `values: { kind: 질감 이름(아래 Backdrop과 같음), intensity 0–1(기본 0.35), scale, seed }`. 아래 그림에 종이결을 얹습니다. 소재가 바래지 않게 intensity 0.2–0.4(Q11).
+- `transitionFx` `values: { transition: 전환 키(am-*·gl-* 포함), direction: "in"|"out", progress?, params? }`. 전환 셰이더로 클립 하나만 나타나거나 사라지게 합니다(장면 전환 없이 로고만 잉크 번짐으로 등장).
+- `clip.effects`는 이 효과들도 `startTime`·`duration`(μs)이 있어야 그려지고, 한 시점에 첫 항목 하나만 그려집니다.
+
+### 11.3 배경: 입자·종이 질감
+
+- `{ "type": "Backdrop", "src": "backdrop", "backdropType": "particles", "params": { "kind": "rain"|"snow"|"sparks"|"petals"|"confetti", "count", "speed", "size", "wind", "depth", "colors", "seed", "blend" } }`. 배경이 투명이라 위 트랙에 두면 오버레이입니다. 소재 위 눈·꽃잎·폭죽.
+- Paper Shaders 질감 `backdropType`: `paperTexture`·`fabric`·`watercolor`·`contour`·`waves`·`grainGradient`·`dotGrid`·`voronoi` (`colors` 최대 4, `speed`, `scale`, `density`, `params`). 모션 전용 씬(interludes.md)의 바닥에.
+
+### 11.4 시간: 반복·프레임 정지·잔상·모션블러
+
+- 클립 `repeat: { "every": μs, "count"? }`: 클립 안 애니메이션을 every마다 다시(로고 반짝임 반복).
+- Video `holdAt: μs`(원본 한 프레임으로 정지), `holdRanges: [{ "at": μs, "length": μs, "frame"? }]`(재생 중 멈췄다 이어서. 클립 길이가 length만큼 늘어난 값으로 timing을 적음).
+- 클립 `afterimage: { "count": 1–12, "gap": μs(30000–100000), "fade": 0–1, "scaleStep"? }`: 빠른 등장 뒤에 잔상.
+- `settings.shutter: { "angle": 180, "samples": 8 }`: 진짜 모션블러(렌더가 samples배 느려짐). 빠른 움직임이 많은 광고에만.
+
+### 11.5 그 밖
+
+- Image에 움직이는 GIF·APNG·WebP를 그대로 넣으면 재생됩니다. `style.animation: { playbackRate, loop, startFrame, holdLast }` 또는 `false`(첫 프레임만).
+- Shape `shapeType: "sparkle"`, `style: { points 3–12, inner 0.02–0.9, curve 0–1, rotation }`: 네 갈래 반짝임.
+- `{ "type": "AudioSpectrum", "src": "spectrum", "source": "<Audio 클립 id>", "style": "bars"|"radial"|"wave", "bands", "colors", "gap", "round", "smoothing" }`: 소리에 맞춰 움직이는 막대(샷 audio-viz-bars). 앱으로 넘겨도 남지만 서버 인코딩에서 빠지므로, 서버 mp4가 최종본이면 `audio-viz.mjs` 키프레임 방식을 씁니다.
+- three `extrude` 장면: `{ "type": "Adapter", "adapter": "three", "src": "three", "params": { "scene": "extrude", "text"|"svg"|"path", "depth", "bevel", "material": "matte"|"glossy"|"metal"|"candy", "colors", "spin", "tilt" } }`. three `model`의 `params.media { 슬롯: { src, kind } }` + `screenSlot { mesh, media }`로 3D 화면 메쉬에 영상을 재생합니다. 둘 다 앱에서 열립니다.
+- 투명 배경 내보내기: `node render/render.mjs project.json out/logo.mov --alpha prores|webm|png`.

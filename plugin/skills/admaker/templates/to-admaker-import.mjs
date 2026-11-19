@@ -5,7 +5,7 @@
 import fs from "node:fs";
 
 /** 앱 엔진에 내장된 three 장면. 그 밖의 커스텀 씬은 영상으로 구워 넣는다(bake). */
-const APP_THREE_SCENES = new Set(["model", "morph"]);
+const APP_THREE_SCENES = new Set(["model", "morph", "extrude"]); // extrude(글자·로고 입체)는 엔진 3.0.31
 
 const [inFile = "project.json", outFile = "admaker-import.json"] = process.argv.slice(2);
 const p = JSON.parse(fs.readFileSync(inFile, "utf8"));
@@ -21,7 +21,7 @@ const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "stroke
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)
 const AM_TRANSITION_XFADE = { "am-flash-streak": "fadewhite", "am-cover-flood": "circleclose", "am-zoom-through": "zoomin", "am-card-swap": "smoothleft", "am-push": "slideleft", "am-ink-bleed": "dissolve",
-  "am-cut-curve": "smoothleft", "am-zoom-blur": "zoomin", "am-rack-focus": "hblur", "am-light-leak": "fadewhite", "am-pixelate": "pixelize", "am-rgb-split": "wipeleft" };
+  "am-cut-curve": "smoothleft", "am-zoom-blur": "zoomin", "am-rack-focus": "hblur", "am-light-leak": "fadewhite", "am-pixelate": "pixelize", "am-rgb-split": "wipeleft", "am-page-curl": "fade" };
 // 트랙 행 순서를 바꿔도 클립 겹침 순서가 유지되도록 앱의 "명시 zIndex" 구간(≥ 1,000,000)으로 옮긴다
 const Z_BASE = 1_000_000;
 
@@ -48,6 +48,22 @@ function volumeToWire(c, wc) {
   if (c.duck && typeof c.duck === "object") duckTargets.push({ wc, duck: JSON.parse(JSON.stringify(c.duck)) });
 }
 const duckTargets = []; // by(클립 id·트랙 id)는 앱 id로 바꿔야 해서 모든 트랙을 옮긴 뒤 고친다
+
+// 엔진 3.0.31 클립 확장 — 앱(#545)은 transform.engineFields로 받아 저장·다시 열기에 남긴다(서버 인코딩에서는 빠짐).
+// cornerPin·repeat·afterimage는 모든 그림 클립, holdAt·holdRanges는 Video, style.animation(움직이는 GIF·APNG·WebP)은 Image
+function engineFieldsOf(c) {
+  const out = {};
+  for (const k of ["cornerPin", "repeat", "afterimage"]) if (c[k] && typeof c[k] === "object") out[k] = JSON.parse(JSON.stringify(c[k]));
+  if (c.type === "Video") {
+    if (Number.isFinite(Number(c.holdAt)) && c.holdAt !== null && Number(c.holdAt) >= 0) out.holdAt = Number(c.holdAt);
+    if (Array.isArray(c.holdRanges) && c.holdRanges.length) out.holdRanges = JSON.parse(JSON.stringify(c.holdRanges));
+  }
+  if (c.type === "Image" && c.style && (c.style.animation === false || (c.style.animation && typeof c.style.animation === "object"))) out.style = { animation: JSON.parse(JSON.stringify(c.style.animation)) };
+  return Object.keys(out).length ? out : null;
+}
+// 앱 EP에 대응 타입이 없는 엔진 클립(Backdrop 입자·종이 질감 등, AudioSpectrum) — 앱은 clipType effect + transform.engineClip(클립 JSON에서 시간·위치·id 뺀 것)으로 받는다
+const ENGINE_CLIP_OMIT = new Set(["id", "timing", "transform", "metadata", "display", "trim", "duration", "playbackRate", "zIndex", "animations", "effects", "groupId"]);
+const spectrumTargets = []; // AudioSpectrum source(엔진 클립 id)는 앱 id(ep_<이름>)로 바꾼다
 
 function animationsToWire(id, clip) {
   const out = [];
@@ -252,6 +268,14 @@ for (const track of ordered) {
         break;
       }
       case "Backdrop":
+      case "AudioSpectrum": {
+        const engineClip = {};
+        for (const [k, v] of Object.entries(c)) if (!ENGINE_CLIP_OMIT.has(k) && v !== undefined) engineClip[k] = JSON.parse(JSON.stringify(v));
+        wc = { ...base, clipType: "effect", source: "", transform: { ...baseTransform(c), engineClip } };
+        if (c.type === "AudioSpectrum" && typeof c.source === "string" && p.clips?.[c.source]) spectrumTargets.push({ id, engineClip });
+        warn(id, `${c.type}${c.backdropType ? ` "${c.backdropType}"` : ""}는 앱 미리보기·로컬 내보내기에서 보이고, 서버 인코딩에서는 빠집니다`);
+        break;
+      }
       case "Placeholder":
         warn(id, `${c.type} 클립은 앱이 받지 않아 뺐습니다 (룩 스택은 motion.mjs lookStack의 Image 클립을 쓰세요)`);
         skipped.add(id);
@@ -262,6 +286,8 @@ for (const track of ordered) {
         continue;
     }
     if (anim.length) wc.transform = { ...(wc.transform ?? {}), animation: anim };
+    const engineFields = engineFieldsOf(c);
+    if (engineFields) wc.transform = { ...(wc.transform ?? {}), engineFields };
     if (clipEffects.length && wc.clipType !== "effect") wc.transform = { ...(wc.transform ?? {}), clipEffects: JSON.parse(JSON.stringify(clipEffects)) };
     // 클립 그룹 — 앱은 멤버마다 transform._clipGroup { id, name, angle }으로 받아 그룹을 다시 만든다
     const gid = typeof c.groupId === "string" ? c.groupId.trim() : "";
@@ -301,6 +327,12 @@ for (const { wc, duck } of duckTargets) {
   wc.duck = duck;
 }
 
+// AudioSpectrum source: 엔진 클립 id → 앱 클립 id. 소리 클립이 빠졌으면 경고
+for (const { id, engineClip } of spectrumTargets) {
+  if (skipped.has(engineClip.source)) warn(id, `AudioSpectrum source "${engineClip.source}"가 빠져서 막대가 움직이지 않습니다`);
+  engineClip.source = `ep_${clipName(engineClip.source)}`;
+}
+
 // ③ 전환
 const transitions = [];
 for (const [id, c] of Object.entries(p.clips)) {
@@ -324,13 +356,20 @@ for (const [id, c] of Object.entries(p.clips)) {
   transitions.push({ id, type, duration: sec(c.timing?.duration ?? (c.timing?.display?.to - c.timing?.display?.from)), from: c.fromClipId ?? "", to: c.toClipId ?? "", mode, ...(engine ? { engine } : {}) });
 }
 
+// 서브프레임 모션블러(settings.shutter, 엔진 3.0.31) — 앱은 output.shutter로 받는다(로컬 내보내기 전용)
+function shutterOut() {
+  const angle = Number(S.shutter?.angle), samples = Math.round(Number(S.shutter?.samples));
+  if (!(angle > 0) || !(samples > 1)) return {};
+  return { shutter: { angle: Math.min(360, angle), samples: Math.min(32, samples) } };
+}
+
 const wire = {
   version: "1.0",
   track_type: "json_to_ffmpeg",
   inputs,
   tracks: wireTracks,
   transitions,
-  output: { width: W, height: H, framerate: FPS, format: "mp4", startPosition: 0, endPosition: sec(S.duration), fileName: p.name ?? "admaker-skill" },
+  output: { width: W, height: H, framerate: FPS, format: "mp4", startPosition: 0, endPosition: sec(S.duration), fileName: p.name ?? "admaker-skill", ...shutterOut() },
   admaker_meta: { creationMode: "studio", last_entry_mode: "studio" },
 };
 fs.writeFileSync(outFile, JSON.stringify(wire, null, 2));
