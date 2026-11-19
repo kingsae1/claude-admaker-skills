@@ -16,7 +16,7 @@ const warnings = [];
 const warn = (id, m) => warnings.push(`△ ${id}: ${m}`);
 
 // 앱이 그대로 엔진 모션으로 넘기는 type (그 밖의 type은 앱이 버린다)
-const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "lineBoil", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline"]);
+const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "lineBoil", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline", "followPath"]);
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)
@@ -38,6 +38,16 @@ function inputFor(src, type, extra = {}) {
   inputBySrc.set(key, name);
   return name;
 }
+
+// 볼륨(엔진 3.0.30): 숫자 또는 곡선 [[초, 게인], ...]. 앱 EP volume은 숫자만 받으므로 곡선의 가장 큰 게인을 쓰고
+// 곡선은 volumeCurve, 덕킹 { by, amount, attack, release }는 duck 확장 필드로 보낸다 (앱 encodingPayloadAdmaker/volume.ts와 같은 형식)
+function volumeToWire(c, wc) {
+  const curve = Array.isArray(c.volume) ? c.volume.filter((pt) => Array.isArray(pt) && pt.length >= 2).map(([t, g]) => [Number(t), Number(g)]).filter(([t, g]) => Number.isFinite(t) && Number.isFinite(g)) : null;
+  wc.volume = curve?.length ? Math.max(...curve.map(([, g]) => g)) : Number.isFinite(c.volume) ? c.volume : 1;
+  if (curve?.length) wc.volumeCurve = curve;
+  if (c.duck && typeof c.duck === "object") duckTargets.push({ wc, duck: JSON.parse(JSON.stringify(c.duck)) });
+}
+const duckTargets = []; // by(클립 id·트랙 id)는 앱 id로 바꿔야 해서 모든 트랙을 옮긴 뒤 고친다
 
 function animationsToWire(id, clip) {
   const out = [];
@@ -80,7 +90,21 @@ function textTransform(clip) {
   const weight = Number(s._weight ?? (s.fontWeight === "bold" ? 700 : s.fontWeight));
   if (weight >= 600 && !/-(\w+)$/.test(String(s.fontFamily ?? ""))) t.isBold = true;
   if (s.fontStyle === "italic") t.isItalic = true;
-  if (s.background) t.boxColor = String(s.background);
+  // 글자 배경: 문자열 색은 boxColor, 엔진 3.0.30 객체 { color, opacity, borderRadius, paddingX, paddingY, mode: "box"|"perLine" }는
+  // 서버 렌더용 boxColor(색) + 앱 확장 키 textBackground로 보낸다 (앱 #531과 같은 형식. 예전에는 "[object Object]"로 깨짐)
+  if (s.background && typeof s.background === "object") {
+    const bg = {};
+    if (typeof s.background.color === "string" && s.background.color) { bg.color = s.background.color; t.boxColor = bg.color; }
+    for (const k of ["opacity", "borderRadius", "paddingX", "paddingY"]) if (Number.isFinite(Number(s.background[k])) && s.background[k] !== null && s.background[k] !== "") bg[k] = Number(s.background[k]);
+    if (s.background.mode === "box" || s.background.mode === "perLine") bg.mode = s.background.mode;
+    if (Object.keys(bg).length) t.textBackground = bg;
+  } else if (s.background) t.boxColor = String(s.background);
+  // 자동 맞춤(style.autoFit { mode: "shrink"|"fill", maxLines, minFontSize, maxFontSize, step }) → transform.textAutoFit
+  if (s.autoFit && (s.autoFit.mode === "shrink" || s.autoFit.mode === "fill")) {
+    const fit = { mode: s.autoFit.mode };
+    for (const k of ["maxLines", "minFontSize", "maxFontSize", "step"]) if (Number.isFinite(Number(s.autoFit[k])) && s.autoFit[k] != null) fit[k] = Number(s.autoFit[k]);
+    t.textAutoFit = fit;
+  }
   if (s.stroke && Number(s.stroke.width) > 0) { t.textStrokeWidth = Number(s.stroke.width); if (s.stroke.color) t.textStrokeColor = String(s.stroke.color); }
   if (s.shadow) t.textShadow = s.shadow;
   // 글자 단위 애니메이션·스타일은 앱의 text_segment 렌더러가 transform에서 읽는다
@@ -129,6 +153,7 @@ function splitLanes(clipIds) {
 }
 
 let row = 0;
+const appTrackIds = new Map(); // 엔진 트랙 id → 앱 트랙 id들(레인마다 하나, 앱은 "track_<EP 트랙 이름>")
 for (const track of ordered) {
   const lanes = track.type === "Audio" ? [track.clipIds] : splitLanes(track.clipIds);
   const trackName = trackNameFor(track);
@@ -165,13 +190,14 @@ for (const track of ordered) {
         if (kind === "video") {
           wc.sourceStartOffset = sec(c.timing?.trim?.from);
           wc.usesLinkedAudio = c.audio !== false;
-          wc.volume = c.volume ?? 1;
+          volumeToWire(c, wc);
         }
         break;
       }
       case "Audio": {
         const source = inputFor(c.src, "audio", { duration: sec(c.timing?.duration) });
-        wc = { ...base, clipType: "audio", source, volume: c.volume ?? 1, sourceStartOffset: sec(c.timing?.trim?.from) };
+        wc = { ...base, clipType: "audio", source, volume: 1, sourceStartOffset: sec(c.timing?.trim?.from) };
+        volumeToWire(c, wc);
         const fi = c.fadeIn?.duration ?? c.timing?.fadeIn?.duration, fo = c.fadeOut?.duration ?? c.timing?.fadeOut?.duration;
         if (fi) wc.fadeInSec = fi / 1000; // 엔진 페이드는 ms
         if (fo) wc.fadeOutSec = fo / 1000;
@@ -186,7 +212,9 @@ for (const track of ordered) {
         const words = cap.words ?? [];
         const t = textTransform(c);
         Object.assign(t, { _isCaption: true, _captionWords: words, _captionColors: cap.colors, _captionPositioning: cap.positioning, _captionWordsPerLine: c.wordsPerLine ?? "multiple" });
-        if (cap.wordAnimation) warn(id, "Caption wordAnimation(말하는 단어 확대)은 앱에서 보존되지 않습니다");
+        // 말하는 단어 확대·강조(wordAnimation, "highlight"는 엔진 3.0.30+) — 앱은 transform._captionWordAnimation으로 받는다
+        const wordAnimation = cap.wordAnimation ?? c.style?.wordAnimation;
+        if (wordAnimation) t._captionWordAnimation = JSON.parse(JSON.stringify(wordAnimation));
         wc = { ...base, clipType: "text_segment", source: "", content: words.length ? words.map((w) => w.text).join(" ") : String(c.text ?? ""), transform: t };
         break;
       }
@@ -251,6 +279,7 @@ for (const track of ordered) {
   let name = trackName;
   if (lane > 0) { name = `${trackName}_l${lane + 1}`; while (usedTrackNames.has(name)) name += "_"; usedTrackNames.add(name); }
   wireTracks.push({ name, type, studioRow: row++, clips });
+  appTrackIds.set(track.id, [...(appTrackIds.get(track.id) ?? []), `track_${name}`]);
   }
 }
 
@@ -265,17 +294,27 @@ for (const { id, wc, matte } of matteTargets) {
   wc.transform = { ...(wc.transform ?? {}), matte: out };
 }
 
+// 덕킹 by: 엔진 클립 id → 앱 클립 id(ep_<이름>), 엔진 트랙 id → 앱 트랙 id(레인 모두). 그 밖(트랙 이름)은 그대로
+for (const { wc, duck } of duckTargets) {
+  const by = (Array.isArray(duck.by) ? duck.by : [duck.by]).filter((v) => typeof v === "string" && v);
+  duck.by = by.flatMap((ref) => (p.clips?.[ref] ? (skipped.has(ref) ? [] : [`ep_${clipName(ref)}`]) : appTrackIds.get(ref) ?? [ref]));
+  wc.duck = duck;
+}
+
 // ③ 전환
 const transitions = [];
 for (const [id, c] of Object.entries(p.clips)) {
   if (c.type !== "Transition") continue;
   if (skipped.has(c.fromClipId) || skipped.has(c.toClipId)) { warn(id, "전환의 앞뒤 클립이 빠져서 전환도 뺐습니다"); continue; }
   const key = c.transitionKey ?? "fade";
-  const type = TRANSITION_TO_WIRE[key] ?? AM_TRANSITION_XFADE[key] ?? String(key).toLowerCase();
+  // gl-* (gl-transitions 팩 143개, 엔진 3.0.30) — 앱이 등록해 미리보기·브라우저 내보내기에 그대로 보이고, 서버 인코딩은 fade
+  const isGl = /^gl-/.test(key);
+  const type = TRANSITION_TO_WIRE[key] ?? AM_TRANSITION_XFADE[key] ?? (isGl ? "fade" : String(key).toLowerCase());
   // 앱은 transitions[].engine { key, values, easing }을 엔진 전환 키로 그대로 쓴다(앱 미리보기·브라우저 내보내기). type은 서버 인코딩(xfade)용 이름
   const values = c.values && typeof c.values === "object" && Object.keys(c.values).length ? c.values : null;
   const engine = !TRANSITION_TO_WIRE[key] || values || c.easing ? { key, ...(values ? { values } : {}), ...(c.easing ? { easing: c.easing } : {}) } : null;
   if (/^hf-/.test(key)) warn(id, `전환 "${key}"(셰이더 팩)는 앱에 등록되어 있지 않아 앱에서는 fade로 보입니다. 앱으로 넘길 광고는 am-* 전환·트랙 매트·마스크 전환을 쓰세요 (transitions.md)`);
+  else if (isGl) warn(id, `전환 "${key}"(gl- 팩)는 앱 미리보기·브라우저 내보내기에서 그대로 보이고, 서버 인코딩에서만 fade로 바뀝니다`);
   else if (AM_TRANSITION_XFADE[key]) warn(id, `전환 "${key}"는 앱 미리보기·브라우저 내보내기에서 그대로(values·easing 포함) 보이고, 서버 인코딩에서만 "${type}"(xfade)로 바뀝니다`);
   else if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 엔진 키 그대로 넘깁니다. 앱 전환 탭에 있는 이름인지 확인하세요`);
   // 앱과 같은 규칙: 두 클립이 겹치면 crossover, 아니면 freeze_overlay (engine-recipes §5.2)
