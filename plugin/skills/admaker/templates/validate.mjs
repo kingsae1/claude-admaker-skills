@@ -4,6 +4,7 @@
 // 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준, 이징·followPath·파라미터 효과(colorGrade·lightLeak·outline·bevel·longShadow)는 3.0.30까지. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
+import { paramRefs } from "./params.mjs";
 import { appTransitionWindow, autoZSign, checkSeams, sampleClip } from "./seams.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold", "followPath"]);
@@ -75,6 +76,9 @@ const warn = (id, m) => warnings.push(`△ ${id}: ${m}`);
 const entranceStarts = new Map(); // 입장 시작 프레임 → 클립 id들 (R7)
 const fontUrls = new Map(); // fontFamily → Set(fontUrl) (B5)
 const dur = p.settings?.duration ?? Infinity;
+// 템플릿 파라미터 "{{이름}}"이 남아 있으면 엔진·앱이 문자 그대로 읽는다 → params.mjs applyParams 먼저 (references/subtitles-params.md §2)
+const leftRefs = paramRefs(p);
+if (leftRefs.length) err("params", `"{{${leftRefs.join("}}\", \"{{")}}}" 참조가 남아 있음 → node params.mjs ${file} [values.json] --out <새 파일>로 값을 넣은 뒤 검사·렌더`);
 
 for (const [id, c] of Object.entries(p.clips ?? {})) {
   const d = c.timing?.display;
