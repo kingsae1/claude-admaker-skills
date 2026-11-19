@@ -4,7 +4,7 @@ name: hand-drawn-emphasis
 슬롯: 상승부, 엔드카드 (다른 샷 위에 얹는 샷)
 에너지: 중
 길이: 0.5–0.8초 그리기 + 대상이 끝날 때까지 유지
-엔진: Shape `path` + stroke + `strokeDraw` (`templates/draw.mjs` `annotationPath`/`annotationBox`, MCP `draw_annotation`)
+엔진: Shape `path` + stroke + `strokeDraw` (`templates/draw.mjs` `annotationPath`/`annotationBox`/`annotationForLines`, MCP `draw_annotation` clipId + text)
 ---
 
 ## 의도
@@ -32,6 +32,7 @@ name: hand-drawn-emphasis
 - 선 굵기만큼 클립 상자를 넓히지 않으면 선 바깥쪽이 잘립니다(`draw_annotation`은 자동 처리).
 - `strokeDraw`의 `fill`은 `"none"`으로 둡니다. 기본값 `"after"`는 열린 선에서 의미가 없고 그리기를 70% 지점에서 끝냅니다.
 - 대상이 움직이는 동안(입장 중) 그리면 표시가 대상을 놓칩니다. 반드시 정지한 뒤 그립니다.
+- 글자 일부를 강조할 때 상자를 글자 수로 어림하면 한글에서 선이 단어 중간에 끝납니다. MCP는 `draw_annotation` `clipId` + `text`(실제 글자 자리를 잼, 줄바꿈되면 줄마다), 스킬은 `annotationForLines`(drawing.md "대상 상자는 실제 글자 자리로")를 씁니다.
 - 검증 전 값입니다. 첫 광고에서 렌더로 확인하고 `검증: <엔진 버전>`을 붙입니다.
 
 ## 참조 구현

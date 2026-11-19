@@ -208,7 +208,13 @@ export function roughenPath(cmds, { amount = 2, step = 12, seed = 1 } = {}) {
 export const ANNOTATION_KINDS = ['underline', 'doubleUnderline', 'strike', 'circle', 'box', 'arrow', 'check', 'cross', 'bracket'];
 
 /** 손그림 강조 패스 — width×height 상자 안 좌표(viewBox [0,0,w,h]) */
-export function annotationPath(kind, width, height, { seed = 7, roughness } = {}) {
+export function annotationPath(kind, width, height, opts = {}) {
+  const { cmds, closed } = annotationCmds(kind, width, height, opts);
+  return { path: pathToSvg(cmds), closed };
+}
+
+/** annotationPath의 명령 배열 (옮기거나 이어 붙일 때) */
+export function annotationCmds(kind, width, height, { seed = 7, roughness } = {}) {
   const w = Math.max(1, width);
   const h = Math.max(1, height);
   const rand = seededRandom(seed);
@@ -291,7 +297,7 @@ export function annotationPath(kind, width, height, { seed = 7, roughness } = {}
       cmds = line([0, j(h * 0.55), w * 0.35, j(h * 0.45), w * 0.7, j(h * 0.5), w, j(h * 0.4)]);
   }
   const out = amount > 0 ? roughenPath(cmds, { amount: amount * 0.6, step: Math.max(8, Math.min(w, h) * 0.25), seed }) : cmds;
-  return { path: pathToSvg(out), closed: kind === 'box' };
+  return { cmds: out, closed: kind === 'box' };
 }
 
 /**
@@ -320,6 +326,45 @@ export function annotationBox(kind, target, { pad } = {}) {
     default:
       return { x: x - p, y: y - p, width: w + p * 2, height: h + p * 2 };
   }
+}
+
+/** 줄마다 따로 긋는 강조 (나머지는 줄 상자 전체를 감싼다) */
+export const PER_LINE_ANNOTATIONS = ['underline', 'doubleUnderline', 'strike'];
+
+function unionRect(rects) {
+  const x0 = Math.min(...rects.map((r) => r.x));
+  const y0 = Math.min(...rects.map((r) => r.y));
+  const x1 = Math.max(...rects.map((r) => r.x + r.width));
+  const y1 = Math.max(...rects.map((r) => r.y + r.height));
+  return { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
+}
+
+function shiftCmds(cmds, dx, dy) {
+  return cmds.map((c) => {
+    if (c.op === 'Z') return c;
+    const o = { ...c, x: c.x + dx, y: c.y + dy };
+    if ('x1' in c) Object.assign(o, { x1: c.x1 + dx, y1: c.y1 + dy });
+    if ('x2' in c) Object.assign(o, { x2: c.x2 + dx, y2: c.y2 + dy });
+    return o;
+  });
+}
+
+/**
+ * 실제 글자 자리(줄마다 상자, 캔버스 px — MCP measure_text_range의 lines)에 맞춘 강조.
+ * underline·doubleUnderline·strike는 줄마다 그 줄 글자 폭만큼 긋고 한 패스로 이어서 strokeDraw가 윗줄부터 끝줄 끝까지 그린다.
+ * circle·box·bracket·arrow·check·cross는 줄 상자 전체를 감싸는 상자 하나를 대상으로 한다.
+ * 돌려주는 box가 클립 상자이고 path는 viewBox [0, 0, box.width, box.height] 좌표다.
+ */
+export function annotationForLines(kind, lines, { pad, seed = 7, roughness } = {}) {
+  const rects = (lines ?? []).filter((l) => l && l.width > 0 && l.height > 0);
+  if (!rects.length) throw new Error('강조할 글자 상자가 없습니다.');
+  const targets = PER_LINE_ANNOTATIONS.includes(kind) ? rects : [unionRect(rects)];
+  const boxes = targets.map((t) => annotationBox(kind, t, { pad }));
+  const box = unionRect(boxes);
+  const cmds = boxes.flatMap((b, i) =>
+    shiftCmds(annotationCmds(kind, b.width, b.height, { seed: seed + i * 13, roughness }).cmds, b.x - box.x, b.y - box.y),
+  );
+  return { box, path: pathToSvg(cmds), closed: kind === 'box', lines: targets.length };
 }
 
 /** SVG d의 대략적인 범위 — 절대 좌표 M/L/C/Q/T/S/Z만 쓴 패스(직접 만든 패스)일 때만 맞다 */
