@@ -59,16 +59,20 @@ const fit = ([sw, sh] = [W, H]) => { // 레터박스(contain): 소재를 자르�
 };
 let footageFills = FOOTAGE.length > 0;
 for (const [i, f] of FOOTAGE.entries()) {
-  const box = f.fit === "contain" ? fit(f.size) : cover(f.size);
+  // box: 직접 정한 화면 자리(리캡 띠 자르기처럼 원본을 키워 가장자리를 화면 밖으로 밀 때, recap.mjs edges)
+  const box = f.box ? { ...f.box, fills: f.box.x <= 0 && f.box.y <= 0 && f.box.x + f.box.width >= W && f.box.y + f.box.height >= H } : f.fit === "contain" ? fit(f.size) : cover(f.size);
   footageFills &&= box.fills;
   const dur = f.to - f.from;
   const still = f.type === "Image";
+  // playbackRate(0.25–4): 원본 구간 = 타임라인 길이 × 속도 (engine-recipes §1)
+  const rate = still ? 1 : Math.min(4, Math.max(0.25, Number(f.playbackRate ?? 1) || 1));
   addClip(`footage_${i}`, {
-    type: f.type, name: `footage-${i}`, src: f.src,
-    timing: { display: { from: us(f.from), to: us(f.to) }, duration: us(dur), playbackRate: 1, ...(still ? {} : { trim: { from: us(f.trimFrom ?? 0), to: us((f.trimFrom ?? 0) + dur) } }) },
+    type: f.type, name: f.name ?? `footage-${i}`, src: f.src,
+    timing: { display: { from: us(f.from), to: us(f.to) }, duration: us(dur), playbackRate: rate, ...(still ? {} : { trim: { from: us(f.trimFrom ?? 0), to: us((f.trimFrom ?? 0) + dur * rate) } }) },
     transform: { x: box.x, y: box.y, width: box.width, height: box.height, angle: 0, opacity: 1, zIndex: 2 + Math.min(i, 7) },
     // kenBurns: false = 멈춘 프레임(정지 컷 transition-beat-freeze 등)이라 천천히 움직이면 안 되는 스틸
-    ...(still ? { animations: f.kenBurns === false ? [] : [kenBurns(dur, { shotIndex: i })] } : { volume: f.volume ?? 0 }),
+    // 영상의 animations(리캡 카메라 줌 등)와 volume 곡선 [[초, 게인], ...]은 그대로 넣는다
+    ...(still ? { animations: f.animations ?? (f.kenBurns === false ? [] : [kenBurns(dur, { shotIndex: i })]) } : { volume: f.volume ?? 0, ...(f.animations?.length ? { animations: f.animations } : {}) }),
   }, "footage", f.type);
 }
 if (!FOOTAGE.length) console.warn("△ FOOTAGE가 비어 있음: 이 스킬의 광고는 사용자 영상·이미지 위에 그래픽을 얹는 구조입니다 (SKILL.md)");

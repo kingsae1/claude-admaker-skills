@@ -202,6 +202,28 @@
 8. BGM(`ai.bgm.generate`, 장르별 영문 프롬프트) + 덕킹 + 효과음(시간 점프, 대사 강조 앞 히트) → 전환·줌은 6번에서 넣은 것을 미리보기로 확인.
 9. 검수(9번) → 사용자가 Studio에서 미리보고 내보냄. 썸네일 프레임 후보 2–3개와 제목 후보 3개를 같이 줍니다.
 
+### 8.1 앱 없이(로컬) 진행
+
+admaker 앱이 없을 때는 `templates/recap.mjs`(ffmpeg·ffprobe만 필요)로 같은 단계를 밟고, 결과를 `timeline.mjs`의 `FOOTAGE`·`SHOTS`에 넣어 `build.sh`로 만듭니다. 계산은 앱 MCP 도구와 같은 규칙(`recap-core.mjs`)이라 장면·띠·배치 결과가 같습니다. 원본은 프로젝트 폴더에 두고 `src`를 상대 경로로 씁니다(렌더할 때는 `render/` 아래에도 둠).
+
+| 단계 | 앱 MCP | 로컬 |
+|---|---|---|
+| 대사 뽑기 | `transcribe_clip` | `node recap.mjs transcribe 자막.srt`(또는 .vtt). 자막이 없으면 whisper JSON(`transcribe 결과.json`), whisper CLI가 깔려 있으면 `transcribe 원본.mp4 --whisper small`. 셋 다 없으면 사용자에게 자막 파일을 받습니다 |
+| 장면 나누기 | `detect_scenes` | `node recap.mjs scenes 원본.mp4 --out scenes.json` (`--threshold`·`--min-shot`·`--from`·`--to`). `flags`의 `dark`·`short`는 어림값이라 §1.1 판단은 시트로 직접 |
+| 장면 보기 | `view_shot_sheet` | `node recap.mjs sheet 원본.mp4 --shots scenes.json --out sheet.jpg`(36칸씩 나눠 저장) 또는 `--at 12.5,40,88` → 이미지를 열어 봄 |
+| 로고·자막 띠 | `detect_edge_overlays` | `node recap.mjs edges 원본.mp4 --size 1080x1920 --preview edges.jpg` → 미리보기 확인 후 `bands`를 계획의 `crop`에 |
+| 배치 | `place_story_shots` | `plan.json`에 `{ src, size, shots: [스토리 순서의 { from, to, label, stage, keyLine?, camera?, transitionOut?, speed? }], crop? }` → `node recap.mjs place plan.json --dry-run`으로 `effectSuggestions` 검토 → `node recap.mjs place plan.json [--auto-effects] --out placed.json` |
+| 목소리 일관성 | `check_voice_consistency` | `node recap.mjs voice lines.json`(`[{ file, text, voiceId? }]`) → 음량·속도는 줄마다 주는 `fix.ffmpeg` 명령으로 맞추고, `regenerate` 줄은 확인받고 다시 생성 |
+
+`place` 결과를 넣는 법:
+
+- `footage` → `FOOTAGE`(이미 다른 소재가 앞에 있으면 계획에 `footageOffset: 그 개수`). 항목마다 `trimFrom`·`playbackRate`·`volume`(대사 강조 곡선)·`animations`(카메라 줌)·`box`(띠 자르기)가 들어 있고 `build-project.mjs`가 그대로 씁니다.
+- 띠 자르기는 crop 필드 대신 원본을 키워 띠를 화면 밖으로 미는 `box`라서, 엔진 렌더와 앱 가져오기에서 똑같이 보입니다. 원본 비율을 그대로 두는 `contain`은 로컬에서 쓰지 않습니다.
+- `shots` → `SHOTS`. 장면 전환은 `transition-shader` 카드로, 두 장면을 전환 길이만큼 겹쳐 둡니다(engine-recipes §5.2). 원본 앞뒤 여유가 없으면 그 전환은 컷으로 두고 `warnings`에 적습니다. 앱 전환 키는 엔진 키로 바꿉니다(`fadeIn` → `fade`, `zoomIn` → `am-zoom-blur`, `slideLeft` → `am-push`, `wipeLeft` → `gl-wipe-left`).
+- 배우 대사 자막은 `recap-keyline` 카드(따옴표·노랑·굵게, 아래쪽 2줄 안)로 들어갑니다. 내레이션은 결과의 `keyLines`(타임라인 초) 구간을 비웁니다.
+- `DURATION`은 결과의 `totalSec`. 리캡은 박에 맞추지 않으므로 `build-project`의 "박에서 벗어남" 경고와 `validate`의 밀도·같은 전환 반복 경고는 무시해도 됩니다(이 문서 규칙이 우선).
+- 내레이션·BGM·자막은 광고와 같은 로컬 경로(narration.md, sfx.md, `subtitles.mjs`)를 씁니다.
+
 ## 9. 검수 체크리스트
 
 - [ ] 첫 4초 안에 가장 센 장면과 질문이 있다.
