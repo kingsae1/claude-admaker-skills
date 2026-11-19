@@ -33,6 +33,44 @@ window.renderProject = async (project) => {
   } finally { exporter.dispose(); }
 };
 
+// 투명 배경(--alpha): 엔진은 프레임을 straight 알파 RGBA PNG로만 넘기고, 인코딩은 render.mjs가 ffmpeg로 한다.
+let alpha = null;
+window.alphaOpen = async (project) => {
+  const { width, height, fps = 30 } = project.settings;
+  const exporter = await Exporter.create({ width, height, fps, transparent: true, audio: false });
+  if (typeof exporter.framePNG !== "function") {
+    exporter.dispose();
+    throw new Error("이 엔진 버전에는 투명 내보내기(framePNG)가 없습니다. @admaker/engine을 올려 주세요");
+  }
+  await exporter.load(project);
+  const frames = Math.max(1, Math.ceil((exporter.durationOf() * fps) / 1e6 - 1e-6));
+  alpha = { exporter, fps, project };
+  return { frames, fps };
+};
+window.alphaFrame = async (i) => {
+  const blob = await alpha.exporter.framePNG(Math.round((i * 1e6) / alpha.fps));
+  return toBase64(new Uint8Array(await blob.arrayBuffer()));
+};
+// 오디오만 따로 (영상 트랙 없이 width/height 0). 소리 나는 클립이 없거나 실패하면 null.
+window.alphaAudio = async () => {
+  const clips = Object.values(alpha.project.clips ?? {});
+  if (!clips.some((c) => c?.type === "Audio" || c?.type === "Video")) return null;
+  const ex = await Exporter.create({ width: 0, height: 0, audio: true, format: "mp4" });
+  try {
+    await ex.load(alpha.project);
+    const reader = ex.export().getReader();
+    const parts = [];
+    for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); }
+    const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+    let o = 0; for (const p of parts) { out.set(p, o); o += p.length; }
+    return out.length ? toBase64(out) : null;
+  } catch (e) {
+    console.warn("오디오 없이 내보냅니다:", e?.message ?? e);
+    return null;
+  } finally { ex.dispose(); }
+};
+window.alphaClose = () => { alpha?.exporter.dispose(); alpha = null; };
+
 window.captureStills = async (project, timesSec) => {
   const { width, height, fps = 30 } = project.settings;
   const canvas = document.createElement("canvas");
