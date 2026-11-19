@@ -7,7 +7,9 @@ import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 import { paramRefs } from "./params.mjs";
 import { appTransitionWindow, autoZSign, checkSeams, sampleClip } from "./seams.mjs";
 
-const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold", "followPath"]);
+const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold", "followPath",
+  // 텍스트 모션 (엔진 3.0.33+, admaker-plugin PR #89): 해독·타자 커서·사인 웨이브
+  "scramble", "typewrite", "charWave"]);
 const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing",
   // 엔진 3.0.31: 기울이기(°) · 코너 핀 꼭짓점 이동(클립 상자 비율 차이값, clip.cornerPin에 더함)
   "skewX", "skewY", "pinTLx", "pinTLy", "pinTRx", "pinTRy", "pinBRx", "pinBRy", "pinBLx", "pinBLy"]);
@@ -56,9 +58,9 @@ function checkGsapTimeline(id, a) {
 }
 const SHAPE_ONLY = new Set(["strokeDraw"]);
 // paint 키: Shape(fillColor·strokeColor·strokeWidth·borderRadius·fill, pie는 startAngle·endAngle·innerRadius),
-// Text(color·strokeColor·strokeWidth·letterSpacing + 가변 폰트 축 wght·wdth·… 4글자 태그, 엔진 3.0.25+)
+// Text(color·strokeColor·strokeWidth·letterSpacing + 가변 폰트 축 wght·wdth·… 4글자 태그, 엔진 3.0.25+) · 돌출 extrude·extrudeAngle·extrudeScale (style.extrude가 있을 때)
 const PAINT_SHAPE = new Set(["fillColor", "strokeColor", "strokeWidth", "borderRadius", "fill", "startAngle", "endAngle", "innerRadius", "easing"]);
-const PAINT_TEXT = new Set(["color", "strokeColor", "strokeWidth", "letterSpacing", "fontWeight", "fontWidth", "fontSlant", "opticalSize", "easing"]);
+const PAINT_TEXT = new Set(["color", "strokeColor", "strokeWidth", "letterSpacing", "fontWeight", "fontWidth", "fontSlant", "opticalSize", "extrude", "extrudeAngle", "extrudeScale", "easing"]);
 const AXIS_TAG = /^(?:[a-z]{4}|[A-Z]{4})$/;
 const FILTERS = new Set(["adjustment", "advancedBloom", "backdropBlur", "bloom", "colorMap", "colorOverlay", "convolution", "dot", "dropShadow", "glitch", "glow", "godray", "grayscale", "hslAdjustment", "kawaseBlur", "motionBlur", "oldFilm", "pixelate", "radialBlur", "reflection", "rgbSplit", "tiltShift"].map((n) => `${n}Filter`));
 // 엔진 3.0.30 파라미터 효과: Effect 클립(아래 레이어 전체)은 colorGrade·lightLeak, clip.effects(이 클립만)는 outline·bevel·longShadow·colorGrade (engine-recipes §10)
@@ -121,6 +123,8 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (!MOTION_TYPES.has(a.type)) err(id, `모르는 모션 type "${a.type}"`);
     if (SHAPE_ONLY.has(a.type) && c.type !== "Shape") err(id, `${a.type}는 Shape 전용`);
     if (a.type === "countUp" && c.type !== "Text") err(id, "countUp은 Text 전용");
+    if (["scramble", "typewrite", "charWave"].includes(a.type) && !["Text", "Caption"].includes(c.type)) err(id, `${a.type}은 Text 전용`);
+    if (["scramble", "typewrite", "charWave", "countUp"].includes(a.type) && (c.style?.characterAnimation ?? []).length) warn(id, `${a.type}와 characterAnimation을 한 클립에 같이 쓰면 글자 모션만 그려집니다 (text_segment 렌더러). 클립을 나누세요`);
     if (a.type === "followPath") {
       const pd = a.params?.d;
       if (!pd || !/^\s*[Mm]/.test(String(pd))) err(id, "followPath에 params.d(SVG 경로, M으로 시작) 없음");

@@ -3,6 +3,7 @@
 import { Exporter, Preview, registerScript, registerAdmakerTransitions } from "@admaker/engine";
 import "@admaker/engine/adapters/lottie";
 import { registerThreeScene } from "@admaker/engine/adapters/three";
+import { withCharacterAnimation } from "./char-anim.js"; // 글자 단위 애니메이션 → text_segment 렌더러
 
 // script 어댑터: 프로젝트 scripts/*.js 를 같은 이름으로 등록 (admaker 앱에도 같은 이름으로 등록해야 함)
 const scripts = import.meta.glob("../scripts/*.js", { eager: true });
@@ -18,6 +19,7 @@ const toBase64 = (bytes) => {
 };
 
 window.renderProject = async (project) => {
+  project = await withCharacterAnimation(project);
   const { width, height, fps = 30, bitrate = 8e6 } = project.settings;
   if (!(await Exporter.isSupported({ width, height, bitrate }))) throw new Error("이 브라우저는 WebCodecs 인코딩을 지원하지 않습니다");
   const exporter = await Exporter.create({ width, height, fps, bitrate, format: "mp4", audio: true });
@@ -36,6 +38,7 @@ window.renderProject = async (project) => {
 // 투명 배경(--alpha): 엔진은 프레임을 straight 알파 RGBA PNG로만 넘기고, 인코딩은 render.mjs가 ffmpeg로 한다.
 let alpha = null;
 window.alphaOpen = async (project) => {
+  project = await withCharacterAnimation(project);
   const { width, height, fps = 30 } = project.settings;
   const exporter = await Exporter.create({ width, height, fps, transparent: true, audio: false });
   if (typeof exporter.framePNG !== "function") {
@@ -72,6 +75,7 @@ window.alphaAudio = async () => {
 window.alphaClose = () => { alpha?.exporter.dispose(); alpha = null; };
 
 window.captureStills = async (project, timesSec) => {
+  project = await withCharacterAnimation(project);
   const { width, height, fps = 30 } = project.settings;
   const canvas = document.createElement("canvas");
   document.body.appendChild(canvas);
