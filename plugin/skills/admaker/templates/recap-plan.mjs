@@ -1,5 +1,5 @@
 // 줄거리 요약(리캡) 기획 검사: 원작 시간순 사건표(events)와 영상 서술순 설계(beats)를 따로 적고,
-// 궁금증 설계 규칙(references/recap-highlight.md §2, 쇼츠는 references/recap-shorts.md)을 지켰는지 본다.
+// 규칙을 지켰는지 본다. mode: full(궁금증 설계형, references/recap-highlight.md §2) · chrono(시간순 해설형, references/recap-chrono.md) · shorts(references/recap-shorts.md).
 // 순수 모듈 + CLI(파일·네트워크 없음, 결정적).
 //
 //   checkRecapPlan(plan) → { ok, errors, warnings, order, questions, stats }
@@ -17,6 +17,10 @@ import { fileURLToPath } from "node:url";
 export const FULL_STAGES = Object.freeze(["hook", "setup", "inciting", "escalation", "twist", "payoff", "cliffhanger"]);
 /** 쇼츠 단계 */
 export const SHORTS_STAGES = Object.freeze(["hook", "context", "dialogue", "commentary", "payoff"]);
+/** 시간순 해설형 단계 (references/recap-chrono.md) — 맨 앞 짧은 hook 예고는 선택, twist는 여러 번 */
+export const CHRONO_STAGES = Object.freeze(["hook", "intro", "incident", "sequence", "conflict", "twist", "ending", "outro"]);
+/** 시간순 해설형 장면 잇는 말 — 문장 맨 앞 */
+export const CONNECTIVES = Object.freeze(["그때", "한편", "그런데", "그렇게", "이제", "다음 날", "다음날", "결국", "마침내", "알고 보니", "사실", "하지만", "그러던 중", "그 사이", "얼마 후", "그날 밤"]);
 /** 내레이션 역할 — 한 문장에 하나 */
 export const NARRATION_ROLES = Object.freeze({
   situation: "상황 설명 — 장면을 빠르게 이해시킴",
@@ -26,7 +30,10 @@ export const NARRATION_ROLES = Object.freeze({
   twist: "반전 강조 — 앞 장면의 의미를 다시 읽게 함",
   emotion: "감정 해석 — 장면의 감정적 의미",
   tease: "다음 예고 — 새 갈등으로 넘김",
-  wit: "재치 해석 — 상황을 한 박자 비틀어 한 줄로 (쇼츠·위트 줄)",
+  wit: "재치 해석 — 상황을 한 박자 비틀어 한 줄로 (쇼츠·위트 줄, 시간순 해설형의 구어체 한마디)",
+  transition: "장면 연결 — 그때·한편·그런데로 다음 사건으로 넘김 (시간순 해설형)",
+  suspense: "질문형 궁금증 — 시청자에게 직접 묻고 다음 장면에서 답함",
+  outro: "마무리 — 주인공의 마지막 상태와 작품명으로 끝냄",
 });
 /** 정보 공개 방식 */
 export const REVEALS = Object.freeze(["withhold", "partial", "full", "recontext"]);
@@ -35,6 +42,7 @@ export const REVEALS = Object.freeze(["withhold", "partial", "full", "recontext"
 export const APP_STAGE = Object.freeze({
   hook: "hook", setup: "setup", inciting: "inciting", escalation: "escalation", twist: "twist", payoff: "payoff", cliffhanger: "cliffhanger",
   context: "setup", dialogue: "escalation", commentary: "escalation",
+  intro: "setup", incident: "inciting", sequence: "escalation", conflict: "escalation", ending: "payoff", outro: "payoff",
 });
 
 const sentences = (t) => String(t ?? "").split(/(?<=[.!?。…])\s+|\n+/).map((s) => s.trim()).filter(Boolean);
@@ -47,11 +55,77 @@ function overlap(a, b) {
   return n / Math.min(A.size, B.size);
 }
 
+const startsWithConnective = (t) => {
+  const x = String(t ?? "").replace(/^\s*(\[[^\]]*\]\s*)+/, "").trim();
+  return CONNECTIVES.find((c) => x.startsWith(c)) ?? null;
+};
+
+/** 시간순 해설형 검사 — 내레이션이 사건을 원작 순서대로 끌고 가고, 잇는 말·구어체 한마디·질문·반전 공개로 리듬을 만든다 */
+function checkChrono(plan, beats, stages, byId, events, errors, warnings) {
+  const dur = Number(plan.durationSec) || 0;
+  const first = stages.indexOf("intro");
+  if (first < 0 || first > 1) errors.push("intro가 맨 앞(짧은 hook 예고 뒤까지)에 없습니다 — 주인공의 이름·지금 상황·특징부터 소개합니다.");
+  if (!stages.includes("incident")) errors.push("incident가 없습니다 — 주인공에게 일어난 핵심 사건을 둡니다.");
+  if (!stages.includes("ending")) warnings.push("ending이 없습니다 — 사건의 결과와 주인공의 마지막 상태(변화)를 정리합니다.");
+  const last = stages[stages.length - 1];
+  if (last !== "ending" && last !== "outro") warnings.push("마지막이 ending·outro가 아닙니다 — 결말을 정리하고 작품명 한 줄로 끝냅니다.");
+  // 원작 순서대로 — 회상은 한 번까지
+  const chronos = beats.map((b) => Number(byId.get(b.event)?.chrono)).map((c) => (Number.isFinite(c) ? c : null));
+  let back = 0;
+  for (let i = 1; i < chronos.length; i++) if (chronos[i] !== null && chronos[i - 1] !== null && chronos[i] < chronos[i - 1]) back++;
+  const hookOffset = stages[0] === "hook" ? 1 : 0;
+  if (back - hookOffset > 1) warnings.push(`원작 순서를 거슬러 간 곳이 ${back - hookOffset}곳 — 시간순 해설형은 사건 순서대로, 회상은 한 번까지(나머지는 궁금증 설계형 recap-highlight.md).`);
+  if (!events.length) warnings.push("events(원작 시간순 사건표)가 없어 순서를 확인하지 못했습니다.");
+  // 내레이션이 끌고 감
+  const narrated = beats.filter((b) => b.narration?.text);
+  if (beats.length && narrated.length / beats.length < 0.7)
+    warnings.push(`내레이션 있는 beat가 ${Math.round((narrated.length / beats.length) * 100)}% — 시간순 해설형은 내레이션이 사건을 끌고 갑니다(70% 이상, 대사 강조 beat만 비움).`);
+  // 잇는 말
+  const cons = beats.map((b, i) => (i > 0 && b.narration?.text ? startsWithConnective(b.narration.text) : null));
+  const after = narrated.length - (beats[0]?.narration?.text ? 1 : 0);
+  const withCon = cons.filter(Boolean);
+  if (after >= 4 && withCon.length / after < 0.25)
+    warnings.push(`잇는 말로 시작하는 줄이 ${withCon.length}/${after} — 장면이 바뀌는 곳은 "그때·한편·그런데·그렇게·결국" 등으로 이어 줍니다.`);
+  const count = new Map();
+  for (const c of withCon) count.set(c, (count.get(c) ?? 0) + 1);
+  for (const [c, k] of count) if (k >= 3 && k / Math.max(1, after) > 0.35) warnings.push(`"${c}"로 시작하는 줄이 ${k}번 — 같은 잇는 말이 반복됩니다. 바꾸거나 빼세요.`);
+  for (let i = 2; i < cons.length; i++) if (cons[i] && cons[i] === cons[i - 1] && cons[i] === cons[i - 2]) warnings.push(`${i - 1}–${i + 1}번 beat: "${cons[i]}" 3연속`);
+  // 구어체 한마디(wit)는 양념
+  const wits = narrated.filter((b) => b.narration.role === "wit").length;
+  if (dur >= 90 && wits === 0) warnings.push("구어체 한마디(wit)가 없습니다 — 인물의 행동을 관찰하는 짧은 한마디를 한두 번 넣으면 친근해집니다.");
+  if (narrated.length >= 5 && wits / narrated.length > 0.3) warnings.push(`wit가 ${wits}줄(${Math.round((wits / narrated.length) * 100)}%) — 30% 아래로, 사건 설명이 중심입니다.`);
+  // 반전 앞에는 의심이나 질문
+  const ti = stages.indexOf("twist");
+  if (ti > 0) {
+    const before = beats.slice(0, ti);
+    if (!before.some((b) => ["suspense", "withhold"].includes(b.narration?.role) || b.opens || b.question))
+      warnings.push("twist 앞에 의심·질문이 없습니다 — 수상한 단서나 \"~일까요?\" 한 줄로 추측을 먼저 만들고 반전에서 고칩니다.");
+  }
+  // 인물 첫 소개 — 이름이 내레이션에 나와야
+  const seen = new Set();
+  beats.forEach((b, i) => {
+    const chars = [].concat(byId.get(b.event)?.characters ?? [], b.characters ?? []);
+    for (const c of chars) {
+      if (seen.has(c)) continue;
+      seen.add(c);
+      if (b.narration?.text && !b.narration.text.includes(c)) warnings.push(`${i + 1}번 beat: "${c}" 첫 등장인데 내레이션에 이름이 없습니다 — 이름 + 지금 상황(행동)으로 소개합니다.`);
+    }
+  });
+  // 대사 강조 구간에는 내레이션을 얹지 않음
+  beats.forEach((b, i) => {
+    if (b.keyLine && b.narration?.text && b.narrationOverLine === true) warnings.push(`${i + 1}번 beat: 배우 대사 위에 내레이션 — 대사 앞뒤 쉼에 둡니다.`);
+  });
+  const emos = beats.map((b) => b.emotion ?? byId.get(b.event)?.emotion ?? null);
+  for (let i = 3; i < emos.length; i++)
+    if (emos[i] && emos[i] === emos[i - 1] && emos[i] === emos[i - 2] && emos[i] === emos[i - 3])
+      warnings.push(`${i - 2}–${i + 1}번 beat: 감정 "${emos[i]}"가 4번 연속 — 긴장·유머·감동을 번갈아.`);
+}
+
 export function checkRecapPlan(plan) {
   const errors = [];
   const warnings = [];
-  const mode = plan?.mode === "shorts" ? "shorts" : "full";
-  const STAGES = mode === "shorts" ? SHORTS_STAGES : FULL_STAGES;
+  const mode = plan?.mode === "shorts" ? "shorts" : plan?.mode === "chrono" ? "chrono" : "full";
+  const STAGES = mode === "shorts" ? SHORTS_STAGES : mode === "chrono" ? CHRONO_STAGES : FULL_STAGES;
   const events = Array.isArray(plan?.events) ? plan.events : [];
   const beats = Array.isArray(plan?.beats) ? plan.beats : [];
   const byId = new Map(events.map((e) => [e.id, e]));
@@ -73,7 +147,7 @@ export function checkRecapPlan(plan) {
   if (!beats.length) return { ok: false, mode, errors, warnings, order: [], questions: [], stats: {} };
 
   const stages = beats.map((b) => b.stage);
-  if (stages[0] !== "hook") errors.push("첫 beat는 hook이어야 합니다 (결과·모순·위기를 먼저).");
+  if (mode !== "chrono" && stages[0] !== "hook") errors.push("첫 beat는 hook이어야 합니다 (결과·모순·위기를 먼저).");
 
   // 질문 장부 — 연 질문은 나중에 답하거나 마지막에 열어 둔다(cliffhanger). 열지 않은 질문에 답하면 안 됨
   const open = new Map();
@@ -138,6 +212,8 @@ export function checkRecapPlan(plan) {
     const roles = beats.map((b) => b.narration?.role ?? null);
     for (let i = 2; i < roles.length; i++)
       if (roles[i] && roles[i] === roles[i - 1] && roles[i] === roles[i - 2]) warnings.push(`${i - 1}–${i + 1}번 beat: 내레이션 역할 "${roles[i]}" 3연속 — 역할을 바꿔 리듬을 만듭니다.`);
+  } else if (mode === "chrono") {
+    checkChrono(plan, beats, stages, byId, events, errors, warnings);
   } else {
     if (stages[stages.length - 1] !== "payoff") warnings.push("마지막이 payoff가 아닙니다 — 반전·황당한 대사·통쾌한 행동으로 끝냅니다.");
     if (!stages.includes("dialogue")) errors.push("dialogue beat가 없습니다 — 쇼츠는 원작 대사가 주인공입니다.");
@@ -191,7 +267,7 @@ export function toStoryShots(plan) {
  * skipped[{ beat, kind, why }](상한·대사 겹침으로 뺀 것), limits.
  */
 export function suggestFinishing(plan) {
-  const mode = plan?.mode === "shorts" ? "shorts" : "full";
+  const mode = plan?.mode === "shorts" ? "shorts" : plan?.mode === "chrono" ? "chrono" : "full";
   const beats = Array.isArray(plan?.beats) ? plan.beats : [];
   const events = new Map((Array.isArray(plan?.events) ? plan.events : []).map((e) => [e.id, e]));
   const dur = Number(plan?.durationSec) > 0 ? Number(plan.durationSec) : mode === "shorts" ? 40 : 120;
@@ -228,11 +304,11 @@ export function suggestFinishing(plan) {
       add(i, "motion", `장 제목·시간 표시 "${b.timeLabel ?? "그날 밤 / 3년 전"}" 1–1.5초`, "beat 시작", "언제인지 화면으로 알림", 3);
     }
     // 인물 첫 등장 — 이름표 (행동 소개 beat, 본편만)
-    if (mode === "full") {
+    if (mode !== "shorts") {
       const chars = [].concat(events.get(b.event)?.characters ?? b.characters ?? []);
       const fresh = chars.filter((ch) => !seenChars.has(ch));
       chars.forEach((ch) => seenChars.add(ch));
-      if (fresh.length && ["setup", "inciting", "escalation"].includes(b.stage))
+      if (fresh.length && ["setup", "inciting", "escalation", "intro", "incident", "sequence", "conflict"].includes(b.stage))
         add(i, "motion", `인물 이름표 ${fresh.slice(0, 2).join("·")} (이름 + 역할 한 줄, 얼굴 옆 하단)`, "인물이 화면에 처음 보일 때", "처음 나온 인물", 2);
     }
     if (b.infoCard) add(i, "motion", `정보 카드 "${b.infoCard}" 2–3초`, "beat 시작", "관계·장소를 화면으로", 2);
@@ -240,7 +316,8 @@ export function suggestFinishing(plan) {
     if (b.stage === "twist" || b.reveal === "full" || b.reveal === "recontext") {
       add(i, "sfx", mode === "shorts" ? "짧은 스팅(sting) 하나" : "저음 히트(low boom) + 직전 0.5초 BGM 끊기", at, "반전·공개 순간", b.stage === "twist" ? 5 : 4);
     }
-    if (mode === "full" && b.stage === "hook" && i === 0) add(i, "sfx", "짧은 상승음(riser) 0.6–1초 → 첫 컷에서 끊김", "0초", "첫 1초에 소리로 시선 잡기", 2);
+    if (mode !== "shorts" && b.stage === "hook" && i === 0) add(i, "sfx", "짧은 상승음(riser) 0.6–1초 → 첫 컷에서 끊김", "0초", "첫 1초에 소리로 시선 잡기", 2);
+    if (b.stage === "outro") add(i, "motion", `작품명 카드 "${b.label ?? plan?.title ?? "작품명"}" 1.5–2초`, "마지막 문장", "무엇을 봤는지 남김", 3);
     if (b.stage === "cliffhanger") add(i, "sfx", "긴장 드론이 끊기는 멈춤(stop) 또는 낮은 펄스", "마지막 문장 뒤", "다음 궁금증 여운", 3);
     if (mode === "shorts") {
       if (b.stage === "commentary") add(i, "sfx", "가벼운 팝(pop)·레코드 긁힘 중 하나, 아주 작게", "해석 문장 끝", "위트 줄에 박자", 2);
