@@ -1,0 +1,17 @@
+{
+  "description": "admaker 데이터 유출 방지: 웹 요청·셸 전송·다른 MCP 도구로 엔진 파일·토큰·키를 보내면 막고, 프로젝트 데이터·서명 URL을 보내면 사용자에게 묻습니다.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|WebFetch|WebSearch|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/egress-guard.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
