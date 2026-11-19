@@ -160,3 +160,62 @@ test("suggestFinishing — 시간 점프에 휘익·딥 전환·시간 표시", 
   assert.ok(r.cues.some((c) => c.kind === "motion" && c.what.includes("3년 전") && c.shot === 2));
   assert.ok(r.cues.some((c) => c.kind === "sfx" && c.what.includes("휘익")));
 });
+
+test("시간순 해설형(chrono) — 소개부터 원작 순서대로, 잇는 말·구어체 한마디·질문 뒤 반전", async () => {
+  const { checkRecapPlan, toStoryShots, suggestFinishing } = await import("../plugin/skills/admaker/templates/recap-plan.mjs");
+  const ev = [
+    { id: "C1", chrono: 1, characters: ["민호"] },
+    { id: "C2", chrono: 2 },
+    { id: "C3", chrono: 3, characters: ["지아"] },
+    { id: "C4", chrono: 4 },
+    { id: "C5", chrono: 5 },
+    { id: "C6", chrono: 6 },
+    { id: "C7", chrono: 7 },
+  ];
+  const good = {
+    mode: "chrono",
+    durationSec: 120,
+    title: "작품명",
+    events: ev,
+    beats: [
+      { stage: "intro", event: "C1", narration: { role: "situation", text: "새벽마다 같은 버스를 타는 남자 민호." }, src: { from: 5, to: 9 } },
+      { stage: "incident", event: "C2", narration: { role: "situation", text: "그런데 그날 버스가 종점을 지나쳐 버리는데" } },
+      { stage: "sequence", event: "C3", narration: { role: "character", text: "그때 맨 뒷자리에서 일어난 여자 지아." } },
+      { stage: "sequence", event: "C4", narration: { role: "wit", text: "길 잃은 건 버스인데 사과는 민호가 하네요." } },
+      { stage: "conflict", event: "C5", narration: { role: "suspense", text: "지아는 정말 처음 보는 사람일까요?" } },
+      { stage: "twist", event: "C6", reveal: "recontext", narration: { role: "twist", text: "알고 보니 지아는 민호가 잊은 옛 동창이었죠." } },
+      { stage: "ending", event: "C7", narration: { role: "emotion", text: "결국 민호는 처음으로 종점까지 함께 걸어갑니다." } },
+      { stage: "outro", narration: { role: "outro", text: "지금까지 작품명이었습니다." } },
+    ],
+  };
+  const r = checkRecapPlan(good);
+  assert.equal(r.ok, true, r.errors.join("\n"));
+  assert.deepEqual(r.warnings, []);
+  assert.equal(toStoryShots(good)[0].stage, "setup");
+  const f = suggestFinishing(good);
+  assert.ok(f.cues.some((c) => c.kind === "motion" && c.what.includes("작품명 카드")));
+  assert.ok(f.cues.some((c) => c.kind === "motion" && c.what.includes("이름표")));
+
+  const bad = checkRecapPlan({
+    mode: "chrono",
+    durationSec: 120,
+    events: ev,
+    beats: [
+      { stage: "sequence", event: "C3", narration: { role: "situation", text: "그렇게 하루가 간다." } },
+      { stage: "twist", event: "C6", narration: { role: "twist", text: "그렇게 진실이 나온다." } },
+      { stage: "sequence", event: "C2", dialogueText: "가자" },
+      { stage: "sequence", event: "C1", narration: { role: "situation", text: "그렇게 버스가 떠난다." } },
+      { stage: "sequence", event: "C4", narration: { role: "situation", text: "그렇게 밤이 온다." } },
+      { stage: "sequence", event: "C5", narration: { role: "situation", text: "그렇게 또 하루." } },
+    ],
+  });
+  assert.equal(bad.ok, false);
+  assert.ok(bad.errors.some((e) => e.includes("intro")));
+  assert.ok(bad.errors.some((e) => e.includes("incident")));
+  const w = bad.warnings.join("\n");
+  assert.match(w, /거슬러/);
+  assert.match(w, /"그렇게"/);
+  assert.match(w, /wit/);
+  assert.match(w, /twist 앞에/);
+  assert.match(w, /이름이 없습니다/);
+});
