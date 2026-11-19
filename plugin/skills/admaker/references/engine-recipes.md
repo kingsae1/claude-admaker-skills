@@ -465,6 +465,7 @@ registerThreeScene("glass-hero", async ({ THREE, src, params, loadGLTF }) => {
 - 렌더는 `templates/render/`의 하니스로 합니다: 헤드리스 Chromium에서 페이지가 `Exporter.create({width, height, fps, bitrate})` → `load(project)` → `export()` 결과를 파일로 저장.
 - 스틸 검수는 `Preview.capture(timeUs)`(PNG)로 1–2초마다 뽑아 컨택트 시트로 만듭니다.
 - `Exporter.isSupported({videoCodec, width, height, bitrate})`로 코덱 지원을 먼저 확인합니다. WebCodecs·WebGL이 없는 환경이면 렌더가 실패하므로 GPU 있는 Chromium 또는 앱의 export를 씁니다.
+- **투명 배경 내보내기**(로고 애니메이션·자막 바·스티커를 프리미어·캡컷 위에 얹을 때, 엔진에 `frameRGBA`/`framePNG`가 있는 버전): `node render/render.mjs project.json out/logo.mov --alpha prores` (`prores` → ProRes 4444 `.mov`, `webm` → VP9 알파 `.webm`, `png` → PNG 시퀀스 `.zip`). `settings.backgroundColor`는 무시하고, 바닥 영상·배경 클립이 있으면 그것까지 그대로 나오니 투명하게 둘 부분에는 클립을 두지 않습니다. 엔진 `Exporter.create({ transparent: true })`가 프레임을 straight 알파 PNG로 넘기고 하네스가 ffmpeg로 묶은 뒤 ffprobe로 알파를 확인합니다(없으면 실패). ffmpeg에 libvpx-vp9가 없으면 prores로 바꾸고 경고합니다. 오디오는 prores에 pcm, webm에 opus로 붙고 png에는 없습니다. 앱 가져오기에는 쓰지 않는 로컬 산출물입니다(광고는 영상이 바닥이라 보통은 mp4).
 
 ## 9. admaker 앱으로 넘기기 (광고 불러오기 포맷)
 
