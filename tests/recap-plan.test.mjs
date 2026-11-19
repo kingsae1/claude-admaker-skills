@@ -219,3 +219,77 @@ test("시간순 해설형(chrono) — 소개부터 원작 순서대로, 잇는 �
   assert.match(w, /twist 앞에/);
   assert.match(w, /이름이 없습니다/);
 });
+
+test("해설형 리뷰(review) — 줄거리 뒤 리뷰 파트, 톤마다 반응 양", async () => {
+  const { checkRecapPlan, suggestFinishing, toStoryShots } = await import("../plugin/skills/admaker/templates/recap-plan.mjs");
+  const ev = [1, 2, 3, 4, 5, 6].map((c) => ({ id: `R${c}`, chrono: c, ...(c === 1 ? { characters: ["수아"] } : {}) }));
+  const story = [
+    { stage: "intro", event: "R1", narration: { role: "situation", text: "새벽 세 시, 문 닫은 놀이공원에서 생방송을 켜는 수아." } },
+    { stage: "incident", event: "R2", narration: { role: "suspense", text: "그런데 꺼진 회전목마가 혼자 돌기 시작하는데, 대체 누가 켠 걸까요?" } },
+    { stage: "sequence", event: "R3", narration: { role: "reaction", text: "아니 이걸 혼자 간다고요?" } },
+    { stage: "conflict", event: "R4", narration: { role: "causal", text: "그렇게 모든 의심이 수아에게 쏠리게 됩니다." } },
+    { stage: "twist", event: "R5", reveal: "recontext", narration: { role: "twist", text: "알고 보니 방송을 켠 건 수아가 아니었죠." } },
+    { stage: "ending", event: "R6", narration: { role: "emotion", text: "결국 수아는 카메라를 끕니다." } },
+  ];
+  const social = {
+    mode: "review",
+    tone: "social",
+    durationSec: 300,
+    events: ev,
+    beats: [
+      ...story,
+      { stage: "review", narration: { role: "review", text: "제목이 놀이와 공포를 동시에 가리킨다는 점이 끝까지 힘을 줍니다." } },
+      { stage: "review", narration: { role: "review", text: "무서운 장면보다 숫자만 세는 시청자 수가 더 오래 남습니다." } },
+    ],
+  };
+  const r = checkRecapPlan(social);
+  assert.equal(r.ok, true, r.errors.join("\n"));
+  assert.deepEqual(r.warnings, []);
+  assert.equal(toStoryShots({ beats: [{ stage: "review", src: { from: 1, to: 2 } }] })[0].stage, "payoff");
+  const f = suggestFinishing(social);
+  assert.ok(f.cues.some((c) => c.kind === "transition" && c.why.includes("평가")));
+  assert.ok(f.cues.some((c) => c.kind === "motion" && c.what.includes("리뷰 파트")));
+
+  // 리뷰 파트 없음, 톤 없음
+  const noTone = checkRecapPlan({ mode: "review", events: ev, beats: story });
+  assert.equal(noTone.ok, false);
+  assert.ok(noTone.errors.some((e) => e.includes("tone")));
+  assert.ok(noTone.warnings.some((w) => w.includes("review 파트")));
+
+  // 감정 톤인데 농담이 많음
+  const emo = checkRecapPlan({
+    mode: "review",
+    tone: "emotional",
+    events: ev,
+    beats: story.map((b, i) => (i > 0 && i < 5 ? { ...b, narration: { role: "wit", text: "그런데 이건 좀 웃기네요." } } : b)).concat({ stage: "review", narration: { role: "review", text: "오래된 편지처럼 조용히 마음을 두드립니다." } }),
+  });
+  assert.match(emo.warnings.join("\n"), /10% 아래로/);
+
+  // 개그 톤인데 반응이 없음 + callback 없음
+  const flat = checkRecapPlan({ mode: "review", tone: "comedy", events: ev, beats: story.map((b) => (b.narration.role === "reaction" ? { ...b, narration: { role: "situation", text: "수아는 방송을 이어 간다." } } : b)) });
+  const fw = flat.warnings.join("\n");
+  assert.match(fw, /20% 이상/);
+  assert.match(fw, /callback/);
+});
+
+test("해설형 리뷰 주제형(tone: topic) — 개념 정의, 사례 사이 설명", async () => {
+  const { checkRecapPlan } = await import("../plugin/skills/admaker/templates/recap-plan.mjs");
+  const ok = checkRecapPlan({
+    mode: "review",
+    tone: "topic",
+    beats: [
+      { stage: "hook", dialogueText: "…" },
+      { stage: "concept", narration: { role: "knowledge", text: "말소리가 엉뚱한 뜻으로 들리는 착청 현상부터 짚고 갑니다." } },
+      { stage: "case", narration: { role: "situation", text: "첫 번째는 게임 속 대사." } },
+      { stage: "case", narration: { role: "reaction", text: "한 번 들리면 다시는 못 돌아가요." } },
+      { stage: "explain", narration: { role: "knowledge", text: "뇌가 익숙한 단어 쪽으로 소리를 맞추기 때문입니다." } },
+      { stage: "case", narration: { role: "situation", text: "다음은 노래 가사." } },
+      { stage: "outro", narration: { role: "knowledge", text: "결국 우리 귀는 듣고 싶은 대로 듣는 셈이죠." } },
+    ],
+  });
+  assert.equal(ok.ok, true, ok.errors.join("\n"));
+  assert.deepEqual(ok.warnings, []);
+  const bad = checkRecapPlan({ mode: "review", tone: "topic", beats: [{ stage: "case" }, { stage: "case" }, { stage: "case" }, { stage: "case" }] });
+  assert.equal(bad.ok, false);
+  assert.match(bad.warnings.join("\n"), /4번 연속/);
+});
