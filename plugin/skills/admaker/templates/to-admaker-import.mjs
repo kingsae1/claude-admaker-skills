@@ -49,7 +49,7 @@ function volumeToWire(c, wc) {
 }
 const duckTargets = []; // by(클립 id·트랙 id)는 앱 id로 바꿔야 해서 모든 트랙을 옮긴 뒤 고친다
 
-// 엔진 3.0.31 클립 확장 — 앱(#545)은 transform.engineFields로 받아 저장·다시 열기에 남긴다(서버 인코딩에서는 빠짐).
+// 엔진 3.0.31 클립 확장 — 앱(#545)은 transform.engineFields로 받아 저장·다시 열기에 남긴다.
 // cornerPin·repeat·afterimage는 모든 그림 클립, holdAt·holdRanges는 Video, style.animation(움직이는 GIF·APNG·WebP)은 Image
 function engineFieldsOf(c) {
   const out = {};
@@ -273,7 +273,6 @@ for (const track of ordered) {
         for (const [k, v] of Object.entries(c)) if (!ENGINE_CLIP_OMIT.has(k) && v !== undefined) engineClip[k] = JSON.parse(JSON.stringify(v));
         wc = { ...base, clipType: "effect", source: "", transform: { ...baseTransform(c), engineClip } };
         if (c.type === "AudioSpectrum" && typeof c.source === "string" && p.clips?.[c.source]) spectrumTargets.push({ id, engineClip });
-        warn(id, `${c.type}${c.backdropType ? ` "${c.backdropType}"` : ""}는 앱 미리보기·로컬 내보내기에서 보이고, 서버 인코딩에서는 빠집니다`);
         break;
       }
       case "Placeholder":
@@ -346,9 +345,8 @@ for (const [id, c] of Object.entries(p.clips)) {
   const values = c.values && typeof c.values === "object" && Object.keys(c.values).length ? c.values : null;
   const engine = !TRANSITION_TO_WIRE[key] || values || c.easing ? { key, ...(values ? { values } : {}), ...(c.easing ? { easing: c.easing } : {}) } : null;
   if (/^hf-/.test(key)) warn(id, `전환 "${key}"(셰이더 팩)는 앱에 등록되어 있지 않아 앱에서는 fade로 보입니다. 앱으로 넘길 광고는 am-* 전환·트랙 매트·마스크 전환을 쓰세요 (transitions.md)`);
-  else if (isGl) warn(id, `전환 "${key}"(gl- 팩)는 앱 미리보기·브라우저 내보내기에서 그대로 보이고, 서버 인코딩에서만 fade로 바뀝니다`);
-  else if (AM_TRANSITION_XFADE[key]) warn(id, `전환 "${key}"는 앱 미리보기·브라우저 내보내기에서 그대로(values·easing 포함) 보이고, 서버 인코딩에서만 "${type}"(xfade)로 바뀝니다`);
-  else if (!TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 엔진 키 그대로 넘깁니다. 앱 전환 탭에 있는 이름인지 확인하세요`);
+  // gl-*·am-*는 앱에 등록돼 있어 그대로 보인다(앱은 브라우저 내보내기만 쓰므로 type의 xfade 이름은 형식상 값)
+  else if (!isGl && !AM_TRANSITION_XFADE[key] && !TRANSITION_TO_WIRE[key]) warn(id, `전환 "${key}"는 엔진 키 그대로 넘깁니다. 앱 전환 탭에 있는 이름인지 확인하세요`);
   // 앱과 같은 규칙: 두 클립이 겹치면 crossover, 아니면 freeze_overlay (engine-recipes §5.2)
   const fa = p.clips?.[c.fromClipId]?.timing?.display, tb = p.clips?.[c.toClipId]?.timing?.display;
   const mode = fa && tb && Math.min(fa.to, tb.to) > Math.max(fa.from, tb.from) ? "crossover" : "freeze_overlay";
