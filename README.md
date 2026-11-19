@@ -23,6 +23,9 @@ admaker 데스크톱 앱에서 MCP 메뉴 → **Claude와 연결하기**를 엽�
 ## 구성
 
 ```
+plugin/hooks/
+├── hooks.json                   PreToolUse 훅 등록 (Bash·WebFetch·WebSearch·MCP)
+└── egress-guard.mjs             유출 방지: 엔진·토큰·키 전송은 막고, 프로젝트 데이터·서명 URL 전송은 묻기
 plugin/skills/admaker/
 ├── SKILL.md                     워크플로와 원칙
 ├── references/
@@ -34,6 +37,7 @@ plugin/skills/admaker/
 │   ├── gsap.md                  gsapTimeline 작성법, 이징, 웹 GSAP과 다른 점
 │   ├── three.md                 3D 제품 샷 (조명·재질·후처리·에셋), 웹 three.js 예제 옮기기
 │   ├── fonts.md / fonts.json    무드별 폰트 페어링 + admaker 앱 폰트 목록
+│   ├── data-safety.md           밖으로 보내지 않는 것 (엔진·토큰·키, 프로젝트 데이터는 확인 후)
 │   └── shots/                   샷 카드 7장 (지도 2장 포함)
 └── templates/                   프로젝트 시작 파일
     ├── TREATMENT.md
