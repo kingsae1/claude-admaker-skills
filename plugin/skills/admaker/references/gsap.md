@@ -90,7 +90,7 @@
 | GSAP | admaker에서 |
 |---|---|
 | SplitText (글자·단어별) | Text `characterAnimation`, Caption `wordAnimation` |
-| ScrambleText | 없음 (Text 여러 클립을 `steps`로 교체하거나 script 어댑터) |
+| ScrambleText | Text 모션 `scramble` (엔진 3.0.33+, `text-animations.md`) |
 | DrawSVG | Shape `strokeDraw` |
 | MorphSVG | 없음 (두 Shape를 교차 페이드) |
 | MotionPath | `@admaker/animation` path 모션(`compileAnimation`) |

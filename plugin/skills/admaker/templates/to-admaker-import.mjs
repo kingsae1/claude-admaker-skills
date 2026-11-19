@@ -16,7 +16,9 @@ const warnings = [];
 const warn = (id, m) => warnings.push(`△ ${id}: ${m}`);
 
 // 앱이 그대로 엔진 모션으로 넘기는 type (그 밖의 type은 앱이 버린다)
-const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "lineBoil", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline", "followPath"]);
+const EP_MOTION_TYPES = new Set(["keyframes", "shake", "unfold", "fold", "strokeDraw", "paint", "countUp", "lineBoil", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "gsapTimeline", "followPath",
+  // 텍스트 모션(엔진 3.0.33+): 앱이 엔진을 올리고 EP_MOTION_TYPES에 넣은 버전부터 보임
+  "scramble", "typewrite", "charWave"]);
 // 앱이 xfade 이름으로 내보내는 전환 (엔진 key → wire type)
 const TRANSITION_TO_WIRE = { fadeIn: "fade", fadeOut: "fade", fade: "fade", zoomIn: "zoomin", slideLeft: "slideleft", slideRight: "slideright", slideUp: "slideup", slideDown: "slidedown", wipeLeft: "wipeleft", wipeRight: "wiperight", coverRight: "coverright", coverLeft: "coverleft", coverUp: "coverup", coverDown: "coverdown" };
 // admaker 전환 팩(am-*): 앱 서버 인코딩에는 가장 가까운 xfade로 (엔진 getAdmakerTransitionInfo().xfade와 같은 값)

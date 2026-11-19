@@ -77,6 +77,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 색보정·라이트 릭, 스티커 외곽선·입체·긴 그림자, 경로 따라 날아가기, BGM 볼륨 곡선·내레이션 덕킹, 글자 둥근 배경·자동 맞춤, 자막 단어 강조, gl- 전환 → `references/engine-recipes.md` §10(엔진 3.0.30). 키프레임으로 굽거나 오프라인으로 섞지 말고 값으로 넣으면 앱에서도 그대로 열립니다.
    - 색이 바뀌는 키프레임, 기울이기, 화면에 끼우는 코너 핀, 렌즈 왜곡·책장 넘김·종이 질감, 전환을 클립 하나에, 눈·꽃잎 입자, 반복·프레임 정지·잔상·모션블러, 움직이는 GIF, 반짝임 도형, 소리 막대, 입체 글자 → `references/engine-recipes.md` §11(엔진 3.0.31). 값으로 넣으면 앱에서도 그대로 열립니다.
    - 사용자가 준 자막 파일(.srt·.vtt)을 넣거나 만든 자막을 SRT/VTT로 내보내기, 같은 광고를 문구·색·이미지만 바꾼 여러 버전(템플릿 파라미터 `{{이름}}`) → `references/subtitles-params.md`, `templates/subtitles.mjs`·`templates/params.mjs`.
+   - 글자 자체가 주인공인 문구 애니메이션(타자·해독·물결·분할 리빌·리퀴드 필·취소선 교체·줌 셰이크 등 20종) → `references/text-animations.md`, `templates/text-fx.mjs` `textFx(id, …)` (MCP `text_fx`). 페이드만 쓰지 않고 이 중에서 고릅니다.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
    - 종이 질감(미색·크라프트·구긴 종이 바탕, 찢은 종이 조각·테이프, 그래픽 위 종이 결) → `references/paper.md`, `templates/paper.mjs`, 예제 `samples/paper-texture`. 영상·사진 소재 위에는 얹지 않습니다.
