@@ -2,7 +2,7 @@
 // 앱 MCP 도구와 같은 계산(recap-core.mjs)을 쓰고, 결과는 이 스킬의 timeline.mjs(FOOTAGE·SHOTS)에 넣는다.
 // references/recap-highlight.md §9.
 //
-//   node recap.mjs transcribe <자막.srt|.vtt|whisper.json> [--from 초] [--to 초]     ← transcribe_clip
+//   node recap.mjs transcribe <자막.srt|.vtt|whisper.json> [--from 초] [--to 초] [--anchors 자막초=영상초,...|--shift 초 --rate 배율]  ← transcribe_clip
 //   node recap.mjs transcribe <영상> --whisper [모델]                               (whisper CLI가 깔려 있을 때만)
 //   node recap.mjs scenes <영상> [--from --to --step --threshold --contrast --min-shot]  ← detect_scenes
 //   node recap.mjs sheet <영상> (--at 1.2,5,9 | --shots scenes.json) [--cols N] --out sheet.jpg  ← view_shot_sheet
@@ -20,6 +20,8 @@ import {
   applySuggestions, compareVoiceLines, coverTransformForCrop, cropForBands, cuesToSegments, detectEdgeBands, findShotCuts,
   frameDifference, groupWordsToSegments, localRecapTimeline, measureVoiceLine, pickSampleStep, planStoryShots,
   segmentsInRange, shotsFromCuts, suggestStoryEffects,
+  fitSubtitleAlignment,
+  alignSegments,
 } from "./recap-core.mjs";
 
 const round = (v, d = 2) => Math.round(v * 10 ** d) / 10 ** d;
@@ -72,8 +74,16 @@ export function transcribe(file, o = {}) {
   } else if (/\.json$/i.test(file)) segments = fromWhisperJson(JSON.parse(fs.readFileSync(file, "utf8")));
   else if (/\.(srt|vtt)$/i.test(file)) segments = cuesToSegments(readSubtitles(fs.readFileSync(file, "utf8")));
   else throw new Error("자막(.srt·.vtt)이나 whisper JSON을 주거나, 영상이면 --whisper를 붙이세요 (whisper CLI 필요). 둘 다 없으면 앱의 transcribe_clip을 씁니다.");
+  // 받은 자막 맞추기: --anchors "자막초=영상초,자막초=영상초" 또는 --shift 초 --rate 배율
+  let alignment;
+  if (o.anchors || o.shift || o.rate) {
+    alignment = o.anchors
+      ? fitSubtitleAlignment(String(o.anchors).split(",").map((p) => p.split("=").map(Number)).map(([subtitleSec, videoSec]) => ({ subtitleSec, videoSec })))
+      : { shiftSec: num(o.shift) ?? 0, rate: num(o.rate) ?? 1, residualSec: 0 };
+    segments = alignSegments(segments, alignment.shiftSec, alignment.rate);
+  }
   const inRange = segmentsInRange(segments, num(o.from), num(o.to));
-  return { segments: inRange, count: inRange.length, note: "시각은 원본 초입니다. place의 shots from·to와 keyLine에 그대로 씁니다." };
+  return { segments: inRange, count: inRange.length, ...(alignment ? { alignment } : {}), note: "시각은 원본 초입니다. place의 shots from·to와 keyLine에 그대로 씁니다." };
 }
 
 /** openai-whisper JSON(segments[].words) 또는 whisper.cpp -oj(transcription[].offsets ms) */
