@@ -2,7 +2,7 @@
 // node --test tests/*.test.mjs
 import test from "node:test";
 import assert from "node:assert/strict";
-import { computeShortsLayout, containRect, fitCropToRect, parseHookTitle } from "../plugin/skills/admaker/templates/shorts-layout.mjs";
+import { anchorRect, computeLandscapeLayout, computeShortsLayout, containRect, fitCropToRect, parseHookTitle } from "../plugin/skills/admaker/templates/shorts-layout.mjs";
 
 test("parseHookTitle — 줄 기본색 + {색|글자} 강조", () => {
   assert.deepEqual(parseHookTitle("{red|내 동생 죽이면} 1억"), [[{ text: "내 동생 죽이면", color: "#FF3B30" }, { text: " 1억", color: "#FFFFFF" }]]);
@@ -32,4 +32,12 @@ test("fitCropToRect·containRect", () => {
   const d = fitCropToRect({ width: 1920, height: 1080 }, { x: 0, y: 120, width: 1920, height: 840 }, { width: 1080, height: 608 });
   assert.ok(d.y >= 120 && d.y + d.height <= 960);
   assert.deepEqual(containRect({ width: 400, height: 100 }, { x: 0, y: 0, width: 200, height: 200 }), { x: 0, y: 75, width: 200, height: 50 });
+});
+
+test("computeLandscapeLayout — 16:9 왼쪽 위 프로그램 로고, 오른쪽 위 채널 로고, 영화는 프로그램 로고 없음", () => {
+  const l = computeLandscapeLayout({ width: 1920, height: 1080, contentType: "drama" });
+  assert.deepEqual(l.video, { x: 0, y: 0, width: 1920, height: 1080 });
+  assert.ok(l.programLogo.x < 200 && l.channelLogo.x + l.channelLogo.width > 1800);
+  assert.equal(computeLandscapeLayout({ width: 1920, height: 1080, contentType: "movie" }).programLogo, null);
+  assert.equal(anchorRect({ width: 100, height: 100 }, { x: 0, y: 0, width: 400, height: 100 }, "right").x, 300);
 });

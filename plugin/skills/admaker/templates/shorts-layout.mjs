@@ -7,8 +7,10 @@
 //     variant: banded(위 22%·영상 58%·아래 20%) | wide(16:9 영상 폭 맞춤) | fullbleed(영상 화면 전체)
 //   fitCropToRect(source, currentCrop, rect, focusX?, focusY?) → 원본에서 영상 자리 비율로 자를 영역(px)
 //   containRect(media, box) → 로고 이미지를 상자 안에 비율 유지로
+//   computeLandscapeLayout({ width, height, contentType }) → 16:9: 영상 전체 + 왼쪽 위 프로그램 로고 · 오른쪽 위 채널 로고(영화는 프로그램 로고 없음)
 //
 // CLI:  node shorts-layout.mjs [banded|wide|fullbleed] "줄1" "줄2" [--size 1080x1920]
+//       node shorts-layout.mjs landscape [drama|movie|show] [--size 1920x1080]
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -143,10 +145,41 @@ export function containRect(media, box) {
   return { x: Math.round(box.x + (box.width - w) / 2), y: Math.round(box.y + (box.height - h) / 2), width: w, height: h };
 }
 
+/** 16:9 가로 레이아웃 — 영상이 화면 전체, 왼쪽 위 프로그램 로고, 오른쪽 위 채널 로고 (contentType: movie면 프로그램 로고 없음) */
+export function computeLandscapeLayout(opts) {
+  const W = Math.round(opts.width);
+  const H = Math.round(opts.height);
+  const warnings = [];
+  if (!(W > H)) warnings.push(`캔버스가 가로가 아닙니다(${W}×${H}) — 가로 하이라이트는 1920×1080(16:9)`);
+  const mx = Math.round(W * 0.025);
+  const my = Math.round(H * 0.035);
+  const lw = Math.round(W * 0.2);
+  const lh = Math.round(H * 0.08);
+  const programLogo = opts.contentType === "movie" ? null : { x: mx, y: my, width: lw, height: lh };
+  const channelLogo = { x: W - mx - lw, y: my, width: lw, height: lh };
+  const subSize = Math.round(H * 0.052);
+  const subW = Math.round(W * 0.8);
+  const subH = Math.round(subSize * 2.5);
+  const subtitle = { box: { x: Math.round((W - subW) / 2), y: Math.round(H * 0.9) - subH, width: subW, height: subH }, fontSize: subSize, strokeWidth: Math.max(2, Math.round(subSize * 0.1)) };
+  return { canvas: { width: W, height: H }, video: { x: 0, y: 0, width: W, height: H }, programLogo, channelLogo, subtitle, warnings };
+}
+
+/** 로고를 상자 안에 비율 유지로 맞추고 바깥 가장자리에 붙임 */
+export function anchorRect(media, box, align) {
+  const r = containRect(media, box);
+  if (align === "left") return { ...r, x: box.x };
+  if (align === "right") return { ...r, x: box.x + box.width - r.width };
+  return r;
+}
+
 function main(argv) {
   const args = argv.filter((a, i) => !(a === "--size" || argv[i - 1] === "--size"));
   const sizeArg = argv[argv.indexOf("--size") + 1];
   const [w, h] = argv.includes("--size") && /^\d+x\d+$/.test(sizeArg ?? "") ? sizeArg.split("x").map(Number) : [1080, 1920];
+  if (args[0] === "landscape") {
+    console.log(JSON.stringify(computeLandscapeLayout({ width: argv.includes("--size") ? w : 1920, height: argv.includes("--size") ? h : 1080, contentType: args[1] }), null, 2));
+    return;
+  }
   const variant = SHORTS_VARIANTS.includes(args[0]) ? args.shift() : "banded";
   if (!args.length) {
     console.log('usage: node shorts-layout.mjs [banded|wide|fullbleed] "줄1" "{red|강조} 줄2" [--size 1080x1920]');
