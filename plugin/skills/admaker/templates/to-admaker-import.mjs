@@ -47,6 +47,11 @@ function volumeToWire(c, wc) {
   if (curve?.length) wc.volumeCurve = curve;
   if (c.duck && typeof c.duck === "object") duckTargets.push({ wc, duck: JSON.parse(JSON.stringify(c.duck)) });
 }
+// 재생 속도 — 앱 EP는 video·audio 클립의 playbackRate(1이면 생략)로 받는다. 빠지면 앱에서 1배속으로 바뀌어 원본 구간이 어긋난다
+function rateToWire(c, wc) {
+  const r = Number(c.timing?.playbackRate);
+  if (Number.isFinite(r) && r > 0 && Math.abs(r - 1) > 1e-6) wc.playbackRate = Math.min(4, Math.max(0.25, r));
+}
 const duckTargets = []; // by(클립 id·트랙 id)는 앱 id로 바꿔야 해서 모든 트랙을 옮긴 뒤 고친다
 
 // 엔진 3.0.31 클립 확장 — 앱(#545)은 transform.engineFields로 받아 저장·다시 열기에 남긴다.
@@ -205,6 +210,7 @@ for (const track of ordered) {
         if (kind === "video" && st.spriteSheet) warn(id, "spriteSheet는 이미지 클립만 됩니다");
         if (kind === "video") {
           wc.sourceStartOffset = sec(c.timing?.trim?.from);
+          rateToWire(c, wc);
           wc.usesLinkedAudio = c.audio !== false;
           volumeToWire(c, wc);
         }
@@ -213,6 +219,7 @@ for (const track of ordered) {
       case "Audio": {
         const source = inputFor(c.src, "audio", { duration: sec(c.timing?.duration) });
         wc = { ...base, clipType: "audio", source, volume: 1, sourceStartOffset: sec(c.timing?.trim?.from) };
+        rateToWire(c, wc);
         volumeToWire(c, wc);
         const fi = c.fadeIn?.duration ?? c.timing?.fadeIn?.duration, fo = c.fadeOut?.duration ?? c.timing?.fadeOut?.duration;
         if (fi) wc.fadeInSec = fi / 1000; // 엔진 페이드는 ms
