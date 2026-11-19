@@ -2,7 +2,7 @@
 // node --test tests/*.test.mjs
 import test from "node:test";
 import assert from "node:assert/strict";
-import { anchorRect, computeLandscapeLayout, computeShortsLayout, containRect, fitCropToRect, parseHookTitle } from "../plugin/skills/admaker/templates/shorts-layout.mjs";
+import { NEWS_DEFAULTS, anchorRect, computeLandscapeLayout, computeShortsLayout, containRect, fitCropToRect, parseHookTitle } from "../plugin/skills/admaker/templates/shorts-layout.mjs";
 
 test("parseHookTitle — 줄 기본색 + {색|글자} 강조", () => {
   assert.deepEqual(parseHookTitle("{red|내 동생 죽이면} 1억"), [[{ text: "내 동생 죽이면", color: "#FF3B30" }, { text: " 1억", color: "#FFFFFF" }]]);
@@ -40,4 +40,16 @@ test("computeLandscapeLayout — 16:9 왼쪽 위 프로그램 로고, 오른쪽 
   assert.ok(l.programLogo.x < 200 && l.channelLogo.x + l.channelLogo.width > 1800);
   assert.equal(computeLandscapeLayout({ width: 1920, height: 1080, contentType: "movie" }).programLogo, null);
   assert.equal(anchorRect({ width: 100, height: 100 }, { x: 0, y: 0, width: 400, height: 100 }, "right").x, 300);
+});
+
+test("news — 남색 띠 기본색, 16:9 영상, 자막은 영상 아래 띠, 꼬리표는 제목 위", () => {
+  const t = parseHookTitle(["시청 앞 \"전면 재검토\"", "다음 주 발표"], undefined, NEWS_DEFAULTS.lineColors);
+  assert.deepEqual(t.map((l) => l[0].color), ["#FFFFFF", "#5CC8FF"]);
+  const l = computeShortsLayout({ width: 1080, height: 1920, variant: "news", titleLines: t });
+  assert.equal(l.video.height, 608);
+  assert.ok(l.subtitle.box.y >= l.video.y + l.video.height);
+  assert.ok(l.show.titleBox.y > l.subtitle.box.y + l.subtitle.box.height);
+  assert.ok(l.show.taglineBox.y + l.show.taglineBox.height <= 1920);
+  assert.ok(l.tagBox.y + l.tagBox.height <= l.title.box.y && l.tagBox.y >= 0);
+  assert.equal(computeShortsLayout({ width: 1080, height: 1920, titleLines: t }).tagBox, null);
 });
