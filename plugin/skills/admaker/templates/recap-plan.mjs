@@ -4,9 +4,11 @@
 //
 //   checkRecapPlan(plan) → { ok, errors, warnings, order, questions, stats }
 //   toStoryShots(plan)   → place_story_shots shots (beat 순서, stage·keyLine 포함; beat.src가 있는 것만)
+//   suggestFinishing(plan) → 마지막 단계 효과음·장면 전환·모션그래픽 후보 (필요한 beat에만, 길이별 상한)
 //
 // CLI:  node recap-plan.mjs check plan.json [--json]
 //       node recap-plan.mjs shots plan.json      (place_story_shots에 넘길 shots JSON)
+//       node recap-plan.mjs finish plan.json     (마무리 효과 후보)
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -182,13 +184,94 @@ export function toStoryShots(plan) {
   return shots;
 }
 
+/**
+ * 마무리 효과 패스 — 다 만든 뒤 효과음·장면 전환·모션그래픽이 "필요한" beat만 고른다(references/recap-highlight.md §8.2).
+ * 원칙: 원작 대사·내레이션이 주인공. 대사 위에는 효과음을 얹지 않고(앞 쉼에), 이유가 없는 곳은 비운다.
+ * 결과 cues[{ beat, shot, kind: sfx|transition|motion, what, at, why, priority }] (shot은 toStoryShots 1부터 번호),
+ * skipped[{ beat, kind, why }](상한·대사 겹침으로 뺀 것), limits.
+ */
+export function suggestFinishing(plan) {
+  const mode = plan?.mode === "shorts" ? "shorts" : "full";
+  const beats = Array.isArray(plan?.beats) ? plan.beats : [];
+  const events = new Map((Array.isArray(plan?.events) ? plan.events : []).map((e) => [e.id, e]));
+  const dur = Number(plan?.durationSec) > 0 ? Number(plan.durationSec) : mode === "shorts" ? 40 : 120;
+  const per = dur / 60;
+  const limits = mode === "shorts"
+    ? { sfx: Math.max(2, Math.round(3 * per)), transition: 1, motion: 2 }
+    : { sfx: Math.max(3, Math.round(4 * per)), transition: Math.max(2, Math.round(3 * per)), motion: Math.max(2, Math.round(3 * per)) };
+  // beat → 첫 shot 번호
+  const shotOf = [];
+  let n = 0;
+  for (const b of beats) {
+    const k = [].concat(b.src ?? []).filter((s) => Number.isFinite(Number(s?.from)) && Number.isFinite(Number(s?.to))).length;
+    shotOf.push(k ? n + 1 : null);
+    n += k;
+  }
+  const cand = [];
+  const skipped = [];
+  const add = (i, kind, what, at, why, priority) => cand.push({ beat: i + 1, shot: shotOf[i], kind, what, at, why, priority });
+  const seenChars = new Set();
+  const hasLine = (b) => Boolean(b.keyLine || b.dialogueText);
+  const chronoOf = (b) => {
+    const e = events.get(b.event);
+    return Number.isFinite(Number(e?.chrono)) ? Number(e.chrono) : null;
+  };
+  beats.forEach((b, i) => {
+    const prev = beats[i - 1];
+    const at = hasLine(b) ? "대사 앞 쉼(대사 시작 0.2–0.4초 전)" : "beat 시작";
+    // 시간 점프 — 원작 시간이 크게 뒤로 가거나 timeJump/timeLabel을 적은 곳
+    const c = chronoOf(b), pc = prev ? chronoOf(prev) : null;
+    const jump = Boolean(b.timeJump || b.timeLabel) || (c !== null && pc !== null && pc - c >= 2);
+    if (jump && i > 0) {
+      add(i, "sfx", "휘익(whoosh) 짧게, 원본 소리 아래", "beat 시작 직전", "시간 점프를 귀로 알림", 3);
+      if (!prev.transitionOut) add(i - 1, "transition", "fadeIn 0.5초(짧은 딥) — 다음 장면으로", "앞 beat 끝", "시간이 뒤로 감", 3);
+      add(i, "motion", `장 제목·시간 표시 "${b.timeLabel ?? "그날 밤 / 3년 전"}" 1–1.5초`, "beat 시작", "언제인지 화면으로 알림", 3);
+    }
+    // 인물 첫 등장 — 이름표 (행동 소개 beat, 본편만)
+    if (mode === "full") {
+      const chars = [].concat(events.get(b.event)?.characters ?? b.characters ?? []);
+      const fresh = chars.filter((ch) => !seenChars.has(ch));
+      chars.forEach((ch) => seenChars.add(ch));
+      if (fresh.length && ["setup", "inciting", "escalation"].includes(b.stage))
+        add(i, "motion", `인물 이름표 ${fresh.slice(0, 2).join("·")} (이름 + 역할 한 줄, 얼굴 옆 하단)`, "인물이 화면에 처음 보일 때", "처음 나온 인물", 2);
+    }
+    if (b.infoCard) add(i, "motion", `정보 카드 "${b.infoCard}" 2–3초`, "beat 시작", "관계·장소를 화면으로", 2);
+    // 반전·결정적 공개 — 저음 히트, 대사가 있으면 그 앞 쉼에
+    if (b.stage === "twist" || b.reveal === "full" || b.reveal === "recontext") {
+      add(i, "sfx", mode === "shorts" ? "짧은 스팅(sting) 하나" : "저음 히트(low boom) + 직전 0.5초 BGM 끊기", at, "반전·공개 순간", b.stage === "twist" ? 5 : 4);
+    }
+    if (mode === "full" && b.stage === "hook" && i === 0) add(i, "sfx", "짧은 상승음(riser) 0.6–1초 → 첫 컷에서 끊김", "0초", "첫 1초에 소리로 시선 잡기", 2);
+    if (b.stage === "cliffhanger") add(i, "sfx", "긴장 드론이 끊기는 멈춤(stop) 또는 낮은 펄스", "마지막 문장 뒤", "다음 궁금증 여운", 3);
+    if (mode === "shorts") {
+      if (b.stage === "commentary") add(i, "sfx", "가벼운 팝(pop)·레코드 긁힘 중 하나, 아주 작게", "해석 문장 끝", "위트 줄에 박자", 2);
+      if (b.stage === "payoff" && !b.narration?.text) add(i, "sfx", "짧은 스팅·드럼 롤 끝(rimshot) 중 장면에 맞는 하나", "터지는 대사 직후(겹치지 않게)", "재미를 마무리", 3);
+      if (b.keyword) add(i, "motion", `핵심어 팝 "${b.keyword}" 0.6–1초(대사 자막과 다른 자리)`, "대사 끝", "황당한 핵심어 강조", 2);
+    }
+    if (b.stage === "dialogue" && cand.some((x) => x.beat === i + 1 && x.kind === "sfx"))
+      skipped.push({ beat: i + 1, kind: "sfx", why: "dialogue 구간은 원작 소리만" });
+  });
+  // dialogue beat의 효과음은 빼고, 종류별 상한 안에서 priority 높은 것부터
+  const pool = cand.filter((x) => !(x.kind === "sfx" && beats[x.beat - 1]?.stage === "dialogue"));
+  const cues = [];
+  for (const kind of ["sfx", "transition", "motion"]) {
+    const list = pool.filter((x) => x.kind === kind).sort((a, b) => b.priority - a.priority || a.beat - b.beat);
+    list.forEach((x, k) => (k < limits[kind] ? cues.push(x) : skipped.push({ beat: x.beat, kind, why: `${kind} 상한 ${limits[kind]}개를 넘음 — ${x.what}` })));
+  }
+  cues.sort((a, b) => a.beat - b.beat || a.kind.localeCompare(b.kind));
+  return { mode, cues, skipped, limits, note: "후보입니다. 미리보기에서 대사·내레이션과 겹치거나 이유가 약한 것은 뺍니다. 넣을 게 없으면 넣지 않습니다." };
+}
+
 function main(argv) {
   const [cmd, file, ...rest] = argv;
-  if (!cmd || !file || !["check", "shots"].includes(cmd)) {
-    console.log("usage: node recap-plan.mjs check|shots plan.json [--json]");
+  if (!cmd || !file || !["check", "shots", "finish"].includes(cmd)) {
+    console.log("usage: node recap-plan.mjs check|shots|finish plan.json [--json]");
     process.exit(cmd ? 1 : 0);
   }
   const plan = JSON.parse(fs.readFileSync(file, "utf8"));
+  if (cmd === "finish") {
+    console.log(JSON.stringify(suggestFinishing(plan), null, 2));
+    return;
+  }
   if (cmd === "shots") {
     console.log(JSON.stringify(toStoryShots(plan), null, 2));
     return;
