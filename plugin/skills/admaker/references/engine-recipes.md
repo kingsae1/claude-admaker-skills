@@ -487,8 +487,8 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 | Effect / `clip.effects` | `clipType` effect + `transform.effect {effectKey, values}` / `transform.clipEffects` | 필터, 색보정·라이트 릭, 외곽선·입체·긴 그림자 모두 그대로 |
 | Audio·Video `volume` 곡선, `duck` | `volume`(곡선의 최댓값) + `volumeCurve`, `duck`(by는 앱 id `ep_<클립>`·`track_<트랙>`으로 바꿈) | 앱 오디오 속성 "음성 나올 때 낮추기"와 같은 값 |
 | zIndex | `transform.zIndex = 1,000,000 + z` | 앱이 트랙을 재배치해도 겹침 순서를 지키는 "명시 zIndex" 구간 |
-| cornerPin·repeat·afterimage, Video holdAt·holdRanges, Image `style.animation` | `transform.engineFields` | 앱 #545 이후 저장·다시 열기에 남음. 서버 인코딩에서는 빠짐(§11) |
-| Backdrop(입자·종이 질감 포함), AudioSpectrum | `clipType` effect + `transform.engineClip`(클립 JSON에서 시간·위치·id 뺀 것) | AudioSpectrum `source`는 앱 id `ep_<클립>`으로 바꿈. 서버 인코딩에서는 빠짐 |
+| cornerPin·repeat·afterimage, Video holdAt·holdRanges, Image `style.animation` | `transform.engineFields` | 앱 #545 이후 저장·다시 열기에 남음(§11) |
+| Backdrop(입자·종이 질감 포함), AudioSpectrum | `clipType` effect + `transform.engineClip`(클립 JSON에서 시간·위치·id 뺀 것) | AudioSpectrum `source`는 앱 id `ep_<클립>`으로 바꿈 |
 | `settings.shutter` | `output.shutter` | 로컬·브라우저 내보내기 전용 |
 | **빠지는 것** | script 어댑터, three 커스텀 씬(model·morph·extrude 말고) | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
 
@@ -600,11 +600,11 @@ Caption `caption.wordAnimation`(또는 `style.wordAnimation`)에 `{ "type": "hig
 
 ### 10.8 gl- 전환 143종
 
-`transitionKey: "gl-<이름>"`(예: `gl-cube`, `gl-doorway`, `gl-crosswarp`). 장면 성격이 바뀌는 한두 곳에서만 쓰고 나머지는 매체 안의 전환(transitions.md). 앱 서버 인코딩은 fade로 바뀌므로, 서버 mp4가 최종본이면 am-* 전환을 씁니다.
+`transitionKey: "gl-<이름>"`(예: `gl-cube`, `gl-doorway`, `gl-crosswarp`). 장면 성격이 바뀌는 한두 곳에서만 쓰고 나머지는 매체 안의 전환(transitions.md). 앱 미리보기·브라우저 내보내기에서 그대로 보입니다.
 
-## 11. 엔진 3.0.31 기능 (앱 #545 이후 저장·다시 열기에 남음)
+## 11. 엔진 3.0.31 기능 (앱 #545 이후 앱에서도 그대로 열림)
 
-`validate.mjs`가 이름·값 범위를 확인하고 `to-admaker-import.mjs`가 앱 형식으로 바꿉니다(§9 표). 앱 서버 인코딩은 이 값들을 모르므로 **앱 미리보기·브라우저/로컬 내보내기에서만 보입니다**. 서버 mp4가 최종본이면 같은 그림을 키프레임·영상으로 굽습니다.
+`validate.mjs`가 이름·값 범위를 확인하고 `to-admaker-import.mjs`가 앱 형식으로 바꿉니다(§9 표). 앱은 브라우저 내보내기만 쓰므로 앱에서도 그대로 보입니다.
 
 ### 11.1 색·기울이기·코너 핀 키프레임
 
@@ -636,6 +636,6 @@ Caption `caption.wordAnimation`(또는 `style.wordAnimation`)에 `{ "type": "hig
 
 - Image에 움직이는 GIF·APNG·WebP를 그대로 넣으면 재생됩니다. `style.animation: { playbackRate, loop, startFrame, holdLast }` 또는 `false`(첫 프레임만).
 - Shape `shapeType: "sparkle"`, `style: { points 3–12, inner 0.02–0.9, curve 0–1, rotation }`: 네 갈래 반짝임.
-- `{ "type": "AudioSpectrum", "src": "spectrum", "source": "<Audio 클립 id>", "style": "bars"|"radial"|"wave", "bands", "colors", "gap", "round", "smoothing" }`: 소리에 맞춰 움직이는 막대(샷 audio-viz-bars). 앱으로 넘겨도 남지만 서버 인코딩에서 빠지므로, 서버 mp4가 최종본이면 `audio-viz.mjs` 키프레임 방식을 씁니다.
+- `{ "type": "AudioSpectrum", "src": "spectrum", "source": "<Audio 클립 id>", "style": "bars"|"radial"|"wave", "bands", "colors", "gap", "round", "smoothing" }`: 소리에 맞춰 움직이는 막대(샷 audio-viz-bars). 앱으로 넘겨도 그대로 남습니다(1단계 `audio-viz.mjs` 키프레임 방식은 이제 엔진 없이 그림만 필요할 때).
 - three `extrude` 장면: `{ "type": "Adapter", "adapter": "three", "src": "three", "params": { "scene": "extrude", "text"|"svg"|"path", "depth", "bevel", "material": "matte"|"glossy"|"metal"|"candy", "colors", "spin", "tilt" } }`. three `model`의 `params.media { 슬롯: { src, kind } }` + `screenSlot { mesh, media }`로 3D 화면 메쉬에 영상을 재생합니다. 둘 다 앱에서 열립니다.
 - 투명 배경 내보내기: `node render/render.mjs project.json out/logo.mov --alpha prores|webm|png`.

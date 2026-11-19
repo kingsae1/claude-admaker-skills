@@ -72,7 +72,7 @@ MCP가 없으면 영상 생성 AI나 스톡 푸티지는 쓰지 않습니다(소
    - 글자 자체가 주인공인 키네틱 타이포·모션 쇼릴(가변 폰트가 숨쉬는 글자, 입체 돌출 글자, 원형 배지, 도형 격자, 입자 글자, 타임코드 HUD) → `references/engine-recipes.md` §3.0(엔진 3.0.25+), 샷 카드 `variable-type-breath`·`bauhaus-grid-flip`·`particle-morph`, 예제 `samples/kinetic-reel`.
    - 광고끼리 닮아 보이지 않게 소재 씬 사이에 모션만으로 된 씬을 넣거나 전환을 화려하게 → `references/interludes.md`. 템포가 양을 정합니다: 빠른 템포는 모션 전용 씬 여러 개와 경계마다 그래픽 전환, 느린 템포·제품 극대화는 소재 위 액센트와 시그니처 전환 한 곳만. `node templates/interludes.mjs plan --bpm <BPM> --duration <초>`로 개수·자리·전환을 정합니다.
    - 색보정·라이트 릭, 스티커 외곽선·입체·긴 그림자, 경로 따라 날아가기, BGM 볼륨 곡선·내레이션 덕킹, 글자 둥근 배경·자동 맞춤, 자막 단어 강조, gl- 전환 → `references/engine-recipes.md` §10(엔진 3.0.30). 키프레임으로 굽거나 오프라인으로 섞지 말고 값으로 넣으면 앱에서도 그대로 열립니다.
-   - 색이 바뀌는 키프레임, 기울이기, 화면에 끼우는 코너 핀, 렌즈 왜곡·책장 넘김·종이 질감, 전환을 클립 하나에, 눈·꽃잎 입자, 반복·프레임 정지·잔상·모션블러, 움직이는 GIF, 반짝임 도형, 소리 막대, 입체 글자 → `references/engine-recipes.md` §11(엔진 3.0.31). 앱에 저장·다시 열기는 되지만 서버 인코딩에서는 빠집니다.
+   - 색이 바뀌는 키프레임, 기울이기, 화면에 끼우는 코너 핀, 렌즈 왜곡·책장 넘김·종이 질감, 전환을 클립 하나에, 눈·꽃잎 입자, 반복·프레임 정지·잔상·모션블러, 움직이는 GIF, 반짝임 도형, 소리 막대, 입체 글자 → `references/engine-recipes.md` §11(엔진 3.0.31). 값으로 넣으면 앱에서도 그대로 열립니다.
    - 사용자가 준 자막 파일(.srt·.vtt)을 넣거나 만든 자막을 SRT/VTT로 내보내기, 같은 광고를 문구·색·이미지만 바꾼 여러 버전(템플릿 파라미터 `{{이름}}`) → `references/subtitles-params.md`, `templates/subtitles.mjs`·`templates/params.mjs`.
    - 기본 도형·폰트로 안 되는 모양(손그림 강조, 붓 획, 윤곽선 타이포 같은 특수 레터링, 자유 도형) → `references/drawing.md`, `templates/draw.mjs`.
    - 간단한 도형 PNG(스티커·배지·아이콘)가 2장 이상 필요하면 하나씩 만들지 않고 한 장의 시트에 모두 그려 자릅니다: MCP `make_shape_pngs`(앱에 넣을 때는 시트 한 장만 올리고 클립마다 crop 위치만 다르게 하는 시트 모드가 기본), 없으면 `node shape-pngs.mjs shapes.json out/shapes` → `references/drawing.md` "도형 PNG 여러 장".
