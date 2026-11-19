@@ -1,0 +1,119 @@
+// 리캡 기획 검사 — references/recap-highlight.md §2, references/recap-shorts.md
+// node --test tests/*.test.mjs
+import test from "node:test";
+import assert from "node:assert/strict";
+import { checkRecapPlan, toStoryShots } from "../plugin/skills/admaker/templates/recap-plan.mjs";
+
+const events = [
+  { id: "E1", summary: "평범한 출근길", characters: ["A"], plot: "main", chrono: 1, emotion: "calm" },
+  { id: "E2", summary: "사고처럼 보이는 사건", characters: ["B"], plot: "main", chrono: 2, emotion: "shock" },
+  { id: "E3", summary: "맞지 않는 단서", plot: "main", chrono: 3, emotion: "suspicion" },
+  { id: "E4", summary: "C의 과거", characters: ["C"], plot: "sub", chrono: 4, emotion: "sad" },
+  { id: "E5", summary: "일부러 남긴 흔적", plot: "main", chrono: 5, emotion: "suspicion" },
+  { id: "E6", summary: "피해자가 모든 걸 설계함", plot: "main", chrono: 6, emotion: "surprise" },
+  { id: "E7", summary: "새 사건의 단서", plot: "sub", chrono: 7, emotion: "tension" },
+];
+const good = {
+  mode: "full",
+  durationSec: 150,
+  events,
+  beats: [
+    { stage: "hook", event: "E2", opens: ["Q1"], question: "사고일까?", narration: { role: "withhold", text: "그런데 이건 사고가 아니었다." }, src: { from: 300, to: 303 } },
+    { stage: "setup", event: "E1", narration: { role: "character", text: "A는 현장을 누구보다 잘 읽는 수사관이다." }, src: [{ from: 10, to: 13 }] },
+    { stage: "inciting", event: "E3", opens: ["Q2"], question: "누가 손댔나?", narration: { role: "causal", text: "그리고 첫 번째 이상한 점이 나온다." } },
+    { stage: "escalation", event: "E5", answers: ["Q1"], reveal: "partial", narration: { role: "situation", text: "누군가 일부러 남긴 흔적이 발견된다." } },
+    { stage: "twist", event: "E5", reveal: "recontext", narration: { role: "twist", text: "단순한 사고가 아니라 계획된 살인이었다." } },
+    { stage: "escalation", event: "E4", narration: { role: "emotion", text: "C에게는 아직 잊지 못한 밤이 있었다." } },
+    { stage: "twist", event: "E6", answers: ["Q2"], reveal: "full", narration: { role: "twist", text: "모든 걸 설계한 건 피해자였다." } },
+    { stage: "payoff", event: "E6", narration: { role: "situation", text: "결국 진실이 드러난다." } },
+    { stage: "cliffhanger", event: "E7", opens: ["Q3"], question: "그날 밤의 일은?", narration: { role: "tease", text: "하지만 이야기는 여기서 끝나지 않았다." } },
+  ],
+};
+
+test("좋은 본편 기획은 통과하고 순서를 바꾼 곳을 센다", () => {
+  const r = checkRecapPlan(good);
+  assert.equal(r.ok, true, r.errors.join("\n"));
+  assert.deepEqual(r.warnings, []);
+  assert.ok(r.stats.reordered >= 2);
+  assert.equal(r.questions.find((q) => q.id === "Q1").answeredAt, 4);
+});
+
+test("훅으로 시작하지 않거나 반전이 없으면 오류, 열지 않은 질문에 답하면 오류", () => {
+  const r = checkRecapPlan({
+    mode: "full",
+    events,
+    beats: [
+      { stage: "setup", event: "E1" },
+      { stage: "escalation", event: "E3", answers: ["Q9"] },
+      { stage: "payoff", event: "E6" },
+    ],
+  });
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.some((e) => e.includes("hook")));
+  assert.ok(r.errors.some((e) => e.includes("twist")));
+  assert.ok(r.errors.some((e) => e.includes("Q9")));
+  assert.ok(r.warnings.some((w) => w.includes("cliffhanger")));
+});
+
+test("긴 영상은 작은 반전·서브 플롯·감정 교차를 요구", () => {
+  const flat = {
+    mode: "full",
+    durationSec: 180,
+    events: events.map((e) => ({ ...e, plot: "main", emotion: "tension" })),
+    beats: [
+      { stage: "hook", event: "E2" },
+      { stage: "setup", event: "E1", introBy: "narration" },
+      { stage: "inciting", event: "E3" },
+      { stage: "escalation", event: "E4" },
+      { stage: "escalation", event: "E5" },
+      { stage: "twist", event: "E6" },
+      { stage: "payoff", event: "E6" },
+      { stage: "cliffhanger", event: "E7" },
+    ],
+  };
+  const r = checkRecapPlan(flat);
+  assert.equal(r.ok, true);
+  const w = r.warnings.join("\n");
+  assert.match(w, /반전이 1개/);
+  assert.match(w, /서브 플롯/);
+  assert.match(w, /4번 연속/);
+  assert.match(w, /행동 장면/);
+});
+
+test("쇼츠: 대사 중심, 내레이션 비율·되풀이·dialogue 구간 내레이션 경고", () => {
+  const ok = checkRecapPlan({
+    mode: "shorts",
+    beats: [
+      { stage: "hook", dialogueText: "오늘은 아무도 안 아파요." },
+      { stage: "context", narration: { role: "situation", text: "그는 이 섬에 하나뿐인 의사다." } },
+      { stage: "dialogue", dialogueText: "진료는 내일 하죠." },
+      { stage: "dialogue", dialogueText: "다들 왜 줄을 서 계세요?" },
+      { stage: "payoff", dialogueText: "오늘 휴진이라니까요." },
+    ],
+  });
+  assert.equal(ok.ok, true);
+  assert.deepEqual(ok.warnings, []);
+
+  const bad = checkRecapPlan({
+    mode: "shorts",
+    beats: [
+      { stage: "hook", narration: { role: "wit", text: "의사는 쉬기로 한다. 정말이다." } },
+      { stage: "dialogue", dialogueText: "오늘 진료 안 해요", narration: { role: "situation", text: "오늘 진료 안 한다고 말한다" } },
+      { stage: "commentary", narration: { role: "wit", text: "계획은 완벽했다." } },
+      { stage: "payoff", narration: { role: "tease", text: "과연." } },
+    ],
+  });
+  const w = bad.warnings.join("\n");
+  assert.match(w, /40% 이하/);
+  assert.match(w, /되풀이/);
+  assert.match(w, /dialogue 구간에 내레이션/);
+  assert.match(w, /한 문장/);
+});
+
+test("toStoryShots — beat 순서대로 src가 있는 것만, 단계 이름 그대로", () => {
+  const shots = toStoryShots(good);
+  assert.deepEqual(shots, [
+    { from: 300, to: 303, stage: "hook", label: "사고일까?" },
+    { from: 10, to: 13, stage: "setup" },
+  ]);
+});

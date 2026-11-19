@@ -4,6 +4,15 @@
 // 규칙을 바꿀 때는 두 곳을 같이 고친다. 아래쪽 "로컬 배치"는 이 스킬의 ProjectJSON(FOOTAGE·SHOTS)용으로 새로 쓴 부분이다.
 
 // ── 대사·장면·띠·배치 (앱 mcpRecap.ts) ──
+// 단계 이름 — 본편 7단계(hook·setup·inciting·escalation·twist·payoff·cliffhanger), 옛 이름과 쇼츠 단계도 받는다 (앱 normalizeStage)
+const STAGE_ALIAS = {
+  hook: "hook", setup: "setup", inciting: "inciting", escalation: "escalation", twist: "twist", payoff: "payoff", cliffhanger: "cliffhanger",
+  incident: "inciting", rise: "escalation", ending: "payoff", closing: "cliffhanger",
+  context: "setup", dialogue: "escalation", commentary: "escalation",
+};
+export function normalizeStage(stage) {
+  return typeof stage === "string" ? STAGE_ALIAS[stage.trim().toLowerCase()] : undefined;
+}
 const round = (v, d = 2) => Math.round(v * 10 ** d) / 10 ** d;
 export function groupWordsToSegments(words, opts = {}) {
   const gapSec = opts.gapSec ?? 0.7;
@@ -147,7 +156,7 @@ export function suggestStoryEffects(planned) {
     else if (p.keyLine) sug.camera = { move: "punch-in", amount: DEFAULT_AMOUNT["punch-in"], atSec: p.keyLine.localFromSec, reason: "\uBC30\uC6B0 \uB300\uC0AC \uAC15\uC870 \u2014 \uB300\uC0AC \uC2DC\uC791\uC5D0 \uD655 \uB4E4\uC5B4\uAC10" };
     else if (p.stage === "twist") sug.camera = { move: "punch-in", amount: DEFAULT_AMOUNT["punch-in"], atSec: Math.min(0.3, len / 3), reason: "\uBC18\uC804 \u2014 \uC7A5\uBA74 \uC2DC\uC791\uC5D0 \uD655 \uB4E4\uC5B4\uAC10" };
     else if (!next && len > 1.5) sug.camera = { move: "pull-out", amount: DEFAULT_AMOUNT["pull-out"], reason: "\uB9C8\uC9C0\uB9C9 \uC7A5\uBA74 \u2014 \uCC9C\uCC9C\uD788 \uBB3C\uB7EC\uB098\uBA70 \uC5EC\uC6B4" };
-    else if (len > 4 && (p.stage === "setup" || p.stage === "ending" || !p.stage)) sug.camera = { move: "push-in", amount: DEFAULT_AMOUNT["push-in"], reason: "4\uCD08 \uB118\uB294 \uC7A5\uBA74 \u2014 \uC815\uC9C0 \uD654\uBA74 \uD53C\uD558\uAE30" };
+    else if (len > 4 && (p.stage === "setup" || p.stage === "payoff" || !p.stage)) sug.camera = { move: "push-in", amount: DEFAULT_AMOUNT["push-in"], reason: "4\uCD08 \uB118\uB294 \uC7A5\uBA74 \u2014 \uC815\uC9C0 \uD654\uBA74 \uD53C\uD558\uAE30" };
     if (next && !p.transitionOut) {
       const continuous = Math.abs(next.srcFromSec - p.srcToSec) < 0.25;
       const backInTime = next.srcFromSec < p.srcFromSec - 30;
@@ -256,7 +265,7 @@ export function planStoryShots(shots, opts = {}) {
     planned.push({
       index: n,
       ...s.label ? { label: s.label } : {},
-      ...s.stage ? { stage: s.stage } : {},
+      ...normalizeStage(s.stage) ? { stage: normalizeStage(s.stage) } : {},
       ...camera ? { camera } : {},
       ...transitionOut ? { transitionOut } : {},
       srcFromSec: round(from, 3),
