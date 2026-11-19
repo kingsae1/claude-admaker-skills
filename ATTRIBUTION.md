@@ -96,3 +96,8 @@
 - 사양: kingsae1/admaker-plugin `cleanroom/remotion/specs/starburst.md`, `patterns.md`, `wiggle-noise.md` (1단계, 스킬)
 - 참고: SVG 2 경로 호 명령(https://www.w3.org/TR/SVG2/paths.html#PathDataEllipticalArcCommands), SVG 2 패턴(https://www.w3.org/TR/SVG2/pservers.html#Patterns), 위키백과 "Perlin noise"(1D 그래디언트 노이즈와 5차 페이드 함수)
 - `templates/rays.mjs`·`patterns.mjs`·`noise.mjs`는 위 사양서와 공개 표준·교과서 수식만 보고 새로 작성했습니다. 사양서가 허용한 simplex-noise(MIT)는 의존성으로도 쓰지 않았고, Remotion 패키지·저장소·문서는 열지 않았습니다.
+
+## 번개 (클린룸)
+- 사양: kingsae1/admaker-plugin `cleanroom/remotion/specs/lightning.md` (스킬)
+- 참고: 위키백과 "Midpoint displacement"(Diamond-square 문서의 1D 중점 변위 설명)
+- `templates/lightning.mjs`는 위 사양서와 교과서 수식, 우리 스킬 코드(`effects.mjs`, `to-admaker-import.mjs`)만 보고 새로 작성했습니다. Remotion 패키지·저장소·문서는 열지 않았습니다.

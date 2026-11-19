@@ -171,6 +171,8 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (first.opacity === 0 && (a.options?.delay ?? 0) > 0)
       err(id, "입장 keyframes에 options.delay: 엔진은 delay 전에 0% 값을 걸지 않아 클립이 먼저 보였다가 사라짐 (motion.mjs entrance/holdFrom 사용)");
     const moved = Object.keys(first).filter((k) => k !== "easing");
+    // 0에서 켜졌다 다시 0으로 꺼지는 깜빡임(번개·화면 번쩍, lightning.mjs)은 입장이 아니다 → R6·R7 대상 아님
+    if (first.opacity === 0 && stops.length > 2 && stops.at(-1)?.opacity === 0) continue;
     if (moved.length === 1 && moved[0] === "opacity" && first.opacity === 0) warn(id, "opacity만 바뀌는 단독 페이드 입장 (R6: 위치·scale을 함께)");
     if (first.opacity === 0 && d) {
       const f = Math.round(((d.from + (a.options?.delay ?? 0) + (held / 100) * (a.options?.duration ?? 0)) / 1e6) * FPS(p));
