@@ -1,14 +1,19 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
 // + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11), 움직이는 층이 모자란 구간(F2) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
-// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준, 이징·followPath·파라미터 효과(colorGrade·lightLeak·outline·bevel·longShadow)는 3.0.30까지. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
+// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준, 이징·followPath·파라미터 효과(colorGrade·lightLeak·outline·bevel·longShadow)는 3.0.30까지, P2 기능(색·skew·코너 핀 키프레임, lensDistort·pageCurl·paperOverlay·transitionFx, particles·종이 질감 Backdrop, cornerPin·repeat·holdAt·afterimage·shutter, AudioSpectrum, three extrude)은 3.0.31까지. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 import { paramRefs } from "./params.mjs";
 import { appTransitionWindow, autoZSign, checkSeams, sampleClip } from "./seams.mjs";
 
 const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold", "followPath"]);
-const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing"]);
+const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing",
+  // 엔진 3.0.31: 기울이기(°) · 코너 핀 꼭짓점 이동(클립 상자 비율 차이값, clip.cornerPin에 더함)
+  "skewX", "skewY", "pinTLx", "pinTLy", "pinTRx", "pinTRy", "pinBRx", "pinBRy", "pinBLx", "pinBLy"]);
+// 엔진 3.0.31 색 키프레임: CSS 색 문자열, OKLab 보간(params.colorSpace "oklab"|"srgb"). fill=Shape, color=Text·Caption, strokeColor=Shape·Text, tint=Image·Video
+const KEYFRAME_COLOR_KEYS = { fill: ["Shape"], color: ["Text", "Caption"], strokeColor: ["Shape", "Text"], tint: ["Image", "Video"] };
+const isCssColorish = (v) => typeof v === "string" && /^(#[0-9a-f]{3,8}|rgba?\(|hsla?\(|[a-z]+$)/i.test(v.trim());
 const EASINGS = new Set(["linear", "none", "slow",
   ...["Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "Back", "Elastic", "Bounce"].flatMap((n) => [`easeIn${n}`, `easeOut${n}`, `easeInOut${n}`])]);
 // gsap-core가 아는 이징: 이름(방향 생략 = .out), 설정값 "back.out(1.7)", "steps(6)". CustomEase·EasePack(rough, slow(…), expoScale)은 등록 안 됨
@@ -57,9 +62,17 @@ const PAINT_TEXT = new Set(["color", "strokeColor", "strokeWidth", "letterSpacin
 const AXIS_TAG = /^(?:[a-z]{4}|[A-Z]{4})$/;
 const FILTERS = new Set(["adjustment", "advancedBloom", "backdropBlur", "bloom", "colorMap", "colorOverlay", "convolution", "dot", "dropShadow", "glitch", "glow", "godray", "grayscale", "hslAdjustment", "kawaseBlur", "motionBlur", "oldFilm", "pixelate", "radialBlur", "reflection", "rgbSplit", "tiltShift"].map((n) => `${n}Filter`));
 // 엔진 3.0.30 파라미터 효과: Effect 클립(아래 레이어 전체)은 colorGrade·lightLeak, clip.effects(이 클립만)는 outline·bevel·longShadow·colorGrade (engine-recipes §10)
-const PARAM_EFFECT_CLIP = new Set(["colorGrade", "lightLeak"]);
-const PARAM_CLIP_STYLE = new Set(["outline", "bevel", "longShadow", "colorGrade"]);
-const BACKDROPS = new Set(["solid", "gradient", "meshGradient", "noise", "floatingBlobs"]);
+// 엔진 3.0.31: lensDistort·pageCurl·paperOverlay·transitionFx (engine-recipes §11)
+const PARAM_P2 = ["lensDistort", "pageCurl", "paperOverlay", "transitionFx"];
+const PARAM_EFFECT_CLIP = new Set(["colorGrade", "lightLeak", ...PARAM_P2]);
+const PARAM_CLIP_STYLE = new Set(["outline", "bevel", "longShadow", "colorGrade", ...PARAM_P2]);
+// 엔진 내장 GL 효과(effects/shaders.ts EFFECT_KEYS, 앱 효과 탭과 같은 이름). …Filter가 아닌 이름 그대로 씀
+const GL_EFFECTS = new Set(["rotationMovement", "sepia", "glitch", "pixelate", "rgbGlitch", "rgbShift", "halftone", "sinewave", "shine", "blink", "spring", "duotone", "tritone", "hueShift", "warpTransition", "slitScan", "slitScanGlitch", "pixelateTransition", "focusTransition", "invert", "grayscale", "vignette", "chromatic", "swirlMovement", "distort", "perspectiveSingle", "distortSpin", "distortGrid", "mirrorTile", "flashLoop", "filmStripPro", "inverseAperture", "curtainOpen", "curtainBlur", "neonFlash", "waveDistort", "scaleMoveBlur", "paperBreakReveal", "laser", "wave", "sparks", "tvScanlines", "hdr", "blackFlash", "brightPulse", "cameraMove", "fastZoom", "fadeIn", "fadeOut"]);
+// 3.0.31: 입자(particles)·Paper Shaders 질감 8종
+const PAPER_BACKDROPS = ["paperTexture", "fabric", "watercolor", "contour", "waves", "grainGradient", "dotGrid", "voronoi"];
+const BACKDROPS = new Set(["solid", "gradient", "meshGradient", "noise", "floatingBlobs", "particles", ...PAPER_BACKDROPS]);
+const PARTICLE_KINDS = new Set(["rain", "snow", "sparks", "petals", "confetti"]);
+const THREE_SCENES_BUILTIN = new Set(["model", "extrude"]); // morph 등은 커스텀 씬(src 표식 필요)
 // Core(Studio 로딩)는 이 타입들만 빈 src를 허용하고 나머지는 클립을 버린다
 const SRC_OPTIONAL = new Set(["Text", "Caption", "Effect", "Transition"]);
 const FPS = p => p.settings?.fps ?? 30;
@@ -77,6 +90,9 @@ const entranceStarts = new Map(); // 입장 시작 프레임 → 클립 id들 (R
 const fontUrls = new Map(); // fontFamily → Set(fontUrl) (B5)
 const dur = p.settings?.duration ?? Infinity;
 // 템플릿 파라미터 "{{이름}}"이 남아 있으면 엔진·앱이 문자 그대로 읽는다 → params.mjs applyParams 먼저 (references/subtitles-params.md §2)
+const shutter = p.settings?.shutter;
+if (shutter != null && !(Number(shutter.angle) > 0 && Number(shutter.angle) <= 360 && Number(shutter.samples) >= 2 && Number(shutter.samples) <= 32))
+  err("settings", "settings.shutter는 { angle: 0<…≤360, samples: 2..32 } (아니면 엔진이 모션블러를 끔)");
 const leftRefs = paramRefs(p);
 if (leftRefs.length) err("params", `"{{${leftRefs.join("}}\", \"{{")}}}" 참조가 남아 있음 → node params.mjs ${file} [values.json] --out <새 파일>로 값을 넣은 뒤 검사·렌더`);
 
@@ -119,7 +135,13 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (e && !EASINGS.has(e) && !isGsapEase(e)) err(id, `모르는 easing "${e}" (엔진은 선형으로 처리함)`);
     if (a.type === "gsapTimeline") checkGsapTimeline(id, a);
     if (a.type === "keyframes") for (const [stop, v] of Object.entries(a.params ?? {})) {
-      for (const k of Object.keys(v)) if (!KEYFRAME_KEYS.has(k)) err(id, `keyframes ${stop}: 모르는 키 "${k}"`);
+      if (stop === "colorSpace") { if (!["oklab", "srgb"].includes(v)) err(id, `keyframes params.colorSpace "${v}"를 엔진이 모름 (oklab·srgb)`); continue; }
+      for (const k of Object.keys(v)) {
+        if (KEYFRAME_COLOR_KEYS[k]) {
+          if (!KEYFRAME_COLOR_KEYS[k].includes(c.type)) warn(id, `keyframes ${stop}: 색 키 "${k}"는 ${KEYFRAME_COLOR_KEYS[k].join("·")} 클립에만 보임`);
+          if (!isCssColorish(v[k])) err(id, `keyframes ${stop}: "${k}" 값 "${v[k]}"이 CSS 색이 아님 (엔진이 그 키프레임을 버림)`);
+        } else if (!KEYFRAME_KEYS.has(k)) err(id, `keyframes ${stop}: 모르는 키 "${k}"`);
+      }
       if (v.easing && !EASINGS.has(v.easing) && !isGsapEase(v.easing)) err(id, `keyframes ${stop}: 모르는 easing "${v.easing}"`);
       if ("opacity" in v && overshoots(v.easing)) warn(id, `keyframes ${stop}: opacity 구간에 넘치는 이징 "${v.easing}" (0..1 밖으로 나감, easing.md §2)`);
     }
@@ -134,10 +156,13 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (/gradient\(/.test(String(c.style?.fill ?? ""))) err(id, `style.fill에 그라데이션 "${String(c.style.fill).slice(0, 30)}…" (단색으로 그려짐). style.gradient에 넣으세요`);
     if (c.style?.shapeType && c.style.shapeType !== c.shapeType) err(id, `style.shapeType "${c.style.shapeType}"은 무시됨 (도형 종류는 클립의 shapeType에: { type: "Shape", shapeType: "${c.style.shapeType}" })`);
   }
-  if (c.type === "Effect" && !FILTERS.has(c.effectKey) && !PARAM_EFFECT_CLIP.has(c.effectKey)) err(id, `모르는 Effect "${c.effectKey}" (…Filter 형식 또는 colorGrade·lightLeak)`);
+  if (c.type === "Effect" && !FILTERS.has(c.effectKey) && !PARAM_EFFECT_CLIP.has(c.effectKey) && !GL_EFFECTS.has(c.effectKey)) err(id, `모르는 Effect "${c.effectKey}" (…Filter, 내장 GL 효과, colorGrade·lightLeak·lensDistort·pageCurl·paperOverlay·transitionFx)`);
+  if (c.type === "Effect" && c.effectKey === "transitionFx" && !c.values?.transition) err(id, "transitionFx에 values.transition(전환 키) 없음");
   const fxs = c.effects ?? [];
   for (const fx of fxs) {
-    if (!FILTERS.has(fx.key) && !PARAM_CLIP_STYLE.has(fx.key)) err(id, `clip.effects: 모르는 효과 "${fx.key}" (…Filter 또는 outline·bevel·longShadow·colorGrade)`);
+    if (!FILTERS.has(fx.key) && !PARAM_CLIP_STYLE.has(fx.key) && !GL_EFFECTS.has(fx.key)) err(id, `clip.effects: 모르는 효과 "${fx.key}" (…Filter, 내장 GL 효과, outline·bevel·longShadow·colorGrade·lensDistort·pageCurl·paperOverlay·transitionFx)`);
+    if (fx.key === "transitionFx" && !fx.values?.transition) err(id, "clip.effects transitionFx에 values.transition(전환 키) 없음");
+    if (fx.key === "transitionFx" && fx.values?.direction != null && !["in", "out"].includes(fx.values.direction)) err(id, `transitionFx direction "${fx.values.direction}"를 엔진이 모름 (in·out)`);
     if (PARAM_CLIP_STYLE.has(fx.key) && (fx.startTime == null || fx.duration == null)) err(id, `clip.effects "${fx.key}": startTime·duration(클립 시작 기준 μs)이 없으면 안 그려짐`);
   }
   // 엔진은 그 시점에 걸린 첫 항목 하나만 그린다: 스타일 효과가 둘 이상 겹치면 뒤의 것은 안 보임
@@ -145,6 +170,29 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   if (c.type === "Backdrop") {
     const bt = c.backdropType ?? c.style?.backdropType ?? "solid";
     if (!BACKDROPS.has(bt)) err(id, `모르는 backdropType "${bt}"`);
+    if (bt === "particles") {
+      const kind = (c.params ?? c.style?.params ?? {}).kind;
+      if (kind != null && !PARTICLE_KINDS.has(kind)) err(id, `particles kind "${kind}"를 엔진이 모름 (${[...PARTICLE_KINDS].join("·")})`);
+    }
+  }
+  // 엔진 3.0.31 클립 확장 (engine-recipes §11)
+  if (c.cornerPin != null) {
+    const ok = ["tl", "tr", "br", "bl"].every((k) => Array.isArray(c.cornerPin[k]) && c.cornerPin[k].length === 2 && c.cornerPin[k].every(Number.isFinite));
+    if (!ok) err(id, "cornerPin은 { tl:[x,y], tr, br, bl } (클립 상자 비율 0..1, -1..2 허용) 네 점이 모두 있어야 함 (아니면 엔진이 핀을 끔)");
+  }
+  if (c.repeat != null && !(Number(c.repeat.every) > 0)) err(id, "repeat.every(µs)가 0보다 커야 함");
+  if ((c.holdAt != null || c.holdRanges != null) && c.type !== "Video") err(id, "holdAt·holdRanges는 Video 클립 전용");
+  if (Array.isArray(c.holdRanges)) for (const r of c.holdRanges) if (!(Number(r?.length) > 0) || !Number.isFinite(Number(r?.at))) err(id, "holdRanges 항목은 { at: µs(클립 로컬), length: µs > 0, frame? }");
+  if (c.afterimage != null) {
+    const n = Number(c.afterimage.count);
+    if (!(n >= 1 && n <= 12)) err(id, `afterimage.count ${c.afterimage.count} (1..12)`);
+    if (!(Number(c.afterimage.gap) > 0)) err(id, "afterimage.gap(µs)이 0보다 커야 함");
+  }
+  if (c.type === "Image" && c.style?.animation != null && c.style.animation !== false && typeof c.style.animation !== "object") err(id, "Image style.animation은 { playbackRate, loop, startFrame, holdLast } 또는 false");
+  if (c.type === "AudioSpectrum") {
+    if (!c.source) err(id, "AudioSpectrum에 source(Audio·Video 클립 id 또는 오디오 URL) 없음 (src는 Core가 클립을 안 버리게 하는 표식 값 \"spectrum\")");
+    else if (c.source && !p.clips?.[c.source] && !/^(https?:|data:|\.{0,2}\/|blob:)/.test(String(c.source))) err(id, `AudioSpectrum source "${c.source}" 클립이 없음`);
+    if (c.style != null && typeof c.style === "string" && !["bars", "radial", "wave"].includes(c.style)) err(id, `AudioSpectrum style "${c.style}" (bars·radial·wave)`);
   }
   if (c.type === "Text" || c.type === "Caption") {
     const fam = c.style?.fontFamily;
@@ -166,7 +214,7 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   const kfs = (c.animations ?? []).filter((a) => a.type === "keyframes");
   for (const a of kfs) {
     const pctOf = (k) => (/^from$/i.test(k) ? 0 : /^to$/i.test(k) ? 100 : parseFloat(k));
-    const sorted = Object.entries(a.params ?? {}).sort((x, y) => pctOf(x[0]) - pctOf(y[0]));
+    const sorted = Object.entries(a.params ?? {}).filter(([k]) => k !== "colorSpace").sort((x, y) => pctOf(x[0]) - pctOf(y[0]));
     const stops = sorted.map(([, v]) => v);
     const first = stops[0] ?? {};
     const same = (v) => JSON.stringify(Object.entries(v).filter(([k]) => k !== "easing").sort()) === JSON.stringify(Object.entries(first).filter(([k]) => k !== "easing").sort());
@@ -187,7 +235,10 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
   if (c.type === "Adapter" && c.adapter === "three") {
     const scene = c.params?.scene ?? "model";
     if (scene === "model" && !(c.src || c.params?.src)) err(id, "three model 씬에 src(.glb/.gltf) 없음");
-    if (scene !== "model" && !c.src) err(id, "three 커스텀 씬에 src 없음 (비어 있으면 Core가 클립을 버림, 표식 값 \"three\")");
+    if (scene !== "model" && !c.src) err(id, `three ${THREE_SCENES_BUILTIN.has(scene) ? "" : "커스텀 "}씬에 src 없음 (비어 있으면 Core가 클립을 버림, 표식 값 \"three\")`);
+    if (scene === "extrude" && !(c.params?.text || c.params?.svg || c.params?.path)) err(id, "three extrude 씬에 params.text·svg·path 중 하나가 없음");
+    const slot = c.params?.screenSlot;
+    if (slot && !c.params?.media?.[slot.media]) err(id, `three screenSlot.media "${slot?.media}"가 params.media에 없음`);
   }
   if (c.type === "Adapter" && !["script", "lottie", "three"].includes(c.adapter)) err(id, `모르는 어댑터 "${c.adapter}"`);
 }
