@@ -193,6 +193,13 @@ clips.footage.style = { matte: { clipId: "title", mode: "alpha" } };
   - 입장(3.0.2 기준): `rise`, `line_rise`, `slam`, `zoom_settle`, `drop`, `wave`, `center_reveal`, `cascade`, `blur_in`, `spin_in`, `swing`, `skew_slide`, `elastic_pop`, `bouncy_in`, `pop`, `typewriter`, `fade_in`, `slide_up`, `slide_down`, `grow`, `panorama`, `fly_in`, `bounce`, `handwrite_in`(손글씨, @admaker/animation 2.0.8 · 엔진 3.0.7+)
   - 3D 글자(engine 3.0.13+): 입장 `flip_in_x`(가로축으로 뒤집혀 섬), `flip_in_y`(세로축), `tumble_in`(위에서 굴러 들어옴), 퇴장 `flip_out_x`. 회전 중인 글자만 비트맵으로 그려 원근을 주고, 다 서면 벡터로 돌아갑니다. 카메라 거리는 `transform.charPerspective`(기본 800, 작을수록 원근이 셈), 뒷면을 숨기려면 `transform.charBackface: "hidden"`. 긴 문장·큰 글자에 쓰면 입장 구간이 무거우니 헤드라인 한 줄에만 씁니다.
   - 퇴장: `fade_out`, `shrink_out`, `sink_out`, `fly_out`, `blur_out`, `bouncy_out`, `flip_out_x`
+  - 엔진 3.0.33+ 입장: `focus_in`(넓게 벌어진 흐린 글자가 가운데로 모이며 또렷해짐), `blur_drop`(흐리고 기운 글자가 위에서 떨어져 튀며 자리잡음)
+- 글자 내용·글자 위치를 바꾸는 Text 모션(엔진 3.0.33+, `animations`에 넣음. 쓰는 법과 20종 레시피는 `text-animations.md`):
+  - `scramble`: 해독. 글자가 무작위 글자로 돌다 차례로 자리잡음. `chars`(upper·alnum·digits·symbols·binary·hex·직접 문자열, 비우면 글자와 같은 종류 · 한글은 한글), `reveal`(forward·backward·center·edges·random), `rate`(초당 바뀌는 횟수 18), `hold`(처음 모두 도는 비율 0.25), `mode: "out"`. delay 전에도 무작위 글자를 보여 줌.
+  - `typewrite`: 타자 + 커서. `caret`("|", ""면 없음), `blink`(초, 0.9), `caretHold`(끝난 뒤 깜빡이는 초, 기본 클립 끝까지), `unit`(char·word), `mode: "out"`(지우기). 커서가 숨어도 폭을 차지해 줄이 안 흔들림.
+  - `charWave`: 글자가 흐르는 사인 물결을 따라 계속 오르내림(루프). `amplitude`(px), `period`(초), `wavelength`(물결 한 번에 글자 수), `rotate`(도), `scale`, `direction`, `ramp`(시작·끝 완화 초). 같은 클립의 다른 `stagger` 모션과는 먼저 넣은 하나만 적용.
+  - 이 셋과 `countUp`은 `characterAnimation`과 한 클립에 같이 쓰지 않습니다(글자 단위 렌더러가 글자 내용 변경을 그리지 않음 → 클립을 나눔).
+- **로컬 렌더**: 엔진 Exporter·Preview의 Text 클립은 `characterAnimation`을 그리지 않습니다(앱은 text_segment 렌더러로 따로 그림). 렌더 하니스(`templates/render/char-anim.js`)가 렌더 직전에 그런 Text 클립만 같은 렌더러를 쓰는 script 어댑터로 바꿔 그립니다. project.json은 그대로입니다.
 - 각 항목은 `duration`, `stagger`, `staggerMode`(`char|word|line`), `staggerOrder`, `easing`을 덮어쓸 수 있습니다.
 - **클립 리빌**(베이스라인 아래에서 올라와 박스 밖은 잘림) = `line_rise` 또는 `rise` + 줄 단위.
 - **강조 단어 하나**는 글자별 스타일(색·크기)로 처리합니다. 강조 색은 브랜드 토큰의 accent 하나만 씁니다.
