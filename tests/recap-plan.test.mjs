@@ -117,3 +117,46 @@ test("toStoryShots — beat 순서대로 src가 있는 것만, 단계 이름 그
     { from: 10, to: 13, stage: "setup" },
   ]);
 });
+
+test("suggestFinishing — 필요한 beat에만, 대사 구간엔 효과음 없음, 상한", async () => {
+  const { suggestFinishing } = await import("../plugin/skills/admaker/templates/recap-plan.mjs");
+  const r = suggestFinishing(good);
+  const twistSfx = r.cues.filter((c) => c.kind === "sfx" && c.why.includes("반전"));
+  assert.ok(twistSfx.length >= 1);
+  assert.ok(r.cues.some((c) => c.kind === "motion" && c.what.includes("이름표")));
+  assert.ok(r.cues.some((c) => c.kind === "sfx" && c.why.includes("여운")));
+  assert.equal(r.cues.find((c) => c.beat === 1 && c.kind === "sfx").shot, 1);
+  // E4(원작 4번째)→E6? 시간 점프: escalation E4 다음 twist E6는 앞으로 감이라 점프 아님
+  assert.ok(r.cues.filter((c) => c.kind === "sfx").length <= r.limits.sfx);
+
+  const shorts = suggestFinishing({
+    mode: "shorts",
+    durationSec: 30,
+    beats: [
+      { stage: "hook", dialogueText: "오늘은 아무도 안 아파요." },
+      { stage: "dialogue", dialogueText: "진료는 내일 하죠.", reveal: "full" },
+      { stage: "commentary", narration: { role: "wit", text: "계획은 완벽했다." } },
+      { stage: "payoff", dialogueText: "오늘 휴진이라니까요.", keyword: "휴진" },
+    ],
+  });
+  assert.ok(!shorts.cues.some((c) => c.beat === 2 && c.kind === "sfx"));
+  assert.ok(shorts.skipped.some((s) => s.beat === 2));
+  assert.ok(shorts.cues.some((c) => c.beat === 4 && c.kind === "motion"));
+  assert.ok(shorts.cues.every((c) => !c.what.includes("이름표")));
+});
+
+test("suggestFinishing — 시간 점프에 휘익·딥 전환·시간 표시", async () => {
+  const { suggestFinishing } = await import("../plugin/skills/admaker/templates/recap-plan.mjs");
+  const r = suggestFinishing({
+    mode: "full",
+    durationSec: 60,
+    events: [{ id: "A", chrono: 9 }, { id: "B", chrono: 2 }],
+    beats: [
+      { stage: "hook", event: "A", src: { from: 1, to: 2 } },
+      { stage: "setup", event: "B", timeLabel: "3년 전", src: { from: 3, to: 4 } },
+    ],
+  });
+  assert.ok(r.cues.some((c) => c.kind === "transition" && c.beat === 1));
+  assert.ok(r.cues.some((c) => c.kind === "motion" && c.what.includes("3년 전") && c.shot === 2));
+  assert.ok(r.cues.some((c) => c.kind === "sfx" && c.what.includes("휘익")));
+});
