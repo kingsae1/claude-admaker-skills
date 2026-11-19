@@ -1,10 +1,10 @@
 # 내레이션 연출과 오디오 태그
 
-admaker의 내레이션(TTS)은 ElevenLabs v3/v4 모델로 만듭니다. 좋은 광고 내레이션은 TTS 품질보다 **연기 지시**에서 갈립니다. 같은 문장도 어디서 숨을 쉬고, 어느 단어를 밀고, 어느 컷에 맞춰 떨어지느냐에 따라 전혀 다르게 들립니다. 그래서 내레이션은 "대본 쓰기 → 연출표 → 생성 → 싱크·검수" 순서로, 성우 디렉터처럼 만듭니다.
+admaker의 내레이션(TTS)은 ElevenLabs v3/v4 또는 Gemini TTS로 만듭니다(계정·설정에 따라 엔진이 다름, §7.1). 좋은 광고 내레이션은 TTS 품질보다 **연기 지시**에서 갈립니다. 같은 문장도 어디서 숨을 쉬고, 어느 단어를 밀고, 어느 컷에 맞춰 떨어지느냐에 따라 전혀 다르게 들립니다. 그래서 내레이션은 "대본 쓰기 → 연출표 → 생성 → 싱크·검수" 순서로, 성우 디렉터처럼 만듭니다.
 
-이 모델은 대본 안의 **대괄호 영문 태그**(`[excited]`, `[short pause]`)를 읽지 않고, 감정·말투·쉼·호흡 지시로 씁니다. 목록에 없는 태그를 지어내면 그대로 읽힐 수 있습니다.
+두 엔진 모두 대본 안의 **대괄호 영문 태그**(`[excited]`, `[short pause]`)를 읽지 않고, 감정·말투·쉼·호흡 지시로 씁니다. 다만 **엔진마다 받는 태그와 먹히는 자리가 다릅니다**(§7.1). 목록에 없는 태그를 지어내면 그대로 읽힐 수 있습니다.
 
-MCP에서는 `ai.voice.generate { text, voiceId, startSec }`의 `text`에 태그를 넣습니다. 앱(Planner·Quick·Studio)의 입력창에서는 `[`를 치면 같은 목록이 뜹니다. 한국어 화면에서는 `[신남]`처럼 한글 이름으로 보이지만, 실제로 API에 들어가는 값은 영문 태그입니다.
+MCP에서는 `ai.voice.generate { text, voiceId, startSec }`의 `text`에 태그를 넣습니다. 대본을 쓰기 전에 `list_narration_tags`로 지금 엔진에서 쓸 수 있는 태그를 보고, 생성 전에 줄마다 `check_narration_tags { text }`로 검사합니다(크레딧 없음). 앱(Planner·Quick·Studio)의 입력창에서는 `[`를 치면 같은 목록이 뜹니다. 한국어 화면에서는 `[신남]`처럼 한글 이름으로 보이지만, 실제로 API에 들어가는 값은 영문 태그입니다.
 
 `ai.voice.generate`에는 속도·안정성 값을 넘길 수 없습니다(서버 고정). 속도·강약·쉼은 모두 **문장 구성, 문장부호, 태그, 클립 배치**로 만듭니다.
 
@@ -95,6 +95,7 @@ MCP에서는 `ai.voice.generate { text, voiceId, startSec }`의 `text`에 태그
 
 ## 5. 태그 규칙
 
+0. **먼저 엔진을 확인합니다.** MCP `list_narration_tags`가 지금 엔진(`engine`)과 그 엔진에서 쓸 수 있는 태그(`tags`), 쓰면 안 되는 태그(`notSupported`)를 돌려줍니다. 그 목록에서만 고르고, `check_narration_tags`의 `ok`가 false면 `warnings`대로 고친 뒤 생성합니다. `ai.voice.generate`에 `strictTags: true`를 주면 못 쓰는 태그가 있을 때 만들지 않고 돌려줍니다. MCP가 없으면 §7.1 표로 판단합니다.
 1. **태그는 영문, 대괄호 안에, §7 목록에서만 고릅니다.** 한글 이름(`[신남]`)으로 써도 앱이 영문으로 바꿔 주지만, MCP에서는 영문으로 씁니다.
 2. **문장당 0~2개만 넣습니다.** 태그를 늘린다고 연기가 좋아지지 않고, 오히려 발음이 흔들립니다. 감정 태그는 문장 맨 앞에, 반응·쉼 태그는 그 일이 일어나는 자리에 둡니다.
 3. **쉼은 문장부호와 클립 간격이 먼저입니다.** 꼭 문장 안에서 끊어야 할 곳에만 `[short pause]`(약 0.5초)를 넣습니다. `[long pause]`는 광고 길이를 잡아먹으니 거의 쓰지 않습니다. SSML `<break>`는 지원하지 않습니다.
@@ -126,13 +127,24 @@ MCP에서는 `ai.voice.generate { text, voiceId, startSec }`의 `text`에 태그
 | 억양·캐릭터 | `sings`(노래하듯) `pirate voice`(해적 목소리) `British accent`(영국 억양) `strong American accent`(미국 억양) `strong French accent`(프랑스 억양) |
 | 효과음 | `applause`(박수갈채) `clapping`(박수) |
 
+### 7.1 엔진별 차이
+
+| | ElevenLabs | Gemini TTS |
+|---|---|---|
+| 보내는 모양 | `[tag]`를 본문에 그대로 | 앱이 바꿔 보냄: 소리·쉼 태그 → `<laugh>` `<short pause>`, 문장 맨 앞 감정·말투 → 전체 스타일 지시, 중간 감정·말투 → `[...]` 연기 지시 |
+| 감정·말투 태그 | 아무 자리나(문장 앞 권장) | **문장 맨 앞**에 둘 때 가장 잘 먹힘. 문장 끝에 남은 감정 태그는 버려짐 |
+| 쓰면 안 되는 태그 | Gemini 전용 소리(`giggle` `breath` `phew` `tsk` `cough` `yawn` `sob` `cheer`)는 목록 밖이라 읽힐 수 있음 | 효과음(`applause` `clapping`), `gulps` `swallows`는 지워짐. 한글 태그도 지워짐 |
+| 전용 태그 | `gulps` `swallows` `applause` `clapping` | `giggle` `breath` `phew` `tsk` `cough` `yawn` `sob` `cheer` |
+
+엔진 전용 태그가 아니면 §7 목록은 두 엔진 모두 씁니다. 엔진이 바뀌면 같은 대본도 다시 검사합니다. 변환 규칙은 앱의 `voice-tag-engine.ts`·`gemini-tts-tags.ts`가 기준입니다.
+
 출처: ElevenLabs [Audio Tags 101](https://elevenlabs.io/blog/v3-audiotags), [Text to Speech best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices). 앱 목록과 같은 내용입니다(admaker `voice-tag-catalog.ts`). 한쪽을 고치면 다른 쪽도 같이 고칩니다.
 
 ## 8. 자가검사
 
 - 줄마다 화면 문구와 읽을 문장이 나뉘어 있고, 읽을 문장에 `% & / # @ $ +`·마크다운·줄 앞 목록 기호가 없나요?
 - 숫자·영어·브랜드명이 소리 나는 대로 쓰여 있나요?
-- 태그가 모두 §7 목록에 있고 영문이며, 문장마다 2개 이하인가요?
+- 태그가 모두 지금 엔진에서 쓸 수 있는 것(§7.1, MCP `check_narration_tags` ok)이고 영문이며, 문장마다 2개 이하인가요?
 - 전체 분량이 광고 길이 × 4자 안팎이고, 씬마다 `(씬 길이 − 0.5) × 6자` 안에 들어가나요?
 - 줄마다 클립이 따로 있고, 큐 단어가 정한 컷·피크에 떨어지나요?
 - 내레이션 구간에서 BGM이 낮아져 있나요?
