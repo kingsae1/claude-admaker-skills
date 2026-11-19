@@ -1,12 +1,12 @@
 // project.json 검사: 엔진에 없는 모션·이징·키프레임·필터 이름, 클립 타입 제약, src 누락, 시간 범위 (✗ 오류)
 // + 모션 규칙 경고: 단독 페이드(R6), 동시 입장(R7), 바닥 소재 없음·소재를 넓게 덮는 층(Q11), 움직이는 층이 모자란 구간(F2) (△ 경고, 종료 코드에 영향 없음)
 // 사용: node validate.mjs project.json
-// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준, 이징은 3.0.30(spring·cubic-bezier)까지. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
+// 아래 목록은 @admaker/engine 3.0.7 (three 어댑터 + 씬 훅, gsap-core 3.15, lineBoil) 기준, 이징·followPath·파라미터 효과(colorGrade·lightLeak·outline·bevel·longShadow)는 3.0.30까지. 엔진 버전이 바뀌면 dist/index.d.ts와 대조해 갱신한다.
 import fs from "node:fs";
 import { FONTS, findFont, hasHangul } from "./fonts.mjs";
 import { appTransitionWindow, autoZSign, checkSeams, sampleClip } from "./seams.mjs";
 
-const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold"]);
+const MOTION_TYPES = new Set(["keyframes", "stagger", "gsapTimeline", "wipe", "circleReveal", "rectExpand", "angleWipe", "starReveal", "centerExpand", "blockReveal", "strokeDraw", "paint", "shake", "countUp", "lineBoil", "unfold", "fold", "followPath"]);
 const KEYFRAME_KEYS = new Set(["x", "y", "width", "height", "scale", "scaleX", "scaleY", "opacity", "angle", "blur", "brightness", "mirror", "motionBlur", "rotateX", "rotateY", "z", "perspective", "easing"]);
 const EASINGS = new Set(["linear", "none", "slow",
   ...["Quad", "Cubic", "Quart", "Quint", "Sine", "Expo", "Circ", "Back", "Elastic", "Bounce"].flatMap((n) => [`easeIn${n}`, `easeOut${n}`, `easeInOut${n}`])]);
@@ -55,6 +55,9 @@ const PAINT_SHAPE = new Set(["fillColor", "strokeColor", "strokeWidth", "borderR
 const PAINT_TEXT = new Set(["color", "strokeColor", "strokeWidth", "letterSpacing", "fontWeight", "fontWidth", "fontSlant", "opticalSize", "easing"]);
 const AXIS_TAG = /^(?:[a-z]{4}|[A-Z]{4})$/;
 const FILTERS = new Set(["adjustment", "advancedBloom", "backdropBlur", "bloom", "colorMap", "colorOverlay", "convolution", "dot", "dropShadow", "glitch", "glow", "godray", "grayscale", "hslAdjustment", "kawaseBlur", "motionBlur", "oldFilm", "pixelate", "radialBlur", "reflection", "rgbSplit", "tiltShift"].map((n) => `${n}Filter`));
+// 엔진 3.0.30 파라미터 효과: Effect 클립(아래 레이어 전체)은 colorGrade·lightLeak, clip.effects(이 클립만)는 outline·bevel·longShadow·colorGrade (engine-recipes §10)
+const PARAM_EFFECT_CLIP = new Set(["colorGrade", "lightLeak"]);
+const PARAM_CLIP_STYLE = new Set(["outline", "bevel", "longShadow", "colorGrade"]);
 const BACKDROPS = new Set(["solid", "gradient", "meshGradient", "noise", "floatingBlobs"]);
 // Core(Studio 로딩)는 이 타입들만 빈 src를 허용하고 나머지는 클립을 버린다
 const SRC_OPTIONAL = new Set(["Text", "Caption", "Effect", "Transition"]);
@@ -98,6 +101,11 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (!MOTION_TYPES.has(a.type)) err(id, `모르는 모션 type "${a.type}"`);
     if (SHAPE_ONLY.has(a.type) && c.type !== "Shape") err(id, `${a.type}는 Shape 전용`);
     if (a.type === "countUp" && c.type !== "Text") err(id, "countUp은 Text 전용");
+    if (a.type === "followPath") {
+      const pd = a.params?.d;
+      if (!pd || !/^\s*[Mm]/.test(String(pd))) err(id, "followPath에 params.d(SVG 경로, M으로 시작) 없음");
+      if (a.params?.space != null && !["canvas", "clip"].includes(a.params.space)) err(id, `followPath params.space "${a.params.space}"를 엔진이 모름 (canvas·clip)`);
+    }
     if (a.type === "paint") for (const v of Object.values(a.params ?? {})) for (const k of Object.keys(v ?? {})) {
       const ok = c.type === "Text" ? PAINT_TEXT.has(k) || AXIS_TAG.test(k) : PAINT_SHAPE.has(k);
       if (!ok) err(id, `paint 키 "${k}"는 ${c.type}에서 엔진이 모름 (무시됨)`);
@@ -122,8 +130,14 @@ for (const [id, c] of Object.entries(p.clips ?? {})) {
     if (/gradient\(/.test(String(c.style?.fill ?? ""))) err(id, `style.fill에 그라데이션 "${String(c.style.fill).slice(0, 30)}…" (단색으로 그려짐). style.gradient에 넣으세요`);
     if (c.style?.shapeType && c.style.shapeType !== c.shapeType) err(id, `style.shapeType "${c.style.shapeType}"은 무시됨 (도형 종류는 클립의 shapeType에: { type: "Shape", shapeType: "${c.style.shapeType}" })`);
   }
-  if (c.type === "Effect" && !FILTERS.has(c.effectKey)) err(id, `모르는 Effect 필터 "${c.effectKey}" (이름은 …Filter 형식)`);
-  for (const fx of c.effects ?? []) if (!FILTERS.has(fx.key)) err(id, `clip.effects: 모르는 필터 "${fx.key}"`);
+  if (c.type === "Effect" && !FILTERS.has(c.effectKey) && !PARAM_EFFECT_CLIP.has(c.effectKey)) err(id, `모르는 Effect "${c.effectKey}" (…Filter 형식 또는 colorGrade·lightLeak)`);
+  const fxs = c.effects ?? [];
+  for (const fx of fxs) {
+    if (!FILTERS.has(fx.key) && !PARAM_CLIP_STYLE.has(fx.key)) err(id, `clip.effects: 모르는 효과 "${fx.key}" (…Filter 또는 outline·bevel·longShadow·colorGrade)`);
+    if (PARAM_CLIP_STYLE.has(fx.key) && (fx.startTime == null || fx.duration == null)) err(id, `clip.effects "${fx.key}": startTime·duration(클립 시작 기준 μs)이 없으면 안 그려짐`);
+  }
+  // 엔진은 그 시점에 걸린 첫 항목 하나만 그린다: 스타일 효과가 둘 이상 겹치면 뒤의 것은 안 보임
+  if (fxs.filter((fx) => PARAM_CLIP_STYLE.has(fx.key)).length > 1) warn(id, "clip.effects에 스타일 효과(outline·bevel·longShadow·colorGrade)가 2개 이상: 같은 구간이면 첫 항목만 그려짐");
   if (c.type === "Backdrop") {
     const bt = c.backdropType ?? c.style?.backdropType ?? "solid";
     if (!BACKDROPS.has(bt)) err(id, `모르는 backdropType "${bt}"`);

@@ -314,7 +314,7 @@ const hw = handwriting(clipDur, { stagger: 0.08 });
 - 이어지는 바는 한 Shape로 그립니다(이음새 방지).
 - `Backdrop`: 단색/그라디언트 배경.
 - 필터(Effect 클립의 `effectKey`, 클립 효과의 `key`는 이름 뒤에 `Filter`를 붙임. 예: `oldFilmFilter`): adjustment, advancedBloom, backdropBlur, bloom, colorMap, colorOverlay, convolution, dot, dropShadow, glitch, glow, godray, grayscale, hslAdjustment, kawaseBlur, motionBlur, oldFilm, pixelate, radialBlur, reflection, rgbSplit, tiltShift. 광효과(glow, bloom, godray)는 **주인공 하나에 한 번**(aesthetic-rules Q4).
-- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. admaker 전환 팩 `am-*` 6종(`registerAdmakerTransitions()`로 등록): `am-flash-streak`(사선 빛줄기 + 색 번쩍), `am-cover-flood`(색이 번져 덮기), `am-zoom-through`(링 안으로 줌), `am-card-swap`(카드 넘김), `am-push`(다음 화면이 밀어내기, `direction`·`blur`), `am-ink-bleed`(잉크 번짐, engine 3.0.13+), 그리고 이음새용 6종(엔진 PR #37 이후): `am-cut-curve`(흐름 잇기), `am-zoom-blur`(줌 잇기, `push` 1 앞으로 / −1 뒤로), `am-rack-focus`(초점 넘기기), `am-light-leak`(빛샘), `am-pixelate`(픽셀 쪼개기), `am-rgb-split`(색 갈라짐). 고르는 법과 values는 `transitions.md` §2 B. 요소 하나를 화면 밖에서 밀어 넣거나 밀어 낼 때는 애니메이션 에셋 `push`(`@admaker/animation`)를 씁니다. 전환 클립의 `values`로 색·위치를 클립마다 바꾸고(`{ "color": [1, 0.85, 0.1], "origin": [0.25, 0.8] }`, 색은 0–1 RGB, 위치는 화면 비율·위가 0), `easing`으로 진행 곡선을 줍니다(`easing.md` §4). `to-admaker-import.mjs`는 전환마다 서버 인코딩용 xfade 이름(`type`)과 엔진 키·values·easing(`engine`)을 같이 넘겨서, 앱 미리보기·브라우저 내보내기에서는 `am-*`가 그대로 보입니다. `hf-*`는 앱에 등록되어 있지 않아 fade로 바뀝니다.
+- 전환: `fade`, `radialSwipe`, gl-transitions 팩(`getAllTransitions()`로 목록 확인), HyperFrames 셰이더 팩 `hf-*` 14종(엔진 3.0.7: `hf-whip-pan`, `hf-cinematic-zoom`, `hf-cross-warp-morph`, `hf-sdf-iris`, `hf-flash-through-white` 등). 기본은 매체 안의 전환(마스크·키프레임 조합)이고, 셰이더 전환은 장면 성격이 바뀌는 곳에서만. admaker 전환 팩 `am-*` 6종(`registerAdmakerTransitions()`로 등록): `am-flash-streak`(사선 빛줄기 + 색 번쩍), `am-cover-flood`(색이 번져 덮기), `am-zoom-through`(링 안으로 줌), `am-card-swap`(카드 넘김), `am-push`(다음 화면이 밀어내기, `direction`·`blur`), `am-ink-bleed`(잉크 번짐, engine 3.0.13+), 그리고 이음새용 6종(엔진 PR #37 이후): `am-cut-curve`(흐름 잇기), `am-zoom-blur`(줌 잇기, `push` 1 앞으로 / −1 뒤로), `am-rack-focus`(초점 넘기기), `am-light-leak`(빛샘), `am-pixelate`(픽셀 쪼개기), `am-rgb-split`(색 갈라짐). 고르는 법과 values는 `transitions.md` §2 B. 요소 하나를 화면 밖에서 밀어 넣거나 밀어 낼 때는 애니메이션 에셋 `push`(`@admaker/animation`)를 씁니다. 전환 클립의 `values`로 색·위치를 클립마다 바꾸고(`{ "color": [1, 0.85, 0.1], "origin": [0.25, 0.8] }`, 색은 0–1 RGB, 위치는 화면 비율·위가 0), `easing`으로 진행 곡선을 줍니다(`easing.md` §4). `to-admaker-import.mjs`는 전환마다 서버 인코딩용 xfade 이름(`type`)과 엔진 키·values·easing(`engine`)을 같이 넘겨서, 앱 미리보기·브라우저 내보내기에서는 `am-*`가 그대로 보입니다. `hf-*`는 앱에 등록되어 있지 않아 fade로 바뀝니다. gl-transitions 팩 143종(`gl-cube`, `gl-doorway` 등, 엔진 3.0.30)은 앱에 등록되어 있어 앱 미리보기·브라우저 내보내기에서 그대로 보이고 서버 인코딩에서만 fade가 됩니다.
 - 씬 경계마다 어떤 전환을 쓸지(트랙 매트·`am-*`·전환 샷·마스크, 규칙과 values)는 `transitions.md`를 따릅니다.
 - 소재 사이 전환 샷(`shots/transition-*.mjs`)은 그래픽 클립과 함께 **바닥 소재 클립에 붙일 모션**을 `footage: { FOOTAGE 번호: [animations] }`로 돌려주고, `build-project.mjs`가 그 소재 클립의 animations 뒤에 더합니다. 두 소재가 겹쳐야 하는 전환(줌 스루, 카드)은 `FOOTAGE`의 from/to를 카드에 적힌 대로 겹쳐 둡니다.
 - **겹침 순서는 트랙 순서가 먼저입니다.** 클립에 `id`가 있으면 엔진이 트랙 순서로 zIndex를 다시 매깁니다(앞 트랙이 위, 엔진 3.0.19 렌더로 확인). `build-project.mjs`는 모든 클립에 키를 `id`로 적고, 트랙을 그 안 클립의 가장 높은 `transform.zIndex` 순으로 놓아 표의 zIndex가 그대로 지켜지게 합니다. 직접 ProjectJSON을 짤 때도 클립마다 `id`를 적고(없으면 전환 from/to·트랙 매트 clipId가 클립을 못 찾음) 위에 그릴 트랙을 앞에 둡니다. 소재 아래 배경은 `settings.backgroundColor`가 아니라(Exporter가 안 칠함) 소재보다 뒤 트랙의 화면 가득한 클립(`lookStack`의 `look_bg`)으로 둡니다.
@@ -363,10 +363,9 @@ admaker의 전환은 **광고 길이를 줄이지 않습니다.** 클립마다 �
 
 ## 6. 사운드
 
-엔진 믹서는 클립별 고정 볼륨과 페이드만 있습니다. 그래서:
+엔진 3.0.30부터 클립 `volume`에 곡선, `duck`으로 자동 덕킹을 줄 수 있습니다(§10.5). 앱에서도 그대로 열리고 고칠 수 있으니 **앱으로 넘길 광고는 음악·내레이션·SFX를 클립으로 따로 두고 곡선·덕킹으로 섞습니다.**
 
-- **음악 + 내레이션 + 덕킹**은 스킬이 오프라인으로 믹스해(ffmpeg/python: 덕킹, 보이스 컴프, −14 LUFS 2-pass loudnorm, true peak −1 dBTP) `mix.wav` 하나를 Audio 클립으로 넣습니다.
-- 편집 가능성을 남기고 싶으면 `music.wav`(덕킹 반영본), `voice.wav`, `sfx_*.wav`를 따로 넣되, 볼륨 자동화는 없다는 전제로 음악을 미리 덕킹해 둡니다.
+- 로컬 렌더만 하는 최종본은 지금처럼 오프라인 믹스(ffmpeg/python: 덕킹, 보이스 컴프, −14 LUFS 2-pass loudnorm, true peak −1 dBTP)로 `mix.wav` 하나를 넣어도 됩니다. 라우드니스 정규화는 엔진에 없습니다.
 - 사용자가 준 소재가 없으면 앱이 있을 때는 앱 효과음 라이브러리나 `ai.sfx.generate`를 쓰고(`sfx.md` §0), 앱 MCP가 없을 때만 `templates/gen-audio-kit.mjs`로 SFX 키트와 패드 베드를 합성합니다(aesthetic-rules S7). `node gen-audio-kit.mjs [outDir]` → `whoosh_a/b.wav`, `impact.wav`, `riser.wav`, `tick.wav`, `click.wav`, `bed.wav`(timeline.mjs의 BPM·길이 기준).
 - SFX는 프레임 표(`sfx.json`: `{frame, file, gain, peakLagMs, note}`)에서 Audio 클립을 생성합니다. 시작 시간 = `frame/fps − 피크 지연`. 피크 지연은 `node templates/sfx-peak.mjs sfx/*.wav --sfx sfx.json`으로 재서 채웁니다(`sfx.md` §5).
 - 렌더 후 최종 mp4의 오디오를 다시 측정합니다(`ffmpeg -af ebur128`). 엔진 인코더 경로에서 오프셋이 생기면 그 값을 기록하고 SFX 시작 시간에서 일괄 보정합니다.
@@ -478,13 +477,16 @@ admaker 앱의 "광고 불러오기"는 엔진 ProjectJSON을 받지 않고, 렌
 | settings | `output` + `track_bg`(단색 SVG) | 배경색은 track_bg SVG에서 읽힘 |
 | Image / Video / Audio | `clipType` image / video / audio + `inputs` | 오디오 페이드는 `fadeInSec`/`fadeOutSec` |
 | Text | `text`, 스타일은 transform(`fontName`, `fontSize`, `color`, `align`, …) | `characterAnimation`은 transform에 실어 앱의 text_segment 렌더러가 그림 |
-| Caption | `text_segment` + `_isCaption`, `_captionWords`, `_captionColors` | `wordAnimation`은 빠짐 |
+| Text 배경·자동 맞춤 | 객체 `style.background` → `boxColor`(색) + `transform.textBackground`, `style.autoFit` → `transform.textAutoFit` | 앱 #531 이후 그대로 열림(전에는 "[object Object]") |
+| Caption | `text_segment` + `_isCaption`, `_captionWords`, `_captionColors`, `_captionWordAnimation` | 단어 강조(`wordAnimation`)는 앱 #533 이후 보존 |
 | Shape | `shape` + `transform.shape {shapeType, style}` | pill은 `borderRadius`를 채워 넣음 |
 | Adapter lottie / three(model) | `lottie` + `transform.adapter {adapter, params}` | three 모델은 `params.src`(data URL)에 있어야 함 |
-| animations | `transform.animation[] {type, start, duration, easing, iterCount, params}` | keyframes·마스크·countUp·lineBoil 등 16종만. `stagger`·`direction`은 빠짐 |
-| Transition | `transitions[] {type, duration, from, to, mode}` | xfade 이름(fade, slideleft, …)으로 변환 |
+| animations | `transform.animation[] {type, start, duration, easing, iterCount, params}` | keyframes·마스크·countUp·lineBoil·followPath 등 17종만. `stagger`·`direction`은 빠짐 |
+| Transition | `transitions[] {type, duration, from, to, mode, engine}` | `type`은 서버 인코딩용 xfade 이름, `engine`은 엔진 키(am-*·gl-*는 앱에서 그대로 보임, `hf-*`만 fade) |
+| Effect / `clip.effects` | `clipType` effect + `transform.effect {effectKey, values}` / `transform.clipEffects` | 필터, 색보정·라이트 릭, 외곽선·입체·긴 그림자 모두 그대로 |
+| Audio·Video `volume` 곡선, `duck` | `volume`(곡선의 최댓값) + `volumeCurve`, `duck`(by는 앱 id `ep_<클립>`·`track_<트랙>`으로 바꿈) | 앱 오디오 속성 "음성 나올 때 낮추기"와 같은 값 |
 | zIndex | `transform.zIndex = 1,000,000 + z` | 앱이 트랙을 재배치해도 겹침 순서를 지키는 "명시 zIndex" 구간 |
-| **빠지는 것** | Backdrop, Effect, `clip.effects`, script 어댑터, three 커스텀 씬 | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
+| **빠지는 것** | Backdrop, script 어댑터, three 커스텀 씬 | 경고 출력. 어댑터 장면은 영상으로 미리 렌더해 Video로 넣음 |
 
 - 변환 후 경고(△)를 읽고, 빠진 것이 화면에 중요하면 대체합니다.
 
@@ -537,3 +539,61 @@ node to-admaker-template.mjs project.json admaker-import.json template.json \
 - 클립 id가 우연히 표준 필드 이름(예: `logo`)이면 앱이 값을 바꿔 넣습니다. 의도가 아니면 id를 바꿉니다(스크립트가 경고).
 - 앱에 실제로 넣는 곳: 카탈로그는 앱 저장소 `src/assets/ai-plan-templates/`에 파일을 추가(파일명 = id, 예: `40-1_그룹_오프닝-1.json`).
 
+## 10. 엔진 3.0.30 기능 (앱에서도 그대로 열림)
+
+아래 기능은 엔진 3.0.30과 admaker 앱(#528·#529·#531·#533 이후)에서 같은 값으로 그려집니다. 예전처럼 키프레임으로 굽거나 오프라인으로 섞지 말고 값으로 넣습니다. `validate.mjs`가 이름을 확인하고 `to-admaker-import.mjs`가 앱 형식으로 바꿉니다.
+
+### 10.1 색보정 (`colorGrade`)
+
+- **장면 전체**: Effect 클립 `{ "type": "Effect", "effectKey": "colorGrade", "values": { … } }`. 자기보다 아래 레이어 전체에 걸립니다(소재 + 그 아래 그래픽). 앱 효과 탭의 "색보정 · 따뜻하게/시원하게/선명하게"와 같습니다.
+- **클립 하나**: `clip.effects: [{ "id": "style_colorGrade", "key": "colorGrade", "startTime": 0, "duration": <클립 길이 이상 μs>, "values": { … } }]`.
+- 값(0이 원본): `exposure`(−3–3), `temperature`·`tint`(−1–1), `vibrance`, `shadows`·`highlights`, `gamma`(1), 레벨 `blackIn`·`whiteIn`·`blackOut`·`whiteOut`, `mix`(0–1, 적용 정도). 프리셋 값은 엔진 `COLOR_GRADE_PRESETS.warm/cool/punch`.
+- 소재를 뿌옇게 만들지 않게 `exposure`는 ±0.3, `mix`는 0.6–1 안에서. 광고 전체 톤 하나만 정하고 장면마다 바꾸지 않습니다.
+
+### 10.2 라이트 릭 (`lightLeak`)
+
+- Effect 클립 `effectKey: "lightLeak"`, `values: { intensity, origin: "left"|"right"|"top"|"bottom"|"random", hue, hueSpread, scale, speed, seed }`. 화면 가장자리에서 빛이 번져 들어옵니다.
+- 장면이 바뀌는 0.5–1초 구간에만 짧게 둡니다. `intensity`는 0.6–0.8(앱 기본 0.8). 길게 깔면 소재가 바랩니다(Q11).
+
+### 10.3 외곽선·입체·긴 그림자 (`clip.effects`)
+
+글자·로고·누끼 이미지의 알파 모양을 따라 그립니다. 클립 하나에 하나만 그려집니다(엔진은 그 시점의 첫 항목만 그림).
+
+```json
+"effects": [{ "id": "style_outline", "key": "outline", "startTime": 0, "duration": 86400000000,
+  "values": { "width": 12, "color": "#ffffff", "opacity": 1, "position": "outside", "softness": 0 } }]
+```
+
+- `outline`(스티커 테두리): `width`, `color`, `opacity`, `position`(outside·center·inside), `softness`. 누끼 제품 사진에 흰 테두리 10–16px이면 스티커 느낌.
+- `bevel`(입체): `depth`, `strength`, `angle`, `highlight`, `shadow` 색. 굵은 숫자·가격에.
+- `longShadow`(긴 그림자): `length`, `angle`, `color`, `fade`. 플랫한 아이콘·제목에. 그림자 색은 배경보다 한 단계 어둡게.
+- `startTime`·`duration`은 클립 시작 기준 μs. 클립 전체에 걸려면 넉넉하게(앱은 24시간).
+
+### 10.4 경로 따라 움직이기 (`followPath`)
+
+```json
+{ "type": "followPath", "params": { "d": "M0 0 C200 -120 420 120 640 0", "space": "clip", "autoRotate": true, "rotateOffset": 0 },
+  "options": { "delay": 0, "duration": 1200000, "easing": "power2.inOut" } }
+```
+
+- `d`는 SVG 경로. `space: "clip"`(기본)이면 클립이 놓인 자리에서의 상대 좌표, `"canvas"`면 캔버스 px.
+- `autoRotate`로 진행 방향을 바라봅니다(위를 향해 그린 그림은 `rotateOffset: 90`). `from`·`to`(0–1)로 경로 일부만.
+- 지도 위 이동선, 종이비행기, 날아드는 아이콘에 씁니다. 이제 앱 불러오기에서도 그대로 남으니 키프레임으로 굽지 않습니다.
+
+### 10.5 볼륨 곡선·덕킹
+
+- `volume`에 숫자 대신 `[[초, 게인], ...]`(클립 시작 기준 초, 게인 0–2). 예: BGM 페이드 인·아웃 `[[0, 0], [0.6, 0.8], [14, 0.8], [15, 0]]`.
+- `duck: { "by": ["t_vo"], "amount": -12, "attack": 0.08, "release": 0.35 }`. `by`의 클립(또는 트랙 id·이름)이 소리를 내는 동안 `amount` dB만큼 낮춥니다. BGM에 걸고 by는 내레이션 트랙. 앱 오디오 속성 "음성 나올 때 낮추기"(−30–−3dB, 기본 −12)와 같습니다.
+
+### 10.6 글자 배경·자동 맞춤
+
+- `style.background`에 객체: `{ "color": "#FFD400", "opacity": 1, "borderRadius": 16, "paddingX": 24, "paddingY": 10, "mode": "perLine" }`. `perLine`은 줄마다 따로 상자(자막·하이라이트 카피), `box`는 전체 한 상자.
+- `style.autoFit: { "mode": "shrink", "maxLines": 2, "minFontSize": 48 }`. 길이가 다른 문구(가게 이름·가격)가 상자를 넘지 않게 줄입니다. `fill`은 상자를 채우도록 키웁니다.
+
+### 10.7 자막 단어 강조
+
+Caption `caption.wordAnimation`(또는 `style.wordAnimation`)에 `{ "type": "highlight", "color": "#FFD400", … }`. 말하는 단어 뒤에 둥근 색 상자가 붙어 다음 단어로 미끄러집니다(앱 자막 프리셋 "단어 강조"). 문장마다 핵심어 0–1개만 강조색을 바꿉니다.
+
+### 10.8 gl- 전환 143종
+
+`transitionKey: "gl-<이름>"`(예: `gl-cube`, `gl-doorway`, `gl-crosswarp`). 장면 성격이 바뀌는 한두 곳에서만 쓰고 나머지는 매체 안의 전환(transitions.md). 앱 서버 인코딩은 fade로 바뀌므로, 서버 mp4가 최종본이면 am-* 전환을 씁니다.
