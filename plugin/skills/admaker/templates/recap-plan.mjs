@@ -1,5 +1,6 @@
 // 줄거리 요약(리캡) 기획 검사: 원작 시간순 사건표(events)와 영상 서술순 설계(beats)를 따로 적고,
-// 규칙을 지켰는지 본다. mode: full(궁금증 설계형, references/recap-highlight.md §2) · chrono(시간순 해설형, references/recap-chrono.md) · review(해설형 리뷰 + tone, references/recap-review.md) · shorts(references/recap-shorts.md).
+// 규칙을 지켰는지 본다. mode: full(궁금증 설계형, references/recap-highlight.md §2) · chrono(시간순 해설형, references/recap-chrono.md) · review(해설형 리뷰 + tone, references/recap-review.md) · shorts(references/recap-shorts.md)
+// · news(뉴스 쇼츠 + newsType, references/news-shorts.md — 인용 원문 일치·숫자·출처·날짜·의견어·재구성 영상 출처 표시).
 // 순수 모듈 + CLI(파일·네트워크 없음, 결정적).
 //
 //   checkRecapPlan(plan) → { ok, errors, warnings, order, questions, stats }
@@ -23,6 +24,20 @@ export const CHRONO_STAGES = Object.freeze(["hook", "intro", "incident", "sequen
 export const REVIEW_STAGES = Object.freeze([...CHRONO_STAGES, "review"]);
 /** 해설형 리뷰 주제형(tone: topic) 단계 — 작품 한 편이 아니라 한 주제의 사례 모음 */
 export const TOPIC_STAGES = Object.freeze(["hook", "concept", "case", "explain", "review", "outro"]);
+/** 뉴스 쇼츠 단계 (references/news-shorts.md) — 리드 → 사실 → 원문(인터뷰·발언) → 맥락 → 마무리. fact·quote·context는 여러 번 */
+export const NEWS_STAGES = Object.freeze(["lead", "fact", "quote", "context", "close"]);
+/** 뉴스 쇼츠 유형 */
+export const NEWS_TYPES = Object.freeze({
+  breaking: { name: "속보", maxSec: 45 },
+  explainer: { name: "원인·배경 설명", maxSec: 75 },
+  investigative: { name: "탐사·단독", maxSec: 90 },
+  brief: { name: "경제·데이터 브리핑", maxSec: 60 },
+  story: { name: "사연·인물", maxSec: 75 },
+});
+/** 뉴스 내레이션에 쓰지 않는 의견·과장어 (인용 안에 있는 것은 괜찮음) */
+export const NEWS_LOADED_WORDS = Object.freeze(["충격", "경악", "역대급", "발칵", "참담", "어처구니", "말도 안 되", "소름", "최악", "분노 폭발", "논란 폭발", "결국 터졌", "난리", "초토화", "대참사", "미쳤", "황당", "기가 막"]);
+/** 재구성(기사 기반) 영상 종류 — own(자사 원본)이 아니면 출처·성격 표시가 있어야 함 */
+export const FOOTAGE_KINDS = Object.freeze(["own", "archive", "stock", "ai", "graphic"]);
 /** 해설형 리뷰 톤 — 작품의 장르·목적에 따라 내레이션 성격을 바꾼다 */
 export const REVIEW_TONES = Object.freeze({
   social: { name: "스토리 + 사회적 해석", humorMax: 0.25 },
@@ -50,6 +65,8 @@ export const NARRATION_ROLES = Object.freeze({
   reaction: "즉각 반응 — 시청자가 할 반응을 대신 한마디 (해설형 리뷰)",
   knowledge: "지식 — 배경지식·개념·시대 맥락 설명",
   review: "평가 — 작품의 주제·완성도·추천 대상 (줄거리 뒤 리뷰 파트)",
+  lead: "리드 — 가장 중요한 사실 한 문장(누가·무엇을·언제), 뉴스 첫 문장",
+  fact: "사실 — 보도·원문으로 확인된 사실만, 출처를 붙여서 (뉴스)",
 });
 /** 정보 공개 방식 */
 export const REVEALS = Object.freeze(["withhold", "partial", "full", "recontext"]);
@@ -60,6 +77,7 @@ export const APP_STAGE = Object.freeze({
   context: "setup", dialogue: "escalation", commentary: "escalation",
   intro: "setup", incident: "inciting", sequence: "escalation", conflict: "escalation", ending: "payoff", outro: "payoff",
   review: "payoff", concept: "setup", case: "escalation", explain: "escalation",
+  lead: "hook", fact: "setup", quote: "escalation", close: "payoff",
 });
 
 const sentences = (t) => String(t ?? "").split(/(?<=[.!?。…])\s+|\n+/).map((s) => s.trim()).filter(Boolean);
@@ -201,12 +219,85 @@ function checkReview(plan, beats, stages, byId, events, errors, warnings) {
   for (const [r, k] of count) if (roles.length >= 8 && k / roles.length > 0.5) warnings.push(`내레이션의 ${Math.round((k / roles.length) * 100)}%가 "${r}" — 설명·반응·질문·지식·평가를 장면에 맞게 섞습니다(모든 장면에 유머·반전을 넣지는 않음).`);
 }
 
+const squash = (t) => String(t ?? "").replace(/[\s"'“”‘’「」『』.,·…!?~]/g, "");
+const numbersIn = (t) => (String(t ?? "").match(/\d[\d,.]*/g) ?? []).map((x) => x.replace(/[,.]+$/, "").replace(/,/g, "")).filter(Boolean);
+const quotedIn = (t) => [...String(t ?? "").matchAll(/["“]([^"”]{2,})["”]/g)].map((m) => m[1].trim());
+
+/**
+ * 뉴스 쇼츠 검사 — 사실·인용·출처가 원문과 맞는지가 먼저, 재미는 그다음.
+ * plan.source { outlet, date, url? } · plan.origin own|article · plan.newsType · plan.transcript(원본 보도 STT·기사 본문)
+ * beat.quote { speaker, role?, text } · beat.footage { kind, label } · plan.people [{ name, public }]
+ */
+function checkNews(plan, beats, stages, errors, warnings) {
+  const type = plan?.newsType;
+  if (!type) warnings.push(`newsType이 없습니다 — ${Object.entries(NEWS_TYPES).map(([k, v]) => `${k}(${v.name})`).join("·")} 중 하나`);
+  else if (!NEWS_TYPES[type]) errors.push(`newsType "${type}"는 ${Object.keys(NEWS_TYPES).join("·")} 중 하나`);
+  const src = plan?.source ?? {};
+  if (!src.outlet) errors.push("source.outlet(보도한 매체)이 없습니다 — 화면 아래 매체명과 출처 표시에 씁니다.");
+  if (!src.date) errors.push("source.date(보도·발생 날짜)가 없습니다 — 오래된 뉴스를 새 뉴스처럼 보이게 하지 않습니다.");
+  const origin = plan?.origin === "article" ? "article" : "own";
+  const transcript = String(plan?.transcript ?? "");
+  const pool = squash([transcript, ...beats.map((b) => b.dialogueText ?? "")].join("\n"));
+  const poolNums = new Set(numbersIn([transcript, ...beats.map((b) => b.dialogueText ?? "")].join("\n")));
+  const verifiable = pool.length > 0;
+  if (!verifiable) warnings.push("transcript(원본 보도 자막·기사 본문)가 없어 인용·숫자를 대조하지 못했습니다 — 넣고 다시 검사합니다.");
+
+  if (stages[0] !== "lead") errors.push("첫 beat는 lead여야 합니다 — 가장 중요한 사실(누가·무엇을·언제)을 첫 문장에.");
+  if (!stages.includes("fact")) errors.push("fact beat가 없습니다 — 확인된 사실을 하나 이상.");
+  const last = stages[stages.length - 1];
+  if (!["close", "context"].includes(last)) warnings.push("마지막이 close·context가 아닙니다 — 다음 일정·남은 쟁점·확인된 결과로 담담하게 끝냅니다.");
+  const dur = Number(plan?.durationSec) || 0;
+  const maxSec = NEWS_TYPES[type]?.maxSec ?? 90;
+  if (dur > maxSec) warnings.push(`${dur}초 — ${NEWS_TYPES[type]?.name ?? "뉴스"} 쇼츠는 ${maxSec}초 안쪽이 좋습니다.`);
+  if (type === "breaking" && !plan?.tag) warnings.push("속보인데 tag(\"속보\")가 없습니다 — 제목 위 꼬리표로 씁니다.");
+  if (plan?.tag && Array.from(String(plan.tag)).length > 6) warnings.push(`tag "${plan.tag}"가 깁니다 — 두세 글자(속보·단독·이슈).`);
+
+  const headline = [].concat(plan?.headline ?? []).join(" ");
+  const textsToCheck = [{ where: "제목", text: headline }, ...beats.map((b, i) => ({ where: `${i + 1}번 beat`, text: b.narration?.text ?? "" }))];
+  for (const { where, text } of textsToCheck) {
+    if (!text) continue;
+    // 따옴표 인용은 원문 그대로
+    for (const q of quotedIn(text)) if (verifiable && !pool.includes(squash(q))) errors.push(`${where}: 따옴표 안 "${q}"가 원문에 없습니다 — 인용은 원문 그대로(줄이면 말줄임 없이 앞뒤만 자름).`);
+    const outside = text.replace(/["“][^"”]*["”]/g, " ");
+    for (const w of NEWS_LOADED_WORDS) if (outside.includes(w)) warnings.push(`${where}: "${w}" — 의견·과장어는 따옴표(인용) 밖에서 쓰지 않습니다. 사실과 숫자로 보여 줍니다.`);
+    if (verifiable) for (const n of numbersIn(outside)) if (!poolNums.has(n)) warnings.push(`${where}: 숫자 "${n}"가 원문에 없습니다 — 단위·반올림까지 원문과 맞춥니다.`);
+  }
+  beats.forEach((b, i) => {
+    const at = `${i + 1}번 beat`;
+    const role = b.narration?.role;
+    if (["wit", "reaction", "review", "twist", "withhold"].includes(role)) warnings.push(`${at}: 내레이션 역할 "${role}" — 뉴스는 반응·재치·평가·반전 연출 없이 사실·맥락으로.`);
+    if (b.stage === "quote") {
+      const q = b.quote;
+      if (!q?.text && !b.dialogueText) errors.push(`${at}: quote beat에 quote.text(원문 발언)가 없습니다.`);
+      if (q?.text && verifiable && !pool.includes(squash(q.text))) errors.push(`${at}: 인용 "${q.text}"가 원문과 다릅니다 — 글자 그대로 옮깁니다.`);
+      if (q && !q.speaker) warnings.push(`${at}: 인용에 speaker(누가 말했는지)가 없습니다 — 하단 이름표에 이름·직함.`);
+      if (b.narration?.text) warnings.push(`${at}: 발언 구간에 내레이션 — 원문 소리에 맡기고 앞뒤 쉼에만 둡니다.`);
+    }
+    const f = b.footage;
+    if (f?.kind && !FOOTAGE_KINDS.includes(f.kind)) errors.push(`${at}: footage.kind "${f.kind}"는 ${FOOTAGE_KINDS.join("·")} 중 하나`);
+    if (origin === "article") {
+      const kind = f?.kind ?? (b.src ? "own" : null);
+      if (kind && kind !== "own" && kind !== "graphic" && !f?.label) errors.push(`${at}: 재구성 영상(${kind})에 출처·성격 표시(footage.label)가 없습니다 — 예: "자료화면", "AI 생성 영상", "출처: 매체명".`);
+      if (kind === "ai" && f?.label && !/AI/i.test(f.label)) errors.push(`${at}: AI 영상 표시 "${f.label}"에 AI라는 말이 없습니다 — "AI 생성 영상"처럼 분명히.`);
+      if (kind === "ai" && (f?.realPerson || f?.realEvent)) errors.push(`${at}: AI 영상으로 실제 인물·실제 현장을 재현하지 않습니다 — 자료화면·그래픽으로 바꿉니다.`);
+    }
+  });
+  // 공인이 아닌 사람은 보도된 범위만
+  const allText = [headline, ...beats.map((b) => b.narration?.text ?? "")].join("\n");
+  for (const p of [].concat(plan?.people ?? [])) {
+    if (!p?.name || p.public) continue;
+    if (allText.includes(p.name) && verifiable && !pool.includes(squash(p.name))) errors.push(`"${p.name}"(일반인)의 이름이 원문에 없습니다 — 보도된 범위(익명·가명)만 씁니다.`);
+  }
+  const narr = beats.filter((b) => b.narration?.text).length;
+  if (origin === "own" && beats.length >= 4 && narr / beats.length > 0.8) warnings.push(`내레이션 beat가 ${Math.round((narr / beats.length) * 100)}% — 자사 원본은 기자 리포트·현장음·발언을 살리고 내레이션은 빈 곳만.`);
+}
+
 export function checkRecapPlan(plan) {
   const errors = [];
   const warnings = [];
-  const mode = ["shorts", "chrono", "review"].includes(plan?.mode) ? plan.mode : "full";
+  const mode = ["shorts", "chrono", "review", "news"].includes(plan?.mode) ? plan.mode : "full";
   const STAGES =
-    mode === "shorts" ? SHORTS_STAGES : mode === "chrono" ? CHRONO_STAGES : mode === "review" ? (plan?.tone === "topic" ? TOPIC_STAGES : REVIEW_STAGES) : FULL_STAGES;
+    mode === "news" ? NEWS_STAGES : mode === "shorts" ? SHORTS_STAGES : mode === "chrono" ? CHRONO_STAGES : mode === "review" ? (plan?.tone === "topic" ? TOPIC_STAGES : REVIEW_STAGES) : FULL_STAGES;
   const events = Array.isArray(plan?.events) ? plan.events : [];
   const beats = Array.isArray(plan?.beats) ? plan.beats : [];
   const byId = new Map(events.map((e) => [e.id, e]));
@@ -228,7 +319,7 @@ export function checkRecapPlan(plan) {
   if (!beats.length) return { ok: false, mode, errors, warnings, order: [], questions: [], stats: {} };
 
   const stages = beats.map((b) => b.stage);
-  if (mode !== "chrono" && mode !== "review" && stages[0] !== "hook") errors.push("첫 beat는 hook이어야 합니다 (결과·모순·위기를 먼저).");
+  if (!["chrono", "review", "news"].includes(mode) && stages[0] !== "hook") errors.push("첫 beat는 hook이어야 합니다 (결과·모순·위기를 먼저).");
 
   // 질문 장부 — 연 질문은 나중에 답하거나 마지막에 열어 둔다(cliffhanger). 열지 않은 질문에 답하면 안 됨
   const open = new Map();
@@ -297,6 +388,8 @@ export function checkRecapPlan(plan) {
     checkChrono(plan, beats, stages, byId, events, errors, warnings);
   } else if (mode === "review") {
     checkReview(plan, beats, stages, byId, events, errors, warnings);
+  } else if (mode === "news") {
+    checkNews(plan, beats, stages, errors, warnings);
   } else {
     if (stages[stages.length - 1] !== "payoff") warnings.push("마지막이 payoff가 아닙니다 — 반전·황당한 대사·통쾌한 행동으로 끝냅니다.");
     if (!stages.includes("dialogue")) errors.push("dialogue beat가 없습니다 — 쇼츠는 원작 대사가 주인공입니다.");
@@ -350,12 +443,14 @@ export function toStoryShots(plan) {
  * skipped[{ beat, kind, why }](상한·대사 겹침으로 뺀 것), limits.
  */
 export function suggestFinishing(plan) {
-  const mode = ["shorts", "chrono", "review"].includes(plan?.mode) ? plan.mode : "full";
+  const mode = ["shorts", "chrono", "review", "news"].includes(plan?.mode) ? plan.mode : "full";
   const beats = Array.isArray(plan?.beats) ? plan.beats : [];
   const events = new Map((Array.isArray(plan?.events) ? plan.events : []).map((e) => [e.id, e]));
   const dur = Number(plan?.durationSec) > 0 ? Number(plan.durationSec) : mode === "shorts" ? 40 : 120;
   const per = dur / 60;
-  const limits = mode === "shorts"
+  const limits = mode === "news"
+    ? { sfx: plan?.newsType === "breaking" ? 1 : 0, transition: 1, motion: Math.max(3, beats.length) }
+    : mode === "shorts"
     ? { sfx: Math.max(2, Math.round(3 * per)), transition: 1, motion: 2 }
     : { sfx: Math.max(3, Math.round(4 * per)), transition: Math.max(2, Math.round(3 * per)), motion: Math.max(2, Math.round(3 * per)) };
   // beat → 첫 shot 번호
@@ -387,6 +482,15 @@ export function suggestFinishing(plan) {
       add(i, "motion", `장 제목·시간 표시 "${b.timeLabel ?? "그날 밤 / 3년 전"}" 1–1.5초`, "beat 시작", "언제인지 화면으로 알림", 3);
     }
     // 인물 첫 등장 — 이름표 (행동 소개 beat, 본편만)
+    if (mode === "news") {
+      // 뉴스: 효과음·장면 전환은 거의 없이, 정보 그래픽(이름표·데이터 카드·출처 표시)만
+      if (i === 0 && plan?.newsType === "breaking") add(i, "sfx", "짧은 알림음 하나, 아주 작게(현장음 아래)", "0초", "속보 시작", 2);
+      if (b.stage === "quote" && b.quote?.speaker) add(i, "motion", `하단 이름표 "${b.quote.speaker}${b.quote.role ? ` · ${b.quote.role}` : ""}" (원본에 이미 있으면 생략)`, "발언 시작", "누가 말했는지", 4);
+      if (b.data || b.infoCard) add(i, "motion", `데이터 카드 "${b.data ?? b.infoCard}" 2–3초 (숫자는 원문 그대로, 단위·기준일 표기)`, "숫자를 말할 때", "숫자를 화면으로", 3);
+      if (b.footage?.label && b.footage.kind !== "own") add(i, "motion", `출처 표시 "${b.footage.label}" (왼쪽 위 작게, 그 장면 내내)`, "장면 내내", "재구성 영상 출처·성격 표시(필수)", 5);
+      if (i === 0 && plan?.source?.date) add(i, "motion", `날짜·매체 칩 "${plan.source.date} · ${plan.source.outlet ?? "매체명"}" 2초`, "첫 2초", "언제 누구의 보도인지", 3);
+      return;
+    }
     if (mode !== "shorts") {
       const chars = [].concat(events.get(b.event)?.characters ?? b.characters ?? []);
       const fresh = chars.filter((ch) => !seenChars.has(ch));

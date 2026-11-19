@@ -2,7 +2,7 @@
 // node --test tests/*.test.mjs
 import test from "node:test";
 import assert from "node:assert/strict";
-import { checkRecapPlan, toStoryShots } from "../plugin/skills/admaker/templates/recap-plan.mjs";
+import { checkRecapPlan, suggestFinishing, toStoryShots } from "../plugin/skills/admaker/templates/recap-plan.mjs";
 
 const events = [
   { id: "E1", summary: "평범한 출근길", characters: ["A"], plot: "main", chrono: 1, emotion: "calm" },
@@ -119,7 +119,6 @@ test("toStoryShots — beat 순서대로 src가 있는 것만, 단계 이름 그
 });
 
 test("suggestFinishing — 필요한 beat에만, 대사 구간엔 효과음 없음, 상한", async () => {
-  const { suggestFinishing } = await import("../plugin/skills/admaker/templates/recap-plan.mjs");
   const r = suggestFinishing(good);
   const twistSfx = r.cues.filter((c) => c.kind === "sfx" && c.why.includes("반전"));
   assert.ok(twistSfx.length >= 1);
@@ -292,4 +291,68 @@ test("해설형 리뷰 주제형(tone: topic) — 개념 정의, 사례 사이 �
   const bad = checkRecapPlan({ mode: "review", tone: "topic", beats: [{ stage: "case" }, { stage: "case" }, { stage: "case" }, { stage: "case" }] });
   assert.equal(bad.ok, false);
   assert.match(bad.warnings.join("\n"), /4번 연속/);
+});
+
+// 뉴스 쇼츠 — references/news-shorts.md (예시 문장은 새로 지은 것)
+const NEWS_SRC = "시는 오늘 오전 강변 다리 보수 공사를 3주 앞당겨 시작한다고 밝혔습니다. 담당 과장은 \"안전 점검에서 균열 12곳이 확인됐다\"고 말했습니다. 공사 기간에는 버스 4개 노선이 우회합니다.";
+const newsPlan = (over = {}) => ({
+  mode: "news", newsType: "explainer", origin: "own", durationSec: 50,
+  source: { outlet: "가상방송", date: "2026-11-19" }, headline: ["강변 다리 보수", "3주 앞당겨 시작"], transcript: NEWS_SRC,
+  beats: [
+    { stage: "lead", narration: { role: "lead", text: "강변 다리 보수 공사가 3주 앞당겨 시작됩니다." }, src: { from: 0, to: 4 } },
+    { stage: "fact", narration: { role: "fact", text: "안전 점검에서 균열 12곳이 확인됐기 때문입니다." }, src: { from: 10, to: 14 } },
+    { stage: "quote", quote: { speaker: "담당 과장", text: "안전 점검에서 균열 12곳이 확인됐다" }, src: { from: 20, to: 24 } },
+    { stage: "close", narration: { role: "situation", text: "공사 기간에는 버스 4개 노선이 우회합니다." }, src: { from: 30, to: 34 } },
+  ],
+  ...over,
+});
+
+test("news — 원문과 맞는 기획은 통과", () => {
+  const r = checkRecapPlan(newsPlan());
+  assert.equal(r.mode, "news");
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.warnings, []);
+});
+
+test("news — 인용이 원문과 다르거나 출처·날짜가 없으면 오류", () => {
+  const p = newsPlan({ source: {} });
+  p.beats[2].quote.text = "균열이 무려 12곳이나 나왔다";
+  const r = checkRecapPlan(p);
+  assert.ok(r.errors.some((e) => e.includes("source.outlet")));
+  assert.ok(r.errors.some((e) => e.includes("source.date")));
+  assert.ok(r.errors.some((e) => e.includes("인용") && e.includes("원문과 다릅니다")));
+});
+
+test("news — 원문에 없는 숫자·과장어·따옴표는 잡음", () => {
+  const p = newsPlan({ headline: ["충격 균열 20곳", "\"당장 무너진다\""] });
+  const r = checkRecapPlan(p);
+  assert.ok(r.warnings.some((w) => w.includes('"충격"')));
+  assert.ok(r.warnings.some((w) => w.includes('숫자 "20"')));
+  assert.ok(r.errors.some((e) => e.includes("당장 무너진다")));
+});
+
+test("news — 기사 기반 재구성은 AI·자료 영상에 출처 표시가 있어야 함", () => {
+  const p = newsPlan({ origin: "article" });
+  p.beats[0].footage = { kind: "ai" };
+  p.beats[1].footage = { kind: "archive", label: "자료화면" };
+  p.beats[3].footage = { kind: "ai", label: "생성 영상", realEvent: true };
+  const r = checkRecapPlan(p);
+  assert.ok(r.errors.some((e) => e.startsWith("1번 beat") && e.includes("footage.label")));
+  assert.ok(!r.errors.some((e) => e.startsWith("2번 beat")));
+  assert.ok(r.errors.some((e) => e.startsWith("4번 beat") && e.includes("AI라는 말")));
+  assert.ok(r.errors.some((e) => e.startsWith("4번 beat") && e.includes("실제")));
+  const f = suggestFinishing(p);
+  assert.ok(f.cues.some((c) => c.beat === 2 && c.what.includes("자료화면")));
+  assert.ok(f.cues.some((c) => c.what.includes("담당 과장")));
+  assert.equal(f.limits.sfx, 0);
+});
+
+test("news — lead로 시작하지 않거나 재치 줄이 있으면 알림, 일반인 이름은 보도 범위만", () => {
+  const p = newsPlan({ people: [{ name: "김가상", public: false }] });
+  p.beats[0].stage = "fact";
+  p.beats[1].narration = { role: "wit", text: "김가상 씨도 다리를 건넜습니다." };
+  const r = checkRecapPlan(p);
+  assert.ok(r.errors.some((e) => e.includes("lead")));
+  assert.ok(r.warnings.some((w) => w.includes('"wit"')));
+  assert.ok(r.errors.some((e) => e.includes("김가상")));
 });
