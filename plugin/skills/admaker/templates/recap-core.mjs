@@ -42,6 +42,29 @@ export function groupWordsToSegments(words, opts = {}) {
 export function cuesToSegments(cues) {
   return cues.filter((c) => c.text.trim() && c.to > c.from).map((c, i) => ({ index: i + 1, fromSec: round(c.from / 1e6), toSec: round(c.to / 1e6), text: c.text.replace(/\s*\n\s*/g, " ").trim() }));
 }
+/** 받은 자막을 이 원본에 맞춤 (앱 mcpRecap.ts와 같은 규칙) — anchors [{ subtitleSec, videoSec }] 1개면 밀기, 2개 이상이면 rate까지 */
+export function fitSubtitleAlignment(anchors) {
+  const pts = (anchors ?? []).filter((a) => Number.isFinite(a.subtitleSec) && Number.isFinite(a.videoSec));
+  if (!pts.length) return { shiftSec: 0, rate: 1, residualSec: 0 };
+  if (pts.length === 1) return { shiftSec: round(pts[0].videoSec - pts[0].subtitleSec), rate: 1, residualSec: 0 };
+  const n = pts.length;
+  const mx = pts.reduce((t, p) => t + p.subtitleSec, 0) / n;
+  const my = pts.reduce((t, p) => t + p.videoSec, 0) / n;
+  const sxx = pts.reduce((t, p) => t + (p.subtitleSec - mx) ** 2, 0);
+  const sxy = pts.reduce((t, p) => t + (p.subtitleSec - mx) * (p.videoSec - my), 0);
+  let rate = sxx > 0 ? sxy / sxx : 1;
+  if (!(rate > 0.9 && rate < 1.1)) rate = 1;
+  const shiftSec = my - rate * mx;
+  const residualSec = Math.max(...pts.map((p) => Math.abs(p.subtitleSec * rate + shiftSec - p.videoSec)));
+  return { shiftSec: round(shiftSec), rate: Math.round(rate * 1e5) / 1e5, residualSec: round(residualSec) };
+}
+export function alignSegments(segments, shiftSec = 0, rate = 1) {
+  if (!shiftSec && rate === 1) return segments;
+  return segments
+    .map((s) => ({ ...s, fromSec: round(s.fromSec * rate + shiftSec), toSec: round(s.toSec * rate + shiftSec) }))
+    .filter((s) => s.toSec > 0)
+    .map((s, i) => ({ ...s, fromSec: Math.max(0, s.fromSec), index: i + 1 }));
+}
 export function segmentsInRange(segments, fromSec, toSec) {
   const lo = fromSec ?? -Infinity;
   const hi = toSec ?? Infinity;
